@@ -1,6 +1,9 @@
 <script lang="ts">
-	import Header from '$lib/header/Header.svelte';
-	import '../app.css';
+	import Header from '$lib/Header/Header.svelte';
+	import '../styles/reset.css';
+	import '../styles/colors.css';
+	import '../styles/typography.css';
+	import '../styles/global.css';
 </script>
 
 <Header />
@@ -10,7 +13,7 @@
 </main>
 
 <footer>
-	<p>visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit</p>
+	<p>Some workstreams footer</p>
 </footer>
 
 <style>
@@ -23,23 +26,5 @@
 		max-width: 1024px;
 		margin: 0 auto;
 		box-sizing: border-box;
-	}
-
-	footer {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 40px;
-	}
-
-	footer a {
-		font-weight: bold;
-	}
-
-	@media (min-width: 480px) {
-		footer {
-			padding: 40px 0;
-		}
 	}
 </style>
