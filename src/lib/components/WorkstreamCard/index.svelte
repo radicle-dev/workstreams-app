@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { format } from 'timeago.js';
+	import { goto } from '$app/navigation';
 	export let data;
 </script>
 
-<div class="card">
+<div on:click={() => goto(`/${data.title}`)} class="card">
 	<h3>{data.title}</h3>
 	<p>{data.owner}</p>
-	<p>{format(data.created)}</p>
 	<pre>{data.type}</pre>
 	<p>{data.desc}</p>
 	<p>rate: {data.rate} {data.currency}/sec</p>
