@@ -108,15 +108,15 @@ p,
 }
 
 .typo-text-small {
-	font-size: 14px;
-	line-height: 18px;
+	font-size: 12px;
+	line-height: 16px;
 }
 
 .typo-text-small-bold {
 	font-family: var(--typeface-medium);
 	font-weight: 600;
-	font-size: 14px;
-	line-height: 18px;
+	font-size: 12px;
+	line-height: 16px;
 }
 
 .typo-text-small-mono {
@@ -128,7 +128,7 @@ p,
 /* Relative links */
 
 .typo-link {
-	color: var(--color-primary);
+	color: var(--color-blue);
 	cursor: pointer;
 	text-decoration: underline;
 	text-underline-offset: 0.25rem;

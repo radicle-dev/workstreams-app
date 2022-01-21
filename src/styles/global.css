@@ -7,6 +7,6 @@
 
 	font-family: var(--typeface-regular);
 	font-size: 16px;
-	color: var(--color-foreground);
+	color: var(--color-white);
 	font-feature-settings: 'ss01', 'ss02', 'cv01', 'calt' 0;
 }

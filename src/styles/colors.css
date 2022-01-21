@@ -1,29 +1,27 @@
 :root {
-	--color-primary: rgba(85, 85, 255, 1);
-	--color-primary-level-1: rgba(85, 85, 255, 0.17);
-	--color-primary-level-2: rgba(85, 85, 255, 0.37);
-	--color-primary-level-6: rgba(85, 85, 255, 0.87);
-	--color-positive: #53db53;
-	--color-positive-level-1: #21402f;
-	--color-positive-level-2: #2c6837;
-	--color-positive-level-6: #e3ffe3;
-	--color-caution: #ffc555;
-	--color-caution-level-1: #2f312d;
-	--color-caution-level-2: #524a34;
-	--color-caution-level-6: #ffefcf;
-	--color-negative: #ff5555;
-	--color-negative-level-1: #38282f;
-	--color-negative-level-2: #623237;
-	--color-negative-level-6: #ffd4d4;
-	--color-foreground: #ffffff;
-	--color-foreground-level-1: #162029;
-	--color-foreground-level-2: #29343d;
-	--color-foreground-level-3: #333e47;
-	--color-foreground-level-4: #5e6d7a;
-	--color-foreground-level-5: #8594a1;
-	--color-foreground-level-6: #d3dee8;
+	--color-blue: rgba(85, 85, 255, 1);
+	--color-blue-dark: rgba(85, 85, 255, 0.45);
+	--color-blue-darker: rgba(85, 85, 255, 0.1);
+	--color-pink: rgba(255, 85, 255, 1);
+	--color-pink-dark: rgba(255, 85, 255, 0.45);
+	--color-pink-darker: rgba(255, 85, 255, 0.1);
+	--color-teal: rgba(85, 255, 255, 1);
+	--color-teal-dark: rgba(85, 255, 255, 0.45);
+	--color-teal-darker: rgba(85, 255, 255, 0.1);
+	--color-yellow: rgba(255, 255, 85, 1);
+	--color-yellow-dark: rgba(255, 255, 85, 0.45);
+	--color-yellow-darker: rgba(255, 255, 85, 0.1);
+	--color-red: rgba(255, 85, 85, 1);
+	--color-red-dark: rgba(255, 85, 85, 0.45);
+	--color-red-darker: rgba(255, 85, 85, 0.1);
+	--color-red: rgba(85, 255, 85, 1);
+	--color-red-dark: rgba(85, 255, 85, 0.45);
+	--color-red-darker: rgba(85, 255, 85, 0.1);
+
+	--color-white: #ffffff;
+	--color-grey: #dddddd;
+	--color-grey-dark: #9ca1a3;
+	--color-grey-darker: #636575;
+	--color-black: #0a141e;
 	--color-background: #0e171f;
-	--color-shadows: 0px -1px 1px rgba(255, 255, 255, 0.1), 0 4px 8px rgba(0, 0, 0, 0.25),
-		-12px 12.4829px 90.82px rgba(255, 0, 0, 0.2), 8px -5.39px 69.61px rgba(0, 255, 0, 0.2),
-		8px 7.14244px 79.34px rgba(0, 0, 255, 0.4);
 }
