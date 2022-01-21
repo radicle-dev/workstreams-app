@@ -1,10 +1,11 @@
 <script lang="ts">
-	import Tag from './shared/Tag.svelte';
-	import User from './shared/User.svelte';
+	import { goto } from '$app/navigation';
+	import Tag from '../../shared/Tag.svelte';
+	import User from '../../shared/User.svelte';
 	export let data;
 </script>
 
-<div class="card">
+<div on:click={() => goto(`/${data.title}`)} class="card">
 	<div class="top">
 		<h4>{data.title}</h4>
 		<Tag>{data.type}</Tag>

@@ -3,7 +3,8 @@
 </script>
 
 <script lang="ts">
-	import WorkstreamCard from '$lib/WorkstreamCard.svelte';
+	import Protected from '@components/Protected/index.svelte';
+	import WorkstreamCard from '@components/WorkstreamCard/index.svelte';
 
 	let workstreams = [
 		{
@@ -67,13 +68,15 @@
 	<title>Workstreams · Overview</title>
 </svelte:head>
 
-<section>
-	<div class="overview">
-		{#each workstreams as workstream}
-			<WorkstreamCard data={workstream} />
-		{/each}
-	</div>
-</section>
+<Protected>
+	<section>
+		<div class="overview">
+			{#each workstreams as workstream}
+				<WorkstreamCard data={workstream} />
+			{/each}
+		</div>
+	</section>
+</Protected>
 
 <style>
 	.overview {
