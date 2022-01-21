@@ -12,6 +12,7 @@
 			</li> -->
 
 	<div class="corner">
+		<button>New Workstream</button>
 		<button>connect</button>
 	</div>
 </header>
