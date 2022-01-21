@@ -7,8 +7,60 @@
 	import WorkstreamCard from '@components/WorkstreamCard/index.svelte';
 
 	let workstreams = [
-		{ name: 'Rinkeby faucet', owner: '0xjkfsklj234', type: 'grant', rate: 1.1 },
-		{ name: 'other stream', owner: '0xjkfsklj234', type: 'role', rate: 2 }
+		{
+			created: 1641458535,
+			currency: 'DAI',
+			title: 'Rinkeby faucet',
+			desc: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus et culpa necessitatibus numquam, doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
+			owner: 'address.eth',
+			type: 'grant',
+			rate: 1.1
+		},
+		{
+			created: 1641458535,
+			currency: 'DAI',
+			title: 'other stream',
+			desc: 'Doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
+			owner: 'address.eth',
+			type: 'role',
+			rate: 2
+		},
+		{
+			created: 1641458535,
+			currency: 'DAI',
+			title: 'other stream',
+			desc: 'Lorem ipsum dolor',
+			owner: 'address.eth',
+			type: 'role',
+			rate: 2
+		},
+		{
+			created: 1641458535,
+			currency: 'DAI',
+			title: 'Rinkeby faucet',
+			desc: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus et culpa necessitatibus numquam, doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
+			owner: 'address.eth',
+			type: 'grant',
+			rate: 1.1
+		},
+		{
+			created: 1641458535,
+			currency: 'DAI',
+			title: 'other stream',
+			desc: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus et culpa necessitatibus numquam, doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
+			owner: 'address.eth',
+			type: 'role',
+			rate: 2
+		},
+		{
+			created: 1641458535,
+			currency: 'DAI',
+			title: 'other stream',
+			desc: '',
+			owner: 'address.eth',
+			type: 'role',
+			rate: 2
+		}
 	];
 </script>
 
@@ -18,8 +70,7 @@
 
 <Protected>
 	<section>
-		<h1>Workstreams Overview</h1>
-		<div class="workstreams">
+		<div class="overview">
 			{#each workstreams as workstream}
 				<WorkstreamCard data={workstream} />
 			{/each}
@@ -28,4 +79,10 @@
 </Protected>
 
 <style>
+	.overview {
+		padding: 2rem 0;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1.5rem;
+	}
 </style>
