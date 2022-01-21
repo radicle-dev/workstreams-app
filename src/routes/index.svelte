@@ -7,56 +7,56 @@
 
 	let workstreams = [
 		{
-			created: 1641458535,
+			timeframe: 1641458535,
 			currency: 'DAI',
 			title: 'Rinkeby faucet',
 			desc: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus et culpa necessitatibus numquam, doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
-			owner: 'address.eth',
+			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
 			type: 'grant',
 			rate: 1.1
 		},
 		{
-			created: 1641458535,
+			timeframe: 1641458535,
 			currency: 'DAI',
 			title: 'other stream',
 			desc: 'Doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
-			owner: 'address.eth',
+			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
 			type: 'role',
 			rate: 2
 		},
 		{
-			created: 1641458535,
+			timeframe: 1641458535,
 			currency: 'DAI',
 			title: 'other stream',
 			desc: 'Lorem ipsum dolor',
-			owner: 'address.eth',
+			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
 			type: 'role',
 			rate: 2
 		},
 		{
-			created: 1641458535,
+			timeframe: 1641458535,
 			currency: 'DAI',
 			title: 'Rinkeby faucet',
 			desc: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus et culpa necessitatibus numquam, doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
-			owner: 'address.eth',
+			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
 			type: 'grant',
 			rate: 1.1
 		},
 		{
-			created: 1641458535,
+			timeframe: 1641458535,
 			currency: 'DAI',
 			title: 'other stream',
 			desc: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus et culpa necessitatibus numquam, doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
-			owner: 'address.eth',
+			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
 			type: 'role',
 			rate: 2
 		},
 		{
-			created: 1641458535,
+			timeframe: 1641458535,
 			currency: 'DAI',
 			title: 'other stream',
 			desc: '',
-			owner: 'address.eth',
+			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
 			type: 'role',
 			rate: 2
 		}
@@ -64,7 +64,7 @@
 </script>
 
 <svelte:head>
-	<title>Home</title>
+	<title>Workstreams · Overview</title>
 </svelte:head>
 
 <section>
@@ -80,6 +80,6 @@
 		padding: 2rem 0;
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 1.5rem;
+		gap: 1rem;
 	}
 </style>

@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { format } from 'timeago.js';
+	import Tag from './shared/Tag.svelte';
+	import User from './shared/User.svelte';
 	export let data;
 </script>
 
 <div class="card">
-	<h3>{data.title}</h3>
-	<p>{data.owner}</p>
-	<p>{format(data.created)}</p>
-	<pre>{data.type}</pre>
+	<div class="top">
+		<h4>{data.title}</h4>
+		<Tag>{data.type}</Tag>
+	</div>
+	<p>by <User address={data.owner} /></p>
 	<p>{data.desc}</p>
 	<p>rate: {data.rate} {data.currency}/sec</p>
 </div>
@@ -17,10 +19,16 @@
 		display: flex;
 		flex-direction: column;
 		padding: 1.5rem;
-		border: 1px solid var(--color-primary);
+		border: 1px solid var(--color-teal-dark);
+		border-radius: 0.25rem;
 	}
 
 	.card > * {
-		padding-top: 0.5rem;
+		padding-bottom: 0.5rem;
+	}
+
+	.top {
+		display: flex;
+		align-items: center;
 	}
 </style>
