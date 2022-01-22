@@ -12,7 +12,7 @@
 			currency: 'DAI',
 			title: 'Rinkeby faucet',
 			desc: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus et culpa necessitatibus numquam, doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
-			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
+			owner: '0x061294782b7c73a675cf54124853c8133e3463fc',
 			type: 'grant',
 			rate: 1.1
 		},
@@ -39,7 +39,7 @@
 			currency: 'DAI',
 			title: 'Rinkeby faucet',
 			desc: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus et culpa necessitatibus numquam, doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
-			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
+			owner: '0x061294782b7c73a675cf54124853c8133e3463fc',
 			type: 'grant',
 			rate: 1.1
 		},
@@ -57,7 +57,7 @@
 			currency: 'DAI',
 			title: 'other stream',
 			desc: '',
-			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
+			owner: '0x061294782b7c73a675cf54124853c8133e3463fc',
 			type: 'role',
 			rate: 2
 		}

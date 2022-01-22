@@ -10,7 +10,10 @@
 		<h4>{data.title}</h4>
 		<Tag>{data.type}</Tag>
 	</div>
-	<p>by <User address={data.owner} /></p>
+	<div class="owner">
+		<span>by</span>
+		<User address={data.owner} />
+	</div>
 	<p>{data.desc}</p>
 	<p>rate: {data.rate} {data.currency}/sec</p>
 </div>
@@ -22,14 +25,19 @@
 		padding: 1.5rem;
 		border: 1px solid var(--color-teal-dark);
 		border-radius: 0.25rem;
+		cursor: pointer;
+	}
+	.card:hover {
+		box-shadow: 0 0 1rem var(--color-teal-dark);
 	}
 
-	.card > * {
-		padding-bottom: 0.5rem;
-	}
-
-	.top {
+	.top,
+	.owner {
 		display: flex;
 		align-items: center;
+	}
+
+	.owner > span {
+		margin-right: 0.5rem;
 	}
 </style>
