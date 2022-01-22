@@ -3,65 +3,9 @@
 </script>
 
 <script lang="ts">
+	import { workstreams } from '../stores.js';
 	import Protected from '@components/Protected/index.svelte';
 	import WorkstreamCard from '@components/WorkstreamCard/index.svelte';
-
-	let workstreams = [
-		{
-			timeframe: 1641458535,
-			currency: 'DAI',
-			title: 'Rinkeby faucet',
-			desc: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus et culpa necessitatibus numquam, doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
-			owner: '0x061294782b7c73a675cf54124853c8133e3463fc',
-			type: 'grant',
-			rate: 1.1
-		},
-		{
-			timeframe: 1641458535,
-			currency: 'DAI',
-			title: 'other stream',
-			desc: 'Doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
-			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
-			type: 'role',
-			rate: 2
-		},
-		{
-			timeframe: 1641458535,
-			currency: 'DAI',
-			title: 'other stream',
-			desc: 'Lorem ipsum dolor',
-			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
-			type: 'role',
-			rate: 2
-		},
-		{
-			timeframe: 1641458535,
-			currency: 'DAI',
-			title: 'Rinkeby faucet',
-			desc: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus et culpa necessitatibus numquam, doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
-			owner: '0x061294782b7c73a675cf54124853c8133e3463fc',
-			type: 'grant',
-			rate: 1.1
-		},
-		{
-			timeframe: 1641458535,
-			currency: 'DAI',
-			title: 'other stream',
-			desc: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus et culpa necessitatibus numquam, doloremque nam corrupti eveniet officiis eum ipsa impedit aliquid illo magnam iste consectetur fuga, vel dolor adipisci!',
-			owner: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
-			type: 'role',
-			rate: 2
-		},
-		{
-			timeframe: 1641458535,
-			currency: 'DAI',
-			title: 'other stream',
-			desc: '',
-			owner: '0x061294782b7c73a675cf54124853c8133e3463fc',
-			type: 'role',
-			rate: 2
-		}
-	];
 </script>
 
 <svelte:head>
@@ -71,7 +15,7 @@
 <Protected>
 	<section>
 		<div class="overview">
-			{#each workstreams as workstream}
+			{#each $workstreams as workstream}
 				<WorkstreamCard data={workstream} />
 			{/each}
 		</div>
