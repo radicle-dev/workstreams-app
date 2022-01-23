@@ -73,7 +73,6 @@ h4,
 h5,
 .typo-header-5 {
 	font-family: var(--typeface-medium);
-	font-weight: 600;
 	font-size: 13px;
 	text-transform: uppercase;
 	letter-spacing: 0.05rem;
@@ -91,7 +90,6 @@ p,
 
 .typo-text-bold {
 	font-family: var(--typeface-medium);
-	font-weight: 600;
 	font-size: 16px;
 }
 
@@ -108,15 +106,14 @@ p,
 }
 
 .typo-text-small {
-	font-size: 14px;
-	line-height: 18px;
+	font-size: 12px;
+	line-height: 16px;
 }
 
 .typo-text-small-bold {
 	font-family: var(--typeface-medium);
-	font-weight: 600;
-	font-size: 14px;
-	line-height: 18px;
+	font-size: 12px;
+	line-height: 16px;
 }
 
 .typo-text-small-mono {
@@ -128,7 +125,7 @@ p,
 /* Relative links */
 
 .typo-link {
-	color: var(--color-primary);
+	color: var(--color-bl);
 	cursor: pointer;
 	text-decoration: underline;
 	text-underline-offset: 0.25rem;
@@ -159,12 +156,10 @@ p,
 
 .typo-regular {
 	font-family: var(--typeface-regular);
-	font-weight: 600;
 }
 
 .typo-semi-bold {
 	font-family: var(--typeface-medium);
-	font-weight: 600;
 }
 
 .typo-bold {
@@ -190,7 +185,6 @@ p,
 
 .typo-all-caps {
 	font-family: var(--typeface-medium);
-	font-weight: 600;
 	font-size: 13px;
 	text-transform: uppercase;
 	letter-spacing: 0.05rem;
