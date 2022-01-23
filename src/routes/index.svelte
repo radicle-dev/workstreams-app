@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import { workstreams } from '../stores.js';
+	import { workstreams } from '$lib/stores/workstreamsStore.js';
 	import Protected from '@components/Protected/index.svelte';
 	import WorkstreamCard from '@components/WorkstreamCard/index.svelte';
 </script>

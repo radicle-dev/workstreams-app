@@ -1,11 +1,8 @@
 <script lang="ts">
-	import { workstreams } from '../../../stores.js';
 	import Tag from '../../shared/Tag.svelte';
 	import User from '../../shared/User.svelte';
 
-	export let id: string;
-
-	let workstream = $workstreams.find((workstream) => workstream.title === id);
+	export let workstream;
 </script>
 
 <div class="top">

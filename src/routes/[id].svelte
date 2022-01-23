@@ -1,7 +1,18 @@
+<script context="module">
+	import { get } from 'svelte/store';
+	import { workstreams } from '$lib/stores/workstreamsStore.js';
+	const workstreamsData = get(workstreams);
+
+	export async function load({ params }) {
+		let workstream = workstreamsData.find((workstream) => workstream.title === params.id);
+		return { props: { workstream } };
+	}
+</script>
+
 <script lang="ts">
-	import { page } from '$app/stores';
 	import Protected from '@components/Protected/index.svelte';
 	import WorkstreamDetail from '@components/WorkstreamDetail/index.svelte';
+	export let workstream;
 </script>
 
 <svelte:head>
@@ -9,5 +20,5 @@
 </svelte:head>
 
 <Protected>
-	<WorkstreamDetail id={$page.params.id} />
+	<WorkstreamDetail {workstream} />
 </Protected>
