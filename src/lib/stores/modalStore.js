@@ -6,7 +6,7 @@ import { writable } from "svelte/store";
 let params = {};
 
 params.modalInitalState = {
-  visible: false,
+  showModal: false,
   modalId: null
 }
 
