@@ -2,20 +2,48 @@
 	import { goto } from '$app/navigation';
 	import Tag from '../../shared/Tag.svelte';
 	import User from '../../shared/User.svelte';
+
 	export let data;
+
+	function timeframeFormat(timeframe) {
+		const weeks = Math.floor(timeframe / 7);
+		if (weeks < 1) {
+			return `${timeframe} days`;
+		} else {
+			return `${weeks} weeks`;
+		}
+	}
+	function startDateFormat(startdate) {
+		return new Date(startdate).toLocaleDateString('en-US', {
+			month: 'short',
+			day: 'numeric'
+		});
+	}
 </script>
 
 <div on:click={() => goto(`/${data.title}`)} class="card">
 	<div class="top">
-		<h4>{data.title}</h4>
-		<Tag>{data.type}</Tag>
+		<div class="title">
+			<h4>{data.title}</h4>
+			<Tag>{data.type}</Tag>
+		</div>
+		<div class="owner">
+			<span>by</span>
+			<User address={data.owner} />
+		</div>
+		<p class="desc">{data.desc}</p>
 	</div>
-	<div class="owner">
-		<span>by</span>
-		<User address={data.owner} />
+	<div class="bottom">
+		{#if data.type === 'grant'}
+			<p class="timeframe">{timeframeFormat(data.timeframe)}</p>
+		{:else if data.type === 'role'}
+			<p class="timeframe">Start {startDateFormat(data.start_date)}</p>
+		{/if}
+		<p class="typo-text-bold rate">
+			{Math.floor(data.rate * 60 * 60 * 24)}
+			{data.currency} <span class="typo-regular">/ day</span>
+		</p>
 	</div>
-	<p>{data.desc}</p>
-	<p>rate: {data.rate} {data.currency}/sec</p>
 </div>
 
 <style>
@@ -23,21 +51,53 @@
 		display: flex;
 		flex-direction: column;
 		padding: 1.5rem;
-		border: 1px solid var(--color-teal-dark);
+		border: 1px solid var(--color-pink-dark);
 		border-radius: 0.25rem;
 		cursor: pointer;
+		justify-content: space-between;
 	}
 	.card:hover {
-		box-shadow: 0 0 1rem var(--color-teal-dark);
+		border: 1px solid var(--color-pink);
+		box-shadow: 0 0 1rem var(--color-pink-dark);
 	}
 
-	.top,
+	.top > * {
+		margin-bottom: 1.5rem;
+	}
+
+	.title,
 	.owner {
 		display: flex;
 		align-items: center;
 	}
 
+	.title {
+		margin-bottom: 0.25rem;
+	}
+
 	.owner > span {
+		color: var(--color-grey-dark);
 		margin-right: 0.5rem;
+	}
+
+	.desc {
+		color: var(--color-grey);
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
+
+	.bottom {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.timeframe {
+		color: var(--color-grey-dark);
+	}
+
+	.rate {
+		color: var(--color-pink);
 	}
 </style>
