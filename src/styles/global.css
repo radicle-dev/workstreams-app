@@ -1,9 +1,10 @@
 :root {
-	display: grid;
 	height: 100vh;
 	padding: 1.5rem;
-	place-items: center center;
 	background-color: var(--color-background);
+	max-width: 90rem;
+	min-width: 40rem;
+	margin: 0 auto;
 
 	font-family: var(--typeface-regular);
 	font-size: 16px;

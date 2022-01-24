@@ -62,7 +62,7 @@
 	}
 
 	.owner > span {
-		color: var(--color-grey-dark);
+		color: var(--color-grey-darker);
 		margin-right: 0.5rem;
 	}
 

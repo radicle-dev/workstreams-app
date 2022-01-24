@@ -28,8 +28,6 @@
 	main {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
-		max-width: 90rem;
 	}
 	footer {
 		margin-top: 2rem;
