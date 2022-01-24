@@ -35,6 +35,16 @@ button:active {
 	background-color: var(--color-teal-dark);
 }
 
+button:disabled,
+button:disabled:hover,
+button:disabled:active {
+	cursor: default;
+	color: var(--color-background);
+	border: 1px solid var(--color-teal-darker);
+	background-color: var(--color-teal-darker);
+	box-shadow: none;
+}
+
 button.transparent {
 	border: 1px solid var(--color-background);
 }

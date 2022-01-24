@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { closeModal } from '$lib/stores/modalStore.js';
 	import Modal from '@components/Modal/index.svelte';
-	import TextInput from '$lib/shared/TextInput.svelte';
+	import Input from '$lib/shared/Input.svelte';
 	import Spinner from '$lib/shared/Spinner.svelte';
 
 	let type: string = 'grant';
@@ -11,6 +11,16 @@
 	let desc: string;
 	let roleStart: string;
 	let grantDuration: string;
+
+	let disabled: boolean = true;
+
+	$: disabled =
+		title === undefined ||
+		rate === undefined ||
+		desc === undefined ||
+		(type === 'role' ? roleStart === undefined : grantDuration === undefined)
+			? true
+			: false;
 </script>
 
 <Modal>
@@ -49,40 +59,42 @@
 			<span class="emoji">👔</span>
 			<h3>Create a work stream</h3>
 			<p>Describe the {type} and set a rate.</p>
-			<TextInput
-				style="margin-bottom: 2rem;"
+			<Input
+				style="margin-bottom: 1rem;"
 				label="Title"
 				placeholder="Enter a title"
-				value={title}
+				bind:value={title}
 			/>
 			<div class="meta">
-				<TextInput
-					style="margin-bottom: 2rem;"
-					placeholder="Enter rate per day in DAI"
+				<Input
+					type="amount"
+					style="width: 16.75rem"
+					placeholder="Enter rate per day"
 					label="Rate per day"
-					value={rate}
+					bind:value={rate}
 				/>
 				{#if type === 'grant'}
-					<TextInput
-						style="margin-bottom: 2rem;"
+					<Input
+						type="number"
+						style="width: 16.75rem"
 						placeholder="Enter amount of days"
 						label="Grant duration"
-						value={grantDuration}
+						bind:value={grantDuration}
 					/>
 				{:else if type === 'role'}
-					<TextInput
-						style="margin-bottom: 2rem;"
+					<Input
+						type="date"
+						style="width: 16.75rem"
 						placeholder="Enter a date"
 						label="Start date"
-						value={roleStart}
+						bind:value={roleStart}
 					/>
 				{/if}
 			</div>
-			<TextInput
-				style="margin-bottom: 2rem;"
+			<Input
 				label="Description"
 				placeholder="Enter a description (markdown supported)"
-				value={desc}
+				bind:value={desc}
 			/>
 
 			<div class="actions">
@@ -93,6 +105,7 @@
 					}}>Back</button
 				>
 				<button
+					{disabled}
 					on:click={() => {
 						steps = steps + 1;
 					}}>Create {type}</button
@@ -139,6 +152,7 @@
 	.meta {
 		display: flex;
 		gap: 1.5rem;
+		width: 40rem;
 	}
 
 	.actions {
