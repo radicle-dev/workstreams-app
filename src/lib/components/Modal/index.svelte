@@ -1,5 +1,4 @@
-<script lang="ts">
-	import { closeModal } from '$lib/stores/modalStore.js';
+<script>
 </script>
 
 <div class="modal-overlay" />
@@ -7,11 +6,6 @@
 <div class="modal-floating">
 	<div class="modal">
 		<slot name="body" />
-
-		<div class="modal-actions">
-			<button label="Cancel" on:click={$closeModal}>close</button>
-			<slot name="actions" />
-		</div>
 	</div>
 </div>
 
@@ -36,18 +30,14 @@
 		background-color: rgba(0, 0, 0, 0.75);
 	}
 	.modal {
-		padding: 2rem 3rem;
+		margin: 1.5rem;
+		padding: 2.5rem;
 		border: 1px solid var(--color-teal-dark);
 		background: var(--color-background);
 		box-shadow: 0.5rem 0.5rem 4rem var(--color-teal-dark);
-		min-width: 30rem;
-		max-width: 48rem;
-		text-align: center;
-	}
-
-	.modal-actions {
-		padding-top: 0.5rem;
-		margin-top: 2rem;
+		min-width: 24rem;
+		width: 100%;
+		max-width: 40rem;
 		text-align: center;
 	}
 </style>
