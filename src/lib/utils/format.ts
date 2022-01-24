@@ -19,3 +19,11 @@ export function startDateFormat(startdate: number): string {
     day: 'numeric'
   });
 }
+
+export function dateFormat(date: number): string {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}

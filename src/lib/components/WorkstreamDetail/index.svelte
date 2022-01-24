@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { timeframeFormat, startDateFormat } from '$lib/utils/format';
+	import { timeframeFormat, startDateFormat, dateFormat } from '$lib/utils/format';
 	import Tag from '../../shared/Tag.svelte';
 	import User from '../../shared/User.svelte';
 
@@ -13,8 +13,9 @@
 			<Tag size="large">{workstream.type}</Tag>
 		</div>
 		<div class="owner">
-			<span class="label">by</span>
+			<span class="label">created by</span>
 			<User address={workstream.owner} />
+			<span class="label" style="margin-left: 0.5rem;">on {dateFormat(workstream.created_at)}</span>
 		</div>
 		<div class="timerate">
 			{#if workstream.type === 'grant'}
@@ -46,7 +47,7 @@
 <style>
 	.container {
 		max-width: 54rem;
-		margin: 0 auto;
+		margin: 4rem auto;
 		width: 100%;
 	}
 	.metadata > * {
@@ -70,10 +71,6 @@
 	.desc {
 		margin-top: 0.5rem;
 		color: var(--color-white);
-		overflow: hidden;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
 	}
 
 	.timerate {
