@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { ethers } from 'ethers';
-	const provider = ethers.getDefaultProvider();
-	import { createIcon } from '../utils/blockies.ts';
+	import { createIcon } from '../utils/blockies';
+	import { formatAddress } from '../utils/format';
 	import { onMount } from 'svelte';
+	const provider = ethers.getDefaultProvider();
 
 	export let style: string | undefined = undefined;
 	export let address: string;
@@ -21,11 +22,6 @@
 			size: 8,
 			scale: 16
 		}).toDataURL();
-	}
-
-	function formatAddress(input: string): string {
-		const addr = ethers.utils.getAddress(input).replace(/^0x/, '');
-		return addr.substring(0, 4) + ' – ' + addr.substring(addr.length - 4, addr.length);
 	}
 
 	async function laodEnsData(): Promise<string> {

@@ -1,24 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { timeframeFormat, startDateFormat } from '$lib/utils/format';
 	import Tag from '../../shared/Tag.svelte';
 	import User from '../../shared/User.svelte';
 
 	export let data;
-
-	function timeframeFormat(timeframe) {
-		const weeks = Math.floor(timeframe / 7);
-		if (weeks < 1) {
-			return `${timeframe} days`;
-		} else {
-			return `${weeks} weeks`;
-		}
-	}
-	function startDateFormat(startdate) {
-		return new Date(startdate).toLocaleDateString('en-US', {
-			month: 'short',
-			day: 'numeric'
-		});
-	}
 </script>
 
 <div on:click={() => goto(`/${data.title}`)} class="card">
