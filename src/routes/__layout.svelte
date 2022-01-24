@@ -21,17 +21,18 @@
 </main>
 
 <footer>
-	<p>Some workstreams footer</p>
+	<p>by radicle 🌱</p>
 </footer>
 
 <style>
 	main {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
-		max-width: 90rem;
 	}
 	footer {
-		align-items: flex-end;
+		margin-top: 2rem;
+		color: var(--color-grey-dark);
+		display: flex;
+		justify-content: center;
 	}
 </style>

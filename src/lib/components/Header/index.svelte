@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 	// TODO Connect to wallet state.
@@ -7,10 +8,17 @@
 </script>
 
 <header>
-	<div class:active={$page.url.pathname === '/'}><a sveltekit:prefetch href="/">Home</a></div>
+	<div class="home" class:active={$page.url.pathname === '/'}>
+		<a sveltekit:prefetch href="/"><h3>👔 Workstreams</h3></a>
+		<button on:click={() => dispatch('createAction')}>Create</button>
+	</div>
 
-	<div class="corner">
-		<button on:click={() => dispatch('createAction')}>Create workstream</button>
+	<div class="user">
+		<a
+			href="/my-workstreams"
+			on:click={() => goto(`/my-workstreams`)}
+			class:active={$page.url.pathname === '/my-workstreams'}>My workstreams</a
+		>
 		{#if provider}
 			<button>disconnect</button>
 		{:else}
@@ -23,5 +31,32 @@
 	header {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 2rem;
+	}
+
+	.home {
+		display: flex;
+		align-items: center;
+	}
+
+	.home > a {
+		color: var(--color-white);
+		text-decoration: none;
+		margin-right: 2rem;
+	}
+
+	.home > a:hover {
+		color: var(--color-blue);
+		text-shadow: 0 0 1rem var(--color-blue-dark);
+	}
+
+	.home > a:active {
+		color: var(--color-blue-dark);
+		text-shadow: 0 0 1rem var(--color-blue-darker);
+	}
+
+	.user > a {
+		margin-right: 1.5rem;
 	}
 </style>
