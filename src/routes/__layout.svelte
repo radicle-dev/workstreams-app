@@ -21,7 +21,7 @@
 </main>
 
 <footer>
-	<p>Some workstreams footer</p>
+	<p>by radicle 🌱</p>
 </footer>
 
 <style>
@@ -32,6 +32,9 @@
 		max-width: 90rem;
 	}
 	footer {
-		align-items: flex-end;
+		margin-top: 2rem;
+		color: var(--color-grey-dark);
+		display: flex;
+		justify-content: center;
 	}
 </style>
