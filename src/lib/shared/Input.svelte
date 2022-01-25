@@ -50,7 +50,7 @@
 		position: absolute;
 		color: var(--color-teal);
 		right: 1rem;
-		bottom: 0.75rem;
+		top: 0.75rem;
 	}
 	input {
 		position: block;
