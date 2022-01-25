@@ -8,6 +8,7 @@
 	export let style: string | undefined = undefined;
 	export let address: string;
 	export let avatar: boolean = true;
+	export let showAddress: boolean = true;
 
 	let uriData = '';
 	let ensName;
@@ -41,9 +42,11 @@
 		{#if avatar}
 			<img class="avatar circle" src={uriData} alt="user-avatar" />
 		{/if}
-		<p class="typo-text-bold">
-			{ensName === null ? formatAddress(address) : ensName}
-		</p>
+		{#if showAddress}
+			<p class="typo-text-bold">
+				{ensName === null ? formatAddress(address) : ensName}
+			</p>
+		{/if}
 	</div>
 {/if}
 

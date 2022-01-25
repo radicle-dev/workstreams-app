@@ -14,9 +14,9 @@
 	--color-red: rgba(255, 85, 85, 1);
 	--color-red-dark: rgba(255, 85, 85, 0.45);
 	--color-red-darker: rgba(255, 85, 85, 0.1);
-	--color-red: rgba(85, 255, 85, 1);
-	--color-red-dark: rgba(85, 255, 85, 0.45);
-	--color-red-darker: rgba(85, 255, 85, 0.1);
+	--color-green: rgba(85, 255, 85, 1);
+	--color-green-dark: rgba(85, 255, 85, 0.45);
+	--color-green-darker: rgba(85, 255, 85, 0.1);
 
 	--color-white: #ffffff;
 	--color-grey: #dddddd;
