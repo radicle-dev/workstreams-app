@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { timeframeFormat, startDateFormat, dateFormat } from '$lib/utils/format';
-	import Tag from '../../shared/Tag.svelte';
-	import User from '../../shared/User.svelte';
+	import Tag from '$lib/shared/Tag.svelte';
+	import User from '$lib/shared/User.svelte';
+	import Input from '$lib/shared/Input.svelte';
 
 	export let workstream;
+	let applicationText: string;
 </script>
 
 <div class="container">
@@ -41,6 +43,19 @@
 			<span class="label">Description</span>
 			<p class="desc">{workstream.desc}</p>
 		</div>
+	</div>
+	<hr />
+	<div class="application-form">
+		<User address="0x1c4fB2BF4967A9AEe0081E174a7D38b356029a84" style="margin: 2rem 0 1rem;" />
+		<Input
+			type="textarea"
+			label="Application form"
+			placeholder="markdown supported"
+			bind:value={applicationText}
+		/>
+		<button class="apply" disabled={applicationText === undefined || applicationText === ''}
+			>Submit application</button
+		>
 	</div>
 </div>
 
@@ -90,5 +105,19 @@
 	.rate {
 		margin-top: 0.5rem;
 		color: var(--color-pink);
+	}
+
+	hr {
+		border-bottom: 1px solid var(--color-teal);
+	}
+
+	.application-form {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.apply {
+		margin-top: 1rem;
+		align-self: flex-end;
 	}
 </style>
