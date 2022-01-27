@@ -1,10 +1,13 @@
 <script context="module">
 	import { get } from 'svelte/store';
 	import { workstreams } from '$lib/stores/workstreamsStore.js';
+	import { hyphanateString } from '$lib/utils/format';
 	const workstreamsData = get(workstreams);
 
 	export async function load({ params }) {
-		let workstream = workstreamsData.find((workstream) => workstream.title === params.id);
+		let workstream = workstreamsData.find(
+			(workstream) => hyphanateString(workstream.title) === params.id
+		);
 		return { props: { workstream } };
 	}
 </script>

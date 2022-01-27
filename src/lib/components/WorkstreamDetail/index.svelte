@@ -3,6 +3,7 @@
 	import Tag from '$lib/shared/Tag.svelte';
 	import User from '$lib/shared/User.svelte';
 	import Input from '$lib/shared/Input.svelte';
+	import Markdown from '$lib/shared/Markdown.svelte';
 
 	export let workstream;
 	let applicationText: string;
@@ -41,7 +42,9 @@
 		</div>
 		<div>
 			<span class="label">Description</span>
-			<p class="desc">{workstream.desc}</p>
+			<div class="desc">
+				<Markdown content={workstream.desc} />
+			</div>
 		</div>
 	</div>
 	<hr />
