@@ -31,11 +31,11 @@
 <div class="container">
 	<section>
 		<div class="title">
-			<h3>Workstreams</h3>
+			<h3>My {workstreamFilter} workstreams</h3>
 			<SegmentedControl
 				active={workstreamFilter}
 				options={workstreamOptions}
-				on:Select={(ev) => workstreamFilter === ev.detail}
+				on:select={(ev) => (workstreamFilter = ev.detail)}
 			/>
 		</div>
 		<div class="row-container">
@@ -46,11 +46,11 @@
 	</section>
 	<section>
 		<div class="title">
-			<h3>Applications</h3>
+			<h3>My {applicationFilter} applications</h3>
 			<SegmentedControl
 				active={applicationFilter}
 				options={applicationOptions}
-				on:Select={(ev) => applicationFilter === ev.detail}
+				on:select={(ev) => (applicationFilter = ev.detail)}
 			/>
 		</div>
 		<div class="row-container">
