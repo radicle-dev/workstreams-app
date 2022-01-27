@@ -27,3 +27,7 @@ export function dateFormat(date: number): string {
     day: 'numeric'
   });
 }
+
+export function hyphanateString(str: string): string {
+  return str.replace(/ +/g, '-').toLowerCase();
+}
