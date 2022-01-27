@@ -1,10 +1,44 @@
-<script>
+<script lang="ts">
 	import Modal from '@components/Modal/index.svelte';
+	import Step1 from './Step1.svelte';
+	import Step2 from './Step2.svelte';
+	import Step3 from './Step3.svelte';
+
+	let type: string = 'grant';
+	let steps: number = 1;
+	let title: string;
+	let rate: string;
+	let desc: string;
+	let roleStart: string;
+	let grantDuration: string;
 </script>
 
 <Modal>
-	<span slot="body"><h3>Create Workstream</h3></span>
-	<span slot="actions">
-		<button>Next</button>
-	</span>
+	<div slot="body">
+		{#if steps === 1}
+			<Step1
+				{type}
+				on:nextAction={() => {
+					steps = steps + 1;
+				}}
+			/>
+		{:else if steps === 2}
+			<Step2
+				{type}
+				{title}
+				{rate}
+				{desc}
+				{roleStart}
+				{grantDuration}
+				on:backAction={() => {
+					steps = steps - 1;
+				}}
+				on:nextAction={() => {
+					steps = steps + 1;
+				}}
+			/>
+		{:else if steps === 3}
+			<Step3 />
+		{/if}
+	</div>
 </Modal>
