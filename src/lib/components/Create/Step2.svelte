@@ -58,7 +58,7 @@
 	{/if}
 </div>
 <Input
-	type="text"
+	type="textarea"
 	label="Description"
 	placeholder="Enter a description (markdown supported)"
 	bind:value={desc}

@@ -30,6 +30,8 @@
 		</div>
 	{:else if type === 'date'}
 		<input {style} type="date" bind:value {placeholder} name={label} id={label} />
+	{:else if type === 'textarea'}
+		<textarea rows="3" bind:value {placeholder} name={label} id={label} />
 	{/if}
 </label>
 
@@ -52,7 +54,8 @@
 		right: 1rem;
 		top: 0.75rem;
 	}
-	input {
+	input,
+	textarea {
 		position: block;
 		background-color: var(--color-background);
 		border: 1px solid var(--color-grey-darker);
@@ -61,11 +64,17 @@
 		color: var(--color-white);
 	}
 
-	input::placeholder {
+	textarea {
+		resize: vertical;
+	}
+
+	input::placeholder,
+	textarea::placeholder {
 		color: var(--color-grey-darker);
 	}
 
-	input:focus {
+	input:focus,
+	textarea:focus {
 		outline: none !important;
 		border-color: var(--color-blue);
 		box-shadow: 0 0 0.5rem var(--color-blue-dark);
