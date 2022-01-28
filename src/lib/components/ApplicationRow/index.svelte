@@ -5,7 +5,6 @@
 	import User from '../../shared/User.svelte';
 
 	export let application;
-	console.log(application);
 </script>
 
 <div on:click={() => goto(`/${hyphanateString(application.title)}`)} class="row">
