@@ -2,9 +2,9 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { createEventDispatcher } from 'svelte';
+	import Connect from '$lib/shared/Connect.svelte';
+
 	const dispatch = createEventDispatcher();
-	// TODO Connect to wallet state.
-	let provider = true;
 </script>
 
 <header>
@@ -19,11 +19,7 @@
 			on:click={() => goto(`/my-workstreams`)}
 			class:active={$page.url.pathname === '/my-workstreams'}>My workstreams</a
 		>
-		{#if provider}
-			<button>disconnect</button>
-		{:else}
-			<button>connect</button>
-		{/if}
+		<Connect />
 	</div>
 </header>
 
