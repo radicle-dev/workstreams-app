@@ -44,7 +44,7 @@ Previously, while radicle orgs did appear on upstream, registering & linking nam
       {
         title: "application for grant x by Julien",
         proposal_id: 0,
-        desc: "I think you should choose me cause I'm **awesome**!",
+        desc: "I think you should choose me cause I'm **awesome**! Some more text so that it's longer then 1 line.",
         creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471",
         recipients: ["0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471"],
         payment_rate: 0.005,

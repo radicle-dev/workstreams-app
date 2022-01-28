@@ -33,14 +33,14 @@
 		display: flex;
 		flex-direction: row;
 		padding: 1.5rem;
-		border-left: 1px solid var(--color-blue-dark);
-		border-right: 1px solid var(--color-blue-dark);
-		border-top: 1px solid var(--color-blue-dark);
+		border-left: 1px solid var(--color-pink-dark);
+		border-right: 1px solid var(--color-pink-dark);
+		border-top: 1px solid var(--color-pink-dark);
 		cursor: pointer;
 		justify-content: space-between;
 	}
 	.row:hover {
-		box-shadow: 0 0 1rem var(--color-blue-dark);
+		box-shadow: 0 0 1rem var(--color-pink-dark);
 	}
 
 	.row:first-child {
@@ -51,7 +51,7 @@
 	.row:last-child {
 		border-bottom-left-radius: 0.25rem;
 		border-bottom-right-radius: 0.25rem;
-		border-bottom: 1px solid var(--color-blue-dark);
+		border-bottom: 1px solid var(--color-pink-dark);
 	}
 
 	.left > * {
@@ -78,6 +78,6 @@
 	}
 
 	.rate {
-		color: var(--color-blue);
+		color: var(--color-pink);
 	}
 </style>
