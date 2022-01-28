@@ -7,14 +7,14 @@ workstreams.set([
     id: "0",
     type: "grant",
     workstream_state: "rfp",
-    creator: '0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6',
+    creator: "0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6",
     created_at: 1641458535,
     starting_at: 1641460000,
     ending_at: 1641500000,
     payment_rate:  0.008,
     payment_currency: "DAI",
     receivers: [],
-    title: 'Org Naming Flow for Radicle Upstream',
+    title: "Org Naming Flow for Radicle Upstream",
     desc: `
 ## Project Overview 📄
 
@@ -42,17 +42,17 @@ Previously, while radicle orgs did appear on upstream, registering & linking nam
     dripshub_account: 0,
     applications: [
       {
-        title: 'application for grant x by Julien',
+        title: "application for grant x by Julien",
         proposal_id: 0,
         desc: "I think you should choose me cause I'm **awesome**!",
-        creator: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
-        recipients: ['0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471'],
+        creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471",
+        recipients: ["0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471"],
         payment_rate: 0.005,
-        currency: 'DAI',
+        currency: "DAI",
         created_at: 1641458535,
         ending_at: 1641500000,
-        workstream_id: 'Stream-3',
-        state: 'pending'
+        workstream_id: "Stream-3",
+        state: "pending"
       }
     ],
   }

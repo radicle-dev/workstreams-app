@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { timeframeFormat, startDateFormat, hyphanateString } from '$lib/utils/format';
-	import Tag from '../../shared/Tag.svelte';
-	import User from '../../shared/User.svelte';
+	import Tag from '$lib/shared/Tag.svelte';
+	import User from '$lib/shared/User.svelte';
 
 	export let data;
 </script>
@@ -10,7 +10,7 @@
 <div on:click={() => goto(`/${hyphanateString(data.title)}`)} class="row">
 	<div class="left">
 		<div class="title">
-			<User address={data.creat0r} showAddress={false} />
+			<User address={data.creator} showAddress={false} />
 			<h4>{data.title}</h4>
 			<Tag>{data.type}</Tag>
 		</div>

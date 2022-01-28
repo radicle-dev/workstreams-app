@@ -1,25 +1,26 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { timeframeFormat, startDateFormat, hyphanateString } from '$lib/utils/format';
+	import { startDateFormat, hyphanateString } from '$lib/utils/format';
 	import Tag from '../../shared/Tag.svelte';
 	import User from '../../shared/User.svelte';
 
-	export let data;
+	export let application;
+	console.log(application);
 </script>
 
-<div on:click={() => goto(`/${hyphanateString(data.title)}`)} class="row">
+<div on:click={() => goto(`/${hyphanateString(application.title)}`)} class="row">
 	<div class="left">
 		<div class="title">
-			<User address={data.creator} showAddress={false} />
-			<p class="typo-text-bold">{data.workstream_id}</p>
-			<Tag>{data.state}</Tag>
+			<User address={application.creator} showAddress={false} />
+			<p class="typo-text-bold">{application.workstream_id}</p>
+			<Tag>{application.state}</Tag>
 		</div>
 	</div>
 	<div class="right">
-		<p class="timeframe">Start {startDateFormat(data.created_at)}</p>
+		<p class="timeframe">Start {startDateFormat(application.created_at)}</p>
 		<p class="typo-text-bold rate">
-			{Math.floor(data.payment_rate * 60 * 60 * 24)}
-			{data.currency} <span class="typo-regular">/ day</span>
+			{Math.floor(application.payment_rate * 60 * 60 * 24)}
+			{application.currency} <span class="typo-regular">/ day</span>
 		</p>
 	</div>
 </div>
