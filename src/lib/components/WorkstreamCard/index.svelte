@@ -15,19 +15,19 @@
 		</div>
 		<div class="owner">
 			<span>by</span>
-			<User address={data.owner} />
+			<User address={data.creator} />
 		</div>
 		<p class="desc">{data.desc}</p>
 	</div>
 	<div class="bottom">
 		{#if data.type === 'grant'}
-			<p class="timeframe">{timeframeFormat(data.timeframe)}</p>
+			<p class="timeframe">{timeframeFormat(data.starting_at, data.ending_at)}</p>
 		{:else if data.type === 'role'}
-			<p class="timeframe">Start {startDateFormat(data.start_date)}</p>
+			<p class="timeframe">Start {startDateFormat(data.starting_at)}</p>
 		{/if}
 		<p class="typo-text-bold rate">
-			{Math.floor(data.rate * 60 * 60 * 24)}
-			{data.currency} <span class="typo-regular">/ day</span>
+			{Math.floor(data.payment_rate * 60 * 60 * 24)}
+			{data.payment_currency} <span class="typo-regular">/ day</span>
 		</p>
 	</div>
 </div>

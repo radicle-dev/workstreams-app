@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { workstreams } from '$lib/stores/workstreamsStore';
 	import WorkstreamRow from '@components/WorkstreamRow/index.svelte';
+	import ApplicationRow from '@components/ApplicationRow/index.svelte';
 	import SegmentedControl from '$lib/shared/SegmentedControl.svelte';
 
 	let workstreamFilter: string = 'active';
@@ -55,7 +56,7 @@
 		</div>
 		<div class="row-container">
 			{#each $workstreams as workstream}
-				<WorkstreamRow data={workstream} />
+				<ApplicationRow data={workstream} />
 			{/each}
 		</div>
 	</section>

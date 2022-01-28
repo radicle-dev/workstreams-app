@@ -17,26 +17,26 @@
 		</div>
 		<div class="owner">
 			<span class="label">created by</span>
-			<User address={workstream.owner} />
+			<User address={workstream.creator} />
 			<span class="label" style="margin-left: 0.5rem;">on {dateFormat(workstream.created_at)}</span>
 		</div>
 		<div class="timerate">
 			{#if workstream.type === 'grant'}
 				<div>
 					<span class="label">Role start date</span>
-					<p class="timeframe">{timeframeFormat(workstream.timeframe)}</p>
+					<p class="timeframe">{timeframeFormat(workstream.starting_at, workstream.ending_at)}</p>
 				</div>
 			{:else if workstream.type === 'role'}
 				<div>
 					<span class="label">Grant duration</span>
-					<p class="timeframe">Start {startDateFormat(workstream.start_date)}</p>
+					<p class="timeframe">Start {startDateFormat(workstream.startin_at)}</p>
 				</div>
 			{/if}
 			<div style="text-align: right;">
 				<span class="label">Stream rate</span>
 				<p class="typo-text-bold rate">
-					{Math.floor(workstream.rate * 60 * 60 * 24)}
-					{workstream.currency} <span class="typo-regular">/ day</span>
+					{Math.floor(workstream.payment_rate * 60 * 60 * 24)}
+					{workstream.payment_currency} <span class="typo-regular">/ day</span>
 				</p>
 			</div>
 		</div>
