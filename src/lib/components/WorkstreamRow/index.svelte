@@ -11,7 +11,7 @@
 	<div class="left">
 		<div class="title">
 			<User address={data.creator} showAddress={false} />
-			<h4 style="margin-right: 0.75rem;">{data.title}</h4>
+			<h4 style="margin: 0 0.75rem;">{data.title}</h4>
 			<Tag>{data.type}</Tag>
 		</div>
 	</div>
