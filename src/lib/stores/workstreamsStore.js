@@ -4,7 +4,7 @@ export const workstreams = writable([]);
 
 workstreams.set([
   {
-    id: "0",
+    id: 0,
     type: "grant",
     workstream_state: "rfp",
     creator: "0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6",
@@ -51,9 +51,22 @@ Previously, while radicle orgs did appear on upstream, registering & linking nam
         currency: "DAI",
         created_at: 1641458535,
         ending_at: 1641500000,
-        workstream_id: "Stream-3",
+        workstream_id: 0,
         state: "pending"
-      }
+      },
+      {
+        title: "application for grant x by Damon",
+        proposal_id: 0,
+        desc: "Dude, I have all the experience. Pick me.",
+        creator: "0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6",
+        recipients: ["0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6"],
+        payment_rate: 0.006,
+        currency: "DAI",
+        created_at: 1641458535,
+        ending_at: 1641500000,
+        workstream_id: 0,
+        state: "pending"
+      },
     ],
   }
 ]

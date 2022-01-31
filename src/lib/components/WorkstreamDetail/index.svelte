@@ -4,6 +4,7 @@
 	import User from '$lib/shared/User.svelte';
 	import Input from '$lib/shared/Input.svelte';
 	import Markdown from '$lib/shared/Markdown.svelte';
+	import ApplicationRow from '@components/ApplicationRow/index.svelte';
 
 	export let workstream;
 	let applicationText: string;
@@ -12,7 +13,7 @@
 <div class="container">
 	<div class="metadata">
 		<div class="title">
-			<h1>{workstream.title}</h1>
+			<h1 style="margin-right: 1rem;">{workstream.title}</h1>
 			<Tag size="large">{workstream.type}</Tag>
 		</div>
 		<div class="owner">
@@ -48,6 +49,16 @@
 		</div>
 	</div>
 	<hr />
+	{#if workstream.applications}
+		<div class="applications">
+			<h4>Pending applications</h4>
+			<div>
+				{#each workstream.applications as application}
+					<ApplicationRow {application} />
+				{/each}
+			</div>
+		</div>
+	{/if}
 	<div class="application-form">
 		<User address="0x1c4fB2BF4967A9AEe0081E174a7D38b356029a84" style="margin: 2rem 0 1rem;" />
 		<Input
@@ -111,9 +122,16 @@
 	}
 
 	hr {
-		border-bottom: 1px solid var(--color-teal);
+		border-bottom: 1px solid var(--color-pink);
 	}
 
+	.applications {
+		margin-top: 1.5rem;
+	}
+
+	.applications h4 {
+		margin-bottom: 1rem;
+	}
 	.application-form {
 		display: flex;
 		flex-direction: column;

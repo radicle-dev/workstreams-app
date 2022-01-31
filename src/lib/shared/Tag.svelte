@@ -1,5 +1,6 @@
 <script lang="ts">
 	export let size: string = 'small';
+	export let style: string | undefined = undefined;
 	export let color: string = 'pink';
 </script>
 
@@ -7,7 +8,7 @@
 	class={`tag ${size === 'large' ? 'typo-regular' : 'typo-text-small'}`}
 	class:small={size === 'small'}
 	class:large={size === 'large'}
-	style={`color: var(--color-${color}); background-color: var(--color-${color}-darker);`}
+	style={`color: var(--color-${color}); background-color: var(--color-${color}-darker); ${style}`}
 	><slot /></span
 >
 
@@ -15,7 +16,6 @@
 	.tag {
 		padding: 0.1875rem 0.5rem 0.3125rem;
 		border-radius: 0.75rem;
-		margin-left: 0.75rem;
 	}
 
 	.large {

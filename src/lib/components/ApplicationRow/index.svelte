@@ -8,8 +8,7 @@
 </script>
 
 <div on:click={() => goto(`/${hyphanateString(application.title)}`)} class="row">
-	<User address={application.creator} showAddress={false} />
-	<p class="typo-text-bold">{application.workstream_id}</p>
+	<User address={application.creator} />
 	<p class="desc typo-overflow-ellipsis">{application.desc}</p>
 	<Tag color="blue">{application.state}</Tag>
 </div>
@@ -39,5 +38,9 @@
 		border-bottom-left-radius: 0.25rem;
 		border-bottom-right-radius: 0.25rem;
 		border-bottom: 1px solid var(--color-blue-dark);
+	}
+
+	.desc {
+		width: -moz-available;
 	}
 </style>

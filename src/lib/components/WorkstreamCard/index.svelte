@@ -10,7 +10,7 @@
 <div on:click={() => goto(`/${hyphanateString(data.title)}`)} class="card">
 	<div class="top">
 		<div class="title">
-			<h4 class="typo-overflow-ellipsis">{data.title}</h4>
+			<h4 style="margin-right: 0.75rem;" class="typo-overflow-ellipsis">{data.title}</h4>
 			<Tag>{data.type}</Tag>
 		</div>
 		<div class="owner">
