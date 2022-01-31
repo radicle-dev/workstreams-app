@@ -40,10 +40,10 @@
 {#if address}
 	<div class="container" {style}>
 		{#if avatar}
-			<img class="avatar circle" src={uriData} alt="user-avatar" />
+			<img class="avatar" src={uriData} alt="user-avatar" />
 		{/if}
 		{#if showAddress}
-			<p class="typo-text-bold">
+			<p class="address typo-text-bold">
 				{ensName === null ? formatAddress(address) : ensName}
 			</p>
 		{/if}
@@ -52,22 +52,20 @@
 
 <style>
 	.container {
-		display: flex;
-		align-items: center;
-	}
-	.circle {
-		width: 1.5rem;
-		height: 1.5rem;
-		border-radius: 0.75rem;
+		display: grid;
+		grid-template-columns: 1.5rem auto;
 	}
 
 	.avatar {
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 0.75rem;
 		user-select: none;
-		flex-shrink: 0;
 		background-color: var(--color-grey-dark);
-		margin-right: 0.5rem;
+	}
+
+	.address {
+		margin-left: 0.5rem;
+		white-space: nowrap;
 	}
 </style>

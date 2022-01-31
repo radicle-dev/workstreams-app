@@ -10,24 +10,24 @@
 <div on:click={() => goto(`/${hyphanateString(data.title)}`)} class="card">
 	<div class="top">
 		<div class="title">
-			<h4 class="typo-overflow-ellipsis">{data.title}</h4>
+			<h4 style="margin-right: 0.75rem;" class="typo-overflow-ellipsis">{data.title}</h4>
 			<Tag>{data.type}</Tag>
 		</div>
 		<div class="owner">
 			<span>by</span>
-			<User address={data.owner} />
+			<User address={data.creator} />
 		</div>
 		<p class="desc">{data.desc}</p>
 	</div>
 	<div class="bottom">
 		{#if data.type === 'grant'}
-			<p class="timeframe">{timeframeFormat(data.timeframe)}</p>
+			<p class="timeframe">{timeframeFormat(data.starting_at, data.ending_at)}</p>
 		{:else if data.type === 'role'}
-			<p class="timeframe">Start {startDateFormat(data.start_date)}</p>
+			<p class="timeframe">Start {startDateFormat(data.starting_at)}</p>
 		{/if}
 		<p class="typo-text-bold rate">
-			{Math.floor(data.rate * 60 * 60 * 24)}
-			{data.currency} <span class="typo-regular">/ day</span>
+			{Math.floor(data.payment_rate * 60 * 60 * 24)}
+			{data.payment_currency} <span class="typo-regular">/ day</span>
 		</p>
 	</div>
 </div>

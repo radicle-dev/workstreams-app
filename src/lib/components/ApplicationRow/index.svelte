@@ -1,0 +1,46 @@
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import { hyphanateString } from '$lib/utils/format';
+	import Tag from '$lib/shared/Tag.svelte';
+	import User from '$lib/shared/User.svelte';
+
+	export let application;
+</script>
+
+<div on:click={() => goto(`/${hyphanateString(application.title)}`)} class="row">
+	<User address={application.creator} />
+	<p class="desc typo-overflow-ellipsis">{application.desc}</p>
+	<Tag color="blue">{application.state}</Tag>
+</div>
+
+<style>
+	.row {
+		display: flex;
+		flex-direction: row;
+		padding: 1.5rem;
+		border-left: 1px solid var(--color-blue-dark);
+		border-right: 1px solid var(--color-blue-dark);
+		border-top: 1px solid var(--color-blue-dark);
+		cursor: pointer;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+	.row:hover {
+		box-shadow: 0 0 1rem var(--color-blue-dark);
+	}
+
+	.row:first-child {
+		border-top-left-radius: 0.25rem;
+		border-top-right-radius: 0.25rem;
+	}
+
+	.row:last-child {
+		border-bottom-left-radius: 0.25rem;
+		border-bottom-right-radius: 0.25rem;
+		border-bottom: 1px solid var(--color-blue-dark);
+	}
+
+	.desc {
+		width: -moz-available;
+	}
+</style>

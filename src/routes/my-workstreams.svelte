@@ -1,6 +1,24 @@
+<script context="module">
+	import { get } from 'svelte/store';
+	import { workstreams } from '$lib/stores/workstreamsStore.js';
+	const workstreamsData = get(workstreams);
+
+	let myApplications = [];
+	export async function load() {
+		workstreamsData.map((workstream) => {
+			workstream.applications.map((application) => {
+				if (application.creator === '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471') {
+					return (myApplications = [application, ...myApplications]);
+				}
+			});
+		});
+		return { props: { myApplications } };
+	}
+</script>
+
 <script lang="ts">
-	import { workstreams } from '$lib/stores/workstreamsStore';
 	import WorkstreamRow from '@components/WorkstreamRow/index.svelte';
+	import ApplicationRow from '@components/ApplicationRow/index.svelte';
 	import SegmentedControl from '$lib/shared/SegmentedControl.svelte';
 
 	let workstreamFilter: string = 'active';
@@ -54,8 +72,8 @@
 			/>
 		</div>
 		<div class="row-container">
-			{#each $workstreams as workstream}
-				<WorkstreamRow data={workstream} />
+			{#each myApplications as application}
+				<ApplicationRow {application} />
 			{/each}
 		</div>
 	</section>
