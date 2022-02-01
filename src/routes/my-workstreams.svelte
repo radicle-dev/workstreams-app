@@ -3,16 +3,25 @@
 	import { workstreams } from '$lib/stores/workstreamsStore.js';
 	const workstreamsData = get(workstreams);
 
-	let myApplications = [];
+	let myOpenApplications = [];
+	let myRejectedApplications = [];
 	export async function load() {
 		workstreamsData.map((workstream) => {
 			workstream.applications.map((application) => {
-				if (application.creator === '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471') {
-					return (myApplications = [application, ...myApplications]);
+				if (
+					application.creator === '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471' &&
+					application.state !== 'rejected'
+				) {
+					return (myOpenApplications = [application, ...myOpenApplications]);
+				} else if (
+					application.creator === '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471' &&
+					application.state === 'rejected'
+				) {
+					return (myRejectedApplications = [application, ...myRejectedApplications]);
 				}
 			});
 		});
-		return { props: { myApplications } };
+		return { props: { myOpenApplications } };
 	}
 </script>
 
@@ -33,15 +42,20 @@
 		}
 	];
 
-	let applicationFilter: string = 'open';
+	let applicationFilter: string = 'all';
 	const applicationOptions = [
 		{
-			title: 'Open',
-			value: 'open'
+			title: 'Accepted',
+			value: 'accepted'
 		},
 		{
-			title: 'Rejected',
-			value: 'rejected'
+			title: 'Pending',
+			value: 'pending'
+		},
+
+		{
+			title: 'All',
+			value: 'all'
 		}
 	];
 </script>
@@ -64,7 +78,7 @@
 	</section>
 	<section>
 		<div class="title">
-			<h3>My {applicationFilter} applications</h3>
+			<h3>My applications</h3>
 			<SegmentedControl
 				active={applicationFilter}
 				options={applicationOptions}
@@ -72,11 +86,23 @@
 			/>
 		</div>
 		<div class="row-container">
-			{#each myApplications as application}
-				<ApplicationRow {application} />
+			{#each myOpenApplications as application}
+				<ApplicationRow {application} owner={true} />
 			{/each}
 		</div>
 	</section>
+	{#if myRejectedApplications.length > 0}
+		<section>
+			<div class="title">
+				<h3>Rejected applications</h3>
+			</div>
+			<div class="row-container">
+				{#each myRejectedApplications as application}
+					<ApplicationRow {application} owner={true} />
+				{/each}
+			</div>
+		</section>
+	{/if}
 </div>
 
 <style>

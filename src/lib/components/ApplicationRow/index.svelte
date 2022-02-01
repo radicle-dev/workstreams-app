@@ -4,13 +4,24 @@
 	import Tag from '$lib/shared/Tag.svelte';
 	import User from '$lib/shared/User.svelte';
 
+	export let owner: boolean = false;
 	export let application;
+
+	function tagColor(state) {
+		if (state === 'accepted') {
+			return 'green';
+		} else if (state === 'pending') {
+			return 'yellow';
+		} else if (state === 'rejected') {
+			return 'red';
+		}
+	}
 </script>
 
 <div on:click={() => goto(`/${hyphanateString(application.title)}`)} class="row">
-	<User address={application.creator} />
+	<User address={application.creator} showAddress={!owner} />
 	<p class="desc typo-overflow-ellipsis">{application.desc}</p>
-	<Tag color="blue">{application.state}</Tag>
+	<Tag color={tagColor(application.state)}>{application.state}</Tag>
 </div>
 
 <style>
