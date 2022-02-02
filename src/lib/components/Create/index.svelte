@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Modal from '@components/Modal/index.svelte';
+	import Modal from '$lib/shared/Modal.svelte';
 	import Step1 from './Step1.svelte';
 	import Step2 from './Step2.svelte';
 	import Step3 from './Step3.svelte';

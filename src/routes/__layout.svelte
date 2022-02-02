@@ -4,7 +4,7 @@
 	import { modalState } from '$lib/stores/modalStore.js';
 
 	import Header from '@components/Header/index.svelte';
-	import Create from '@components/Create/index.svelte';
+	import ModalLayout from '@components/ModalLayout/index.svelte';
 
 	import Tag from '$lib/shared/Tag.svelte';
 
@@ -14,28 +14,35 @@
 	import '../styles/global.css';
 
 	// Initiate Modals
-	const createModal = { showModal: true, modalId: 'create' };
 </script>
 
-{#if $modalState == createModal}
-	<Create />
-{/if}
+<ModalLayout />
+<article>
+	<Header />
+	<main>
+		<slot />
+	</main>
 
-<Header on:createAction={() => modalState.update(() => createModal)} />
-<main>
-	<slot />
-</main>
-
-<footer>
-	<p>by radicle 🌱</p>
-	{#if $providerStore.connected}
-		<Tag>
-			{ethers.providers.getNetwork(parseInt($providerStore.chainId)).name} network
-		</Tag>
-	{/if}
-</footer>
+	<footer>
+		<p>by radicle 🌱</p>
+		{#if $providerStore.connected}
+			<Tag>
+				{ethers.providers.getNetwork(parseInt($providerStore.chainId)).name} network
+			</Tag>
+		{/if}
+	</footer>
+</article>
 
 <style>
+	article {
+		height: 100vh;
+		max-width: 90rem;
+		min-width: 40rem;
+		margin: 0 auto;
+
+		padding: 1.5rem;
+	}
+
 	main {
 		display: flex;
 		flex-direction: column;

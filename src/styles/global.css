@@ -1,15 +1,10 @@
 :root {
-	height: 100vh;
-	padding: 1.5rem;
 	background-color: var(--color-background);
-	max-width: 90rem;
-	min-width: 40rem;
-	margin: 0 auto;
-
 	font-family: var(--typeface-regular);
 	font-size: 16px;
 	color: var(--color-white);
 	font-feature-settings: 'ss01', 'ss02', 'cv01', 'calt' 0;
+	scrollbar-width: none;
 }
 
 button {
