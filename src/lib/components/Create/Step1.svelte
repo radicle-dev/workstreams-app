@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { closeModal } from '$lib/stores/modalStore.js';
+	import * as modal from '$lib/utils/modal';
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
@@ -28,7 +28,7 @@
 	</p>
 </div>
 <div class="actions">
-	<button class="transparent" label="Close" on:click={$closeModal}>Close</button>
+	<button class="transparent" label="Close" on:click={() => modal.hide()}>Close</button>
 	<button on:click={() => dispatch('nextAction')}>Next</button>
 </div>
 

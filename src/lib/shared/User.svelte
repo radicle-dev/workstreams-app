@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ethers } from 'ethers';
-	import { createIcon } from '../utils/blockies';
-	import { formatAddress } from '../utils/format';
+	import { createIcon } from '$lib/utils/blockies';
+	import { formatAddress } from '$lib/utils/format';
 	import { onMount } from 'svelte';
 	const provider = ethers.getDefaultProvider();
 

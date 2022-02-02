@@ -1,23 +1,27 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import * as modal from '$lib/utils/modal';
 	import { goto } from '$app/navigation';
-	import { createEventDispatcher } from 'svelte';
 	import Connect from '$lib/shared/Connect.svelte';
-
-	const dispatch = createEventDispatcher();
+	import Create from '@components/Create/index.svelte';
 </script>
 
 <header>
 	<div class="home" class:active={$page.url.pathname === '/'}>
 		<a sveltekit:prefetch href="/"><h3>👔 Workstreams</h3></a>
-		<button on:click={() => dispatch('createAction')}>Create</button>
+		<button on:click={() => modal.show(Create)}>Create</button>
 	</div>
 
 	<div class="user">
 		<a
-			href="/my-workstreams"
-			on:click={() => goto(`/my-workstreams`)}
-			class:active={$page.url.pathname === '/my-workstreams'}>My workstreams</a
+			href="/outgoing"
+			on:click={() => goto(`/outgoing`)}
+			class:active={$page.url.pathname === '/outgoing'}>outgoing</a
+		>
+		<a
+			href="/incoming"
+			on:click={() => goto(`/incoming`)}
+			class:active={$page.url.pathname === '/incoming'}>incoming</a
 		>
 		<Connect />
 	</div>

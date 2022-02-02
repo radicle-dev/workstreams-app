@@ -3,16 +3,20 @@
 	import { workstreams } from '$lib/stores/workstreamsStore.js';
 	const workstreamsData = get(workstreams);
 
-	let myApplications = [];
+	let myWorkstreams = [];
+	let pendingApplications = [];
 	export async function load() {
 		workstreamsData.map((workstream) => {
-			workstream.applications.map((application) => {
-				if (application.creator === '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471') {
-					return (myApplications = [application, ...myApplications]);
-				}
-			});
+			if (workstream.creator === '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471') {
+				myWorkstreams = [workstream, ...myWorkstreams];
+				workstream.applications.map((application) => {
+					if (application.state === 'pending') {
+						pendingApplications = [application, ...pendingApplications];
+					}
+				});
+			}
 		});
-		return { props: { myApplications } };
+		return { props: { myWorkstreams, pendingApplications } };
 	}
 </script>
 
@@ -32,24 +36,24 @@
 			value: 'past'
 		}
 	];
-
-	let applicationFilter: string = 'open';
-	const applicationOptions = [
-		{
-			title: 'Open',
-			value: 'open'
-		},
-		{
-			title: 'Rejected',
-			value: 'rejected'
-		}
-	];
 </script>
 
 <div class="container">
+	{#if pendingApplications.length > 0}
+		<section>
+			<div class="title">
+				<h3>My applications</h3>
+			</div>
+			<div class="row-container">
+				{#each pendingApplications as application}
+					<ApplicationRow {application} owner={true} />
+				{/each}
+			</div>
+		</section>
+	{/if}
 	<section>
 		<div class="title">
-			<h3>My {workstreamFilter} workstreams</h3>
+			<h3>Created workstreams</h3>
 			<SegmentedControl
 				active={workstreamFilter}
 				options={workstreamOptions}
@@ -57,23 +61,8 @@
 			/>
 		</div>
 		<div class="row-container">
-			{#each $workstreams as workstream}
+			{#each myWorkstreams as workstream}
 				<WorkstreamRow data={workstream} />
-			{/each}
-		</div>
-	</section>
-	<section>
-		<div class="title">
-			<h3>My {applicationFilter} applications</h3>
-			<SegmentedControl
-				active={applicationFilter}
-				options={applicationOptions}
-				on:select={(ev) => (applicationFilter = ev.detail)}
-			/>
-		</div>
-		<div class="row-container">
-			{#each myApplications as application}
-				<ApplicationRow {application} />
 			{/each}
 		</div>
 	</section>

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { closeModal } from '$lib/stores/modalStore.js';
-
+	import * as modal from '$lib/utils/modal';
 	import Spinner from '$lib/shared/Spinner.svelte';
 </script>
 
@@ -9,7 +8,7 @@
 <p>Please sign in your connected wallet</p>
 <Spinner style="display: flex;justify-content: center;" />
 <div class="actions">
-	<button class="transparent" label="Done" on:click={$closeModal}>Done</button>
+	<button class="transparent" label="Done" on:click={() => modal.hide()}>Done</button>
 </div>
 
 <style>

@@ -42,6 +42,7 @@
 		cursor: pointer;
 		justify-content: space-between;
 	}
+
 	.card:hover {
 		border: 1px solid var(--color-pink);
 		box-shadow: 0 0 1rem var(--color-pink-dark);
