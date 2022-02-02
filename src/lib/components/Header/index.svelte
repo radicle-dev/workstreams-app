@@ -14,9 +14,14 @@
 
 	<div class="user">
 		<a
-			href="/my-workstreams"
-			on:click={() => goto(`/my-workstreams`)}
-			class:active={$page.url.pathname === '/my-workstreams'}>My workstreams</a
+			href="/outgoing"
+			on:click={() => goto(`/outgoing`)}
+			class:active={$page.url.pathname === '/outgoing'}>outgoing</a
+		>
+		<a
+			href="/incoming"
+			on:click={() => goto(`/incoming`)}
+			class:active={$page.url.pathname === '/incoming'}>incoming</a
 		>
 		<Connect />
 	</div>

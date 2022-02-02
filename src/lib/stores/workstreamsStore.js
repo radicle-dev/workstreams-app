@@ -100,10 +100,10 @@ Previously, while radicle orgs did appear on upstream, registering & linking nam
     ],
   },
   {
-    id: 1,
+    id: 2,
     type: "role",
     workstream_state: "rfp",
-    creator: "0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6",
+    creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471",
     created_at: 1641458535,
     starting_at: 1641460000,
     ending_at: null,
@@ -126,7 +126,20 @@ Previously, while radicle orgs did appear on upstream, registering & linking nam
         ending_at: 1641500000,
         workstream_id: 0,
         state: "rejected"
-      }
+      },
+      {
+        title: "Not juliens application",
+        proposal_id: 0,
+        desc: "Dont reject me :( 😥",
+        creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F871",
+        recipients: ["0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F871"],
+        payment_rate: 0.005,
+        currency: "DAI",
+        created_at: 1641458535,
+        ending_at: 1641500000,
+        workstream_id: 0,
+        state: "pending"
+      },
     ],
   }
 ]

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { hyphanateString } from '$lib/utils/format';
+	import * as modal from '$lib/utils/modal';
 	import Tag from '$lib/shared/Tag.svelte';
 	import User from '$lib/shared/User.svelte';
+	import ApplicationDetail from '@components/ApplicationDetail/index.svelte';
 
 	export let owner: boolean = false;
 	export let application;
@@ -18,7 +18,7 @@
 	}
 </script>
 
-<div on:click={() => goto(`/${hyphanateString(application.title)}`)} class="row">
+<div on:click={() => modal.toggle(ApplicationDetail, () => {}, { application })} class="row">
 	<User address={application.creator} showAddress={!owner} />
 	<p class="desc typo-overflow-ellipsis">{application.desc}</p>
 	<Tag color={tagColor(application.state)}>{application.state}</Tag>

@@ -26,21 +26,8 @@
 </script>
 
 <script lang="ts">
-	import WorkstreamRow from '@components/WorkstreamRow/index.svelte';
 	import ApplicationRow from '@components/ApplicationRow/index.svelte';
 	import SegmentedControl from '$lib/shared/SegmentedControl.svelte';
-
-	let workstreamFilter: string = 'active';
-	const workstreamOptions = [
-		{
-			title: 'Active',
-			value: 'active'
-		},
-		{
-			title: 'Past',
-			value: 'past'
-		}
-	];
 
 	let applicationFilter: string = 'all';
 	const applicationOptions = [
@@ -61,21 +48,6 @@
 </script>
 
 <div class="container">
-	<section>
-		<div class="title">
-			<h3>My {workstreamFilter} workstreams</h3>
-			<SegmentedControl
-				active={workstreamFilter}
-				options={workstreamOptions}
-				on:select={(ev) => (workstreamFilter = ev.detail)}
-			/>
-		</div>
-		<div class="row-container">
-			{#each $workstreams as workstream}
-				<WorkstreamRow data={workstream} />
-			{/each}
-		</div>
-	</section>
 	<section>
 		<div class="title">
 			<h3>My applications</h3>

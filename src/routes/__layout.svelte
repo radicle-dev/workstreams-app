@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { providerStore } from 'web3-stores';
 	import { ethers } from 'ethers';
-	import { modalState } from '$lib/stores/modalStore.js';
 
 	import Header from '@components/Header/index.svelte';
 	import ModalLayout from '@components/ModalLayout/index.svelte';
