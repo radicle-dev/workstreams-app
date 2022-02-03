@@ -1,20 +1,24 @@
 <script context="module">
 	import { get } from 'svelte/store';
-	import { workstreams } from '$lib/stores/workstreamsStore.js';
-	const workstreamsData = get(workstreams);
+	import { providerStore } from 'web3-stores';
+	import { workstreamStore } from '$lib/stores/workstreamsStore.js';
+	const workstreams = get(workstreamStore);
+	const provider = get(providerStore);
 
+	let connectedAddress = provider.connected && provider.accounts[0];
 	let myOpenApplications = [];
 	let myRejectedApplications = [];
+
 	export async function load() {
-		workstreamsData.map((workstream) => {
+		workstreams.map((workstream) => {
 			workstream.applications.map((application) => {
 				if (
-					application.creator === '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471' &&
+					application.creator.toLowerCase() === connectedAddress &&
 					application.state !== 'rejected'
 				) {
 					return (myOpenApplications = [application, ...myOpenApplications]);
 				} else if (
-					application.creator === '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471' &&
+					application.creator.toLowerCase() === connectedAddress &&
 					application.state === 'rejected'
 				) {
 					return (myRejectedApplications = [application, ...myRejectedApplications]);

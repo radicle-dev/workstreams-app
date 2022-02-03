@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
 
-export const workstreams = writable([]);
+export const workstreamStore = writable([]);
 
-workstreams.set([
+workstreamStore.set([
   {
     id: 0,
     type: "grant",
@@ -45,8 +45,8 @@ Previously, while radicle orgs did appear on upstream, registering & linking nam
         title: "application for grant x by Julien",
         proposal_id: 0,
         desc: "I think you should choose me cause I'm **awesome**! Some more text so that it's longer then 1 line.",
-        creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471",
-        recipients: ["0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471"],
+        creator: "0x3A8881e345fa29d5b5B77971480f9d55897A820B",
+        recipients: ["0x3A8881e345fa29d5b5B77971480f9d55897A820B"],
         payment_rate: 0.005,
         currency: "DAI",
         created_at: 1641458535,
@@ -88,13 +88,13 @@ Previously, while radicle orgs did appear on upstream, registering & linking nam
         title: "Radicle grant application",
         proposal_id: 0,
         desc: "I build faucets all the time!",
-        creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471",
-        recipients: ["0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471"],
+        creator: "0x3A8881e345fa29d5b5B77971480f9d55897A820B",
+        recipients: ["0x3A8881e345fa29d5b5B77971480f9d55897A820B"],
         payment_rate: 0.005,
         currency: "DAI",
         created_at: 1641458535,
         ending_at: 1641500000,
-        workstream_id: 0,
+        workstream_id: 1,
         state: "accepted"
       }
     ],
@@ -103,7 +103,7 @@ Previously, while radicle orgs did appear on upstream, registering & linking nam
     id: 2,
     type: "role",
     workstream_state: "rfp",
-    creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471",
+    creator: "0x3A8881e345fa29d5b5B77971480f9d55897A820B",
     created_at: 1641458535,
     starting_at: 1641460000,
     ending_at: null,
@@ -115,29 +115,29 @@ Previously, while radicle orgs did appear on upstream, registering & linking nam
     dripshub_account: 0,
     applications: [
       {
-        title: "juliens application",
+        title: "Application to Something else",
         proposal_id: 0,
         desc: "Why you reject me :( 😥",
-        creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471",
-        recipients: ["0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471"],
+        creator: "0x3A8881e345fa29d5b5B77971480f9d55897A820B",
+        recipients: ["0x3A8881e345fa29d5b5B77971480f9d55897A820B"],
         payment_rate: 0.005,
         currency: "DAI",
         created_at: 1641458535,
         ending_at: 1641500000,
-        workstream_id: 0,
+        workstream_id: 2,
         state: "rejected"
       },
       {
-        title: "Not juliens application",
+        title: "Application to Something else",
         proposal_id: 0,
         desc: "Dont reject me :( 😥",
-        creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F871",
-        recipients: ["0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F871"],
+        creator: "0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6",
+        recipients: ["0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6"],
         payment_rate: 0.005,
         currency: "DAI",
         created_at: 1641458535,
         ending_at: 1641500000,
-        workstream_id: 0,
+        workstream_id: 2,
         state: "pending"
       },
     ],
