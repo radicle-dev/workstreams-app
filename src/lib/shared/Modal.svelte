@@ -1,4 +1,8 @@
-<div class="modal">
+<script lang="ts">
+	export let style: string | undefined = undefined;
+</script>
+
+<div class="modal" {style}>
 	<slot name="body" />
 </div>
 
