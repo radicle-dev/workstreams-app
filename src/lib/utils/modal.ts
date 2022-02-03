@@ -1,47 +1,47 @@
-import { derived, get, writable } from "svelte/store";
-import type { SvelteComponent } from "svelte";
+import { derived, get, writable } from 'svelte/store';
+import type { SvelteComponent } from 'svelte';
 
 type OnHide = () => void;
 const doNothing = (): void => {};
 
 type ModalLayout = {
-  modalComponent: typeof SvelteComponent;
-  onHide: OnHide;
-  modalComponentProps: unknown;
+	modalComponent: typeof SvelteComponent;
+	onHide: OnHide;
+	modalComponentProps: unknown;
 };
 
 const overlayStore = writable<ModalLayout | null>(null);
-export const store = derived(overlayStore, $store => $store);
+export const store = derived(overlayStore, ($store) => $store);
 
 export const hide = (): void => {
-  const stored = get(store);
-  if (stored === null) {
-    return;
-  }
+	const stored = get(store);
+	if (stored === null) {
+		return;
+	}
 
-  stored.onHide();
-  overlayStore.set(null);
+	stored.onHide();
+	overlayStore.set(null);
 };
 
 export const show = (
-  modalComponent: typeof SvelteComponent,
-  onHide: OnHide = doNothing,
-  modalComponentProps: unknown = {}
+	modalComponent: typeof SvelteComponent,
+	onHide: OnHide = doNothing,
+	modalComponentProps: unknown = {}
 ): void => {
-  overlayStore.set({ modalComponent, onHide, modalComponentProps });
+	overlayStore.set({ modalComponent, onHide, modalComponentProps });
 };
 
 export const toggle = (
-  modalComponent: typeof SvelteComponent,
-  onHide: OnHide = doNothing,
-  modalComponentProps: { [propName: string]: unknown } = {}
+	modalComponent: typeof SvelteComponent,
+	onHide: OnHide = doNothing,
+	modalComponentProps: { [propName: string]: unknown } = {}
 ): void => {
-  const stored = get(store);
+	const stored = get(store);
 
-  if (stored && stored.modalComponent === modalComponent) {
-    hide();
-    return;
-  }
+	if (stored && stored.modalComponent === modalComponent) {
+		hide();
+		return;
+	}
 
-  show(modalComponent, onHide, modalComponentProps);
+	show(modalComponent, onHide, modalComponentProps);
 };

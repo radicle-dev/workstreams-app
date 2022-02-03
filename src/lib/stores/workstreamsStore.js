@@ -3,19 +3,19 @@ import { writable } from 'svelte/store';
 export const workstreams = writable([]);
 
 workstreams.set([
-  {
-    id: 0,
-    type: "grant",
-    workstream_state: "rfp",
-    creator: "0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6",
-    created_at: 1641458535,
-    starting_at: 1641460000,
-    ending_at: 1641500000,
-    payment_rate:  0.008,
-    payment_currency: "DAI",
-    receivers: [],
-    title: "Org Naming Flow for Radicle Upstream",
-    desc: `
+	{
+		id: 0,
+		type: 'grant',
+		workstream_state: 'rfp',
+		creator: '0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6',
+		created_at: 1641458535,
+		starting_at: 1641460000,
+		ending_at: 1641500000,
+		payment_rate: 0.008,
+		payment_currency: 'DAI',
+		receivers: [],
+		title: 'Org Naming Flow for Radicle Upstream',
+		desc: `
 ## Project Overview 📄
 
 Note: This is an application for retroactive funding.
@@ -39,111 +39,107 @@ The project scope includes UX & UI Design of the flow and implementation on the 
 
 Previously, while radicle orgs did appear on upstream, registering & linking names was possible only through the 'radicle-interface' client. Additionally, orgs appeared with placeholder logos & only their address, even if a name was already linked. Being able to create and link names right from within 'upstream', as well as displaying rich metadata for orgs makes the Radicle Orgs feature vastly more accessible within the upstream client.
     `,
-    dripshub_account: 0,
-    applications: [
-      {
-        title: "application for grant x by Julien",
-        proposal_id: 0,
-        desc: "I think you should choose me cause I'm **awesome**! Some more text so that it's longer then 1 line.",
-        creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471",
-        recipients: ["0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471"],
-        payment_rate: 0.005,
-        currency: "DAI",
-        created_at: 1641458535,
-        ending_at: 1641500000,
-        workstream_id: 0,
-        state: "pending"
-      },
-      {
-        title: "application for grant x by Damon",
-        proposal_id: 0,
-        desc: "Dude, I have all the experience. Pick me.",
-        creator: "0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6",
-        recipients: ["0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6"],
-        payment_rate: 0.006,
-        currency: "DAI",
-        created_at: 1641458535,
-        ending_at: 1641500000,
-        workstream_id: 0,
-        state: "pending"
-      },
-    ],
-  },
-  {
-    id: 1,
-    type: "role",
-    workstream_state: "funded",
-    creator: "0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6",
-    created_at: 1641458535,
-    starting_at: 1641460000,
-    ending_at: null,
-    payment_rate:  0.008,
-    payment_currency: "DAI",
-    receivers: [],
-    title: "Rinkeby faucet for RAD",
-    desc: `Build a rinkeby faucet for the radicle token RAD.`,
-    dripshub_account: 0,
-    applications: [
-      {
-        title: "Radicle grant application",
-        proposal_id: 0,
-        desc: "I build faucets all the time!",
-        creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471",
-        recipients: ["0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471"],
-        payment_rate: 0.005,
-        currency: "DAI",
-        created_at: 1641458535,
-        ending_at: 1641500000,
-        workstream_id: 0,
-        state: "accepted"
-      }
-    ],
-  },
-  {
-    id: 2,
-    type: "role",
-    workstream_state: "rfp",
-    creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471",
-    created_at: 1641458535,
-    starting_at: 1641460000,
-    ending_at: null,
-    payment_rate:  0.008,
-    payment_currency: "DAI",
-    receivers: [],
-    title: "Something else",
-    desc: `This is a project where my application is rejected`,
-    dripshub_account: 0,
-    applications: [
-      {
-        title: "juliens application",
-        proposal_id: 0,
-        desc: "Why you reject me :( 😥",
-        creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471",
-        recipients: ["0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471"],
-        payment_rate: 0.005,
-        currency: "DAI",
-        created_at: 1641458535,
-        ending_at: 1641500000,
-        workstream_id: 0,
-        state: "rejected"
-      },
-      {
-        title: "Not juliens application",
-        proposal_id: 0,
-        desc: "Dont reject me :( 😥",
-        creator: "0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F871",
-        recipients: ["0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F871"],
-        payment_rate: 0.005,
-        currency: "DAI",
-        created_at: 1641458535,
-        ending_at: 1641500000,
-        workstream_id: 0,
-        state: "pending"
-      },
-    ],
-  }
-]
-)
-
-
-
+		dripshub_account: 0,
+		applications: [
+			{
+				title: 'application for grant x by Julien',
+				proposal_id: 0,
+				desc: "I think you should choose me cause I'm **awesome**! Some more text so that it's longer then 1 line.",
+				creator: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
+				recipients: ['0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471'],
+				payment_rate: 0.005,
+				currency: 'DAI',
+				created_at: 1641458535,
+				ending_at: 1641500000,
+				workstream_id: 0,
+				state: 'pending'
+			},
+			{
+				title: 'application for grant x by Damon',
+				proposal_id: 0,
+				desc: 'Dude, I have all the experience. Pick me.',
+				creator: '0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6',
+				recipients: ['0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6'],
+				payment_rate: 0.006,
+				currency: 'DAI',
+				created_at: 1641458535,
+				ending_at: 1641500000,
+				workstream_id: 0,
+				state: 'pending'
+			}
+		]
+	},
+	{
+		id: 1,
+		type: 'role',
+		workstream_state: 'funded',
+		creator: '0x5d68cF61C1Fa28A538da2979D3bD377FaD9607b6',
+		created_at: 1641458535,
+		starting_at: 1641460000,
+		ending_at: null,
+		payment_rate: 0.008,
+		payment_currency: 'DAI',
+		receivers: [],
+		title: 'Rinkeby faucet for RAD',
+		desc: `Build a rinkeby faucet for the radicle token RAD.`,
+		dripshub_account: 0,
+		applications: [
+			{
+				title: 'Radicle grant application',
+				proposal_id: 0,
+				desc: 'I build faucets all the time!',
+				creator: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
+				recipients: ['0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471'],
+				payment_rate: 0.005,
+				currency: 'DAI',
+				created_at: 1641458535,
+				ending_at: 1641500000,
+				workstream_id: 0,
+				state: 'accepted'
+			}
+		]
+	},
+	{
+		id: 2,
+		type: 'role',
+		workstream_state: 'rfp',
+		creator: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
+		created_at: 1641458535,
+		starting_at: 1641460000,
+		ending_at: null,
+		payment_rate: 0.008,
+		payment_currency: 'DAI',
+		receivers: [],
+		title: 'Something else',
+		desc: `This is a project where my application is rejected`,
+		dripshub_account: 0,
+		applications: [
+			{
+				title: 'juliens application',
+				proposal_id: 0,
+				desc: 'Why you reject me :( 😥',
+				creator: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471',
+				recipients: ['0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471'],
+				payment_rate: 0.005,
+				currency: 'DAI',
+				created_at: 1641458535,
+				ending_at: 1641500000,
+				workstream_id: 0,
+				state: 'rejected'
+			},
+			{
+				title: 'Not juliens application',
+				proposal_id: 0,
+				desc: 'Dont reject me :( 😥',
+				creator: '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F871',
+				recipients: ['0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F871'],
+				payment_rate: 0.005,
+				currency: 'DAI',
+				created_at: 1641458535,
+				ending_at: 1641500000,
+				workstream_id: 0,
+				state: 'pending'
+			}
+		]
+	}
+]);
