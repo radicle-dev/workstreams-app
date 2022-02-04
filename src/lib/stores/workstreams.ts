@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
+import type { Workstreams } from '$lib/types';
 
-export const workstreams = writable([]);
+export const workstreams = writable<Workstreams>();
 
 workstreams.set([
 	{
