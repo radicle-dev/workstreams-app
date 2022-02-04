@@ -1,7 +1,9 @@
 <script lang="ts">
-	import Modal from '$lib/shared/Modal.svelte';
-	import User from '$lib/shared/User.svelte';
-	export let application;
+	import Modal from './Modal.svelte';
+	import User from './User.svelte';
+	import type { Application } from '$lib/types';
+
+	export let application: Application;
 </script>
 
 <Modal>

@@ -1,13 +1,15 @@
 <script lang="ts">
 	import * as modal from '$lib/utils/modal';
 
+	const modalStore = modal.store;
+
+	$: store = $modalStore;
+
 	const clickOutside = () => {
 		modal.hide();
 	};
 
-	const modalStore = modal.store;
-	// Hack to make svelte typecheck in the markup section.
-	$: store = $modalStore;
+	// TODO Hack to make svelte typecheck in the markup section.
 </script>
 
 <div class="modal-layout" class:hide={store === null} data-cy="modal-layout">
@@ -30,19 +32,16 @@
 		justify-content: center;
 		overflow: scroll;
 	}
-
 	.overlay {
 		background-color: rgba(0, 0, 0, 0.75);
 		height: 100%;
 		width: 100%;
 		position: fixed;
 	}
-
 	.content {
 		z-index: 200;
 		margin: auto;
 	}
-
 	.hide {
 		display: none;
 	}

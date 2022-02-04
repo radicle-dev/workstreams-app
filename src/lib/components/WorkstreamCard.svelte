@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import User from './User.svelte';
 	import { timeframeFormat, startDateFormat, hyphanateString } from '$lib/utils/format';
-	import Tag from '../../shared/Tag.svelte';
-	import User from '../../shared/User.svelte';
+	import type { Workstream } from '$lib/types';
 
-	export let data;
+	export let data: Workstream;
 </script>
 
 <div on:click={() => goto(`/${hyphanateString(data.title)}`)} class="card">
 	<div class="top">
 		<div class="title">
 			<h4 style="margin-right: 0.75rem;" class="typo-overflow-ellipsis">{data.title}</h4>
-			<Tag>{data.type}</Tag>
+			<!-- <Tag>{data.type}</Tag> -->
 		</div>
 		<div class="owner">
 			<span>by</span>
@@ -42,31 +42,25 @@
 		cursor: pointer;
 		justify-content: space-between;
 	}
-
 	.card:hover {
 		border: 1px solid var(--color-pink);
 		box-shadow: 0 0 1rem var(--color-pink-dark);
 	}
-
 	.top > * {
 		margin-bottom: 1.5rem;
 	}
-
 	.title,
 	.owner {
 		display: flex;
 		align-items: center;
 	}
-
 	.title {
 		margin-bottom: 0.25rem;
 	}
-
 	.owner > span {
 		color: var(--color-grey-darker);
 		margin-right: 0.5rem;
 	}
-
 	.desc {
 		color: var(--color-grey);
 		overflow: hidden;
@@ -74,16 +68,13 @@
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 	}
-
 	.bottom {
 		display: flex;
 		justify-content: space-between;
 	}
-
 	.timeframe {
 		color: var(--color-grey-dark);
 	}
-
 	.rate {
 		color: var(--color-pink);
 	}
