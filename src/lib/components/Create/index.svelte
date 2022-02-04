@@ -4,8 +4,8 @@
 	import Step2 from './Step2.svelte';
 	import Step3 from './Step3.svelte';
 
-	let type: string = 'grant';
-	let steps: number = 1;
+	let type = 'grant';
+	let steps = 1;
 	let title: string;
 	let rate: string;
 	let desc: string;

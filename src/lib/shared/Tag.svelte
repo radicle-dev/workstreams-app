@@ -1,7 +1,7 @@
 <script lang="ts">
-	export let size: string = 'small';
+	export let size = 'small';
 	export let style: string | undefined = undefined;
-	export let color: string = 'pink';
+	export let color = 'pink';
 </script>
 
 <span
