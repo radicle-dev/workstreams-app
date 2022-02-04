@@ -6,8 +6,11 @@
 
 	const streams: Workstream[] = get(workstreams);
 
+	/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 	export const load = async ({ params }): Promise<{ props: { workstream: Workstream } }> => {
-		const workstream = streams.find((workstream) => hyphanateString(workstream.title) === params.title);
+		const workstream = streams.find(
+			(workstream) => hyphanateString(workstream.title) === params.title
+		);
 		return { props: { workstream } };
 	};
 </script>
@@ -15,7 +18,7 @@
 <script lang="ts">
 	import WorkstreamDetail from '$lib/components/WorkstreamDetail.svelte';
 
-    export let workstream: Workstream;
+	export let workstream: Workstream;
 </script>
 
 <svelte:head>

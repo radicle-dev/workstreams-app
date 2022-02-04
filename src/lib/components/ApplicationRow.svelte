@@ -7,6 +7,7 @@
 	export let owner = false;
 	export let application: Application;
 
+	/*
 	const tagColor = (state: string) => {
 		if (state === 'accepted') {
 			return 'green';
@@ -16,6 +17,7 @@
 			return 'red';
 		}
 	};
+	*/
 </script>
 
 <div on:click={() => modal.toggle(ApplicationDetail, () => null, { application })} class="row">
