@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { get } from 'svelte/store';
 	import { providerStore } from 'web3-stores';
 	import { workstreamStore } from '$lib/stores/workstreamsStore.js';
-	const workstreams = get(workstreamStore);
 
 	import Modal from '$lib/shared/Modal.svelte';
 	import User from '$lib/shared/User.svelte';
@@ -11,7 +9,7 @@
 	let workstream;
 
 	function getWorkstream() {
-		return (workstream = workstreams.find(
+		return (workstream = $workstreamStore.find(
 			(workstream) => workstream.id === application.workstream_id
 		));
 	}
