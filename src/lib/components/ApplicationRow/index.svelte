@@ -4,7 +4,7 @@
 	import User from '$lib/shared/User.svelte';
 	import ApplicationDetail from '@components/ApplicationDetail/index.svelte';
 
-	export let owner: boolean = false;
+	export let owner = false;
 	export let application;
 
 	function tagColor(state) {

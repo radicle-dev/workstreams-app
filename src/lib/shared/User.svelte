@@ -7,8 +7,8 @@
 
 	export let style: string | undefined = undefined;
 	export let address: string;
-	export let avatar: boolean = true;
-	export let showAddress: boolean = true;
+	export let avatar = true;
+	export let showAddress = true;
 
 	let uriData = '';
 	let ensName;

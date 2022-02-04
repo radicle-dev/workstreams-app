@@ -25,7 +25,7 @@
 	import ApplicationRow from '@components/ApplicationRow/index.svelte';
 	import SegmentedControl from '$lib/shared/SegmentedControl.svelte';
 
-	let workstreamFilter: string = 'active';
+	let workstreamFilter = 'active';
 	const workstreamOptions = [
 		{
 			title: 'Active',

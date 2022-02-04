@@ -1,10 +1,10 @@
 <script lang="ts">
-	export let style: string = undefined;
+	export let style = undefined;
 	export let label: string;
 	export let placeholder: string;
 	export let value: string;
-	export let type: string = 'text';
-	export let currency: string = 'DAI';
+	export let type = 'text';
+	export let currency = 'DAI';
 </script>
 
 <label for={label} {style}>

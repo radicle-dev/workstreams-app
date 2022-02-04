@@ -10,7 +10,7 @@
 	export let roleStart: string;
 	export let grantDuration: string;
 
-	let disabled: boolean = false;
+	let disabled = false;
 
 	$: disabled =
 		title === undefined ||
