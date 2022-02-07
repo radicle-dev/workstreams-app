@@ -33,7 +33,7 @@
 	import ApplicationRow from '@components/ApplicationRow/index.svelte';
 	import SegmentedControl from '$lib/shared/SegmentedControl.svelte';
 
-	let applicationFilter: string = 'all';
+	let applicationFilter = 'all';
 	const applicationOptions = [
 		{
 			title: 'Accepted',

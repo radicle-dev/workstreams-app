@@ -1,15 +1,15 @@
 <script lang="ts">
-    // TODO Connect to wallet state.
-    let loading = false;
-    let provider = true;
+	// TODO Connect to wallet state.
+	let loading = false;
+	let provider = true;
 </script>
 
 {#if loading}
-    <div>Loading ...</div>
+	<div>Loading ...</div>
 {:else if provider}
-    <slot />
+	<slot />
 {:else}
-    <slot name="unauthorized">
-        <div>Please connect your wallet.</div>
-    </slot>
+	<slot name="unauthorized">
+		<div>Please connect your wallet.</div>
+	</slot>
 {/if}
