@@ -4,7 +4,6 @@
 
 <script lang="ts">
 	import { workstreamStore } from '$lib/stores/workstreamsStore.js';
-	import Protected from '@components/Protected/index.svelte';
 	import WorkstreamCard from '@components/WorkstreamCard/index.svelte';
 </script>
 
@@ -12,15 +11,13 @@
 	<title>Workstreams · Overview</title>
 </svelte:head>
 
-<Protected>
-	<section>
-		<div class="overview">
-			{#each $workstreamStore as workstream}
-				<WorkstreamCard data={workstream} />
-			{/each}
-		</div>
-	</section>
-</Protected>
+<section>
+	<div class="overview">
+		{#each $workstreamStore as workstream}
+			<WorkstreamCard data={workstream} />
+		{/each}
+	</div>
+</section>
 
 <style>
 	.overview {
