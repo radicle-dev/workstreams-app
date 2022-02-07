@@ -1,10 +1,10 @@
 <script context="module" lang="ts">
 	import { get } from 'svelte/store';
-	import { workstreams } from '$lib/stores/workstreams';
+	import { workstreamsStore } from '$lib/stores/workstreams';
 	import { hyphanateString } from '$lib/utils/format';
 	import type { Workstream } from '$lib/types';
 
-	const streams: Workstream[] = get(workstreams);
+	const streams: Workstream[] = get(workstreamsStore);
 
 	/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 	export const load = async ({ params }): Promise<{ props: { workstream: Workstream } }> => {

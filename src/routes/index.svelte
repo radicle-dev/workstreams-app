@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import { workstreams } from '$lib/stores/workstreams';
+	import { workstreamsStore } from '$lib/stores/workstreams';
 	import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
 </script>
 
@@ -12,7 +12,7 @@
 </svelte:head>
 
 <div class="overview">
-	{#each $workstreams as workstream}
+	{#each $workstreamsStore as workstream}
 		<WorkstreamCard data={workstream} />
 	{/each}
 </div>

@@ -1,9 +1,9 @@
 <script context="module" lang="ts">
 	import { get } from 'svelte/store';
-	import { workstreams } from '$lib/stores/workstreams';
+	import { workstreamsStore } from '$lib/stores/workstreams';
 	import type { Application, Workstreams } from '$lib/types';
 
-	const streams: Workstreams = get(workstreams);
+	const streams: Workstreams = get(workstreamsStore);
 
 	let myOpenApplications = [];
 	let myRejectedApplications = [];

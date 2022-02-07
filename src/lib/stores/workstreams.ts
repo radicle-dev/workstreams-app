@@ -1,9 +1,9 @@
 import { writable } from 'svelte/store';
 import type { Workstreams } from '$lib/types';
 
-export const workstreams = writable<Workstreams>();
+export const workstreamsStore = writable<Workstreams>();
 
-workstreams.set([
+workstreamsStore.set([
 	{
 		id: 0,
 		type: 'grant',
