@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { timeframeFormat, startDateFormat, dateFormat } from '$lib/utils/format';
 	import User from '$components/User.svelte';
+	import Tag from '$components/Tag.svelte';
 	import Input from '$components/Input.svelte';
 	import Markdown from '$components/Markdown.svelte';
 	import ApplicationRow from '$components/ApplicationRow.svelte';
@@ -15,7 +16,7 @@
 	<div class="metadata">
 		<div class="title">
 			<h1 style="margin-right: 1rem;">{workstream.title}</h1>
-			<!-- <Tag size="large">{workstream.type}</Tag> -->
+			<Tag size="large">{workstream.type}</Tag>
 		</div>
 		<div class="owner">
 			<span class="label">created by</span>

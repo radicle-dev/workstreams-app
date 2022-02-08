@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import User from '$components/User.svelte';
+	import Tag from '$components/Tag.svelte';
 	import { timeframeFormat, startDateFormat, hyphanateString } from '$lib/utils/format';
 	import type { Workstream } from '$lib/types';
 
@@ -11,7 +12,7 @@
 	<div class="top">
 		<div class="title">
 			<h4 style="margin-right: 0.75rem;" class="typo-overflow-ellipsis">{data.title}</h4>
-			<!-- <Tag>{data.type}</Tag> -->
+			<Tag>{data.type}</Tag>
 		</div>
 		<div class="owner">
 			<span>by</span>

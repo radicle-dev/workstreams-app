@@ -3,6 +3,7 @@
 	import { providers } from 'ethers';
 	import Header from '$components/Header.svelte';
 	import ModalLayout from '$components/ModalLayout.svelte';
+	import Tag from '$components/Tag.svelte';
 	import '../app.css';
 </script>
 
@@ -16,9 +17,9 @@
 	<footer>
 		<p>by radicle 🌱</p>
 		{#if $providerStore.connected}
-			<!-- <Tag> -->
-			{providers.getNetwork(parseInt($providerStore.chainId)).name} network
-			<!-- </Tag> -->
+			<Tag>
+				{providers.getNetwork(parseInt($providerStore.chainId)).name} network
+			</Tag>
 		{/if}
 	</footer>
 </article>

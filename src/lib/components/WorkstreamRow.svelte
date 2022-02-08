@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { timeframeFormat, startDateFormat, hyphanateString } from '$lib/utils/format';
 	import User from '$components/User.svelte';
+	import Tag from '$components/Tag.svelte';
 	import type { Workstream } from '$lib/types';
 
 	export let data: Workstream;
@@ -12,7 +13,7 @@
 		<div class="title">
 			<User address={data.creator} showAddress={false} />
 			<h4 style="margin: 0 0.75rem;">{data.title}</h4>
-			<!-- <Tag>{data.type}</Tag> -->
+			<Tag>{data.type}</Tag>
 		</div>
 	</div>
 	<div class="right">
