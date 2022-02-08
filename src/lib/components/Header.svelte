@@ -12,7 +12,6 @@
 		<a sveltekit:prefetch href="/"><h3>👔 Workstreams</h3></a>
 		<Protected>
 			<button on:click={() => modal.show(Create)}>Create</button>
-			<p slot="unauthorized">Please connect your wallet.</p>
 		</Protected>
 	</div>
 
