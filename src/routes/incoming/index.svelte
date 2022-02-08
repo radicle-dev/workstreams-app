@@ -1,15 +1,16 @@
-<script context="module">
+<script context="module" lang="ts">
 	import { get } from 'svelte/store';
+	import { workstreamsStore } from '$lib/stores/workstreams';
+	import type { Application, Workstreams } from '$lib/types';
 	import { providerStore } from 'web3-stores';
-	import { workstreamStore } from '$lib/stores/workstreamsStore.js';
-	const workstreams = get(workstreamStore);
 	const provider = get(providerStore);
+	const workstreams: Workstreams = get(workstreamsStore);
 
 	let connectedAddress = provider.connected && provider.accounts[0];
 	let myOpenApplications = [];
 	let myRejectedApplications = [];
 
-	export async function load() {
+	export const load = async (): Promise<{ props: { myOpenApplications: Application[] } }> => {
 		workstreams.map((workstream) => {
 			workstream.applications.map((application) => {
 				if (
@@ -25,15 +26,15 @@
 				}
 			});
 		});
+
 		return { props: { myOpenApplications } };
-	}
+	};
 </script>
 
 <script lang="ts">
-	import ApplicationRow from '@components/ApplicationRow/index.svelte';
-	import SegmentedControl from '$lib/shared/SegmentedControl.svelte';
+	import ApplicationRow from '$components/ApplicationRow.svelte';
+	import SegmentedControl from '$components/SegmentedControl.svelte';
 
-	let applicationFilter = 'all';
 	const applicationOptions = [
 		{
 			title: 'Accepted',
@@ -43,12 +44,13 @@
 			title: 'Pending',
 			value: 'pending'
 		},
-
 		{
 			title: 'All',
 			value: 'all'
 		}
 	];
+
+	let applicationFilter = 'all';
 </script>
 
 <div class="container">
@@ -87,11 +89,9 @@
 		margin: 4rem auto;
 		width: 100%;
 	}
-
 	section {
 		margin-bottom: 2.5rem;
 	}
-
 	.title {
 		display: flex;
 		align-items: center;

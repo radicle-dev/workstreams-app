@@ -1,16 +1,23 @@
-<script context="module">
+<script context="module" lang="ts">
 	import { get } from 'svelte/store';
+
 	import { providerStore } from 'web3-stores';
-	import { workstreamStore } from '$lib/stores/workstreamsStore.js';
-	const workstreams = get(workstreamStore);
+	import { workstreamsStore } from '$lib/stores/workstreams';
+	import type { Application, Workstreams } from '$lib/types';
+
 	const provider = get(providerStore);
+	const streams: Workstreams = get(workstreamsStore);
 
 	let connectedAddress = provider.connected && provider.accounts[0];
 
 	let myWorkstreams = [];
 	let pendingApplications = [];
-	export async function load() {
-		workstreams.map((workstream) => {
+
+	// TODO Pass param address.
+	export const load = async (): Promise<{
+		props: { myWorkstreams: Workstreams; pendingApplications: Application[] };
+	}> => {
+		streams.map((workstream) => {
 			if (connectedAddress === workstream.creator.toLowerCase()) {
 				myWorkstreams = [workstream, ...myWorkstreams];
 				workstream.applications.map((application) => {
@@ -20,16 +27,16 @@
 				});
 			}
 		});
+
 		return { props: { myWorkstreams, pendingApplications } };
-	}
+	};
 </script>
 
 <script lang="ts">
-	import WorkstreamRow from '@components/WorkstreamRow/index.svelte';
-	import ApplicationRow from '@components/ApplicationRow/index.svelte';
-	import SegmentedControl from '$lib/shared/SegmentedControl.svelte';
+	import WorkstreamRow from '$components/WorkstreamRow.svelte';
+	import ApplicationRow from '$components/ApplicationRow.svelte';
+	import SegmentedControl from '$components/SegmentedControl.svelte';
 
-	let workstreamFilter = 'active';
 	const workstreamOptions = [
 		{
 			title: 'Active',
@@ -40,6 +47,8 @@
 			value: 'past'
 		}
 	];
+
+	let workstreamFilter = 'active';
 </script>
 
 <div class="container">
@@ -78,11 +87,9 @@
 		margin: 4rem auto;
 		width: 100%;
 	}
-
 	section {
 		margin-bottom: 2.5rem;
 	}
-
 	.title {
 		display: flex;
 		align-items: center;

@@ -1,7 +1,6 @@
 <script lang="ts">
-	import Input from '$lib/shared/Input.svelte';
 	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher();
+	import Input from '$components/Input.svelte';
 
 	export let type: string;
 	export let title: string;
@@ -11,6 +10,8 @@
 	export let grantDuration: string;
 
 	let disabled = false;
+
+	const dispatch = createEventDispatcher();
 
 	$: disabled =
 		title === undefined ||
@@ -72,21 +73,17 @@
 	h3 {
 		margin: 1rem 0;
 	}
-
 	p {
 		color: var(--color-teal);
 	}
-
 	p:first-of-type {
 		margin-bottom: 2rem;
 	}
-
 	.meta {
 		display: flex;
 		gap: 1.5rem;
 		width: 40rem;
 	}
-
 	.actions {
 		display: flex;
 		justify-content: center;

@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { timeframeFormat, startDateFormat, dateFormat } from '$lib/utils/format';
-	import Tag from '$lib/shared/Tag.svelte';
-	import User from '$lib/shared/User.svelte';
-	import Input from '$lib/shared/Input.svelte';
-	import Markdown from '$lib/shared/Markdown.svelte';
-	import ApplicationRow from '@components/ApplicationRow/index.svelte';
+	import User from '$components/User.svelte';
+	import Tag from '$components/Tag.svelte';
+	import Input from '$components/Input.svelte';
+	import Markdown from '$components/Markdown.svelte';
+	import ApplicationRow from '$components/ApplicationRow.svelte';
+	import type { Workstream } from '$lib/types';
 
-	export let workstream;
+	export let workstream: Workstream;
+
 	let applicationText: string;
 </script>
 
@@ -30,7 +32,7 @@
 			{:else if workstream.type === 'role'}
 				<div>
 					<span class="label">Grant duration</span>
-					<p class="timeframe">Start {startDateFormat(workstream.startin_at)}</p>
+					<p class="timeframe">Start {startDateFormat(workstream.starting_at)}</p>
 				</div>
 			{/if}
 			<div style="text-align: right;">
@@ -82,53 +84,42 @@
 	.metadata > * {
 		margin-bottom: 2rem;
 	}
-
 	.title,
 	.owner {
 		display: flex;
 		align-items: center;
 	}
-
 	.title {
 		margin-bottom: 0.5rem;
 	}
-
 	.owner > span {
 		margin-right: 0.5rem;
 	}
-
 	.desc {
 		margin-top: 0.5rem;
 		color: var(--color-white);
 	}
-
 	.timerate {
 		display: flex;
 		justify-content: space-between;
 	}
-
 	.label {
 		color: var(--color-grey-darker);
 	}
-
 	.timeframe {
 		margin-top: 0.5rem;
 		color: var(--color-white);
 	}
-
 	.rate {
 		margin-top: 0.5rem;
 		color: var(--color-pink);
 	}
-
 	hr {
 		border-bottom: 1px solid var(--color-pink);
 	}
-
 	.applications {
 		margin-top: 1.5rem;
 	}
-
 	.applications h4 {
 		margin-bottom: 1rem;
 	}
@@ -136,7 +127,6 @@
 		display: flex;
 		flex-direction: column;
 	}
-
 	.apply {
 		margin-top: 1rem;
 		align-self: flex-end;

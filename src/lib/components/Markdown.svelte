@@ -18,17 +18,14 @@
 		margin: 0 0 1.75rem;
 		border-bottom: 1px solid var(--color-foreground-level-3);
 	}
-
 	.markdown :global(h1:not(:first-child)) {
 		margin-top: 2rem;
 	}
-
 	.markdown :global(h1 > code) {
 		font-family: var(--typeface-mono-bold), monospace;
 		font-size: 2rem;
 		padding: 0.25rem;
 	}
-
 	.markdown :global(h2) {
 		font-family: var(--typeface-medium);
 		font-size: 1.5rem;
@@ -36,13 +33,11 @@
 		margin: 1.8rem 0 1.65rem;
 		border-bottom: 1px solid var(--color-foreground-level-3);
 	}
-
 	.markdown :global(h2 > code) {
 		font-family: var(--typeface-mono-bold), monospace;
 		font-size: 1.5rem;
 		padding: 0.25rem;
 	}
-
 	.markdown :global(h3) {
 		font-family: var(--typeface-medium);
 		font-size: 1.25rem;
@@ -50,13 +45,11 @@
 		margin: 1.75rem 0 1.5rem;
 		border-bottom: 1px solid var(--color-foreground-level-3);
 	}
-
 	.markdown :global(h3 > code) {
 		font-family: var(--typeface-mono-bold), monospace;
 		font-size: 1.25rem;
 		padding: 0.25rem;
 	}
-
 	.markdown :global(h4) {
 		font-family: var(--typeface-medium);
 		font-size: 1rem;
@@ -64,13 +57,11 @@
 		margin: 1.5rem 0 1.35rem;
 		border-bottom: 1px solid var(--color-foreground-level-3);
 	}
-
 	.markdown :global(h4 > code) {
 		font-family: var(--typeface-mono-bold), monospace;
 		font-size: 1rem;
 		padding: 0.25rem;
 	}
-
 	.markdown :global(h5) {
 		font-family: var(--typeface-medium);
 		font-size: 0.875rem;
@@ -78,13 +69,11 @@
 		margin: 1.35rem 0 1.25rem;
 		border-bottom: 1px solid var(--color-foreground-level-3);
 	}
-
 	.markdown :global(h5 > code) {
 		font-family: var(--typeface-mono-bold), monospace;
 		font-size: 0.875rem;
 		padding: 0.25rem;
 	}
-
 	.markdown :global(h6) {
 		font-family: var(--typeface-medium);
 		font-size: 0.75rem;
@@ -92,27 +81,22 @@
 		margin: 1.25rem 0 1rem;
 		border-bottom: 1px solid var(--color-foreground-level-3);
 	}
-
 	.markdown :global(h6 > code) {
 		font-family: var(--typeface-mono-bold), monospace;
 		font-size: 0.75rem;
 		padding: 0.25rem;
 	}
-
 	.markdown :global(p) {
 		margin-top: 0;
 		margin-bottom: 0.625rem;
 	}
-
 	.markdown :global(strong) {
 		font-family: var(--typeface-medium);
 	}
-
 	.markdown :global(img) {
 		border-style: none;
 		max-width: 100%;
 	}
-
 	.markdown :global(code) {
 		font-family: var(--typeface-mono-regular), monospace;
 		font-size: 1rem;
@@ -120,7 +104,6 @@
 		padding: 0.09rem 0.25rem;
 		border-radius: 0.5rem;
 	}
-
 	.markdown :global(pre) {
 		font-family: var(--typeface-mono-regular), monospace;
 		font-size: 1rem;
@@ -131,11 +114,9 @@
 		overflow: scroll;
 		scrollbar-width: none;
 	}
-
 	.markdown :global(pre::-webkit-scrollbar) {
 		display: none;
 	}
-
 	.markdown :global(hr) {
 		height: 0;
 		margin: 0rem 0;
@@ -144,13 +125,11 @@
 		border: 0;
 		border-bottom: 1px solid var(--color-foreground-level-3);
 	}
-
 	.markdown :global(ol) {
 		list-style-type: decimal;
 		margin-bottom: 1rem;
 		padding-left: 1.5rem;
 	}
-
 	.markdown :global(ul) {
 		list-style-type: inherit;
 		padding-left: 1.25rem;
@@ -159,30 +138,25 @@
 	.markdown :global(a) {
 		text-decoration: underline;
 		text-underline-offset: 0.25rem;
-
 		/* Disable all links by default. This way we disable relative links,
        which don't work at the moment and selectively enable external links and
        anchors which do work. */
 		cursor: default;
 		pointer-events: none;
 	}
-
 	/* Enable relative anchors. */
 	.markdown :global(a[href^='#']) {
 		color: var(--color-primary);
 		cursor: pointer;
 		pointer-events: inherit;
 	}
-
 	.markdown :global(a[href^='#']:hover),
 	.markdown :global(a[href^='#']:focus) {
 		opacity: 0.75;
 	}
-
 	.markdown :global(a[href^='#']:active) {
 		opacity: 0.5;
 	}
-
 	/* Enable external links. */
 	.markdown :global(a[href^="http://"]),
   .markdown :global(a[href^="https://"])
@@ -191,7 +165,6 @@
 		cursor: pointer;
 		pointer-events: inherit;
 	}
-
 	.markdown :global(a[href^="http://"]:hover),
   .markdown :global(a[href^="https://"]:hover),
   .markdown :global(a[href^="http://"]:focus),
@@ -199,13 +172,11 @@
 	{
 		opacity: 0.75;
 	}
-
 	.markdown :global(a[href^="http://"]:active),
   .markdown :global(a[href^="https://"]:active)
 	{
 		opacity: 0.5;
 	}
-
 	.markdown :global(a[href^="http://"]:after),
   .markdown :global(a[href^="https://"]:after)
 	{
