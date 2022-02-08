@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { providerStore } from 'web3-stores';
 	import { workstreamsStore } from '$lib/stores/workstreams';
 
@@ -15,7 +16,10 @@
 			(workstream) => workstream.id === application.workstream_id
 		));
 	}
-	getWorkstream();
+	onMount(() => {
+		getWorkstream();
+	});
+
 	$: isCreator =
 		$providerStore.connected && $providerStore.accounts[0] === workstream.creator.toLowerCase();
 </script>

@@ -4,11 +4,11 @@
 	import { hyphanateString } from '$lib/utils/format';
 	import type { Workstream } from '$lib/types';
 
-	const streams: Workstream[] = get(workstreamsStore);
+	const workstreams: Workstream[] = get(workstreamsStore);
 
 	/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 	export const load = async ({ params }): Promise<{ props: { workstream: Workstream } }> => {
-		const workstream = streams.find(
+		const workstream = workstreams.find(
 			(workstream) => hyphanateString(workstream.title) === params.title
 		);
 		return { props: { workstream } };
