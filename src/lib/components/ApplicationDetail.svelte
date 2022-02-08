@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Modal from './Modal.svelte';
-	import User from './User.svelte';
+	import Modal from '$components/Modal.svelte';
+	import User from '$components/User.svelte';
 	import type { Application } from '$lib/types';
 
 	export let application: Application;

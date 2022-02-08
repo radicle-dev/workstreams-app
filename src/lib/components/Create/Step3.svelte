@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { providerStore } from 'web3-stores';
 	import * as modal from '$lib/utils/modal';
-	import Spinner from '../Spinner.svelte';
+	import Spinner from '$components/Spinner.svelte';
 </script>
 
 <span class="emoji">👔</span>

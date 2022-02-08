@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { providerStore } from 'web3-stores';
 	import { providers } from 'ethers';
-	import Header from '$lib/components/Header.svelte';
-	import ModalLayout from '$lib/components/ModalLayout.svelte';
+	import Header from '$components/Header.svelte';
+	import ModalLayout from '$components/ModalLayout.svelte';
 	import '../app.css';
 </script>
 

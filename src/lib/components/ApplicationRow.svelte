@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as modal from '$lib/utils/modal';
-	import User from './User.svelte';
-	import ApplicationDetail from './ApplicationDetail.svelte';
+	import User from '$components/User.svelte';
+	import ApplicationDetail from '$components/ApplicationDetail.svelte';
 	import type { Application } from '$lib/types';
 
 	export let owner = false;

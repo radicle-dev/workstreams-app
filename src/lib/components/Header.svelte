@@ -2,9 +2,9 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import * as modal from '$lib/utils/modal';
-	import Protected from './Protected.svelte';
-	import Connect from './Connect.svelte';
-	import Create from './Create/index.svelte';
+	import Protected from '$components/Protected.svelte';
+	import Connect from '$components/Connect.svelte';
+	import Create from '$components/Create/index.svelte';
 </script>
 
 <header>

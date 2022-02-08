@@ -30,8 +30,8 @@
 </script>
 
 <script lang="ts">
-	import ApplicationRow from '$lib/components/ApplicationRow.svelte';
-	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
+	import ApplicationRow from '$components/ApplicationRow.svelte';
+	import SegmentedControl from '$components/SegmentedControl.svelte';
 
 	const applicationOptions = [
 		{

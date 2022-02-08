@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { timeframeFormat, startDateFormat, hyphanateString } from '$lib/utils/format';
-	import User from './User.svelte';
+	import User from '$components/User.svelte';
 	import type { Workstream } from '$lib/types';
 
 	export let data: Workstream;

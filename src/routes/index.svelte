@@ -4,7 +4,7 @@
 
 <script lang="ts">
 	import { workstreamsStore } from '$lib/stores/workstreams';
-	import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
+	import WorkstreamCard from '$components/WorkstreamCard.svelte';
 </script>
 
 <svelte:head>

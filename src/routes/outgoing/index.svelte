@@ -28,9 +28,9 @@
 </script>
 
 <script lang="ts">
-	import WorkstreamRow from '$lib/components/WorkstreamRow.svelte';
-	import ApplicationRow from '$lib/components/ApplicationRow.svelte';
-	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
+	import WorkstreamRow from '$components/WorkstreamRow.svelte';
+	import ApplicationRow from '$components/ApplicationRow.svelte';
+	import SegmentedControl from '$components/SegmentedControl.svelte';
 
 	const workstreamOptions = [
 		{

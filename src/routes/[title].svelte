@@ -16,7 +16,7 @@
 </script>
 
 <script lang="ts">
-	import WorkstreamDetail from '$lib/components/WorkstreamDetail.svelte';
+	import WorkstreamDetail from '$components/WorkstreamDetail.svelte';
 
 	export let workstream: Workstream;
 </script>

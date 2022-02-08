@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { timeframeFormat, startDateFormat, dateFormat } from '$lib/utils/format';
-	import User from '$lib/components/User.svelte';
-	import Input from '$lib/components/Input.svelte';
-	import Markdown from '$lib/components/Markdown.svelte';
-	import ApplicationRow from '$lib/components/ApplicationRow.svelte';
+	import User from '$components/User.svelte';
+	import Input from '$components/Input.svelte';
+	import Markdown from '$components/Markdown.svelte';
+	import ApplicationRow from '$components/ApplicationRow.svelte';
 	import type { Workstream } from '$lib/types';
 
 	export let workstream: Workstream;

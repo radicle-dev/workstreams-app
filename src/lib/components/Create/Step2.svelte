@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import Input from '../Input.svelte';
+	import Input from '$components/Input.svelte';
 
 	export let type: string;
 	export let title: string;
