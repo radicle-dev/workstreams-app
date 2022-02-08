@@ -2,7 +2,6 @@ import { derived, get, writable } from 'svelte/store';
 import type { SvelteComponent } from 'svelte';
 
 type OnHide = () => void;
-const doNothing = (): void => {};
 
 type ModalLayout = {
 	modalComponent: typeof SvelteComponent;
@@ -11,7 +10,10 @@ type ModalLayout = {
 };
 
 const overlayStore = writable<ModalLayout | null>(null);
+
 export const store = derived(overlayStore, ($store) => $store);
+
+const doNothing = (): void => null;
 
 export const hide = (): void => {
 	const stored = get(store);

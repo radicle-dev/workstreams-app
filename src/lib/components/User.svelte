@@ -1,40 +1,40 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { ethers } from 'ethers';
 	import { createIcon } from '$lib/utils/blockies';
 	import { formatAddress } from '$lib/utils/format';
-	import { onMount } from 'svelte';
-	const provider = ethers.getDefaultProvider();
 
-	export let style: string | undefined = undefined;
-	export let address: string;
 	export let avatar = true;
 	export let showAddress = true;
+	export let address: string;
+	export let style: string = undefined;
 
-	let uriData = '';
-	let ensName;
+	const ethersProvider = ethers.getDefaultProvider();
+	let uriData: string;
+	let ensName: string;
 
 	onMount(() => {
 		uriData = blockyDataUri(address);
+		laodEnsData();
 	});
 
-	function blockyDataUri(urn: string) {
-		return createIcon({
-			seed: urn.toLowerCase(),
-			size: 8,
-			scale: 16
-		}).toDataURL();
-	}
-
-	async function laodEnsData(): Promise<string> {
-		ensName = await provider.lookupAddress(address);
+	$: laodEnsData = async () => {
+		const checksummedAddress = await ethersProvider._getAddress(address.toLocaleLowerCase());
+		ensName = await ethersProvider.lookupAddress(checksummedAddress);
 		if (!ensName) {
 			return;
 		} else {
 			return ensName;
 		}
-	}
+	};
 
-	$: laodEnsData();
+	const blockyDataUri = (urn: string) => {
+		return createIcon({
+			seed: urn.toLowerCase(),
+			size: 8,
+			scale: 16
+		}).toDataURL();
+	};
 </script>
 
 {#if address}
@@ -44,7 +44,7 @@
 		{/if}
 		{#if showAddress}
 			<p class="address typo-text-bold">
-				{ensName === null ? formatAddress(address) : ensName}
+				{ensName ? ensName : formatAddress(address.toLocaleLowerCase())}
 			</p>
 		{/if}
 	</div>
@@ -55,7 +55,6 @@
 		display: grid;
 		grid-template-columns: 1.5rem auto;
 	}
-
 	.avatar {
 		width: 1.5rem;
 		height: 1.5rem;
@@ -63,7 +62,6 @@
 		user-select: none;
 		background-color: var(--color-grey-dark);
 	}
-
 	.address {
 		margin-left: 0.5rem;
 		white-space: nowrap;

@@ -1,9 +1,10 @@
 <script lang="ts">
 	import * as modal from '$lib/utils/modal';
 	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher();
 
 	export let type: string;
+
+	const dispatch = createEventDispatcher();
 </script>
 
 <span class="emoji">👔</span>
@@ -36,26 +37,21 @@
 	h3 {
 		margin: 1rem 0;
 	}
-
 	p {
 		color: var(--color-teal);
 	}
-
 	p:first-of-type {
 		margin-bottom: 2rem;
 	}
-
 	.inputs {
 		background-color: var(--color-teal-darker);
 		padding: 1.5rem;
 		text-align: left;
 		border-radius: 1rem;
 	}
-
 	input {
 		margin-bottom: 1rem;
 	}
-
 	.actions {
 		display: flex;
 		justify-content: center;

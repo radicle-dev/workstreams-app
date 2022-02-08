@@ -1,12 +1,14 @@
 <script>
-	export let style;
 	export let size = 50;
 	export let speed = 1500;
 	export let color = 'rgba(255,255,255,0.4)';
 	export let thickness = 2;
 	export let gap = 40;
 	export let radius = 10;
+	export let style;
+
 	let dash;
+
 	$: dash = (2 * Math.PI * radius * (100 - gap)) / 100;
 </script>
 
@@ -16,7 +18,7 @@
 		width={size}
 		style="animation-duration:{speed}ms;"
 		class="svelte-spinner"
-		viewbox="0 0 32 32"
+		viewBox="0 0 32 32"
 	>
 		<circle
 			role="presentation"

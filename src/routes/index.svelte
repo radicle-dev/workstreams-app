@@ -3,24 +3,19 @@
 </script>
 
 <script lang="ts">
-	import { workstreams } from '$lib/stores/workstreamsStore.js';
-	import Protected from '@components/Protected/index.svelte';
-	import WorkstreamCard from '@components/WorkstreamCard/index.svelte';
+	import { workstreamsStore } from '$lib/stores/workstreams';
+	import WorkstreamCard from '$components/WorkstreamCard.svelte';
 </script>
 
 <svelte:head>
 	<title>Workstreams · Overview</title>
 </svelte:head>
 
-<Protected>
-	<section>
-		<div class="overview">
-			{#each $workstreams as workstream}
-				<WorkstreamCard data={workstream} />
-			{/each}
-		</div>
-	</section>
-</Protected>
+<div class="overview">
+	{#each $workstreamsStore as workstream}
+		<WorkstreamCard data={workstream} />
+	{/each}
+</div>
 
 <style>
 	.overview {

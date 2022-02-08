@@ -1,10 +1,10 @@
 <script lang="ts">
-	export let style = undefined;
+	export let currency = 'DAI';
+	export let type = 'text';
+	export let style: string = undefined;
+	export let value: string = undefined;
 	export let label: string;
 	export let placeholder: string;
-	export let value: string;
-	export let type = 'text';
-	export let currency = 'DAI';
 </script>
 
 <label for={label} {style}>
@@ -63,16 +63,13 @@
 		border-radius: 0.5rem;
 		color: var(--color-white);
 	}
-
 	textarea {
 		resize: vertical;
 	}
-
 	input::placeholder,
 	textarea::placeholder {
 		color: var(--color-grey-darker);
 	}
-
 	input:focus,
 	textarea:focus {
 		outline: none !important;

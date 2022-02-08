@@ -1,18 +1,10 @@
 <script lang="ts">
 	import { providerStore } from 'web3-stores';
-	import { ethers } from 'ethers';
-
-	import Header from '@components/Header/index.svelte';
-	import ModalLayout from '@components/ModalLayout/index.svelte';
-
-	import Tag from '$lib/shared/Tag.svelte';
-
-	import '../styles/reset.css';
-	import '../styles/colors.css';
-	import '../styles/typography.css';
-	import '../styles/global.css';
-
-	// Initiate Modals
+	import { providers } from 'ethers';
+	import Header from '$components/Header.svelte';
+	import ModalLayout from '$components/ModalLayout.svelte';
+	import Tag from '$components/Tag.svelte';
+	import '../app.css';
 </script>
 
 <ModalLayout />
@@ -26,7 +18,7 @@
 		<p>by radicle 🌱</p>
 		{#if $providerStore.connected}
 			<Tag>
-				{ethers.providers.getNetwork(parseInt($providerStore.chainId)).name} network
+				{providers.getNetwork(parseInt($providerStore.chainId)).name} network
 			</Tag>
 		{/if}
 	</footer>
@@ -38,10 +30,8 @@
 		max-width: 90rem;
 		min-width: 40rem;
 		margin: 0 auto;
-
 		padding: 1.5rem;
 	}
-
 	main {
 		display: flex;
 		flex-direction: column;

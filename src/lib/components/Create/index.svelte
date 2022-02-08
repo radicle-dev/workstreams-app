@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Modal from '$lib/shared/Modal.svelte';
-	import Step1 from './Step1.svelte';
-	import Step2 from './Step2.svelte';
-	import Step3 from './Step3.svelte';
+	import Modal from '$components/Modal.svelte';
+	import Step1 from '$components/Create/Step1.svelte';
+	import Step2 from '$components/Create/Step2.svelte';
+	import Step3 from '$components/Create/Step3.svelte';
 
 	let type = 'grant';
 	let steps = 1;
