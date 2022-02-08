@@ -4,8 +4,8 @@
 
 	import type { Application } from '$lib/types';
 
-	import Modal from '$lib/shared/Modal.svelte';
-	import User from '$lib/shared/User.svelte';
+	import Modal from '$components/Modal.svelte';
+	import User from '$components/User.svelte';
 
 	export let application: Application;
 	let workstream;

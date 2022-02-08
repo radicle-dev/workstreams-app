@@ -16,16 +16,18 @@
 	</div>
 
 	<div class="user">
-		<a
-			href="/outgoing"
-			on:click={() => goto(`/outgoing`)}
-			class:active={$page.url.pathname === '/outgoing'}>outgoing</a
-		>
-		<a
-			href="/incoming"
-			on:click={() => goto(`/incoming`)}
-			class:active={$page.url.pathname === '/incoming'}>incoming</a
-		>
+		<Protected>
+			<a
+				href="/outgoing"
+				on:click={() => goto(`/outgoing`)}
+				class:active={$page.url.pathname === '/outgoing'}>outgoing</a
+			>
+			<a
+				href="/incoming"
+				on:click={() => goto(`/incoming`)}
+				class:active={$page.url.pathname === '/incoming'}>incoming</a
+			>
+		</Protected>
 		<Connect />
 	</div>
 </header>

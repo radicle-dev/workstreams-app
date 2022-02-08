@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let style: string | undefined = undefined;
+	export let style: string = undefined;
 </script>
 
 <div class="modal" {style}>
