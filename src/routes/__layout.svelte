@@ -4,8 +4,6 @@
 	import Header from '$lib/components/Header.svelte';
 	import ModalLayout from '$lib/components/ModalLayout.svelte';
 	import '../app.css';
-
-	// TODO Initiate Modals
 </script>
 
 <ModalLayout />

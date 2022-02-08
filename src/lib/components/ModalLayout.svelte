@@ -8,8 +8,6 @@
 	const clickOutside = () => {
 		modal.hide();
 	};
-
-	// TODO Hack to make svelte typecheck in the markup section.
 </script>
 
 <div class="modal-layout" class:hide={store === null} data-cy="modal-layout">
