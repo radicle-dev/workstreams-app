@@ -1,9 +1,14 @@
 <script context="module" lang="ts">
 	import { get } from 'svelte/store';
+
+	import { providerStore } from 'web3-stores';
 	import { workstreamsStore } from '$lib/stores/workstreams';
 	import type { Application, Workstreams } from '$lib/types';
 
+	const provider = get(providerStore);
 	const streams: Workstreams = get(workstreamsStore);
+
+	let connectedAddress = provider.connected && provider.accounts[0];
 
 	let myWorkstreams = [];
 	let pendingApplications = [];
@@ -13,7 +18,7 @@
 		props: { myWorkstreams: Workstreams; pendingApplications: Application[] };
 	}> => {
 		streams.map((workstream) => {
-			if (workstream.creator === '0x0Baf8fDF6f68737476Ba13CDB3781B29fe71F471') {
+			if (connectedAddress === workstream.creator.toLowerCase()) {
 				myWorkstreams = [workstream, ...myWorkstreams];
 				workstream.applications.map((application) => {
 					if (application.state === 'pending') {
@@ -50,7 +55,7 @@
 	{#if pendingApplications.length > 0}
 		<section>
 			<div class="title">
-				<h3>My applications</h3>
+				<h3>New applications</h3>
 			</div>
 			<div class="row-container">
 				{#each pendingApplications as application}
