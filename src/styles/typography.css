@@ -125,7 +125,7 @@ p,
 /* Relative links */
 
 .typo-link {
-	color: var(--color-bl);
+	color: var(--color-foreground-level-6);
 	cursor: pointer;
 	text-decoration: underline;
 	text-underline-offset: 0.25rem;

@@ -97,25 +97,25 @@
 	}
 	.desc {
 		margin-top: 0.5rem;
-		color: var(--color-white);
+		color: var(--color-foreground);
 	}
 	.timerate {
 		display: flex;
 		justify-content: space-between;
 	}
 	.label {
-		color: var(--color-grey-darker);
+		color: var(--color-foreground-level-5);
 	}
 	.timeframe {
 		margin-top: 0.5rem;
-		color: var(--color-white);
+		color: var(--color-foreground);
 	}
 	.rate {
 		margin-top: 0.5rem;
-		color: var(--color-pink);
+		color: var(--color-primary);
 	}
 	hr {
-		border-bottom: 1px solid var(--color-pink);
+		border-bottom: 1px solid var(--color-primary);
 	}
 	.applications {
 		margin-top: 1.5rem;

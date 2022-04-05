@@ -34,14 +34,14 @@
 		display: flex;
 		flex-direction: row;
 		padding: 1.5rem;
-		border-left: 1px solid var(--color-pink-dark);
-		border-right: 1px solid var(--color-pink-dark);
-		border-top: 1px solid var(--color-pink-dark);
+		border-left: 1px solid var(--color-primary-level-6);
+		border-right: 1px solid var(--color-primary-level-6);
+		border-top: 1px solid var(--color-primary-level-6);
 		cursor: pointer;
 		justify-content: space-between;
 	}
 	.row:hover {
-		box-shadow: 0 0 1rem var(--color-pink-dark);
+		box-shadow: 0 0 1rem var(--color-primary-level-6);
 	}
 	.row:first-child {
 		border-top-left-radius: 0.25rem;
@@ -50,7 +50,7 @@
 	.row:last-child {
 		border-bottom-left-radius: 0.25rem;
 		border-bottom-right-radius: 0.25rem;
-		border-bottom: 1px solid var(--color-pink-dark);
+		border-bottom: 1px solid var(--color-primary-level-6);
 	}
 	.left > * {
 		margin-bottom: 1.5rem;
@@ -68,9 +68,9 @@
 		gap: 1rem;
 	}
 	.timeframe {
-		color: var(--color-grey-dark);
+		color: var(--color-foreground-level-5);
 	}
 	.rate {
-		color: var(--color-pink);
+		color: var(--color-primary);
 	}
 </style>

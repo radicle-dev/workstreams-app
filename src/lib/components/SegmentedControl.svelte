@@ -46,17 +46,17 @@
 		margin: 0.25rem;
 		border: none;
 		background-color: var(--color-background);
-		color: var(--color-grey-dark);
+		color: var(--color-foreground-level-5);
 	}
 	button:focus {
 		outline: none;
 	}
 	button:hover,
 	button:active {
-		background-color: var(--color-grey);
+		background-color: var(--color-foreground-level-2);
 	}
 	button.active {
-		background-color: var(--color-blue);
+		background-color: var(--color-primary);
 		color: var(--color-background);
 	}
 </style>

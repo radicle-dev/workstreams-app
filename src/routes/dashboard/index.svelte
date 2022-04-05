@@ -17,12 +17,12 @@
 					application.creator.toLowerCase() === connectedAddress &&
 					application.state !== 'rejected'
 				) {
-					return (myOpenApplications = [application, ...myOpenApplications]);
+					return (myOpenApplications = [application]);
 				} else if (
 					application.creator.toLowerCase() === connectedAddress &&
 					application.state === 'rejected'
 				) {
-					return (myRejectedApplications = [application, ...myRejectedApplications]);
+					return (myRejectedApplications = [application]);
 				}
 			});
 		});

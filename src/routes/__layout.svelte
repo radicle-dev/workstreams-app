@@ -38,7 +38,7 @@
 	}
 	footer {
 		margin-top: 2rem;
-		color: var(--color-grey-dark);
+		color: var(--color-foreground-level-5);
 		display: flex;
 		justify-content: center;
 		align-items: center;

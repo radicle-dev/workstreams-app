@@ -9,25 +9,18 @@
 
 <header>
 	<div class="home" class:active={$page.url.pathname === '/'}>
-		<a sveltekit:prefetch href="/"><h3>👔 Workstreams</h3></a>
-		<Protected>
+		<a sveltekit:prefetch href="/" class:active={$page.url.pathname === '/'}>Explore</a>
+		<a
+			href="/dashboard"
+			on:click={() => goto(`/dashboard`)}
+			class:active={$page.url.pathname === '/dashboard'}>Dashboard</a
+		>
+		<!-- <Protected>
 			<button on:click={() => modal.show(Create)}>Create</button>
-		</Protected>
+		</Protected> -->
 	</div>
 
 	<div class="user">
-		<Protected>
-			<a
-				href="/outgoing"
-				on:click={() => goto(`/outgoing`)}
-				class:active={$page.url.pathname === '/outgoing'}>outgoing</a
-			>
-			<a
-				href="/incoming"
-				on:click={() => goto(`/incoming`)}
-				class:active={$page.url.pathname === '/incoming'}>incoming</a
-			>
-		</Protected>
 		<Connect />
 	</div>
 </header>
@@ -44,19 +37,18 @@
 		align-items: center;
 	}
 	.home > a {
-		color: var(--color-white);
+		color: var(--color-foreground-level-5);
+		padding: 0.5rem 1rem;
 		text-decoration: none;
-		margin-right: 2rem;
+		margin-right: 1rem;
+		border-radius: 0.5rem;
 	}
 	.home > a:hover {
-		color: var(--color-blue);
-		text-shadow: 0 0 1rem var(--color-blue-dark);
+		background-color: var(--color-foreground-level-2);
 	}
-	.home > a:active {
-		color: var(--color-blue-dark);
-		text-shadow: 0 0 1rem var(--color-blue-darker);
-	}
-	.user > a {
-		margin-right: 1.5rem;
+	.home > a.active {
+		color: var(--color-foreground);
+		background-color: var(--color-foreground-level-2);
+		font-weight: 900;
 	}
 </style>
