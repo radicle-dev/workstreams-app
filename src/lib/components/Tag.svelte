@@ -1,5 +1,4 @@
 <script lang="ts">
-	export let size = 'small';
 	export let style: string = undefined;
 </script>
 
