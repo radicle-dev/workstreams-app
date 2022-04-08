@@ -60,7 +60,7 @@
 		height: 1.5rem;
 		border-radius: 0.75rem;
 		user-select: none;
-		background-color: var(--color-grey-dark);
+		background-color: var(--color-foreground-level-5);
 	}
 	.address {
 		margin-left: 0.5rem;

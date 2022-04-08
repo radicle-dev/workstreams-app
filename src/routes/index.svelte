@@ -4,16 +4,16 @@
 
 <script lang="ts">
 	import { workstreamsStore } from '$lib/stores/workstreams';
-	import WorkstreamCard from '$components/WorkstreamCard.svelte';
+	import ExploreCard from '$lib/components/ExploreCard.svelte';
 </script>
 
 <svelte:head>
-	<title>Workstreams · Overview</title>
+	<title>Workstreams · Explore</title>
 </svelte:head>
 
 <div class="overview">
 	{#each $workstreamsStore as workstream}
-		<WorkstreamCard data={workstream} />
+		<ExploreCard {workstream} />
 	{/each}
 </div>
 
@@ -21,6 +21,6 @@
 	.overview {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 1rem;
+		gap: 1.5rem;
 	}
 </style>

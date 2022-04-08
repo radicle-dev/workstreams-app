@@ -19,7 +19,7 @@
 		margin: 1rem 0;
 	}
 	p {
-		color: var(--color-teal);
+		color: var(--color-primary);
 	}
 	p:first-of-type {
 		margin-bottom: 2rem;
