@@ -1,41 +1,73 @@
+/**
+ * Copyright © 2021 The Radicle Upstream Contributors
+ *
+ * This file is part of radicle-upstream, distributed under the GPLv3
+ * with Radicle Linking Exception. For full terms see the included
+ * LICENSE file.
+ */
 /* headers */
 
 @font-face {
 	font-family: 'Inter Bold';
-	src: url('../fonts/Inter-Bold.otf');
+	src: url('fonts/Inter-Bold.otf');
 }
 
 @font-face {
 	font-family: 'Inter SemiBold';
-	src: url('../fonts/Inter-SemiBold.otf');
+	src: url('fonts/Inter-SemiBold.otf');
 }
 
 @font-face {
 	font-family: 'Inter Regular';
-	src: url('../fonts/Inter-Regular.otf');
+	src: url('fonts/Inter-Regular.otf');
 }
 
 @font-face {
 	font-family: 'SourceCodePro Bold';
-	src: url('../fonts/SourceCodePro-Bold.otf');
+	src: url('fonts/SourceCodePro-Bold.otf');
 }
 
 @font-face {
 	font-family: 'SourceCodePro Regular';
-	src: url('../fonts/SourceCodePro-Regular.otf');
+	src: url('fonts/SourceCodePro-Regular.otf');
 }
 
 :root {
-	--typeface-bold: 'Inter Bold', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-		Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-	--typeface-medium: 'Inter SemiBold', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-		Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-	--typeface-regular: 'Inter Regular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-		Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-	--typeface-mono-bold: 'SourceCodePro Bold', SFMono-Regular, Menlo, Monaco, Consolas,
-		'Liberation Mono', 'Courier New', monospace;
-	--typeface-mono-regular: 'SourceCodePro Regular', SFMono-Regular, Menlo, Monaco, Consolas,
-		'Liberation Mono', 'Courier New', monospace;
+	--typeface-bold: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+		sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	--typeface-medium: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+		sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	--typeface-regular: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+		sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	--typeface-mono-bold: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+		monospace;
+	--typeface-mono-regular: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+		monospace;
+}
+[data-uifont='system'] {
+	--typeface-bold: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+		sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	--typeface-medium: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+		sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	--typeface-regular: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+		sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+[data-codefont='system'] {
+	--typeface-mono-bold: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+		monospace;
+	--typeface-mono-regular: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+		monospace;
+}
+
+[data-uifont='inter'] {
+	--typeface-bold: 'Inter Bold';
+	--typeface-medium: 'Inter SemiBold';
+	--typeface-regular: 'Inter Regular';
+}
+
+[data-codefont='sourceCode'] {
+	--typeface-mono-bold: 'SourceCodePro Bold';
+	--typeface-mono-regular: 'SourceCodePro Regular';
 }
 
 h1,
@@ -73,6 +105,7 @@ h4,
 h5,
 .typo-header-5 {
 	font-family: var(--typeface-medium);
+	font-weight: 600;
 	font-size: 13px;
 	text-transform: uppercase;
 	letter-spacing: 0.05rem;
@@ -90,6 +123,7 @@ p,
 
 .typo-text-bold {
 	font-family: var(--typeface-medium);
+	font-weight: 600;
 	font-size: 16px;
 }
 
@@ -106,14 +140,15 @@ p,
 }
 
 .typo-text-small {
-	font-size: 12px;
-	line-height: 16px;
+	font-size: 14px;
+	line-height: 18px;
 }
 
 .typo-text-small-bold {
 	font-family: var(--typeface-medium);
-	font-size: 12px;
-	line-height: 16px;
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 18px;
 }
 
 .typo-text-small-mono {
@@ -125,7 +160,7 @@ p,
 /* Relative links */
 
 .typo-link {
-	color: var(--color-foreground-level-6);
+	color: var(--color-primary);
 	cursor: pointer;
 	text-decoration: underline;
 	text-underline-offset: 0.25rem;
@@ -156,10 +191,12 @@ p,
 
 .typo-regular {
 	font-family: var(--typeface-regular);
+	font-weight: 600;
 }
 
 .typo-semi-bold {
 	font-family: var(--typeface-medium);
+	font-weight: 600;
 }
 
 .typo-bold {
@@ -185,6 +222,7 @@ p,
 
 .typo-all-caps {
 	font-family: var(--typeface-medium);
+	font-weight: 600;
 	font-size: 13px;
 	text-transform: uppercase;
 	letter-spacing: 0.05rem;

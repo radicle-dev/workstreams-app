@@ -13,6 +13,7 @@
 		| 'vanilla'
 		| 'transparent'
 		| 'outline'
+		| 'primary-outline'
 		| 'destructive'
 		| 'embedded' = 'primary';
 
@@ -73,7 +74,7 @@
 
 	.primary :global(svg),
 	.destructive :global(svg) {
-		fill: var(--color-background);
+		fill: var(--color-foreground);
 	}
 
 	.vanilla.disabled :global(svg) {
@@ -104,7 +105,7 @@
 	.primary {
 		background-color: var(--color-primary);
 		border-color: var(--color-primary);
-		color: var(--color-background);
+		color: var(--color-foreground);
 	}
 
 	.primary.disabled {
@@ -113,6 +114,27 @@
 	}
 
 	.primary.disabled :global(svg) {
+		fill: var(--color-background);
+	}
+
+	.primary-outline {
+		background-color: transparent;
+		border-color: var(--color-primary-level-2);
+		color: var(--color-foreground);
+	}
+
+	.primary-outline:hover {
+		color: var(--color-foreground);
+		background-color: var(--color-primary);
+		border: 1px solid var(--color-primary);
+	}
+
+	.primary-outline.disabled {
+		opacity: 0.25;
+		cursor: not-allowed;
+	}
+
+	.primary-outline.disabled :global(svg) {
 		fill: var(--color-background);
 	}
 
@@ -213,43 +235,5 @@
 
 	.destructive.disabled :global(svg) {
 		fill: var(--color-background);
-	}
-
-	.embedded {
-		background: none;
-		border: none;
-		color: var(--color-foreground-level-6);
-	}
-
-	.embedded :global(svg) {
-		fill: var(--color-foreground-level-5);
-		margin: 0px;
-	}
-
-	.embedded:hover {
-		color: var(--color-foreground-level-3);
-	}
-
-	.embedded:hover :global(svg) {
-		fill: var(--color-foreground-level-3);
-	}
-
-	.embedded:active :global(svg) {
-		fill: var(--color-foreground-level-4);
-	}
-
-	.embedded.disabled {
-		fill: var(--color-foreground-level-3);
-		cursor: not-allowed;
-	}
-
-	.embedded.disabled:hover,
-	.embedded.disabled:active {
-		box-shadow: 0 0 0 0;
-		fill: var(--color-foreground-level-3);
-	}
-
-	.embedded.disabled :global(svg) {
-		fill: var(--color-foreground-level-3);
 	}
 </style>

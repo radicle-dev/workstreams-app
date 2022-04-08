@@ -8,12 +8,12 @@
 </script>
 
 <svelte:head>
-	<title>Workstreams · Overview</title>
+	<title>Workstreams · Explore</title>
 </svelte:head>
 
 <div class="overview">
 	{#each $workstreamsStore as workstream}
-		<ExploreCard data={workstream} />
+		<ExploreCard {workstream} />
 	{/each}
 </div>
 
@@ -21,6 +21,6 @@
 	.overview {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 1rem;
+		gap: 1.5rem;
 	}
 </style>

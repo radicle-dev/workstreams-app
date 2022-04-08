@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import * as modal from '$lib/utils/modal';
-	import Protected from '$components/Protected.svelte';
+
 	import Connect from '$components/Connect.svelte';
-	import Create from '$components/Create/index.svelte';
 </script>
 
 <header>
@@ -15,9 +13,6 @@
 			on:click={() => goto(`/dashboard`)}
 			class:active={$page.url.pathname === '/dashboard'}>Dashboard</a
 		>
-		<!-- <Protected>
-			<button on:click={() => modal.show(Create)}>Create</button>
-		</Protected> -->
 	</div>
 
 	<div class="user">
@@ -49,6 +44,6 @@
 	.home > a.active {
 		color: var(--color-foreground);
 		background-color: var(--color-foreground-level-2);
-		font-weight: 900;
+		font-weight: 600;
 	}
 </style>
