@@ -22,7 +22,7 @@
 <div on:click={() => modal.toggle(ApplicationDetail, () => null, { application })} class="row">
 	<User address={application.creator} showAddress={!owner} />
 	<p class="desc typo-overflow-ellipsis">{application.desc}</p>
-	<Tag color={tagColor(application.state)}>{application.state}</Tag>
+	<Tag>{application.state}</Tag>
 </div>
 
 <style>

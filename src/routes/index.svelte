@@ -4,7 +4,7 @@
 
 <script lang="ts">
 	import { workstreamsStore } from '$lib/stores/workstreams';
-	import WorkstreamCard from '$components/WorkstreamCard.svelte';
+	import ExploreCard from '$lib/components/ExploreCard.svelte';
 </script>
 
 <svelte:head>
@@ -13,7 +13,7 @@
 
 <div class="overview">
 	{#each $workstreamsStore as workstream}
-		<WorkstreamCard data={workstream} />
+		<ExploreCard data={workstream} />
 	{/each}
 </div>
 

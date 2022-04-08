@@ -14,12 +14,6 @@ export function timeframeFormat(start_date: number, end_date: number): string {
 		return `${weeks} weeks`;
 	}
 }
-export function startDateFormat(startdate: number): string {
-	return new Date(startdate).toLocaleDateString('en-US', {
-		month: 'short',
-		day: 'numeric'
-	});
-}
 
 export function dateFormat(date: number): string {
 	return new Date(date).toLocaleDateString('en-US', {
