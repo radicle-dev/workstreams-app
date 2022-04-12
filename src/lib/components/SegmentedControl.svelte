@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import type { SegmentedControlOption } from '$lib/types';
+
+	type SegmentedControlOption = {
+		title: string;
+		value: string;
+	};
 
 	export let style: string = undefined;
 	export let active: string;

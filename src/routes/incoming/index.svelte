@@ -1,31 +1,31 @@
 <script context="module" lang="ts">
 	import { get } from 'svelte/store';
-	import { workstreamsStore } from '$lib/stores/workstreams';
-	import type { Application, Workstreams } from '$lib/types';
+	import workstreamsStore from '$lib/stores/workstreams';
+	import type { Application, Workstream } from '$lib/stores/types';
 	import { providerStore } from 'web3-stores';
 	const provider = get(providerStore);
-	const workstreams: Workstreams = get(workstreamsStore);
+	const workstreams: Workstream[] = get(workstreamsStore);
 
 	let connectedAddress = provider.connected && provider.accounts[0];
 	let myOpenApplications = [];
 	let myRejectedApplications = [];
 
 	export const load = async (): Promise<{ props: { myOpenApplications: Application[] } }> => {
-		workstreams.map((workstream) => {
-			workstream.applications.map((application) => {
-				if (
-					application.creator.toLowerCase() === connectedAddress &&
-					application.state !== 'rejected'
-				) {
-					return (myOpenApplications = [application, ...myOpenApplications]);
-				} else if (
-					application.creator.toLowerCase() === connectedAddress &&
-					application.state === 'rejected'
-				) {
-					return (myRejectedApplications = [application, ...myRejectedApplications]);
-				}
-			});
-		});
+		// workstreams.map((workstream) => {
+		// 	workstream.applications.map((application) => {
+		// 		if (
+		// 			application.creator.toLowerCase() === connectedAddress &&
+		// 			application.state !== 'rejected'
+		// 		) {
+		// 			return (myOpenApplications = [application, ...myOpenApplications]);
+		// 		} else if (
+		// 			application.creator.toLowerCase() === connectedAddress &&
+		// 			application.state === 'rejected'
+		// 		) {
+		// 			return (myRejectedApplications = [application, ...myRejectedApplications]);
+		// 		}
+		// 	});
+		// });
 
 		return { props: { myOpenApplications } };
 	};

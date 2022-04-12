@@ -2,13 +2,13 @@
 	import { goto } from '$app/navigation';
 	import User from '$components/User.svelte';
 	import Tag from '$components/Tag.svelte';
-	import { timeframeFormat, startDateFormat, hyphanateString } from '$lib/utils/format';
-	import type { Workstream } from '$lib/types';
+	import { timeframeFormat, startDateFormat, hyphenateString } from '$lib/utils/format';
+	import type { Workstream } from '$lib/stores/types';
 
 	export let data: Workstream;
 </script>
 
-<div on:click={() => goto(`/${hyphanateString(data.title)}`)} class="card">
+<div on:click={() => goto(`/workstreams/${hyphenateString(data.id)}`)} class="card">
 	<div class="top">
 		<div class="title">
 			<h4 style="margin-right: 0.75rem;" class="typo-overflow-ellipsis">{data.title}</h4>
@@ -21,10 +21,8 @@
 		<p class="desc">{data.desc}</p>
 	</div>
 	<div class="bottom">
-		{#if data.type === 'grant'}
-			<p class="timeframe">{timeframeFormat(data.starting_at, data.ending_at)}</p>
-		{:else if data.type === 'role'}
-			<p class="timeframe">Start {startDateFormat(data.starting_at)}</p>
+		{#if data.type === 'grant' && data.length}
+			<p class="timeframe">{timeframeFormat(data.length)}</p>
 		{/if}
 		<p class="typo-text-bold rate">
 			{Math.floor(data.payment_rate * 60 * 60 * 24)}

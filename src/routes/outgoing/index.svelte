@@ -2,11 +2,11 @@
 	import { get } from 'svelte/store';
 
 	import { providerStore } from 'web3-stores';
-	import { workstreamsStore } from '$lib/stores/workstreams';
-	import type { Application, Workstreams } from '$lib/types';
+	import workstreamsStore from '$lib/stores/workstreams';
+	import type { Application, Workstream } from '$lib/stores/types';
 
 	const provider = get(providerStore);
-	const streams: Workstreams = get(workstreamsStore);
+	const streams: Workstream[] = get(workstreamsStore);
 
 	let connectedAddress = provider.connected && provider.accounts[0];
 
@@ -15,16 +15,16 @@
 
 	// TODO Pass param address.
 	export const load = async (): Promise<{
-		props: { myWorkstreams: Workstreams; pendingApplications: Application[] };
+		props: { myWorkstreams: Workstream[]; pendingApplications: Application[] };
 	}> => {
 		streams.map((workstream) => {
 			if (connectedAddress === workstream.creator.toLowerCase()) {
 				myWorkstreams = [workstream, ...myWorkstreams];
-				workstream.applications.map((application) => {
-					if (application.state === 'pending') {
-						pendingApplications = [application, ...pendingApplications];
-					}
-				});
+				// workstream.applications.map((application) => {
+				// 	if (application.state === 'pending') {
+				// 		pendingApplications = [application, ...pendingApplications];
+				// 	}
+				// });
 			}
 		});
 

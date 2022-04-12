@@ -4,8 +4,7 @@
 	import Tag from '$components/Tag.svelte';
 	import Input from '$components/Input.svelte';
 	import Markdown from '$components/Markdown.svelte';
-	import ApplicationRow from '$components/ApplicationRow.svelte';
-	import type { Workstream } from '$lib/types';
+	import type { Workstream } from '$lib/stores/types';
 
 	export let workstream: Workstream;
 
@@ -24,15 +23,10 @@
 			<span class="label" style="margin-left: 0.5rem;">on {dateFormat(workstream.created_at)}</span>
 		</div>
 		<div class="timerate">
-			{#if workstream.type === 'grant'}
-				<div>
-					<span class="label">Role start date</span>
-					<p class="timeframe">{timeframeFormat(workstream.starting_at, workstream.ending_at)}</p>
-				</div>
-			{:else if workstream.type === 'role'}
+			{#if workstream.type === 'grant' && workstream.length}
 				<div>
 					<span class="label">Grant duration</span>
-					<p class="timeframe">Start {startDateFormat(workstream.starting_at)}</p>
+					<p class="timeframe">{timeframeFormat(workstream.length)}</p>
 				</div>
 			{/if}
 			<div style="text-align: right;">
@@ -51,16 +45,6 @@
 		</div>
 	</div>
 	<hr />
-	{#if workstream.applications}
-		<div class="applications">
-			<h4>Pending applications</h4>
-			<div>
-				{#each workstream.applications as application}
-					<ApplicationRow {application} />
-				{/each}
-			</div>
-		</div>
-	{/if}
 	<div class="application-form">
 		<User address="0x1c4fB2BF4967A9AEe0081E174a7D38b356029a84" style="margin: 2rem 0 1rem;" />
 		<Input
@@ -117,12 +101,7 @@
 	hr {
 		border-bottom: 1px solid var(--color-pink);
 	}
-	.applications {
-		margin-top: 1.5rem;
-	}
-	.applications h4 {
-		margin-bottom: 1rem;
-	}
+
 	.application-form {
 		display: flex;
 		flex-direction: column;

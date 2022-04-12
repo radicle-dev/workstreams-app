@@ -1,10 +1,24 @@
 <script context="module" lang="ts">
-	export const prerender = true;
+    /** @type {import('./[slug]').Load} */
+	export async function load({ fetch }) {
+        console.log('LOAD');
+        const url = `https://us-central1-radicle-workstreams.cloudfunctions.net/api/workstreams`;
+        const response = await fetch(url);
+
+        return {
+            status: response.status,
+            props: {
+                workstreams: response.ok && (await response.json())
+            }
+        };
+    }
 </script>
 
 <script lang="ts">
-	import { workstreamsStore } from '$lib/stores/workstreams';
-	import WorkstreamCard from '$components/WorkstreamCard.svelte';
+import WorkstreamCard from '$components/WorkstreamCard.svelte';
+import type { Workstream } from '$lib/stores/types';
+
+export let workstreams: Workstream[] = [];
 </script>
 
 <svelte:head>
@@ -12,7 +26,7 @@
 </svelte:head>
 
 <div class="overview">
-	{#each $workstreamsStore as workstream}
+	{#each workstreams as workstream}
 		<WorkstreamCard data={workstream} />
 	{/each}
 </div>

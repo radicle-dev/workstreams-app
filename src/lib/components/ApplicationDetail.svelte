@@ -1,23 +1,18 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { providerStore } from 'web3-stores';
-	import { workstreamsStore } from '$lib/stores/workstreams';
+	import workstreamsStore from '$lib/stores/workstreams';
 
-	import type { Application } from '$lib/types';
+	import type { Application, Workstream } from '$lib/stores/types';
 
 	import Modal from '$components/Modal.svelte';
 	import User from '$components/User.svelte';
 
 	export let application: Application;
-	let workstream;
+	let workstream: Workstream;
 
-	function getWorkstream() {
-		return (workstream = $workstreamsStore.find(
-			(workstream) => workstream.id === application.workstream_id
-		));
-	}
-	onMount(() => {
-		getWorkstream();
+	onMount(async () => {
+		workstream = await workstreamsStore.fetchOne(application.workstream_id);
 	});
 
 	$: isCreator =

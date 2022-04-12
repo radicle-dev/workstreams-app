@@ -3,7 +3,7 @@
 	import User from '$components/User.svelte';
 	import Tag from '$components/Tag.svelte';
 	import ApplicationDetail from '$components/ApplicationDetail.svelte';
-	import type { Application } from '$lib/types';
+	import type { Application } from '$lib/stores/types';
 
 	export let owner = false;
 	export let application: Application;
