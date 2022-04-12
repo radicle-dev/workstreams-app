@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { providerStore } from 'web3-stores';
-	import workstreamsStore from '$lib/stores/workstreams';
+	import workstreamsStore from '$lib/stores/workstreams/workstreams';
 
-	import type { Application, Workstream } from '$lib/stores/types';
+	import type { Application, Workstream } from '$lib/stores/workstreams/types';
 
 	import Modal from '$components/Modal.svelte';
 	import User from '$components/User.svelte';

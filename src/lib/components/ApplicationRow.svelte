@@ -3,7 +3,7 @@
 	import User from '$components/User.svelte';
 	import Tag from '$components/Tag.svelte';
 	import ApplicationDetail from '$components/ApplicationDetail.svelte';
-	import type { Application } from '$lib/stores/types';
+	import type { Application } from '$lib/stores/workstreams/types';
 
 	export let owner = false;
 	export let application: Application;
@@ -22,7 +22,7 @@
 <div on:click={() => modal.toggle(ApplicationDetail, () => null, { application })} class="row">
 	<User address={application.creator} showAddress={!owner} />
 	<p class="desc typo-overflow-ellipsis">{application.desc}</p>
-	<Tag color={tagColor(application.state)}>{application.state}</Tag>
+	<Tag>{application.state}</Tag>
 </div>
 
 <style>
@@ -30,15 +30,15 @@
 		display: flex;
 		flex-direction: row;
 		padding: 1.5rem;
-		border-left: 1px solid var(--color-blue-dark);
-		border-right: 1px solid var(--color-blue-dark);
-		border-top: 1px solid var(--color-blue-dark);
+		border-left: 1px solid var(--color-primary-level-1);
+		border-right: 1px solid var(--color-primary-level-1);
+		border-top: 1px solid var(--color-primary-level-1);
 		cursor: pointer;
 		justify-content: space-between;
 		gap: 1rem;
 	}
 	.row:hover {
-		box-shadow: 0 0 1rem var(--color-blue-dark);
+		box-shadow: 0 0 1rem var(--color-primary-level-1);
 	}
 	.row:first-child {
 		border-top-left-radius: 0.25rem;
@@ -47,7 +47,7 @@
 	.row:last-child {
 		border-bottom-left-radius: 0.25rem;
 		border-bottom-right-radius: 0.25rem;
-		border-bottom: 1px solid var(--color-blue-dark);
+		border-bottom: 1px solid var(--color-primary-level-1);
 	}
 	.desc {
 		width: -moz-available;

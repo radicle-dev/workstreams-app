@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import type { Workstream } from '$lib/stores/types';
+	import type { Workstream } from '$lib/stores/workstreams/types';
 
     /** @type {import('./[slug]').Load} */
 	export async function load({ params, fetch }) {

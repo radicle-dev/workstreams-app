@@ -40,27 +40,30 @@
 	.segmented-control {
 		display: flex;
 		width: fit-content;
-		height: 2.5rem;
+		max-height: 2.5rem;
 		overflow: hidden;
 	}
 	button {
+		min-height: 2.5rem;
+		line-height: 1.375rem;
+		border-radius: 0.5rem;
 		cursor: pointer;
 		padding: 0 0.75rem;
-		max-height: 1.875rem;
-		margin: 0.25rem;
+		margin: 0 0.25rem;
 		border: none;
 		background-color: var(--color-background);
-		color: var(--color-grey-dark);
+		color: var(--color-foreground-level-5);
 	}
 	button:focus {
 		outline: none;
 	}
 	button:hover,
 	button:active {
-		background-color: var(--color-grey);
+		color: var(--color-foreground);
+		background-color: var(--color-foreground-level-2);
 	}
 	button.active {
-		background-color: var(--color-blue);
-		color: var(--color-background);
+		color: var(--color-foreground);
+		background-color: var(--color-foreground-level-2);
 	}
 </style>

@@ -42,7 +42,7 @@
 	}
 	.label {
 		align-self: flex-start;
-		color: var(--color-grey-darker);
+		color: var(--color-foreground-level-5);
 		margin-bottom: 0.5rem;
 	}
 	.input-box {
@@ -50,7 +50,7 @@
 	}
 	.currency {
 		position: absolute;
-		color: var(--color-teal);
+		color: var(--color-primary);
 		right: 1rem;
 		top: 0.75rem;
 	}
@@ -58,22 +58,22 @@
 	textarea {
 		position: block;
 		background-color: var(--color-background);
-		border: 1px solid var(--color-grey-darker);
+		border: 1px solid var(--color-foreground-level-5);
 		padding: 0.6875rem 0.75rem;
 		border-radius: 0.5rem;
-		color: var(--color-white);
+		color: var(--color-foreground);
 	}
 	textarea {
 		resize: vertical;
 	}
 	input::placeholder,
 	textarea::placeholder {
-		color: var(--color-grey-darker);
+		color: var(--color-foreground-level-5);
 	}
 	input:focus,
 	textarea:focus {
 		outline: none !important;
-		border-color: var(--color-blue);
-		box-shadow: 0 0 0.5rem var(--color-blue-dark);
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0.5rem var(--color-primary-level-1);
 	}
 </style>

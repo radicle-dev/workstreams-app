@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	import { get } from 'svelte/store';
-	import workstreamsStore from '$lib/stores/workstreams';
-	import type { Application, Workstream } from '$lib/stores/types';
+	import workstreamsStore from '$lib/stores/workstreams/workstreams';
+	import type { Application, Workstream } from '$lib/stores/workstreams/types';
 	import { providerStore } from 'web3-stores';
 	const provider = get(providerStore);
 	const workstreams: Workstream[] = get(workstreamsStore);

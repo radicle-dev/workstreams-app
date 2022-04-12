@@ -38,13 +38,13 @@
 		margin: 1rem 0;
 	}
 	p {
-		color: var(--color-teal);
+		color: var(--color-primary);
 	}
 	p:first-of-type {
 		margin-bottom: 2rem;
 	}
 	.inputs {
-		background-color: var(--color-teal-darker);
+		background-color: var(--color-primary-level-6);
 		padding: 1.5rem;
 		text-align: left;
 		border-radius: 1rem;
