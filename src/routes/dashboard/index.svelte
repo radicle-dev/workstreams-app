@@ -2,7 +2,7 @@
 	import { walletStore } from '$lib/stores/wallet/wallet';
 	import type { Workstream } from '$lib/stores/workstreams/types';
 	import * as modal from '$lib/utils/modal';
-	import Create from '$components/Create/index.svelte';
+	import Create from '$components/CreateModal.svelte';
 
 	const workstreams: Workstream[] = [];
 	let connectedAddress = $walletStore.initialized && $walletStore.address;

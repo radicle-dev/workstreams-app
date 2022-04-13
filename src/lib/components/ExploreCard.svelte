@@ -33,6 +33,6 @@
 		display: flex;
 		flex: 1;
 		justify-content: space-between;
-		align-items: flex-;
+		align-items: flex-end;
 	}
 </style>
