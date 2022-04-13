@@ -112,7 +112,7 @@ export const walletStore = (() => {
         provider,
         signer: provider.getSigner(),
       }))
-      .catch(() => console.log("Error while connecting to wallet"));
+      .catch(() => console.error("Error while connecting to wallet"));
 
     return current;
   }
@@ -126,8 +126,6 @@ export const walletStore = (() => {
 
   function authenticate(walletData: WalletData): WalletData {
     if (!walletData.initialized) throw new Error("Initialize Wallet first");
-
-    console.log(walletData.address);
 
     (async () => {
       const message = await createSiweMessage(
