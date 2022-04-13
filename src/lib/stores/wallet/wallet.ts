@@ -1,6 +1,8 @@
 import { browser } from '$app/env';
+import { getConfig } from '$lib/config';
 import { ethers, Signer } from 'ethers';
 import { SiweMessage } from 'siwe';
+
 import { writable } from 'svelte/store';
 
 type WalletData = {
@@ -16,10 +18,10 @@ type WalletData = {
   authenticated?: boolean;
 }
 
-const BACKEND_URL_BASE = 'http://127.0.0.1:5001/radicle-workstreams/us-central1/api';
+const BACKEND_URL_BASE = getConfig().API_URL_BASE;
 
 async function createSiweMessage(address: string, statement: string) {
-  const res = await fetch(`${BACKEND_URL_BASE}/nonce`, { credentials: 'include' });
+  const res = await fetch(`${BACKEND_URL_BASE}/nonce`, { credentials: "include" });
 
   const nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate() + 7);

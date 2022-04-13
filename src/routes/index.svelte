@@ -1,7 +1,9 @@
 <script context="module" lang="ts">
+    import { getConfig } from "$lib/config";
+
     /** @type {import('./[slug]').Load} */
 	export async function load({ fetch }) {
-        const url = `http://127.0.0.1:5001/radicle-workstreams/us-central1/api/workstreams`;
+        const url = `${getConfig().API_URL_BASE}/workstreams`;
         const response = await fetch(url);
 
         return {
