@@ -3,8 +3,7 @@
 
     /** @type {import('./[slug]').Load} */
 	export async function load({ params, fetch }) {
-        console.log('FETCHING', `https://us-central1-radicle-workstreams.cloudfunctions.net/api/workstreams/${params.id}`);
-		const url = `https://us-central1-radicle-workstreams.cloudfunctions.net/api/workstreams/${params.id}`;
+		const url = `http://127.0.0.1:5001/radicle-workstreams/us-central1/api/workstreams/${params.id}`;
         const response = await fetch(url);
 
 		return {

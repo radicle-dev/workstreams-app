@@ -1,5 +1,5 @@
 import { browser } from '$app/env';
-import { ethers, providers, Signer, Wallet } from 'ethers';
+import { ethers, Signer } from 'ethers';
 import { SiweMessage } from 'siwe';
 import { writable } from 'svelte/store';
 
@@ -16,7 +16,7 @@ type WalletData = {
   authenticated?: boolean;
 }
 
-const BACKEND_URL_BASE = 'https://us-central1-radicle-workstreams.cloudfunctions.net/api';
+const BACKEND_URL_BASE = 'http://127.0.0.1:5001/radicle-workstreams/us-central1/api';
 
 async function createSiweMessage(address: string, statement: string) {
   const res = await fetch(`${BACKEND_URL_BASE}/nonce`, { credentials: 'include' });
