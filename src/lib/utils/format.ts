@@ -1,4 +1,4 @@
-import type { Timestamp } from '$lib/stores/types';
+import type { Timestamp } from '$lib/stores/workstreams/types';
 import { ethers } from 'ethers';
 
 export function formatAddress(input: string): string {
@@ -7,6 +7,7 @@ export function formatAddress(input: string): string {
 }
 
 export function timeframeFormat(duration: number): string {
+	console.log(duration);
 	const weeks = Math.floor(duration / 604800);
 
 	if (weeks < 1) {

@@ -19,10 +19,10 @@
 	</div>
 	<div slot="bottom" class="spread">
 		<div>
-			{#if workstream.type === 'grant'}
-				<Timeframe duration={workstream.length} />
+			{#if workstream.type === 'grant' && workstream.duration}
+				<Timeframe duration={workstream.duration} />
 			{/if}
-			<Rate rate={workstream.payment_rate} currency={workstream.payment_currency} />
+			<Rate rate={workstream.payment.rate} currency={workstream.payment.currency} />
 		</div>
 		<Button variant="outline"><Apply />Apply</Button>
 	</div>

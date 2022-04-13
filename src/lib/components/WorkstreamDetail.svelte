@@ -20,15 +20,15 @@
 			<span class="label" style="margin-left: 0.5rem;">on {dateFormat(workstream.created_at)}</span>
 		</div>
 		<div class="timerate">
-			{#if workstream.type === 'grant'}
+			{#if workstream.type === 'grant' && workstream.duration}
 				<div>
-					<p class="timeframe">{timeframeFormat(workstream.length)}</p>
+					<p class="timeframe">{timeframeFormat(workstream.duration)}</p>
 				</div>
 			{/if}
 			<div style="text-align: right;">
 				<p class="typo-text-bold rate">
-					{Math.floor(workstream.payment_rate * 60 * 60 * 24)}
-					{workstream.payment_currency} <span class="typo-regular">/ day</span>
+					{Math.floor(workstream.payment.rate * 24)}
+					{workstream.payment.currency} <span class="typo-regular">/ day</span>
 				</p>
 			</div>
 		</div>

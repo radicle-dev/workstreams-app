@@ -1,14 +1,11 @@
 <script lang="ts">
-	import { get } from 'svelte/store';
-	import { providerStore } from 'web3-stores';
-	import workstreamsStore from '$lib/stores/workstreams/workstreams';
+	import { walletStore } from '$lib/stores/wallet/wallet';
 	import type { Workstream } from '$lib/stores/workstreams/types';
 	import * as modal from '$lib/utils/modal';
 	import Create from '$components/Create/index.svelte';
 
-	const provider = get(providerStore);
-	const workstreams: Workstream[] = get(workstreamsStore);
-	let connectedAddress = provider.connected && provider.accounts[0];
+	const workstreams: Workstream[] = [];
+	let connectedAddress = $walletStore.initialized && $walletStore.address;
 
 	import SegmentedControl from '$components/SegmentedControl.svelte';
 	import Button from '$components/Button.svelte';
@@ -47,7 +44,7 @@
 		<Button on:click={() => modal.show(Create)}><TokenStreamsIcon />Create workstream</Button>
 	</header>
 	<main>
-		{#each $workstreamsStore as workstream}
+		{#each workstreams as workstream}
 			<WorkstreamCard {workstream} />
 		{/each}
 	</main>

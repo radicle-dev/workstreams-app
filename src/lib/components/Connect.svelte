@@ -1,20 +1,26 @@
 <script lang="ts">
-	import { providerStore } from 'web3-stores';
 	import { formatAddress } from '$lib/utils/format';
+	import { walletStore } from '$lib/stores/wallet/wallet';
 	import Button from '$components/Button.svelte';
 
-	$: label = $providerStore.connected && formatAddress($providerStore.accounts[0]);
+	$: label = $walletStore.initialized && formatAddress($walletStore.address);
+
+	$: {
+		if ($walletStore.initialized && !$walletStore.authenticated) {
+			walletStore.authenticate();
+		}
+	}
 </script>
 
-{#if $providerStore.connected}
+{#if $walletStore.initialized}
 	<Button
 		variant="outline"
-		on:click={() => providerStore.disconnect()}
+		on:click={() => walletStore.disconnect()}
 		on:blur={() => console.log('blur')}
 		on:focus={() => console.log('focus')}
-		on:mouseout={() => (label = formatAddress($providerStore.accounts[0]))}
+		on:mouseout={() => (label = formatAddress($walletStore.initialized && $walletStore.address))}
 		on:mouseover={() => (label = 'disconnect')}>{label}</Button
 	>
 {:else}
-	<Button on:click={() => providerStore.connect()} variant="outline">connect</Button>
+	<Button on:click={() => walletStore.connect()} variant="outline">connect</Button>
 {/if}

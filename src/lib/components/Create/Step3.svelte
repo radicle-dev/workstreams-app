@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { providerStore } from 'web3-stores';
+	import { walletStore } from '$lib/stores/wallet/wallet';
 	import * as modal from '$lib/utils/modal';
 	import Spinner from '$components/Spinner.svelte';
 </script>
 
 <span class="emoji">👔</span>
 <h3>Create a work stream</h3>
-{#if !$providerStore.connected}
+{#if !$walletStore.initialized}
 	<p>Please sign in your connected wallet</p>
 {/if}
 <Spinner style="display: flex;justify-content: center;" />

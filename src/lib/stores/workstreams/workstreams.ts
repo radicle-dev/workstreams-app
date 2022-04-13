@@ -1,12 +1,10 @@
 import { writable } from 'svelte/store';
 import type { Workstream } from '$lib/stores/workstreams/types';
 
-function createStore() {
+export const workstreamsStore = (() => {
 	const store = writable<Workstream[]>([]);
 
 	return {
 		...store,
 	}
-}
-
-export default createStore();
+})();
