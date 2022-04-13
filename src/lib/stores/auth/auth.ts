@@ -6,8 +6,9 @@ import { get, writable } from "svelte/store";
 import type { WalletData } from "../wallet/wallet";
 
 interface AuthData {
-  expiresAt: string | null;
+  expiresAt?: string;
   authenticated: boolean;
+  address?: string;
 }
 
 const BACKEND_URL_BASE = getConfig().API_URL_BASE;
@@ -87,6 +88,7 @@ export const authStore = (() => {
       set({
         expiresAt: message.expirationTime,
         authenticated: true,
+        address: walletData.address,
       });
     }
 

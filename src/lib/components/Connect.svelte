@@ -6,28 +6,27 @@
 
 	$: label = $walletStore.connected && formatAddress($walletStore.address);
 
+	$: connectedAndLoggedIn =
+		$walletStore.connected &&
+		$authStore.authenticated &&
+		$walletStore.address === $authStore.address;
+
 	let locked: boolean;
 
 	async function logIn() {
 		locked = true;
 		try {
 			if (!$walletStore.connected) await walletStore.connect();
-			if (!$authStore.authenticated) await authStore.authenticate($walletStore);
+			if (!connectedAndLoggedIn)
+				await authStore.authenticate($walletStore);
 		} catch {}
 		locked = false;
 	}
 </script>
 
-{#if $walletStore.connected && $authStore.authenticated}
-	<Button
-		variant="outline"
-		on:click={() => walletStore.disconnect()}
-		on:blur={() => console.log('blur')}
-		on:focus={() => console.log('focus')}
-		on:mouseout={() => (label = formatAddress($walletStore.connected && $walletStore.address))}
-		on:mouseover={() => (label = 'disconnect')}>{label}</Button
-	>
-{:else if locked }
+{#if connectedAndLoggedIn}
+	<Button variant="outline" on:click={() => walletStore.disconnect()}>{label}</Button>
+{:else if locked}
 	<Button disabled variant="outline">. . .</Button>
 {:else}
 	<Button on:click={() => logIn()} variant="outline">Log in</Button>

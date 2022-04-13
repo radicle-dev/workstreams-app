@@ -60,7 +60,10 @@ export const walletStore = (() => {
       connecting: true,
     });
 
-    const accounts = await provider.send('eth_requestAccounts', [])
+    await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{
+      eth_accounts: {}
+    }]});
+    const accounts = await provider.send('eth_requestAccounts', []);
 
     set({
       connected: true,
