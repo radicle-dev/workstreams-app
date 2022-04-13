@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import {  hyphenateString } from '$lib/utils/format';
+	import { hyphenateString } from '$lib/utils/format';
 	import type { Workstream } from '$lib/stores/workstreams/types';
 
 	import Card from '$components/Card.svelte';
@@ -19,9 +19,9 @@
 	</div>
 	<div slot="bottom" class="content">
 		<div class="spread">
-			<Rate rate={workstream.payment_rate} currency={workstream.payment_currency} />
+			<Rate rate={workstream.payment.rate} currency={workstream.payment.currency} />
 			{#if workstream.type === 'grant'}
-				<Timeframe duration={workstream.length} />
+				<Timeframe duration={workstream.duration} />
 			{/if}
 		</div>
 		<Button

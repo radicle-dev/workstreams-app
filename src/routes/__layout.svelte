@@ -1,28 +1,43 @@
+<script context="module">
+  export const load = async ({ url }) => ({ props: { url } });
+</script>
+
 <script lang="ts">
+	import { navigating } from '$app/stores';
 	import Header from '$components/Header.svelte';
 	import ModalLayout from '$components/ModalLayout.svelte';
+	import FlyTransition from '$lib/components/FlyTransition.svelte';
 	import '../app.css';
+
+	export let url;
 </script>
 
 <ModalLayout />
-<article>
+<div class="wrapper" class:loading={$navigating}>
 	<Header />
 	<main>
-		<slot />
+		<FlyTransition {url}>
+			<slot />
+		</FlyTransition>
 	</main>
 
 	<footer>
 		<p>by radicle 🌱</p>
 	</footer>
-</article>
+</div>
 
 <style>
-	article {
+	.wrapper {
 		height: 100vh;
 		max-width: 90rem;
 		min-width: 40rem;
 		margin: 0 auto;
 		padding: 1.5rem;
+		transition: opacity .3s;
+	}
+
+	.wrapper.loading {
+		opacity: .3;
 	}
 	main {
 		display: flex;

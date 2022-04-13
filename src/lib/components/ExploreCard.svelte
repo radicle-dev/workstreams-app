@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, prefetch } from '$app/navigation';
 	import { hyphenateString } from '$lib/utils/format';
 	import type { Workstream } from '$lib/stores/workstreams/types';
 
@@ -11,9 +11,14 @@
 	import Timeframe from '$components/Timeframe.svelte';
 
 	export let workstream: Workstream;
+
+	$: url = `/workstreams/${hyphenateString(workstream.id)}`;
 </script>
 
-<Card on:CardClick={() => goto(`/workstreams/${hyphenateString(workstream.id)}`)}>
+<Card
+	on:click={() => goto(url)}
+	on:hover={() => prefetch(url)}
+>
 	<div slot="top">
 		<TitleMeta title={workstream.title} type={workstream.type} creator={workstream.creator} />
 	</div>
@@ -34,5 +39,9 @@
 		flex: 1;
 		justify-content: space-between;
 		align-items: flex-;
+	}
+
+	a {
+		all: unset;
 	}
 </style>

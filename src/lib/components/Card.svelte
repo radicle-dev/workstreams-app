@@ -3,7 +3,12 @@
 	const dispatch = createEventDispatcher();
 </script>
 
-<div on:click={() => dispatch('CardClick')} class="card">
+<div
+	on:click={() => dispatch('click')}
+	on:focus={() => dispatch('hover')}
+	on:mouseover={() => dispatch('hover')}
+	class="card"
+>
 	<div class="top">
 		<slot name="top" />
 	</div>
