@@ -8,9 +8,9 @@
 	import WorkstreamCard from '$components/WorkstreamCard.svelte';
 	import { getConfig } from '$lib/config';
 	import { walletStore } from '$lib/stores/wallet/wallet';
-import { authStore } from '$lib/stores/auth/auth';
-import { goto } from '$app/navigation';
-import { browser } from '$app/env';
+	import { authStore } from '$lib/stores/auth/auth';
+	import { goto } from '$app/navigation';
+	import { browser } from '$app/env';
 
 	let workstreams: Workstream[] = [];
 
@@ -45,7 +45,7 @@ import { browser } from '$app/env';
 	}
 
 	$: {
-		if (browser && !$authStore.authenticated) goto("/");
+		if (browser && !$authStore.authenticated) goto('/');
 	}
 
 	let applicationFilter = 'all';

@@ -49,7 +49,7 @@ export const authStore = (() => {
 	const { update, set, subscribe } = writable<AuthData>({
 		expiresAt: null,
 		authenticated: false,
-		address: null,
+		address: null
 	});
 
 	if (browser) {
@@ -95,8 +95,8 @@ export const authStore = (() => {
 		set({
 			expiresAt: null,
 			authenticated: false,
-			address: null,
-		})
+			address: null
+		});
 	}
 
 	return {
@@ -104,6 +104,6 @@ export const authStore = (() => {
 		set,
 		subscribe,
 		authenticate,
-		clear,
+		clear
 	};
 })();
