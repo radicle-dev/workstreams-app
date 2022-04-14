@@ -27,7 +27,7 @@
 			{/if}
 			<div style="text-align: right;">
 				<p class="typo-text-bold rate">
-					{Math.floor(workstream.payment.rate * 24)}
+					{Math.floor(workstream.payment.rate)}
 					{workstream.payment.currency} <span class="typo-regular">/ day</span>
 				</p>
 			</div>

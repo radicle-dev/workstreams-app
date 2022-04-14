@@ -6,11 +6,11 @@ export function formatAddress(input: string): string {
 	return addr.substring(0, 4) + ' – ' + addr.substring(addr.length - 4, addr.length);
 }
 
-export function timeframeFormat(duration: number): string {
-	const weeks = Math.floor(duration / 604800);
+export function timeframeFormat(days: number): string {
+	const weeks = Math.floor(days / 7);
 
 	if (weeks < 1) {
-		return `${Math.floor(duration / 86400)} days`;
+		return `${days} days`;
 	} else {
 		return `${weeks} weeks`;
 	}

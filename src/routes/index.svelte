@@ -4,7 +4,7 @@
 	/** @type {import('./[slug]').Load} */
 	export async function load({ fetch }) {
 		const url = `${getConfig().API_URL_BASE}/workstreams`;
-		const response = await fetch(url);
+		const response = await fetch(url, { credentials: 'include' });
 
 		return {
 			status: response.status,

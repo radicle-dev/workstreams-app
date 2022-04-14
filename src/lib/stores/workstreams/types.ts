@@ -24,7 +24,7 @@ export interface WorkstreamBase {
 	state: WorkstreamState;
 	creator: string;
 	created_at: Timestamp;
-	payment?: Payment;
+	payment: Payment;
 	title: string;
 	desc: string;
 }
@@ -44,6 +44,8 @@ export interface Role extends WorkstreamBase {
 }
 
 export type Workstream = Grant | Role;
+
+export type WorkstreamInput = Omit<Workstream, 'id' | 'state' | 'creator' | 'created_at'>;
 
 export enum ApplicationState {
 	WAITING = 'waiting',

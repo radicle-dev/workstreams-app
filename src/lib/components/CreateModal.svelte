@@ -3,25 +3,70 @@
 	import Modal from '$components/Modal.svelte';
 	import Button from '$components/Button.svelte';
 	import Dropdown from './Dropdown.svelte';
+	import { WorkstreamInput, WorkstreamType } from '$lib/stores/workstreams/types';
+	import { getConfig } from '$lib/config';
 
-	let type = 'grant';
+	let type = WorkstreamType.GRANT;
 	let title: string;
 	let total: number;
 	let rate: number;
 	let desc: string;
 	let durationAmount: number;
-	let durationInterval: string;
-	let duration: number | undefined = durationAmount * parseInt(durationInterval);
+	let creatingWorkstream = false;
 
-	const options = [
-		{ value: '86400', title: 'days' },
-		{ value: '604800', title: 'weeks' },
-		{ value: '2628000000', title: 'months' },
-		{ value: '31540000000', title: 'years' }
+	const durationOptions = [
+		{ value: '1', title: 'days' },
+		{ value: '7', title: 'weeks' },
+		{ value: '30', title: 'months' },
+		{ value: '365', title: 'years' }
 	];
 
+	let durationInterval = durationOptions[0].value;
+
 	$: disabled =
-		title === undefined || rate === undefined || desc === undefined || duration === undefined;
+		title === undefined || rate === undefined || desc === undefined || creatingWorkstream
+
+	$: {
+		if (type === WorkstreamType.ROLE) {
+			durationAmount = 1;
+			durationInterval = durationOptions[3].value;
+		}
+	}
+
+	$: {
+		if (
+			durationAmount
+			&& durationInterval
+			&& total
+		) {
+			rate = total / (durationAmount * parseInt(durationInterval));
+		}
+	}
+
+	async function createWorkstream() {
+		creatingWorkstream = true;
+
+		try {
+			await fetch(`${getConfig().API_URL_BASE}/workstreams`, {
+				method: "POST",
+				credentials: 'include',
+				body: JSON.stringify({
+					payment: {
+						currency: 'dai',
+						rate: rate,
+					},
+					title,
+					desc,
+					type,
+					duration: durationAmount * parseInt(durationInterval),
+				} as WorkstreamInput)
+			});
+		} catch (e) {
+			creatingWorkstream = false;
+			return;
+		}
+		modal.hide();
+	}
 </script>
 
 <Modal>
@@ -80,14 +125,14 @@
 					<Dropdown
 						disabled={type === 'role'}
 						bind:value={durationInterval}
-						{options}
-						placeholder={type === 'role' ? options[3].title : options[0].title}
+						options={durationOptions}
+						placeholder={type === 'role' ? durationOptions[3].title : durationOptions[0].title}
 					/>
 				</div>
 			</div>
 			<span class="meta-calc typo-text-bold">=</span>
 			<div class="input-w-label">
-				<span class="label typo-text-bold" class:disabled={type === 'grant'}>Stream rate</span>
+				<span class="label typo-text-bold disabled">Stream rate</span>
 				<div>
 					<input
 						class="stream-rate"
@@ -97,9 +142,9 @@
 						bind:value={rate}
 						name="stream-rate"
 						id="stream-rate"
-						disabled={type === 'grant'}
+						disabled
 					/>
-					<span class="typo-text-bold" class:disabled={type === 'grant'}>DAI / 24h</span>
+					<span class="typo-text-bold disabled">DAI / 24h</span>
 				</div>
 			</div>
 		</div>
@@ -109,7 +154,7 @@
 		</div>
 		<div class="actions">
 			<Button variant="transparent" on:click={() => modal.hide()}>Close</Button>
-			<Button {disabled} on:click={() => {}}>Create</Button>
+			<Button {disabled} on:click={createWorkstream}>Create</Button>
 		</div>
 	</div>
 </Modal>

@@ -1,16 +1,15 @@
 <script lang="ts">
-	import { walletStore } from '$lib/stores/wallet/wallet';
 	import type { Workstream } from '$lib/stores/workstreams/types';
 	import * as modal from '$lib/utils/modal';
 	import Create from '$components/CreateModal.svelte';
-
-	const workstreams: Workstream[] = [];
-	let connectedAddress = $walletStore.initialized && $walletStore.address;
-
 	import SegmentedControl from '$components/SegmentedControl.svelte';
 	import Button from '$components/Button.svelte';
 	import TokenStreamsIcon from '$components/icons/TokenStreams.svelte';
 	import WorkstreamCard from '$components/WorkstreamCard.svelte';
+	import { getConfig } from '$lib/config';
+	import { walletStore } from '$lib/stores/wallet/wallet';
+
+	let workstreams: Workstream[] = [];
 
 	const applicationOptions = [
 		{
@@ -26,6 +25,18 @@
 			value: 'grant'
 		}
 	];
+
+	$: {
+		if ($walletStore.connected) {
+			(async () => {
+				const result = await fetch(`${getConfig().API_URL_BASE}/workstreams?createdBy=${$walletStore.address}`, {
+					credentials: 'include',
+				});
+
+				workstreams = await result.json();
+			})();
+		};
+	}
 
 	let applicationFilter = 'all';
 </script>
