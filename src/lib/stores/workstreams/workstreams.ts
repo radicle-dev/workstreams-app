@@ -5,6 +5,6 @@ export const workstreamsStore = (() => {
 	const store = writable<Workstream[]>([]);
 
 	return {
-		...store,
-	}
+		...store
+	};
 })();

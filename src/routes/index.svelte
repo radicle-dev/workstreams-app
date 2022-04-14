@@ -1,25 +1,25 @@
 <script context="module" lang="ts">
-    import { getConfig } from "$lib/config";
+	import { getConfig } from '$lib/config';
 
-    /** @type {import('./[slug]').Load} */
+	/** @type {import('./[slug]').Load} */
 	export async function load({ fetch }) {
-        const url = `${getConfig().API_URL_BASE}/workstreams`;
-        const response = await fetch(url);
+		const url = `${getConfig().API_URL_BASE}/workstreams`;
+		const response = await fetch(url);
 
-        return {
-            status: response.status,
-            props: {
-                workstreams: response.ok && (await response.json())
-            }
-        };
-    }
+		return {
+			status: response.status,
+			props: {
+				workstreams: response.ok && (await response.json())
+			}
+		};
+	}
 </script>
 
 <script lang="ts">
-import ExploreCard from '$lib/components/ExploreCard.svelte';
-import type { Workstream } from '$lib/stores/workstreams/types';
+	import ExploreCard from '$lib/components/ExploreCard.svelte';
+	import type { Workstream } from '$lib/stores/workstreams/types';
 
-export let workstreams: Workstream[] = [];
+	export let workstreams: Workstream[] = [];
 </script>
 
 <svelte:head>

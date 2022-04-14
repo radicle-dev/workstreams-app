@@ -6,47 +6,47 @@
  LICENSE file.
 -->
 <script lang="ts" context="module">
-  import { writable } from "svelte/store";
+	import { writable } from 'svelte/store';
 
-  const current = writable<HTMLDivElement | undefined>(undefined);
+	const current = writable<HTMLDivElement | undefined>(undefined);
 
-  const open = (component: HTMLDivElement): void => {
-    current.set(component);
-  };
+	const open = (component: HTMLDivElement): void => {
+		current.set(component);
+	};
 
-  const close = (): void => {
-    current.set(undefined);
-  };
+	const close = (): void => {
+		current.set(undefined);
+	};
 </script>
 
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+	import { createEventDispatcher } from 'svelte';
 
-  export let expanded: boolean;
-  export let style: string | undefined = undefined;
+	export let expanded: boolean;
+	export let style: string | undefined = undefined;
 
-  let container: HTMLDivElement;
+	let container: HTMLDivElement;
 
-  const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher();
 
-  const handleClick = (ev: MouseEvent) => {
-    const component = $current;
-    const inside = component && component.contains(ev.target as HTMLDivElement);
-    if (!inside) {
-      close();
-    }
-  };
+	const handleClick = (ev: MouseEvent) => {
+		const component = $current;
+		const inside = component && component.contains(ev.target as HTMLDivElement);
+		if (!inside) {
+			close();
+		}
+	};
 
-  $: if (expanded) {
-    open(container);
-  }
-  $: if ($current !== container) {
-    dispatch("hide");
-  }
+	$: if (expanded) {
+		open(container);
+	}
+	$: if ($current !== container) {
+		dispatch('hide');
+	}
 </script>
 
 <svelte:window on:click={handleClick} />
 
 <div bind:this={container} {style}>
-  <slot />
+	<slot />
 </div>

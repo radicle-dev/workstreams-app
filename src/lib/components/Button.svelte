@@ -62,7 +62,7 @@
 		user-select: none;
 		line-height: 1.375rem;
 		gap: 0.5rem;
-		transition: all .2s;
+		transition: all 0.2s;
 	}
 
 	.button :global(svg) {

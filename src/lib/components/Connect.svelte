@@ -17,8 +17,7 @@
 		locked = true;
 		try {
 			if (!$walletStore.connected) await walletStore.connect();
-			if (!connectedAndLoggedIn)
-				await authStore.authenticate($walletStore);
+			if (!connectedAndLoggedIn) await authStore.authenticate($walletStore);
 		} finally {
 			locked = false;
 		}

@@ -15,10 +15,7 @@
 	$: url = `/explore/${hyphenateString(workstream.id)}`;
 </script>
 
-<Card
-	on:click={() => goto(url)}
-	on:hover={() => prefetch(url)}
->
+<Card on:click={() => goto(url)} on:hover={() => prefetch(url)}>
 	<div slot="top">
 		<TitleMeta title={workstream.title} type={workstream.type} creator={workstream.creator} />
 	</div>

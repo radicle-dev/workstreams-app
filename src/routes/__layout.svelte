@@ -1,5 +1,5 @@
 <script context="module">
-  export const load = async ({ url }) => ({ props: { url } });
+	export const load = async ({ url }) => ({ props: { url } });
 </script>
 
 <script lang="ts">
@@ -33,11 +33,11 @@
 		min-width: 40rem;
 		margin: 0 auto;
 		padding: 1.5rem;
-		transition: opacity .3s;
+		transition: opacity 0.3s;
 	}
 
 	.wrapper.loading {
-		opacity: .3;
+		opacity: 0.3;
 	}
 	main {
 		display: flex;

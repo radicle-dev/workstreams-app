@@ -12,10 +12,8 @@
 	<nav>
 		<div class="home">
 			<a sveltekit:prefetch href="/" class:active={onExplore}>Explore</a>
-			<a
-				href="/dashboard"
-				on:click={() => goto(`/dashboard`)}
-				class:active={onDashboard}>Dashboard</a
+			<a href="/dashboard" on:click={() => goto(`/dashboard`)} class:active={onDashboard}
+				>Dashboard</a
 			>
 		</div>
 
@@ -43,7 +41,7 @@
 		margin-right: 1rem;
 		font-weight: 600;
 		border-radius: 0.5rem;
-		transition: all .3s;
+		transition: all 0.3s;
 	}
 	.home > a:hover {
 		background-color: var(--color-foreground-level-2);

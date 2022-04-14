@@ -26,7 +26,7 @@
 		border-radius: 1rem;
 		cursor: pointer;
 		justify-content: space-between;
-		transition: all .2s;
+		transition: all 0.2s;
 	}
 	.card:hover {
 		border: 1px solid var(--color-foreground-level-4);
