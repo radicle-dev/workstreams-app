@@ -37,8 +37,4 @@
 		justify-content: space-between;
 		align-items: flex-end;
 	}
-
-	a {
-		all: unset;
-	}
 </style>

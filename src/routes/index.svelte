@@ -1,6 +1,7 @@
 <script context="module" lang="ts">
 	import { getConfig } from '$lib/config';
 
+	/* eslint-disable */
 	/** @type {import('./[slug]').Load} */
 	export async function load({ fetch }) {
 		const url = `${getConfig().API_URL_BASE}/workstreams`;
@@ -13,6 +14,7 @@
 			}
 		};
 	}
+	/* eslint-enable */
 </script>
 
 <script lang="ts">

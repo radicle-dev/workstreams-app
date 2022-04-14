@@ -48,7 +48,8 @@ async function sendSignatureForVerification(message: string, signature: string) 
 export const authStore = (() => {
 	const { update, set, subscribe } = writable<AuthData>({
 		expiresAt: null,
-		authenticated: false
+		authenticated: false,
+		address: null,
 	});
 
 	if (browser) {
@@ -90,10 +91,19 @@ export const authStore = (() => {
 		return get(authStore);
 	}
 
+	async function clear() {
+		set({
+			expiresAt: null,
+			authenticated: false,
+			address: null,
+		})
+	}
+
 	return {
 		update,
 		set,
 		subscribe,
-		authenticate
+		authenticate,
+		clear,
 	};
 })();

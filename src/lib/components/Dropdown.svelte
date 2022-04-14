@@ -21,15 +21,15 @@
 	export let optionStyle: string | undefined = undefined;
 	export let menuStyle: string | undefined = undefined;
 
-	export let valid: boolean = true;
+	export let valid = true;
 	export let validationMessage = '';
-	export let validationPending: boolean = false;
+	export let validationPending = false;
 
 	let expanded = false;
 
 	// bind to this prop from the outside
 	export let value = '';
-	export let disabled: boolean = false;
+	export let disabled = false;
 
 	const toggleMenu = () => {
 		if (disabled) {

@@ -8,6 +8,9 @@
 	import WorkstreamCard from '$components/WorkstreamCard.svelte';
 	import { getConfig } from '$lib/config';
 	import { walletStore } from '$lib/stores/wallet/wallet';
+import { authStore } from '$lib/stores/auth/auth';
+import { goto } from '$app/navigation';
+import { browser } from '$app/env';
 
 	let workstreams: Workstream[] = [];
 
@@ -29,13 +32,20 @@
 	$: {
 		if ($walletStore.connected) {
 			(async () => {
-				const result = await fetch(`${getConfig().API_URL_BASE}/workstreams?createdBy=${$walletStore.address}`, {
-					credentials: 'include',
-				});
+				const result = await fetch(
+					`${getConfig().API_URL_BASE}/workstreams?createdBy=${$walletStore.address}`,
+					{
+						credentials: 'include'
+					}
+				);
 
 				workstreams = await result.json();
 			})();
-		};
+		}
+	}
+
+	$: {
+		if (browser && !$authStore.authenticated) goto("/");
 	}
 
 	let applicationFilter = 'all';

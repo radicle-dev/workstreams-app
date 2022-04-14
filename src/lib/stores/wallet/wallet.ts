@@ -1,6 +1,7 @@
 import { browser } from '$app/env';
 import { ethers, Signer } from 'ethers';
 import { get, writable } from 'svelte/store';
+import { authStore } from '../auth/auth';
 
 export type WalletData =
 	| {
@@ -88,6 +89,7 @@ export const walletStore = (() => {
 			connected: false,
 			connecting: false
 		});
+		authStore.clear();
 	}
 
 	return {

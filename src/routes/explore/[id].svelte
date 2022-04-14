@@ -2,6 +2,7 @@
 	import type { Workstream } from '$lib/stores/workstreams/types';
 	import { getConfig } from '$lib/config';
 
+	/* eslint-disable */
 	/** @type {import('./[slug]').Load} */
 	export async function load({ params, fetch }) {
 		const url = `${getConfig().API_URL_BASE}/workstreams/${params.id}`;
@@ -14,6 +15,7 @@
 			}
 		};
 	}
+	/* eslint-enable */
 </script>
 
 <script lang="ts">

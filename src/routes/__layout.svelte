@@ -1,5 +1,7 @@
 <script context="module">
+	/* eslint-disable */
 	export const load = async ({ url }) => ({ props: { url } });
+	/* eslint-enable */
 </script>
 
 <script lang="ts">

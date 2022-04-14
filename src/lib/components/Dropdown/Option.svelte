@@ -11,10 +11,10 @@
 	const dispatch = createEventDispatcher();
 
 	export let title: string;
-	export let selected: boolean = false;
+	export let selected = false;
 	export let value: string;
 	export let style: string | undefined = undefined;
-	export let disabled: boolean = false;
+	export let disabled = false;
 
 	const disabledColor = disabled
 		? 'var(--color-foreground-level-4)'

@@ -24,7 +24,7 @@
 	let durationInterval = durationOptions[0].value;
 
 	$: disabled =
-		title === undefined || rate === undefined || desc === undefined || creatingWorkstream
+		title === undefined || rate === undefined || desc === undefined || creatingWorkstream;
 
 	$: {
 		if (type === WorkstreamType.ROLE) {
@@ -34,11 +34,7 @@
 	}
 
 	$: {
-		if (
-			durationAmount
-			&& durationInterval
-			&& total
-		) {
+		if (durationAmount && durationInterval && total) {
 			rate = total / (durationAmount * parseInt(durationInterval));
 		}
 	}
@@ -48,17 +44,17 @@
 
 		try {
 			await fetch(`${getConfig().API_URL_BASE}/workstreams`, {
-				method: "POST",
+				method: 'POST',
 				credentials: 'include',
 				body: JSON.stringify({
 					payment: {
 						currency: 'dai',
-						rate: rate,
+						rate: rate
 					},
 					title,
 					desc,
 					type,
-					duration: durationAmount * parseInt(durationInterval),
+					duration: durationAmount * parseInt(durationInterval)
 				} as WorkstreamInput)
 			});
 		} catch (e) {

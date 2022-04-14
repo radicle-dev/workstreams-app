@@ -17,8 +17,8 @@
 		| 'destructive'
 		| 'embedded' = 'primary';
 
-	export let disabled: boolean = false;
-	export let transition: boolean = true;
+	export let disabled = false;
+	export let transition = true;
 	export let icon: typeof SvelteComponent | undefined = undefined;
 	export let style: string | undefined = undefined;
 	export let dataCy: string | undefined = undefined;
