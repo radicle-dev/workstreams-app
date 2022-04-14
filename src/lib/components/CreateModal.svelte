@@ -1,43 +1,42 @@
 <script lang="ts">
 	import * as modal from '$lib/utils/modal';
 	import Modal from '$components/Modal.svelte';
-	import Button from '$components/Button.svelte';
+	import Button from './Button.svelte';
 	import Dropdown from './Dropdown.svelte';
-	import { WorkstreamInput, WorkstreamType } from '$lib/stores/workstreams/types';
+	import TokenStreams from './icons/TokenStreams.svelte';
+	import TextInput from './TextInput.svelte';
+	import TypeSwitcher from './TypeSwitcher.svelte';
 	import { getConfig } from '$lib/config';
-
-	let type = WorkstreamType.GRANT;
-	let title: string;
-	let total: number;
-	let rate: number;
-	let desc: string;
-	let durationAmount: number;
-	let creatingWorkstream = false;
+	import { WorkstreamInput, WorkstreamType } from '$lib/stores/workstreams/types';
+	import ActionRow from './ActionRow.svelte';
 
 	const durationOptions = [
-		{ value: '1', title: 'days' },
-		{ value: '7', title: 'weeks' },
-		{ value: '30', title: 'months' },
-		{ value: '365', title: 'years' }
+		{ value: '1', title: 'Days' },
+		{ value: '7', title: 'Weeks' },
+		{ value: '30', title: 'Months' },
+		{ value: '365', title: 'Years' }
 	];
 
-	let durationInterval = durationOptions[0].value;
+	let title: string;
+	let total: string;
+	let duration: string;
+	let durationUnit: string = durationOptions[1].value;
+	let description: string;
+	let selectedType: 'first' | 'second';
 
-	$: disabled =
-		title === undefined || rate === undefined || desc === undefined || creatingWorkstream;
+	$: workstreamType = selectedType === 'first' ? WorkstreamType.GRANT : WorkstreamType.ROLE;
 
-	$: {
-		if (type === WorkstreamType.ROLE) {
-			durationAmount = 1;
-			durationInterval = durationOptions[3].value;
-		}
-	}
+	$: streamRate =
+		workstreamType === WorkstreamType.GRANT
+			? parseInt(total) / (parseInt(duration) * parseInt(durationUnit))
+			: parseInt(total) / 365;
 
-	$: {
-		if (durationAmount && durationInterval && total) {
-			rate = total / (durationAmount * parseInt(durationInterval));
-		}
-	}
+	$: canSubmit =
+		workstreamType === WorkstreamType.GRANT
+			? [title, total, duration, durationUnit, description].every((v) => v)
+			: [title, total, description].every((v) => v)
+
+	let creatingWorkstream = false;
 
 	async function createWorkstream() {
 		creatingWorkstream = true;
@@ -49,16 +48,15 @@
 				body: JSON.stringify({
 					payment: {
 						currency: 'dai',
-						rate: rate
+						rate: streamRate
 					},
 					title,
-					desc,
-					type,
-					duration: durationAmount * parseInt(durationInterval)
+					desc: description,
+					type: workstreamType,
+					duration: parseInt(duration) * parseInt(durationUnit)
 				} as WorkstreamInput)
 			});
 		} catch (e) {
-			creatingWorkstream = false;
 			return;
 		}
 		modal.hide();
@@ -68,176 +66,134 @@
 <Modal>
 	<div slot="body">
 		<span class="emoji">👔</span>
-		<h1>Create a work stream</h1>
-		<div class="inputs">
-			<div class="radio">
-				<label for="type">
-					<input type="radio" bind:group={type} name="type" value="grant" />
-					Grant
-				</label>
-				<p>A limited time project</p>
+		<h1>Create a Workstream</h1>
+		<form>
+			<div class="workstream-type">
+				<TypeSwitcher bind:selected={selectedType}>
+					<div slot="first" class="option">
+						<h4>Grant</h4>
+						<p>A fixed-length project.</p>
+					</div>
+					<div slot="second" class="option">
+						<h4>Workstream</h4>
+						<p>A long-term commitment.</p>
+					</div>
+				</TypeSwitcher>
 			</div>
-			<div class="radio">
-				<label for="type">
-					<input type="radio" bind:group={type} name="type" value="role" />
-					Role
-				</label>
-				<p>A long term commitment</p>
+			<div class="input-with-label">
+				<h4>Title</h4>
+				<TextInput bind:value={title} placeholder="Max 256 characters" />
 			</div>
-		</div>
-		<div class="input-w-label">
-			<span class="label typo-text-bold">Title</span>
-			<input type="text" bind:value={title} name="title" id="title" style="margin-bottom: 1rem;" />
-		</div>
-		<div class="meta">
-			<div class="input-w-label">
-				<span class="label typo-text-bold">Amount</span>
-				<div>
-					<input
-						class="total"
-						type="amount"
-						placeholder="0"
-						bind:value={total}
-						name="total"
-						id="total"
-					/>
-					<span class="typo-text-bold">DAI</span>
-				</div>
+			<div class="payment">
+				{#if selectedType === 'first'}
+					<div class="inner">
+						<div class="input-with-label payout">
+							<h4>Total Payout</h4>
+							<TextInput bind:value={total} placeholder="0" suffix="DAI" />
+						</div>
+						<div class="input-with-label duration">
+							<h4>Duration</h4>
+							<div class="input-group">
+								<div class="number"><TextInput bind:value={duration} placeholder="0" /></div>
+								<div class="unit">
+									<Dropdown bind:value={durationUnit} options={durationOptions} />
+								</div>
+							</div>
+						</div>
+					</div>
+				{:else}
+					<div class="inner">
+						<div class="input-with-label payout">
+							<h4>Yearly Salary</h4>
+							<TextInput bind:value={total} placeholder="0" suffix="DAI" />
+						</div>
+					</div>
+				{/if}
 			</div>
-			<span class="meta-calc typo-text-bold">/</span>
-			<div class="input-w-label">
-				<span class="label typo-text-bold" class:disabled={type === 'role'}>Duration</span>
-				<div style="display: flex;">
-					<input
-						class="duration"
-						class:disabled={type === 'role'}
-						disabled={type === 'role'}
-						type="amount"
-						placeholder="1"
-						bind:value={durationAmount}
-						name="duration"
-						id="duration"
-					/>
-					<Dropdown
-						disabled={type === 'role'}
-						bind:value={durationInterval}
-						options={durationOptions}
-						placeholder={type === 'role' ? durationOptions[3].title : durationOptions[0].title}
-					/>
-				</div>
+			<div class="input-with-label">
+				<h4>Description</h4>
+				<TextInput bind:value={description} textarea placeholder="Max 256 characters" />
 			</div>
-			<span class="meta-calc typo-text-bold">=</span>
-			<div class="input-w-label">
-				<span class="label typo-text-bold disabled">Stream rate</span>
-				<div>
-					<input
-						class="stream-rate"
-						class:disabled={type === 'grant'}
-						type="amount"
-						placeholder="0"
-						bind:value={rate}
-						name="stream-rate"
-						id="stream-rate"
-						disabled
-					/>
-					<span class="typo-text-bold disabled">DAI / 24h</span>
-				</div>
-			</div>
-		</div>
-		<div class="input-w-label">
-			<span class="label typo-text-bold">Description</span>
-			<textarea rows="3" bind:value={desc} name="desc" id="desc" />
-		</div>
+		</form>
 		<div class="actions">
-			<Button variant="transparent" on:click={() => modal.hide()}>Close</Button>
-			<Button {disabled} on:click={createWorkstream}>Create</Button>
+			<Button disabled={creatingWorkstream} variant="outline" on:click={modal.hide}>Cancel</Button>
+			<Button
+				icon={TokenStreams}
+				disabled={creatingWorkstream || !canSubmit}
+				on:click={createWorkstream}
+			>
+				Create workstream</Button
+			>
 		</div>
 	</div>
 </Modal>
 
 <style>
+	form > * {
+		margin-bottom: 32px;
+	}
 	h1 {
 		margin: 1rem 0 2rem;
+		color: var(--color-foreground);
+	}
+
+	h4 {
+		color: var(--color-foreground-level-6);
 	}
 	.emoji {
 		font-size: 2rem;
 	}
-	.inputs {
+
+	.workstream-type .option {
 		display: flex;
-		justify-content: space-between;
-		margin-bottom: 2rem;
+		flex-direction: column;
+		align-items: flex-start;
+		text-align: left;
 	}
-	label {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
+
+	.option > h4 {
+		color: var(--color-foreground);
 	}
-	.radio {
+
+	.option > p {
+		color: var(--color-foreground-level-6);
+	}
+
+	.input-with-label {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 	}
-	.radio > p {
-		color: var(--color-foreground-level-4);
-	}
-	.meta {
-		display: flex;
-		gap: 1.5rem;
-		align-items: flex-end;
-	}
-	.actions {
-		display: flex;
-		justify-content: flex-end;
-		padding-top: 0.5rem;
-		margin: 2rem 0 0;
-		gap: 0.75rem;
-	}
-	.input-w-label {
-		display: flex;
-		flex-direction: column;
-	}
-	.label {
-		align-self: flex-start;
-		color: var(--color-foreground-level-6);
-		margin-bottom: 0.5rem;
-	}
-	.disabled {
-		color: var(--color-foreground-level-3);
-	}
-	.total,
-	.stream-rate {
-		width: 5.6rem;
-	}
-	.duration {
-		width: 3rem;
-		margin-right: 0.5rem;
+
+	.input-with-label > h4 {
+		margin-bottom: 12px;
 	}
 
-	input {
-		height: 2.5rem;
+	.payment > .inner {
+		display: flex;
+		gap: 24px;
 	}
-	input,
-	textarea {
-		background-color: var(--color-background);
-		border: 1px solid var(--color-foreground-level-3);
-		padding: 0.4rem 0.75rem;
-		border-radius: 0.5rem;
-		color: var(--color-foreground);
+
+	.payment .payout {
+		width: 128px;
 	}
-	textarea {
-		resize: vertical;
+
+	.duration > .input-group {
+		display: flex;
+		gap: 8px;
 	}
-	input::placeholder,
-	textarea::placeholder {
-		color: var(--color-foreground-level-5);
+
+	.duration .number {
+		width: 64px;
 	}
-	input:focus,
-	textarea:focus {
-		outline: none !important;
-		border-color: var(--color-primary);
+
+	.duration .unit {
+		width: 112px;
 	}
-	.meta-calc {
-		color: var(--color-foreground-level-5);
-		padding-bottom: 0.5rem;
+
+	.actions {
+		display: flex;
+		gap: 16px;
+		justify-content: flex-end;
 	}
 </style>

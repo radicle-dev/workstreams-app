@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as modal from '$lib/utils/modal';
+	import { fade, fly } from 'svelte/transition';
 
 	const modalStore = modal.store;
 
@@ -10,14 +11,16 @@
 	};
 </script>
 
-<div class="modal-layout" class:hide={store === null} data-cy="modal-layout">
-	<div class="overlay" on:click={clickOutside} />
-	<div class="content">
-		{#if store !== null}
-			<svelte:component this={store.modalComponent} {...store.modalComponentProps} />
-		{/if}
+{#if store !== null}
+	<div class="modal-layout" data-cy="modal-layout">
+		<div class="overlay" transition:fade={{ duration: 200 }} on:click={clickOutside} />
+		<div class="content">
+				<div class="modal-wrapper" transition:fly={{ y: 10, duration: 300 }}>
+					<svelte:component this={store.modalComponent} {...store.modalComponentProps} />
+				</div>
+		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 	.modal-layout {
@@ -39,8 +42,5 @@
 	.content {
 		z-index: 200;
 		margin: auto;
-	}
-	.hide {
-		display: none;
 	}
 </style>
