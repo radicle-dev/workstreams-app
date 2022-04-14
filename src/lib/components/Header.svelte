@@ -3,7 +3,6 @@
 	import { page } from '$app/stores';
 
 	import Connect from '$components/Connect.svelte';
-	import { authStore } from '$lib/stores/auth/auth';
 
 	$: onExplore = $page.url.pathname.includes('explore') || $page.url.pathname === '/';
 	$: onDashboard = $page.url.pathname.includes('dashboard');
@@ -13,10 +12,9 @@
 	<nav>
 		<div class="home">
 			<a sveltekit:prefetch href="/" class:active={onExplore}>Explore</a>
-			{#if $authStore.authenticated}
-				<a href="/dashboard" on:click={() => goto(`/dashboard`)} class:active={onDashboard}
-					>Dashboard</a
-				>{/if}
+			<a href="/dashboard" on:click={() => goto(`/dashboard`)} class:active={onDashboard}
+				>Dashboard</a
+			>
 		</div>
 		<div class="user">
 			<Connect />

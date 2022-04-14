@@ -29,5 +29,5 @@
 {:else if locked}
 	<Button disabled variant="outline">. . .</Button>
 {:else}
-	<Button on:click={() => logIn()} variant="outline">Log in</Button>
+	<Button on:click={() => logIn()} variant="outline">Sign in with Ethereum</Button>
 {/if}

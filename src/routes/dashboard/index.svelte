@@ -9,10 +9,17 @@
 	import { getConfig } from '$lib/config';
 	import { walletStore } from '$lib/stores/wallet/wallet';
 	import { authStore } from '$lib/stores/auth/auth';
-	import { goto } from '$app/navigation';
 	import { browser } from '$app/env';
+	import EmptyState from '$lib/components/EmptyState.svelte';
 
 	let workstreams: Workstream[] = [];
+
+	$: connectedAndLoggedIn =
+		$walletStore.connected &&
+		$authStore.authenticated &&
+		$walletStore.address === $authStore.address;
+
+	let locked: boolean;
 
 	const applicationOptions = [
 		{
@@ -30,7 +37,7 @@
 	];
 
 	$: {
-		if ($walletStore.connected) {
+		if ($walletStore.connected && $authStore.authenticated) {
 			(async () => {
 				const result = await fetch(
 					`${getConfig().API_URL_BASE}/workstreams?createdBy=${$walletStore.address}`,
@@ -44,8 +51,14 @@
 		}
 	}
 
-	$: {
-		if (browser && !$authStore.authenticated) goto('/');
+	async function authenticate() {
+		locked = true;
+		try {
+			if (!$walletStore.connected) await walletStore.connect();
+			if (!connectedAndLoggedIn) await authStore.authenticate($walletStore);
+		} finally {
+			locked = false;
+		}
 	}
 
 	let applicationFilter = 'all';
@@ -56,19 +69,31 @@
 </svelte:head>
 
 <div class="container">
-	<header>
-		<SegmentedControl
-			active={applicationFilter}
-			options={applicationOptions}
-			on:select={(ev) => (applicationFilter = ev.detail)}
-		/>
-		<Button on:click={() => modal.show(Create)}><TokenStreamsIcon />Create workstream</Button>
-	</header>
-	<main>
-		{#each workstreams as workstream}
-			<WorkstreamCard {workstream} />
-		{/each}
-	</main>
+	{#if browser && $authStore.authenticated && $walletStore.connected}
+		<header>
+			<SegmentedControl
+				active={applicationFilter}
+				options={applicationOptions}
+				on:select={(ev) => (applicationFilter = ev.detail)}
+			/>
+			<Button on:click={() => modal.show(Create)}><TokenStreamsIcon />Create workstream</Button>
+		</header>
+		<main>
+			{#each workstreams as workstream}
+				<WorkstreamCard {workstream} />
+			{/each}
+		</main>
+	{:else}
+		<div class="empty-wrapper">
+			<EmptyState
+				headerText="Sign in to view your workstreams"
+				text="This is where the workstreams you created or are contributing to show up."
+				primaryActionText="Sign in with Ethereum"
+				on:primaryAction={authenticate}
+				primaryActionDisabled={locked}
+			/>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -76,6 +101,13 @@
 		max-width: 75rem;
 		margin: 0 auto;
 		width: 100%;
+	}
+
+	.empty-wrapper {
+		display: flex;
+		min-height: 32rem;
+		justify-content: center;
+		align-items: center;
 	}
 	header {
 		display: flex;

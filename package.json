@@ -37,6 +37,7 @@
 		"ethers": "5.5.1",
 		"marked": "^4.0.12",
 		"siwe": "^1.1.6",
-		"timeago.js": "^4.0.2"
+		"timeago.js": "^4.0.2",
+		"twemoji": "^14.0.2"
 	}
 }
