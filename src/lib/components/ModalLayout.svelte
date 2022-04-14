@@ -15,9 +15,9 @@
 	<div class="modal-layout" data-cy="modal-layout">
 		<div class="overlay" transition:fade={{ duration: 200 }} on:click={clickOutside} />
 		<div class="content">
-				<div class="modal-wrapper" transition:fly={{ y: 10, duration: 300 }}>
-					<svelte:component this={store.modalComponent} {...store.modalComponentProps} />
-				</div>
+			<div class="modal-wrapper" transition:fly={{ y: 10, duration: 300 }}>
+				<svelte:component this={store.modalComponent} {...store.modalComponentProps} />
+			</div>
 		</div>
 	</div>
 {/if}

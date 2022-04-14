@@ -8,7 +8,6 @@
 	import TypeSwitcher from './TypeSwitcher.svelte';
 	import { getConfig } from '$lib/config';
 	import { WorkstreamInput, WorkstreamType } from '$lib/stores/workstreams/types';
-	import ActionRow from './ActionRow.svelte';
 
 	const durationOptions = [
 		{ value: '1', title: 'Days' },
@@ -34,7 +33,7 @@
 	$: canSubmit =
 		workstreamType === WorkstreamType.GRANT
 			? [title, total, duration, durationUnit, description].every((v) => v)
-			: [title, total, description].every((v) => v)
+			: [title, total, description].every((v) => v);
 
 	let creatingWorkstream = false;
 

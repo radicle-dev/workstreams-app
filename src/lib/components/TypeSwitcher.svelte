@@ -16,7 +16,7 @@
 			class:selected={selected === 'second'}
 			on:click={() => (selected = 'second')}
 		>
-    <div class="option-content"><slot name="second" /></div>
+			<div class="option-content"><slot name="second" /></div>
 		</div>
 	</div>
 	<div class="indicator-wrapper">
@@ -43,24 +43,24 @@
 		box-sizing: border-box;
 		border: 1px solid rgba(0, 0, 0, 0);
 		transition: border 0.2s;
-    cursor: pointer;
-    transition: background-color .2s;
+		cursor: pointer;
+		transition: background-color 0.2s;
 	}
 
-  .option:hover {
-    background-color: var(--color-foreground-level-1);
-  }
+	.option:hover {
+		background-color: var(--color-foreground-level-1);
+	}
 
-  .option-content {
-    z-index: 1;
-    opacity: .5;
-    position: relative;
-    transition: opacity .3s;
-  }
+	.option-content {
+		z-index: 1;
+		opacity: 0.5;
+		position: relative;
+		transition: opacity 0.3s;
+	}
 
-  .selected > .option-content {
-    opacity: 1;
-  }
+	.selected > .option-content {
+		opacity: 1;
+	}
 
 	.option:not(.selected) {
 		border: 1px solid var(--color-foreground-level-3);
