@@ -12,7 +12,7 @@
 
 	export let workstream: Workstream;
 
-	$: url = `/workstreams/${hyphenateString(workstream.id)}`;
+	$: url = `/explore/${hyphenateString(workstream.id)}`;
 </script>
 
 <Card
