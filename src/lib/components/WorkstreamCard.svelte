@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { hyphanateString } from '$lib/utils/format';
-	import type { Workstream } from '$lib/types';
+	import { hyphenateString } from '$lib/utils/format';
+	import type { Workstream } from '$lib/stores/workstreams/types';
 
 	import Card from '$components/Card.svelte';
-	import Apply from '$components/icons/Ledger.svelte';
 	import Button from '$components/Button.svelte';
 	import TitleMeta from '$components/TitleMeta.svelte';
 	import Rate from '$components/Rate.svelte';
@@ -14,15 +13,15 @@
 	export let workstream: Workstream;
 </script>
 
-<Card on:CardClick={() => goto(`/${hyphanateString(workstream.title)}`)}>
+<Card on:CardClick={() => goto(`/${hyphenateString(workstream.title)}`)}>
 	<div slot="top">
 		<TitleMeta title={workstream.title} type={workstream.type} creator={workstream.creator} />
 	</div>
 	<div slot="bottom" class="content">
 		<div class="spread">
-			<Rate rate={workstream.payment_rate} currency={workstream.payment_currency} />
+			<Rate rate={workstream.payment.rate} currency={workstream.payment.currency} />
 			{#if workstream.type === 'grant'}
-				<Timeframe starting={workstream.starting_at} ending={workstream.ending_at} />
+				<Timeframe duration={workstream.duration} />
 			{/if}
 		</div>
 		<Button

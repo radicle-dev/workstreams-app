@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { hyphanateString } from '$lib/utils/format';
-	import type { Workstream } from '$lib/types';
+	import { goto, prefetch } from '$app/navigation';
+	import { hyphenateString } from '$lib/utils/format';
+	import type { Workstream } from '$lib/stores/workstreams/types';
 
 	import Card from '$components/Card.svelte';
 	import Apply from '$components/icons/Ledger.svelte';
@@ -11,18 +11,20 @@
 	import Timeframe from '$components/Timeframe.svelte';
 
 	export let workstream: Workstream;
+
+	$: url = `/explore/${hyphenateString(workstream.id)}`;
 </script>
 
-<Card on:CardClick={() => goto(`/${hyphanateString(workstream.title)}`)}>
+<Card on:click={() => goto(url)} on:hover={() => prefetch(url)}>
 	<div slot="top">
 		<TitleMeta title={workstream.title} type={workstream.type} creator={workstream.creator} />
 	</div>
 	<div slot="bottom" class="spread">
 		<div>
-			{#if workstream.type === 'grant'}
-				<Timeframe starting={workstream.starting_at} ending={workstream.ending_at} />
+			{#if workstream.type === 'grant' && workstream.duration}
+				<Timeframe duration={workstream.duration} />
 			{/if}
-			<Rate rate={workstream.payment_rate} currency={workstream.payment_currency} />
+			<Rate rate={workstream.payment.rate} currency={workstream.payment.currency} />
 		</div>
 		<Button variant="outline"><Apply />Apply</Button>
 	</div>
@@ -33,6 +35,6 @@
 		display: flex;
 		flex: 1;
 		justify-content: space-between;
-		align-items: flex-;
+		align-items: flex-end;
 	}
 </style>

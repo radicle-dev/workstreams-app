@@ -3,7 +3,12 @@
 	const dispatch = createEventDispatcher();
 </script>
 
-<div on:click={() => dispatch('CardClick')} class="card">
+<div
+	on:click={() => dispatch('click')}
+	on:focus={() => dispatch('hover')}
+	on:mouseover={() => dispatch('hover')}
+	class="card"
+>
 	<div class="top">
 		<slot name="top" />
 	</div>
@@ -21,6 +26,7 @@
 		border-radius: 1rem;
 		cursor: pointer;
 		justify-content: space-between;
+		transition: all 0.2s;
 	}
 	.card:hover {
 		border: 1px solid var(--color-foreground-level-4);

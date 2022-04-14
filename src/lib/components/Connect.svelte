@@ -1,20 +1,33 @@
 <script lang="ts">
-	import { providerStore } from 'web3-stores';
 	import { formatAddress } from '$lib/utils/format';
+	import { walletStore } from '$lib/stores/wallet/wallet';
 	import Button from '$components/Button.svelte';
+	import { authStore } from '$lib/stores/auth/auth';
 
-	$: label = $providerStore.connected && formatAddress($providerStore.accounts[0]);
+	$: label = $walletStore.connected && formatAddress($walletStore.address);
+
+	$: connectedAndLoggedIn =
+		$walletStore.connected &&
+		$authStore.authenticated &&
+		$walletStore.address === $authStore.address;
+
+	let locked: boolean;
+
+	async function logIn() {
+		locked = true;
+		try {
+			if (!$walletStore.connected) await walletStore.connect();
+			if (!connectedAndLoggedIn) await authStore.authenticate($walletStore);
+		} finally {
+			locked = false;
+		}
+	}
 </script>
 
-{#if $providerStore.connected}
-	<Button
-		variant="outline"
-		on:click={() => providerStore.disconnect()}
-		on:blur={() => console.log('blur')}
-		on:focus={() => console.log('focus')}
-		on:mouseout={() => (label = formatAddress($providerStore.accounts[0]))}
-		on:mouseover={() => (label = 'disconnect')}>{label}</Button
-	>
+{#if connectedAndLoggedIn}
+	<Button variant="outline" on:click={() => walletStore.disconnect()}>{label}</Button>
+{:else if locked}
+	<Button disabled variant="outline">. . .</Button>
 {:else}
-	<Button on:click={() => providerStore.connect()} variant="outline">connect</Button>
+	<Button on:click={() => logIn()} variant="outline">Sign in with Ethereum</Button>
 {/if}

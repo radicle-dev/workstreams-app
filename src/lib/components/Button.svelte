@@ -17,8 +17,8 @@
 		| 'destructive'
 		| 'embedded' = 'primary';
 
-	export let disabled: boolean = false;
-	export let transition: boolean = true;
+	export let disabled = false;
+	export let transition = true;
 	export let icon: typeof SvelteComponent | undefined = undefined;
 	export let style: string | undefined = undefined;
 	export let dataCy: string | undefined = undefined;
@@ -62,6 +62,7 @@
 		user-select: none;
 		line-height: 1.375rem;
 		gap: 0.5rem;
+		transition: all 0.2s;
 	}
 
 	.button :global(svg) {
@@ -86,15 +87,15 @@
 	}
 
 	.vanilla.disabled {
-		background-color: var(--color-foreground-level-1);
-		border-color: var(--color-foreground-level-1);
+		background-color: #162029;
+		border-color: #162029;
 		color: var(--color-foreground-level-3);
 		cursor: not-allowed;
 	}
 
 	.vanilla.disabled:hover {
 		box-shadow: 0 0 0 0;
-		border-color: var(--color-foreground-level-1);
+		border-color: #162029;
 		color: var(--color-foreground-level-3);
 	}
 
@@ -111,10 +112,6 @@
 	.primary.disabled {
 		opacity: 0.25;
 		cursor: not-allowed;
-	}
-
-	.primary.disabled :global(svg) {
-		fill: var(--color-background);
 	}
 
 	.primary-outline {
@@ -184,7 +181,7 @@
 	}
 
 	.outline:hover {
-		background-color: var(--color-foreground-level-1);
+		background-color: #162029;
 		border: 1px solid var(--color-foreground-level-3);
 		color: var(--color-foreground-level-6);
 	}

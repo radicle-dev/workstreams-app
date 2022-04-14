@@ -1,10 +1,27 @@
 <script context="module" lang="ts">
-	export const prerender = true;
+	import { getConfig } from '$lib/config';
+
+	/* eslint-disable */
+	/** @type {import('./[slug]').Load} */
+	export async function load({ fetch }) {
+		const url = `${getConfig().API_URL_BASE}/workstreams`;
+		const response = await fetch(url, { credentials: 'include' });
+
+		return {
+			status: response.status,
+			props: {
+				workstreams: response.ok && (await response.json())
+			}
+		};
+	}
+	/* eslint-enable */
 </script>
 
 <script lang="ts">
-	import { workstreamsStore } from '$lib/stores/workstreams';
 	import ExploreCard from '$lib/components/ExploreCard.svelte';
+	import type { Workstream } from '$lib/stores/workstreams/types';
+
+	export let workstreams: Workstream[] = [];
 </script>
 
 <svelte:head>
@@ -12,7 +29,7 @@
 </svelte:head>
 
 <div class="overview">
-	{#each $workstreamsStore as workstream}
+	{#each workstreams as workstream}
 		<ExploreCard {workstream} />
 	{/each}
 </div>

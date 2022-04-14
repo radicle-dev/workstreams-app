@@ -8,13 +8,12 @@
 
 <style>
 	.modal {
-		margin: 1.5rem;
 		padding: 2.5rem;
-		border: 1px solid var(--color-primary-level-6);
 		background: var(--color-background);
-		box-shadow: 0.5rem 0.5rem 4rem var(--color-primary-level-6);
-		min-width: 24rem;
-		width: 100%;
+		border-radius: 1rem;
+		box-shadow: var(--color-shadows);
+		min-width: 32rem;
+		width: 70vw;
 		max-width: 40rem;
 		text-align: center;
 	}

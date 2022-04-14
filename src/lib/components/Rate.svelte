@@ -4,7 +4,7 @@
 </script>
 
 <p class="typo-text-bold rate">
-	{Math.floor(rate * 60 * 60 * 24)}
+	{Math.floor(rate)}
 	{currency} <span class="typo-regular">/ day</span>
 </p>
 

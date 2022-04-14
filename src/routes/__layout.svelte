@@ -1,36 +1,45 @@
+<script context="module">
+	/* eslint-disable */
+	export const load = async ({ url }) => ({ props: { url } });
+	/* eslint-enable */
+</script>
+
 <script lang="ts">
-	import { providerStore } from 'web3-stores';
-	import { providers } from 'ethers';
+	import { navigating } from '$app/stores';
 	import Header from '$components/Header.svelte';
 	import ModalLayout from '$components/ModalLayout.svelte';
-	import Tag from '$components/Tag.svelte';
+	import FlyTransition from '$lib/components/FlyTransition.svelte';
 	import '../app.css';
+
+	export let url;
 </script>
 
 <ModalLayout />
-<article>
+<div class="wrapper" class:loading={$navigating}>
 	<Header />
 	<main>
-		<slot />
+		<FlyTransition {url}>
+			<slot />
+		</FlyTransition>
 	</main>
 
 	<footer>
 		<p>by radicle 🌱</p>
-		{#if $providerStore.connected}
-			<Tag>
-				{providers.getNetwork(parseInt($providerStore.chainId)).name} network
-			</Tag>
-		{/if}
 	</footer>
-</article>
+</div>
 
 <style>
-	article {
+	.wrapper {
 		height: 100vh;
 		max-width: 90rem;
 		min-width: 40rem;
 		margin: 0 auto;
 		padding: 1.5rem;
+		transition: opacity 0.3s;
+	}
+
+	.wrapper.loading {
+		opacity: 0.3;
 	}
 	main {
 		display: flex;

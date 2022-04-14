@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { timeframeFormat } from '$lib/utils/format';
 
-	export let starting: number;
-	export let ending: number;
+	export let duration: number;
 </script>
 
-<p class="timeframe">{timeframeFormat(starting, ending)}</p>
+<p class="timeframe">{timeframeFormat(duration)}</p>
 
 <style>
 	.timeframe {

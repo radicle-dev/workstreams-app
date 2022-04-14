@@ -1,3 +1,4 @@
+import type { Timestamp } from '$lib/stores/workstreams/types';
 import { ethers } from 'ethers';
 
 export function formatAddress(input: string): string {
@@ -5,24 +6,24 @@ export function formatAddress(input: string): string {
 	return addr.substring(0, 4) + ' – ' + addr.substring(addr.length - 4, addr.length);
 }
 
-export function timeframeFormat(start_date: number, end_date: number): string {
-	const timeframe = end_date - start_date;
-	const weeks = Math.floor(timeframe / 7);
+export function timeframeFormat(days: number): string {
+	const weeks = Math.floor(days / 7);
+
 	if (weeks < 1) {
-		return `${timeframe} days`;
+		return `${days} days`;
 	} else {
 		return `${weeks} weeks`;
 	}
 }
 
-export function dateFormat(date: number): string {
-	return new Date(date).toLocaleDateString('en-US', {
+export function dateFormat(timestamp: Timestamp): string {
+	return new Date(timestamp._seconds * 1000).toLocaleDateString('en-US', {
 		year: 'numeric',
 		month: 'short',
 		day: 'numeric'
 	});
 }
 
-export function hyphanateString(str: string): string {
+export function hyphenateString(str: string): string {
 	return str.replace(/ +/g, '-').toLowerCase();
 }

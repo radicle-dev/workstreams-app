@@ -3,20 +3,10 @@
 	import User from '$components/User.svelte';
 	import Tag from '$components/Tag.svelte';
 	import ApplicationDetail from '$components/ApplicationDetail.svelte';
-	import type { Application } from '$lib/types';
+	import type { Application } from '$lib/stores/workstreams/types';
 
 	export let owner = false;
 	export let application: Application;
-
-	const tagColor = (state: string) => {
-		if (state === 'accepted') {
-			return 'green';
-		} else if (state === 'pending') {
-			return 'yellow';
-		} else if (state === 'rejected') {
-			return 'red';
-		}
-	};
 </script>
 
 <div on:click={() => modal.toggle(ApplicationDetail, () => null, { application })} class="row">
