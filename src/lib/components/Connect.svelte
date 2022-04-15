@@ -2,9 +2,8 @@
 	import { formatAddress } from '$lib/utils/format';
 	import { walletStore } from '$lib/stores/wallet/wallet';
 	import Button from '$components/Button.svelte';
+	import User from '$components/User.svelte';
 	import { authStore } from '$lib/stores/auth/auth';
-
-	$: label = $walletStore.connected && formatAddress($walletStore.address);
 
 	$: connectedAndLoggedIn =
 		$walletStore.connected &&
@@ -25,7 +24,9 @@
 </script>
 
 {#if connectedAndLoggedIn}
-	<Button variant="outline" on:click={() => walletStore.disconnect()}>{label}</Button>
+	<Button variant="outline" on:click={() => walletStore.disconnect()}
+		><User address={$authStore.address} /></Button
+	>
 {:else if locked}
 	<Button disabled variant="outline">. . .</Button>
 {:else}
