@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, prefetch } from '$app/navigation';
 	import { hyphenateString } from '$lib/utils/format';
 	import type { Workstream } from '$lib/stores/workstreams/types';
 
