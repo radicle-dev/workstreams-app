@@ -21,12 +21,25 @@
 			locked = false;
 		}
 	}
+
+	let hover = false;
 </script>
 
 {#if connectedAndLoggedIn}
-	<Button variant="outline" on:click={() => walletStore.disconnect()}
-		><User address={$authStore.address} /></Button
-	>
+	<div>
+		<Button
+			variant="outline"
+			on:click={() => walletStore.disconnect()}
+			on:mouseenter={() => (hover = true)}
+			on:mouseleave={() => (hover = false)}
+		>
+			{#if hover}
+				Sign out
+			{:else}
+				<User address={$authStore.address} />
+			{/if}
+		</Button>
+	</div>
 {:else if locked}
 	<Button disabled variant="outline">. . .</Button>
 {:else}
