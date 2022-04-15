@@ -25,7 +25,7 @@
 </script>
 
 <svelte:head>
-	<title>Workstream</title>
+	<title>{workstream.title}</title>
 </svelte:head>
 
 {#if workstream}
