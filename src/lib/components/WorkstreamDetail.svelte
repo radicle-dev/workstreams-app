@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { timeframeFormat, dateFormat } from '$lib/utils/format';
+	import * as modal from '$lib/utils/modal';
+
 	import User from '$components/User.svelte';
 	import Tag from '$components/Tag.svelte';
+	import ApplyModal from '$components/ApplyModal.svelte';
 	import Apply from '$components/icons/Ledger.svelte';
 	import Button from '$components/Button.svelte';
 	import Markdown from '$components/Markdown.svelte';
@@ -33,7 +36,9 @@
 					<p class="timeframe">{timeframeFormat(workstream.duration)}</p>
 				</div>
 			{/if}
-			<Button><Apply />Apply</Button>
+			<Button icon={Apply} on:click={() => modal.show(ApplyModal, () => {}, { workstream })}>
+				Apply
+			</Button>
 		</div>
 		<div>
 			<div class="desc">
