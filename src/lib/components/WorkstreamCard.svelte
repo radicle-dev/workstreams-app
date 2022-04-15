@@ -11,6 +11,8 @@
 	import ActionRow from '$components/ActionRow.svelte';
 
 	export let workstream: Workstream;
+
+	$: url = `/explore/${hyphenateString(workstream.id)}`;
 </script>
 
 <Card on:CardClick={() => goto(`/${hyphenateString(workstream.title)}`)}>
@@ -25,6 +27,8 @@
 			{/if}
 		</div>
 		<Button
+			on:click={() => goto(url)}
+			on:hover={() => prefetch(url)}
 			style="margin-top: 1rem; width: 100%; display: block; text-align: center;"
 			variant="outline">View workstream details</Button
 		>
