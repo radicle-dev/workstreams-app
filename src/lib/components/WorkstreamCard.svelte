@@ -15,7 +15,7 @@
 	$: url = `/explore/${hyphenateString(workstream.id)}`;
 </script>
 
-<Card on:CardClick={() => goto(`/${hyphenateString(workstream.title)}`)}>
+<Card>
 	<div slot="top">
 		<TitleMeta title={workstream.title} type={workstream.type} creator={workstream.creator} />
 	</div>
