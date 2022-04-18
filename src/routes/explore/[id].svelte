@@ -19,10 +19,10 @@
 </script>
 
 <script lang="ts">
-	import { onMount } from "svelte";
+	import { onMount } from 'svelte';
 	import WorkstreamDetail from '$components/WorkstreamDetail.svelte';
-import { walletStore } from '$lib/stores/wallet/wallet';
-import { authStore } from '$lib/stores/auth/auth';
+	import { walletStore } from '$lib/stores/wallet/wallet';
+	import { authStore } from '$lib/stores/auth/auth';
 
 	export let workstream: Workstream | undefined;
 
@@ -39,8 +39,8 @@ import { authStore } from '$lib/stores/auth/auth';
 		const applicationRequest = await fetch(
 			`${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`,
 			{
-				credentials: 'include',
-			},
+				credentials: 'include'
+			}
 		);
 
 		application = (await applicationRequest.json())[0];
@@ -56,7 +56,7 @@ import { authStore } from '$lib/stores/auth/auth';
 {#if workstream}
 	<!-- TODO: Temporarily just printing the JSON here -->
 	{#if application && connectedAndLoggedIn}
-	 {JSON.stringify(application)}
+		{JSON.stringify(application)}
 	{/if}
 	<WorkstreamDetail {workstream} />
 {:else}

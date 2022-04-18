@@ -67,6 +67,6 @@ export interface Application {
 }
 
 export type ApplicationInput = Omit<
-  Application,
-  "id" | "state" | "creator" | "created_at" | "workstreamId"
->
+	Application,
+	'id' | 'state' | 'creator' | 'created_at' | 'workstreamId'
+>;
