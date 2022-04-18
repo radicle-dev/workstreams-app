@@ -1,7 +1,7 @@
 <script lang="ts">
 	// import { getConfig } from '$lib/config';
 	import * as modal from '$lib/utils/modal';
-	import type { Workstream } from '$lib/stores/workstreams/types';
+	import type { ApplicationInput, Workstream } from '$lib/stores/workstreams/types';
 	import { WorkstreamType } from '$lib/stores/workstreams/types';
 
 	import Modal from '$components/Modal.svelte';
@@ -13,6 +13,7 @@
 	import Apply from '$components/icons/Ledger.svelte';
 	import TextInput from '$components/TextInput.svelte';
 	import Dropdown from '$components/Dropdown.svelte';
+	import { getConfig } from '$lib/config';
 
 	export let workstream: Workstream;
 
@@ -32,6 +33,11 @@
 			? `${workstream.payment.rate * (parseInt(duration) * parseInt(durationUnit))}`
 			: `${workstream.payment.rate * 365}`;
 
+	$: streamRate =
+		workstream.type === WorkstreamType.GRANT
+			? parseInt(total) / (parseInt(duration) * parseInt(durationUnit))
+			: parseInt(total) / 365;
+
 	$: canSubmit =
 		workstream.type === WorkstreamType.GRANT
 			? [applicationText, total, duration, durationUnit].every((v) => v)
@@ -42,23 +48,25 @@
 	async function createApplication() {
 		creatingApplication = true;
 
-		// try {
-		// 	await fetch(`${getConfig().API_URL_BASE}/workstreams`, {
-		// 		method: 'POST',
-		// 		credentials: 'include',
-		// 		body: JSON.stringify({
-		// 			payment: {
-		// 				currency: 'dai',
-		// 				rate: streamRate
-		// 			},
-		// 			applicationText,
-		// 			type: workstreamType,
-		// 			duration: parseInt(duration) * parseInt(durationUnit)
-		// 		} as WorkstreamInput)
-		// 	});
-		// } catch (e) {
-		// 	return;
-		// }
+		try {
+			await fetch(`${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`, {
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({
+					letter: applicationText,
+					counterOffer:
+						streamRate !== workstream.payment.rate
+							? {
+									rate: streamRate,
+									currency: 'dai'
+							  }
+							: undefined
+				} as ApplicationInput)
+			});
+		} catch (e) {
+			return;
+		}
+
 		modal.hide();
 	}
 </script>
