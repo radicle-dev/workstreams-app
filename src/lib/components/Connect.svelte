@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { formatAddress } from '$lib/utils/format';
 	import { walletStore } from '$lib/stores/wallet/wallet';
 	import Button from '$components/Button.svelte';
 	import User from '$components/User.svelte';

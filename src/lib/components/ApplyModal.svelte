@@ -13,7 +13,6 @@
 	import Apply from '$components/icons/Ledger.svelte';
 	import TextInput from '$components/TextInput.svelte';
 	import Dropdown from '$components/Dropdown.svelte';
-	import { onMount } from 'svelte';
 
 	export let workstream: Workstream;
 

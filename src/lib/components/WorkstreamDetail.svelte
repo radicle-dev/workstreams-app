@@ -36,7 +36,7 @@
 					<p class="timeframe">{timeframeFormat(workstream.duration)}</p>
 				</div>
 			{/if}
-			<Button icon={Apply} on:click={() => modal.show(ApplyModal, () => {}, { workstream })}>
+			<Button icon={Apply} on:click={() => modal.show(ApplyModal, undefined, { workstream })}>
 				Apply
 			</Button>
 		</div>
