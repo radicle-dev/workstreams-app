@@ -65,3 +65,8 @@ export interface Application {
 	};
 	workstreamId: string;
 }
+
+export type ApplicationInput = Omit<
+  Application,
+  "id" | "state" | "creator" | "created_at" | "workstreamId"
+>
