@@ -36,7 +36,7 @@ export interface Payment {
 
 export interface Grant extends WorkstreamBase {
 	type: WorkstreamType.GRANT;
-	duration?: number;
+	duration: number;
 }
 
 export interface Role extends WorkstreamBase {

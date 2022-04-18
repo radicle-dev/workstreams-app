@@ -31,7 +31,7 @@
 		<Button
 			variant="outline"
 			icon={Apply}
-			on:click={() => modal.show(ApplyModal, () => {}, { workstream })}
+			on:click={() => modal.show(ApplyModal, undefined, { workstream })}
 		>
 			Apply
 		</Button>

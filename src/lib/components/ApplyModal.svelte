@@ -13,6 +13,7 @@
 	import Apply from '$components/icons/Ledger.svelte';
 	import TextInput from '$components/TextInput.svelte';
 	import Dropdown from '$components/Dropdown.svelte';
+	import { onMount } from 'svelte';
 
 	export let workstream: Workstream;
 
@@ -23,20 +24,17 @@
 		{ value: '365', title: 'Years' }
 	];
 
-	let total: string;
 	let applicationText: string;
-	let duration: string;
-	let durationUnit: string = durationOptions[1].value;
-
-	$: workstreamType = workstream.type === 'grant' ? WorkstreamType.GRANT : WorkstreamType.ROLE;
-
-	$: streamRate =
-		workstreamType === WorkstreamType.GRANT
-			? parseInt(total) / (parseInt(duration) * parseInt(durationUnit))
-			: parseInt(total) / 365;
+	let duration: string | undefined =
+		workstream.type === WorkstreamType.GRANT ? `${workstream.duration}` : undefined;
+	let durationUnit: string = durationOptions[0].value;
+	let total: string =
+		workstream.type === WorkstreamType.GRANT
+			? `${workstream.payment.rate * (parseInt(duration) * parseInt(durationUnit))}`
+			: `${workstream.payment.rate * 365}`;
 
 	$: canSubmit =
-		workstreamType === WorkstreamType.GRANT
+		workstream.type === WorkstreamType.GRANT
 			? [applicationText, total, duration, durationUnit].every((v) => v)
 			: [applicationText, total].every((v) => v);
 
