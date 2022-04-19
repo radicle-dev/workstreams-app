@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Workstream } from '$lib/stores/workstreams/types';
 	import * as modal from '$lib/utils/modal';
-	import Create from '$components/CreateModal.svelte';
+	import CreateModal from '$components/CreateModal.svelte';
 	import SegmentedControl from '$components/SegmentedControl.svelte';
 	import Button from '$components/Button.svelte';
 	import TokenStreamsIcon from '$components/icons/TokenStreams.svelte';
@@ -11,13 +11,9 @@
 	import { authStore } from '$lib/stores/auth/auth';
 	import { browser } from '$app/env';
 	import EmptyState from '$lib/components/EmptyState.svelte';
+	import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
 	let workstreams: Workstream[] = [];
-
-	$: connectedAndLoggedIn =
-		$walletStore.connected &&
-		$authStore.authenticated &&
-		$walletStore.address === $authStore.address;
 
 	let locked: boolean;
 
@@ -55,7 +51,7 @@
 		locked = true;
 		try {
 			if (!$walletStore.connected) await walletStore.connect();
-			if (!connectedAndLoggedIn) await authStore.authenticate($walletStore);
+			if (!$connectedAndLoggedIn) await authStore.authenticate($walletStore);
 		} finally {
 			locked = false;
 		}
@@ -76,7 +72,9 @@
 				options={applicationOptions}
 				on:select={(ev) => (applicationFilter = ev.detail)}
 			/>
-			<Button on:click={() => modal.show(Create)}><TokenStreamsIcon />Create workstream</Button>
+			<Button icon={TokenStreamsIcon} on:click={() => modal.show(CreateModal)}
+				>Create workstream</Button
+			>
 		</header>
 		<main>
 			{#each workstreams as workstream}
