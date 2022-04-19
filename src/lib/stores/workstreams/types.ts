@@ -27,6 +27,7 @@ export interface WorkstreamBase {
 	payment: Payment;
 	title: string;
 	desc: string;
+	applicants?: string[];
 }
 
 export interface Payment {
