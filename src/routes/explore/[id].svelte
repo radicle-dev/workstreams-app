@@ -44,8 +44,6 @@
 		);
 
 		application = (await applicationRequest.json())[0];
-
-		console.log(application);
 	});
 </script>
 

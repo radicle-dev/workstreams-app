@@ -7,10 +7,6 @@
 
 	let locked: boolean;
 
-	$: {
-		console.log($connectedAndLoggedIn);
-	}
-
 	async function logIn() {
 		locked = true;
 		try {
