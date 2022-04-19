@@ -3,19 +3,19 @@
 	import Button from '$components/Button.svelte';
 	import User from '$components/User.svelte';
 	import { authStore } from '$lib/stores/auth/auth';
-
-	$: connectedAndLoggedIn =
-		$walletStore.connected &&
-		$authStore.authenticated &&
-		$walletStore.address === $authStore.address;
+	import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
 	let locked: boolean;
+
+	$: {
+		console.log($connectedAndLoggedIn);
+	}
 
 	async function logIn() {
 		locked = true;
 		try {
 			if (!$walletStore.connected) await walletStore.connect();
-			if (!connectedAndLoggedIn) await authStore.authenticate($walletStore);
+			if (!$connectedAndLoggedIn) await authStore.authenticate($walletStore);
 		} finally {
 			locked = false;
 		}
@@ -24,7 +24,7 @@
 	let hover = false;
 </script>
 
-{#if connectedAndLoggedIn}
+{#if $connectedAndLoggedIn}
 	<div>
 		<Button
 			variant="outline"

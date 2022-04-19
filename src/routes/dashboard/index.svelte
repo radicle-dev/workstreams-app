@@ -11,13 +11,9 @@
 	import { authStore } from '$lib/stores/auth/auth';
 	import { browser } from '$app/env';
 	import EmptyState from '$lib/components/EmptyState.svelte';
+	import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
 	let workstreams: Workstream[] = [];
-
-	$: connectedAndLoggedIn =
-		$walletStore.connected &&
-		$authStore.authenticated &&
-		$walletStore.address === $authStore.address;
 
 	let locked: boolean;
 
@@ -55,7 +51,7 @@
 		locked = true;
 		try {
 			if (!$walletStore.connected) await walletStore.connect();
-			if (!connectedAndLoggedIn) await authStore.authenticate($walletStore);
+			if (!$connectedAndLoggedIn) await authStore.authenticate($walletStore);
 		} finally {
 			locked = false;
 		}
