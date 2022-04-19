@@ -44,7 +44,7 @@
 		"twemoji": "^14.0.2"
 	},
 	"lint-staged": {
-		"*.js": "eslint --cache --fix",
-		"*.{js,css,md}": "prettier --write"
+		"*.{js,css,svelte,ts}": "eslint --cache --fix",
+		"*.{js,css,md,ts,svelte}": "prettier --write"
 	}
 }
