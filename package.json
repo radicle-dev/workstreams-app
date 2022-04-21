@@ -16,7 +16,6 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
-		"@types/cookie": "^0.4.1",
 		"@types/marked": "^4.0.3",
 		"@typescript-eslint/eslint-plugin": "^4.31.1",
 		"@typescript-eslint/parser": "^4.31.1",
@@ -37,13 +36,9 @@
 	"dependencies": {
 		"@fontsource/fira-mono": "^4.5.0",
 		"@lukeed/uuid": "^2.0.0",
-		"cookie": "^0.4.1",
 		"ethers": "5.5.1",
-		"marked": "^4.0.12",
 		"radicle-design-system": "rudolfs/radicle-upstream#workspace=radicle-design-system",
-		"siwe": "^1.1.6",
-		"timeago.js": "^4.0.2",
-		"twemoji": "^14.0.2"
+		"siwe": "^1.1.6"
 	},
 	"lint-staged": {
 		"*.{js,css,svelte,ts}": "eslint --cache --fix",

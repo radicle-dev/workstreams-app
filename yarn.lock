@@ -993,13 +993,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/cookie@npm:^0.4.1":
-  version: 0.4.1
-  resolution: "@types/cookie@npm:0.4.1"
-  checksum: 3275534ed69a76c68eb1a77d547d75f99fedc80befb75a3d1d03662fb08d697e6f8b1274e12af1a74c6896071b11510631ba891f64d30c78528d0ec45a9c1a18
-  languageName: node
-  linkType: hard
-
 "@types/json-schema@npm:^7.0.7":
   version: 7.0.11
   resolution: "@types/json-schema@npm:7.0.11"
@@ -1587,13 +1580,6 @@ __metadata:
   version: 1.1.0
   resolution: "console-control-strings@npm:1.1.0"
   checksum: 8755d76787f94e6cf79ce4666f0c5519906d7f5b02d4b884cf41e11dcd759ed69c57da0670afd9236d229a46e0f9cf519db0cd829c6dca820bb5a5c3def584ed
-  languageName: node
-  linkType: hard
-
-"cookie@npm:^0.4.1":
-  version: 0.4.2
-  resolution: "cookie@npm:0.4.2"
-  checksum: a00833c998bedf8e787b4c342defe5fa419abd96b32f4464f718b91022586b8f1bafbddd499288e75c037642493c83083da426c6a9080d309e3bd90fd11baa9b
   languageName: node
   linkType: hard
 
@@ -4121,13 +4107,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"timeago.js@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "timeago.js@npm:4.0.2"
-  checksum: c785a06988717cb5a00bb96b00ebaa56e83f4b5ed5d87c4c3931fb1bb2591a0e13a7ddc4b6c12c6ee7de64b440ed903c7bd4e0edddb37aade9bfc9ceab5d0db3
-  languageName: node
-  linkType: hard
-
 "tiny-glob@npm:^0.2.9":
   version: 0.2.9
   resolution: "tiny-glob@npm:0.2.9"
@@ -4179,7 +4158,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twemoji@npm:14.0.2, twemoji@npm:^14.0.2":
+"twemoji@npm:14.0.2":
   version: 14.0.2
   resolution: "twemoji@npm:14.0.2"
   dependencies:
@@ -4346,18 +4325,15 @@ __metadata:
     "@lukeed/uuid": ^2.0.0
     "@sveltejs/adapter-auto": next
     "@sveltejs/kit": next
-    "@types/cookie": ^0.4.1
     "@types/marked": ^4.0.3
     "@typescript-eslint/eslint-plugin": ^4.31.1
     "@typescript-eslint/parser": ^4.31.1
-    cookie: ^0.4.1
     eslint: ^7.32.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-svelte3: ^3.2.1
     ethers: 5.5.1
     husky: ^7.0.4
     lint-staged: ^12.3.8
-    marked: ^4.0.12
     prettier: ^2.4.1
     prettier-plugin-svelte: ^2.4.0
     radicle-design-system: "rudolfs/radicle-upstream#workspace=radicle-design-system"
@@ -4365,9 +4341,7 @@ __metadata:
     svelte: ^3.44.0
     svelte-check: ^2.2.6
     svelte-preprocess: ^4.9.4
-    timeago.js: ^4.0.2
     tslib: ^2.3.1
-    twemoji: ^14.0.2
     typescript: ^4.4.3
   languageName: unknown
   linkType: soft
