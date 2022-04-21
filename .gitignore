@@ -10,7 +10,6 @@ node_modules
 .output
 .gitsigners
 .eslintcache
-/static/twemoji
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -18,3 +17,6 @@ node_modules
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+static/styles
+static/fonts
+static/twemoji
