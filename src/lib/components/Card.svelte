@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
+
+	export let style: string | undefined = undefined;
 </script>
 
 <div
@@ -8,6 +10,7 @@
 	on:focus={() => dispatch('hover')}
 	on:mouseover={() => dispatch('hover')}
 	class="card"
+	{style}
 >
 	<div class="top">
 		<slot name="top" />

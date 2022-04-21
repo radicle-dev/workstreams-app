@@ -2,6 +2,7 @@
 	import { goto, prefetch } from '$app/navigation';
 	import { hyphenateString } from '$lib/utils/format';
 	import type { Workstream } from '$lib/stores/workstreams/types';
+	import * as modal from '$lib/utils/modal';
 
 	import Card from '$components/Card.svelte';
 	import Apply from '$components/icons/Ledger.svelte';
@@ -9,6 +10,7 @@
 	import TitleMeta from '$components/TitleMeta.svelte';
 	import Rate from '$components/Rate.svelte';
 	import Timeframe from '$components/Timeframe.svelte';
+	import ApplyModal from '$components/ApplyModal.svelte';
 
 	export let workstream: Workstream;
 
@@ -26,7 +28,13 @@
 			{/if}
 			<Rate rate={workstream.payment.rate} currency={workstream.payment.currency} />
 		</div>
-		<Button variant="outline"><Apply />Apply</Button>
+		<Button
+			variant="outline"
+			icon={Apply}
+			on:click={() => modal.show(ApplyModal, undefined, { workstream })}
+		>
+			Apply
+		</Button>
 	</div>
 </Card>
 

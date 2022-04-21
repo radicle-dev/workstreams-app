@@ -111,7 +111,7 @@
 			</div>
 			<div class="input-with-label">
 				<h4>Description</h4>
-				<TextInput bind:value={description} textarea placeholder="Max 256 characters" />
+				<TextInput bind:value={description} textarea placeholder="Markdown supported" />
 			</div>
 		</form>
 		<div class="actions">
@@ -162,37 +162,34 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-	}
-
-	.input-with-label > h4 {
-		margin-bottom: 12px;
+		gap: 0.75rem;
 	}
 
 	.payment > .inner {
 		display: flex;
-		gap: 24px;
+		gap: 1.5rem;
 	}
 
 	.payment .payout {
-		width: 128px;
+		width: 8rem;
 	}
 
 	.duration > .input-group {
 		display: flex;
-		gap: 8px;
+		gap: 0.5rem;
 	}
 
 	.duration .number {
-		width: 64px;
+		width: 4rem;
 	}
 
 	.duration .unit {
-		width: 112px;
+		width: 7rem;
 	}
 
 	.actions {
 		display: flex;
-		gap: 16px;
+		gap: 1rem;
 		justify-content: flex-end;
 	}
 </style>

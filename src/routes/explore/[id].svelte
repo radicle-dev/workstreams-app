@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-	import type { Workstream } from '$lib/stores/workstreams/types';
+	import type { Application, Workstream } from '$lib/stores/workstreams/types';
 	import { getConfig } from '$lib/config';
 
 	/* eslint-disable */
@@ -19,16 +19,43 @@
 </script>
 
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import WorkstreamDetail from '$components/WorkstreamDetail.svelte';
+	import { walletStore } from '$lib/stores/wallet/wallet';
+	import { authStore } from '$lib/stores/auth/auth';
 
-	export let workstream: Workstream;
+	export let workstream: Workstream | undefined;
+
+	let application: Application | undefined;
+
+	$: connectedAndLoggedIn =
+		$walletStore.connected &&
+		$authStore.authenticated &&
+		$walletStore.address === $authStore.address;
+
+	onMount(async () => {
+		if (!workstream || !connectedAndLoggedIn) return;
+
+		const applicationRequest = await fetch(
+			`${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`,
+			{
+				credentials: 'include'
+			}
+		);
+
+		application = (await applicationRequest.json())[0];
+	});
 </script>
 
 <svelte:head>
-	<title>Workstream</title>
+	<title>{workstream.title}</title>
 </svelte:head>
 
 {#if workstream}
+	<!-- TODO: Temporarily just printing the JSON here -->
+	{#if application && connectedAndLoggedIn}
+		{JSON.stringify(application)}
+	{/if}
 	<WorkstreamDetail {workstream} />
 {:else}
 	<p>Sorry couldn't load the details of this workstream.</p>

@@ -36,7 +36,7 @@ export interface Payment {
 
 export interface Grant extends WorkstreamBase {
 	type: WorkstreamType.GRANT;
-	duration?: number;
+	duration: number;
 }
 
 export interface Role extends WorkstreamBase {
@@ -65,3 +65,8 @@ export interface Application {
 	};
 	workstreamId: string;
 }
+
+export type ApplicationInput = Omit<
+	Application,
+	'id' | 'state' | 'creator' | 'created_at' | 'workstreamId'
+>;

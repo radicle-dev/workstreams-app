@@ -37,7 +37,7 @@
 	class="button typo-text-bold {buttonClass}"
 	{title}
 	{disabled}
-	on:click
+	on:click|stopPropagation
 	on:mouseenter
 	on:mouseleave
 	{style}
