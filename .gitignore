@@ -11,3 +11,10 @@ node_modules
 .gitsigners
 .eslintcache
 /static/twemoji
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
