@@ -1,9 +1,9 @@
 <script lang="ts">
 	import * as modal from '$lib/utils/modal';
 	import Modal from '$components/Modal.svelte';
-	import Button from './Button.svelte';
-	import Dropdown from './Dropdown.svelte';
-	import TokenStreams from './icons/TokenStreams.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
+	import Dropdown from 'radicle-design-system/Dropdown.svelte';
+	import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
 	import TextInput from './TextInput.svelte';
 	import TypeSwitcher from './TypeSwitcher.svelte';
 	import { getConfig } from '$lib/config';

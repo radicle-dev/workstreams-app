@@ -3,8 +3,8 @@
 	import * as modal from '$lib/utils/modal';
 	import CreateModal from '$components/CreateModal.svelte';
 	import SegmentedControl from '$components/SegmentedControl.svelte';
-	import Button from '$components/Button.svelte';
-	import TokenStreamsIcon from '$components/icons/TokenStreams.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
+	import TokenStreamsIcon from 'radicle-design-system/icons/TokenStreams.svelte';
 	import WorkstreamCard from '$components/WorkstreamCard.svelte';
 	import { getConfig } from '$lib/config';
 	import { walletStore } from '$lib/stores/wallet/wallet';

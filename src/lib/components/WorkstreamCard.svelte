@@ -4,7 +4,7 @@
 	import type { Workstream } from '$lib/stores/workstreams/types';
 
 	import Card from '$components/Card.svelte';
-	import Button from '$components/Button.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
 	import TitleMeta from '$components/TitleMeta.svelte';
 	import Rate from '$components/Rate.svelte';
 	import Timeframe from '$components/Timeframe.svelte';

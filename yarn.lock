@@ -1627,6 +1627,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"deepmerge@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "deepmerge@npm:4.2.2"
+  checksum: a8c43a1ed8d6d1ed2b5bf569fa4c8eb9f0924034baf75d5d406e47e157a451075c4db353efea7b6bcc56ec48116a8ce72fccf867b6e078e7c561904b5897530b
+  languageName: node
+  linkType: hard
+
 "delegates@npm:^1.0.0":
   version: 1.0.0
   resolution: "delegates@npm:1.0.0"
@@ -1663,6 +1670,44 @@ __metadata:
   dependencies:
     esutils: ^2.0.2
   checksum: fd7673ca77fe26cd5cba38d816bc72d641f500f1f9b25b83e8ce28827fe2da7ad583a8da26ab6af85f834138cf8dae9f69b0cd6ab925f52ddab1754db44d99ce
+  languageName: node
+  linkType: hard
+
+"dom-serializer@npm:^1.0.1":
+  version: 1.4.1
+  resolution: "dom-serializer@npm:1.4.1"
+  dependencies:
+    domelementtype: ^2.0.1
+    domhandler: ^4.2.0
+    entities: ^2.0.0
+  checksum: fbb0b01f87a8a2d18e6e5a388ad0f7ec4a5c05c06d219377da1abc7bb0f674d804f4a8a94e3f71ff15f6cb7dcfc75704a54b261db672b9b3ab03da6b758b0b22
+  languageName: node
+  linkType: hard
+
+"domelementtype@npm:^2.0.1, domelementtype@npm:^2.2.0":
+  version: 2.3.0
+  resolution: "domelementtype@npm:2.3.0"
+  checksum: ee837a318ff702622f383409d1f5b25dd1024b692ef64d3096ff702e26339f8e345820f29a68bcdcea8cfee3531776b3382651232fbeae95612d6f0a75efb4f6
+  languageName: node
+  linkType: hard
+
+"domhandler@npm:^4.0.0, domhandler@npm:^4.2.0":
+  version: 4.3.1
+  resolution: "domhandler@npm:4.3.1"
+  dependencies:
+    domelementtype: ^2.2.0
+  checksum: 4c665ceed016e1911bf7d1dadc09dc888090b64dee7851cccd2fcf5442747ec39c647bb1cb8c8919f8bbdd0f0c625a6bafeeed4b2d656bbecdbae893f43ffaaa
+  languageName: node
+  linkType: hard
+
+"domutils@npm:^2.5.2":
+  version: 2.8.0
+  resolution: "domutils@npm:2.8.0"
+  dependencies:
+    dom-serializer: ^1.0.1
+    domelementtype: ^2.2.0
+    domhandler: ^4.2.0
+  checksum: abf7434315283e9aadc2a24bac0e00eab07ae4313b40cc239f89d84d7315ebdfd2fb1b5bf750a96bc1b4403d7237c7b2ebf60459be394d625ead4ca89b934391
   languageName: node
   linkType: hard
 
@@ -1717,6 +1762,13 @@ __metadata:
   dependencies:
     ansi-colors: ^4.1.1
   checksum: 1c0911e14a6f8d26721c91e01db06092a5f7675159f0261d69c403396a385afd13dd76825e7678f66daffa930cfaa8d45f506fb35f818a2788463d022af1b884
+  languageName: node
+  linkType: hard
+
+"entities@npm:^2.0.0":
+  version: 2.2.0
+  resolution: "entities@npm:2.2.0"
+  checksum: 19010dacaf0912c895ea262b4f6128574f9ccf8d4b3b65c7e8334ad0079b3706376360e28d8843ff50a78aabcb8f08f0a32dbfacdc77e47ed77ca08b713669b3
   languageName: node
   linkType: hard
 
@@ -2496,6 +2548,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"htmlparser2@npm:^6.0.0":
+  version: 6.1.0
+  resolution: "htmlparser2@npm:6.1.0"
+  dependencies:
+    domelementtype: ^2.0.1
+    domhandler: ^4.0.0
+    domutils: ^2.5.2
+    entities: ^2.0.0
+  checksum: 81a7b3d9c3bb9acb568a02fc9b1b81ffbfa55eae7f1c41ae0bf840006d1dbf54cb3aa245b2553e2c94db674840a9f0fdad7027c9a9d01a062065314039058c4e
+  languageName: node
+  linkType: hard
+
 "http-cache-semantics@npm:^4.1.0":
   version: 4.1.0
   resolution: "http-cache-semantics@npm:4.1.0"
@@ -2686,6 +2750,13 @@ __metadata:
   version: 7.0.0
   resolution: "is-number@npm:7.0.0"
   checksum: 456ac6f8e0f3111ed34668a624e45315201dff921e5ac181f8ec24923b99e9f32ca1a194912dc79d539c97d33dba17dc635202ff0b2cf98326f608323276d27a
+  languageName: node
+  linkType: hard
+
+"is-plain-object@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "is-plain-object@npm:5.0.0"
+  checksum: e32d27061eef62c0847d303125440a38660517e586f2f3db7c9d179ae5b6674ab0f469d519b2e25c147a1a3bc87156d0d5f4d8821e0ce4a9ee7fe1fcf11ce45c
   languageName: node
   linkType: hard
 
@@ -3271,6 +3342,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"parse-srcset@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "parse-srcset@npm:1.0.2"
+  checksum: 3a0380380c6082021fcce982f0b89fb8a493ce9dfd7d308e5e6d855201e80db8b90438649b31fdd82a3d6089a8ca17dccddaa2b730a718389af4c037b8539ebf
+  languageName: node
+  linkType: hard
+
 "path-is-absolute@npm:^1.0.0":
   version: 1.0.1
   resolution: "path-is-absolute@npm:1.0.1"
@@ -3322,7 +3400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.12":
+"postcss@npm:^8.3.11, postcss@npm:^8.4.12":
   version: 8.4.12
   resolution: "postcss@npm:8.4.12"
   dependencies:
@@ -3394,6 +3472,28 @@ __metadata:
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
   checksum: b676f8c040cdc5b12723ad2f91414d267605b26419d5c821ff03befa817ddd10e238d22b25d604920340fd73efd8ba795465a0377c4adf45a4a41e4234e42dc4
+  languageName: node
+  linkType: hard
+
+"radicle-avatar@github:radicle-dev/radicle-avatar":
+  version: 0.1.0
+  resolution: "radicle-avatar@https://github.com/radicle-dev/radicle-avatar.git#commit=55640c89666c25fa95390c58a73f0e55d83e2e61"
+  dependencies:
+    rimraf: ^3.0.2
+  checksum: 766698bcc6ab9381eb0f9d62b52d010d1e302c1d98afe4b4dec63eed5116371ff502d0ea9a153984fd8e31093525d55a061f1fc3945445fe974c43a1fa588e15
+  languageName: node
+  linkType: hard
+
+"radicle-design-system@rudolfs/radicle-upstream#workspace=radicle-design-system":
+  version: 0.1.0
+  resolution: "radicle-design-system@https://github.com/rudolfs/radicle-upstream.git#workspace=radicle-design-system&commit=dcdba1be96dc180a36f02b7236cd36f9de42ead8"
+  dependencies:
+    marked: ^4.0.12
+    radicle-avatar: "github:radicle-dev/radicle-avatar"
+    sanitize-html: ^2.7.0
+    svelte: ^3.46.6
+    twemoji: 14.0.2
+  checksum: b7a9e5bd0033d0452dced099d0c20db72df098c8a6b5f079097ff89d5b79bbd7bcadabf64513012eacb60cf6e836acebaee62a9e2ee86a19f8712fb32c30e3e8
   languageName: node
   linkType: hard
 
@@ -3588,6 +3688,20 @@ __metadata:
     mkdirp: ^0.5.1
     rimraf: ^2.5.2
   checksum: 76da5b91dd7848de0c985adf035fc39ca76a3cd15d68bdae0a4672659a4bdef7b716747b31245af5dd769f19765a9e8e16ad577984b12cc041bdb09599921f3a
+  languageName: node
+  linkType: hard
+
+"sanitize-html@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "sanitize-html@npm:2.7.0"
+  dependencies:
+    deepmerge: ^4.2.2
+    escape-string-regexp: ^4.0.0
+    htmlparser2: ^6.0.0
+    is-plain-object: ^5.0.0
+    parse-srcset: ^1.0.2
+    postcss: ^8.3.11
+  checksum: 73a4d66f69578bace3506519ca0734279b7117e15c33c7e4d075cdb483b1586261a18acd35934f6c6109f3b2a4a82f82c242171a94d5dc23fba5b09b01ea5b22
   languageName: node
   linkType: hard
 
@@ -3959,7 +4073,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svelte@npm:^3.44.0":
+"svelte@npm:^3.44.0, svelte@npm:^3.46.6":
   version: 3.47.0
   resolution: "svelte@npm:3.47.0"
   checksum: 247892585543ab0fc4781e36d5469ad0ce8afd4c6c440639cb0c99564a0b435ee0838482443665a905e11b7f500a1cf68475bec6a938b668e1e73c2e0badfc4e
@@ -4065,7 +4179,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twemoji@npm:^14.0.2":
+"twemoji@npm:14.0.2, twemoji@npm:^14.0.2":
   version: 14.0.2
   resolution: "twemoji@npm:14.0.2"
   dependencies:
@@ -4246,6 +4360,7 @@ __metadata:
     marked: ^4.0.12
     prettier: ^2.4.1
     prettier-plugin-svelte: ^2.4.0
+    radicle-design-system: "rudolfs/radicle-upstream#workspace=radicle-design-system"
     siwe: ^1.1.6
     svelte: ^3.44.0
     svelte-check: ^2.2.6

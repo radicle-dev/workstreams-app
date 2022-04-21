@@ -5,9 +5,9 @@
 	import User from '$components/User.svelte';
 	import Tag from '$components/Tag.svelte';
 	import ApplyModal from '$components/ApplyModal.svelte';
-	import Apply from '$components/icons/Ledger.svelte';
-	import Button from '$components/Button.svelte';
-	import Markdown from '$components/Markdown.svelte';
+	import Apply from 'radicle-design-system/icons/Ledger.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
+	import Markdown from 'radicle-design-system/Markdown.svelte';
 	import type { Workstream } from '$lib/stores/workstreams/types';
 	import { walletStore } from '$lib/stores/wallet/wallet';
 

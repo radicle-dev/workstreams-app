@@ -5,14 +5,14 @@
 	import { WorkstreamType } from '$lib/stores/workstreams/types';
 
 	import Modal from '$components/Modal.svelte';
-	import Button from '$components/Button.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
 	import Card from '$components/Card.svelte';
 	import TitleMeta from '$components/TitleMeta.svelte';
 	import Timeframe from '$components/Timeframe.svelte';
 	import Rate from '$components/Rate.svelte';
-	import Apply from '$components/icons/Ledger.svelte';
+	import Apply from 'radicle-design-system/icons/Ledger.svelte';
 	import TextInput from '$components/TextInput.svelte';
-	import Dropdown from '$components/Dropdown.svelte';
+	import Dropdown from 'radicle-design-system/Dropdown.svelte';
 	import { getConfig } from '$lib/config';
 
 	export let workstream: Workstream;

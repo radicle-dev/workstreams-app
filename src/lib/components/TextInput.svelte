@@ -1,9 +1,9 @@
 <script lang="ts">
-	import CheckCircleIcon from './icons/CheckCircle.svelte';
-	import ExclamationCircleIcon from './icons/ExclamationCircle.svelte';
+	import CheckCircleIcon from 'radicle-design-system/icons/CheckCircle.svelte';
+	import ExclamationCircleIcon from 'radicle-design-system/icons/ExclamationCircle.svelte';
 
-	import KeyHint from './KeyHint.svelte';
-	import Spinner from './Spinner.svelte';
+	import KeyHint from 'radicle-design-system/KeyHint.svelte';
+	import Spinner from 'radicle-design-system/Spinner.svelte';
 
 	type TextInputValidationState =
 		| { type: 'unvalidated' }

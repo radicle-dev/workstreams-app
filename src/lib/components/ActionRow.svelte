@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Button from '$components/Button.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
 	import User from '$components/User.svelte';
 	import type { Workstream } from '$lib/types';
 	export let workstream: Workstream;
