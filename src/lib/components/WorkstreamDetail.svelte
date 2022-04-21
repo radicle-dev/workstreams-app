@@ -9,6 +9,7 @@
 	import Button from '$components/Button.svelte';
 	import Markdown from '$components/Markdown.svelte';
 	import type { Workstream } from '$lib/stores/workstreams/types';
+	import { walletStore } from '$lib/stores/wallet/wallet';
 
 	export let workstream: Workstream;
 </script>
@@ -36,7 +37,11 @@
 					<p class="timeframe">{timeframeFormat(workstream.duration)}</p>
 				</div>
 			{/if}
-			<Button icon={Apply} on:click={() => modal.show(ApplyModal, undefined, { workstream })}>
+			<Button
+				disabled={$walletStore.connected && workstream.applicants?.includes($walletStore.address)}
+				icon={Apply}
+				on:click={() => modal.show(ApplyModal, undefined, { workstream })}
+			>
 				Apply
 			</Button>
 		</div>

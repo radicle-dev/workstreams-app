@@ -23,7 +23,7 @@ function updateAccounts(walletData: WalletData, accounts: string[]): WalletData 
 		return {
 			connected: true,
 			connecting: (walletData.connected && walletData.connecting) || false,
-			address: accounts[0],
+			address: accounts[0].toLowerCase(),
 			provider,
 			signer: provider.getSigner()
 		};
@@ -76,7 +76,7 @@ export const walletStore = (() => {
 		set({
 			connected: true,
 			connecting: false,
-			address: accounts[0],
+			address: accounts[0].toLowerCase(),
 			provider,
 			signer: provider.getSigner()
 		});
