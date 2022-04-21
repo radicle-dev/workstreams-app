@@ -7,7 +7,8 @@
 	import TextInput from './TextInput.svelte';
 	import TypeSwitcher from './TypeSwitcher.svelte';
 	import { getConfig } from '$lib/config';
-	import { WorkstreamInput, WorkstreamType } from '$lib/stores/workstreams/types';
+	import type { WorkstreamInput } from '$lib/stores/workstreams/types';
+	import { WorkstreamType } from '$lib/stores/workstreams/types';
 
 	const durationOptions = [
 		{ value: '1', title: 'Days' },
