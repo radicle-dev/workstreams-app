@@ -4,7 +4,13 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-  import Connect from '$components/Connect.svelte';
+	import * as modal from '$lib/utils/modal';
+
+	import Connect from '$components/Connect.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
+	import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
+	import CreateModal from './CreateModal.svelte';
+	import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
 	$: onExplore = $page.url.pathname.includes('explore') || $page.url.pathname === '/';
 	$: onDashboard = $page.url.pathname.includes('dashboard');
@@ -21,19 +27,29 @@
 <header style:box-shadow={scrolledDown ? 'var(--color-shadows)' : ''}>
 	<div class="inner">
 		<div class="logo" on:click={() => goto(`/`)}>
-			<img src="/logo.svg" alt="Radicle Logo" />
+			<img src="/logo.svg" height="40px" alt="Radicle Logo" />
 			<h4>Workstreams</h4>
 		</div>
 		<nav>
-			<div class="home">
-				<a sveltekit:prefetch href="/" class:active={onExplore}>Explore</a>
-				<a href="/dashboard" on:click={() => goto(`/dashboard`)} class:active={onDashboard}
-					>Dashboard</a
-				>
-			</div>
+			<a sveltekit:prefetch href="/" class:active={onExplore}>Explore</a>
+			<a
+				sveltekit:prefetch
+				href="/dashboard"
+				on:click={() => goto(`/dashboard`)}
+				class:active={onDashboard}>Dashboard</a
+			>
 		</nav>
-		<div class="user">
-			<Connect />
+		<div class="buttons">
+			{#if $connectedAndLoggedIn}
+				<div class="create-button">
+					<Button icon={TokenStreams} on:click={() => modal.show(CreateModal)}
+						>Create workstream</Button
+					>
+				</div>
+			{/if}
+			<div class="user">
+				<Connect />
+			</div>
 		</div>
 	</div>
 </header>
@@ -60,6 +76,11 @@
 		align-items: center;
 	}
 
+	.buttons {
+		display: flex;
+		gap: 8px;
+	}
+
 	.spacer {
 		height: 96px;
 	}
@@ -67,33 +88,27 @@
 	.logo {
 		display: flex;
 		gap: 8px;
-		height: 40px;
 		align-items: center;
 		cursor: pointer;
 	}
 	nav {
 		display: flex;
 		flex: 1;
-		justify-content: space-between;
 		align-items: center;
+		gap: 8px;
 	}
-	.home {
-		display: flex;
-		align-items: center;
-	}
-	.home > a {
+	nav > a {
 		color: var(--color-foreground-level-5);
 		padding: 0.5rem 1rem;
 		text-decoration: none;
-		margin-right: 1rem;
 		font-weight: 600;
 		border-radius: 0.5rem;
 		transition: all 0.3s;
 	}
-	.home > a:hover {
+	nav > a:hover {
 		background-color: var(--color-foreground-level-2);
 	}
-	.home > a.active {
+	nav > a.active {
 		color: var(--color-foreground);
 		background-color: var(--color-foreground-level-2);
 	}

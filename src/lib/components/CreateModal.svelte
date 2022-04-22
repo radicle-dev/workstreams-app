@@ -1,14 +1,15 @@
 <script lang="ts">
-  import * as modal from '$lib/utils/modal';
-  import Modal from '$components/Modal.svelte';
-  import Button from 'radicle-design-system/Button.svelte';
-  import Dropdown from 'radicle-design-system/Dropdown.svelte';
-  import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
-  import TextInput from './TextInput.svelte';
-  import TypeSwitcher from './TypeSwitcher.svelte';
-  import { getConfig } from '$lib/config';
-  import type { WorkstreamInput } from '$lib/stores/workstreams/types';
-  import { WorkstreamType } from '$lib/stores/workstreams/types';
+	import * as modal from '$lib/utils/modal';
+	import Modal from '$components/Modal.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
+	import Dropdown from 'radicle-design-system/Dropdown.svelte';
+	import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
+	import TextInput from './TextInput.svelte';
+	import TypeSwitcher from './TypeSwitcher.svelte';
+	import { getConfig } from '$lib/config';
+	import type { WorkstreamInput } from '$lib/stores/workstreams/types';
+	import { WorkstreamType } from '$lib/stores/workstreams/types';
+	import { goto } from '$app/navigation';
 
   const durationOptions = [
     { value: '1', title: 'Days' },
@@ -42,26 +43,27 @@
   async function createWorkstream() {
     creatingWorkstream = true;
 
-    try {
-      await fetch(`${getConfig().API_URL_BASE}/workstreams`, {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({
-          payment: {
-            currency: 'dai',
-            rate: streamRate
-          },
-          title,
-          desc: description,
-          type: workstreamType,
-          duration: parseInt(duration) * parseInt(durationUnit)
-        } as WorkstreamInput)
-      });
-    } catch (e) {
-      return;
-    }
-    modal.hide();
-  }
+		try {
+			await fetch(`${getConfig().API_URL_BASE}/workstreams`, {
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({
+					payment: {
+						currency: 'dai',
+						rate: streamRate
+					},
+					title,
+					desc: description,
+					type: workstreamType,
+					duration: parseInt(duration) * parseInt(durationUnit)
+				} as WorkstreamInput)
+			});
+		} catch (e) {
+			return;
+		}
+		goto('/dashboard');
+		modal.hide();
+	}
 </script>
 
 <Modal>

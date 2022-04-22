@@ -80,17 +80,6 @@
 
 <div class="container">
   {#if browser && $authStore.authenticated && $walletStore.connected}
-    <header>
-      <SegmentedControl
-        style="border: 0;"
-        active={applicationFilter}
-        options={applicationOptions}
-        on:select={(ev) => (applicationFilter = ev.detail)}
-      />
-      <Button icon={TokenStreamsIcon} on:click={() => modal.show(CreateModal)}
-        >Create workstream</Button
-      >
-    </header>
     {#if appliedToWorkstreams.length > 0}
       <h3>Workstreams you've applied to</h3>
       <main>
@@ -132,11 +121,6 @@
     min-height: 32rem;
     justify-content: center;
     align-items: center;
-  }
-  header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
   }
 
   h3 {
