@@ -12,7 +12,7 @@
 <div on:click={() => modal.toggle(ApplicationDetail, () => null, { application })} class="row">
 	<User address={application.creator} showAddress={!owner} />
 	<p class="desc typo-overflow-ellipsis">{application.letter}</p>
-	<Badge>{application.state}</Badge>
+	<Badge style="font-weight: 600;" text={application.state} />
 </div>
 
 <style>

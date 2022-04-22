@@ -18,7 +18,7 @@
 	<div class="metadata">
 		<div class="title">
 			<h1 style="margin-right: 1rem;">{workstream.title}</h1>
-			<Badge>{workstream.type}</Badge>
+			<Badge style="font-weight: 600;" text={workstream.type} />
 		</div>
 		<div class="owner">
 			<span class="label">created by</span>

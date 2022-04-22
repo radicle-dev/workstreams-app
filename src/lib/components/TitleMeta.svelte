@@ -9,7 +9,7 @@
 
 <div class="title">
 	<h3 style="margin-right: 0.75rem;" class="typo-overflow-ellipsis">{title}</h3>
-	<Badge>{type}</Badge>
+	<Badge style="font-weight: 600;" text={type} />
 </div>
 <div class="owner">
 	<User address={creator} />
