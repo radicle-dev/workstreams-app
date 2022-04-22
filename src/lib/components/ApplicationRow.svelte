@@ -11,7 +11,7 @@
 
 <div on:click={() => modal.toggle(ApplicationDetail, () => null, { application })} class="row">
 	<User address={application.creator} showAddress={!owner} />
-	<p class="desc typo-overflow-ellipsis">{application.desc}</p>
+	<p class="desc typo-overflow-ellipsis">{application.letter}</p>
 	<Tag>{application.state}</Tag>
 </div>
 

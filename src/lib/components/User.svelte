@@ -1,7 +1,10 @@
 <script lang="ts">
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	import { createIcon } from 'radicle-design-system/lib/blockies.ts';
+
 	import { onMount } from 'svelte';
 	import { ethers } from 'ethers';
-	import { createIcon } from 'radicle-design-system/lib/blockies.ts';
 	import { formatAddress } from '$lib/utils/format';
 
 	export let avatar = true;

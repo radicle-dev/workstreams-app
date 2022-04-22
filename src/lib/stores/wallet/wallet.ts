@@ -42,7 +42,7 @@ export const walletStore = (() => {
 	});
 
 	if (browser) {
-		window.ethereum.on('accountsChanged', (accounts) => {
+		window.ethereum.on('accountsChanged', (accounts: string[]) => {
 			update((walletData) => updateAccounts(walletData, accounts));
 		});
 
