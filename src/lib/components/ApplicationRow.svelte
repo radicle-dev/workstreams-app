@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as modal from '$lib/utils/modal';
 	import User from '$components/User.svelte';
-	import Tag from '$components/Tag.svelte';
+	import Badge from 'radicle-design-system/Badge.svelte';
 	import ApplicationDetail from '$components/ApplicationDetail.svelte';
 	import type { Application } from '$lib/stores/workstreams/types';
 
@@ -12,7 +12,7 @@
 <div on:click={() => modal.toggle(ApplicationDetail, () => null, { application })} class="row">
 	<User address={application.creator} showAddress={!owner} />
 	<p class="desc typo-overflow-ellipsis">{application.letter}</p>
-	<Tag>{application.state}</Tag>
+	<Badge>{application.state}</Badge>
 </div>
 
 <style>

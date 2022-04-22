@@ -3,7 +3,7 @@
 	import * as modal from '$lib/utils/modal';
 
 	import User from '$components/User.svelte';
-	import Tag from '$components/Tag.svelte';
+	import Badge from 'radicle-design-system/Badge.svelte';
 	import ApplyModal from '$components/ApplyModal.svelte';
 	import Apply from 'radicle-design-system/icons/Ledger.svelte';
 	import Button from 'radicle-design-system/Button.svelte';
@@ -18,7 +18,7 @@
 	<div class="metadata">
 		<div class="title">
 			<h1 style="margin-right: 1rem;">{workstream.title}</h1>
-			<Tag>{workstream.type}</Tag>
+			<Badge>{workstream.type}</Badge>
 		</div>
 		<div class="owner">
 			<span class="label">created by</span>
