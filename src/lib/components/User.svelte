@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { ethers } from 'ethers';
-	import { createIcon } from '$lib/utils/blockies';
+	import { createIcon } from 'radicle-design-system/lib/blockies.ts';
 	import { formatAddress } from '$lib/utils/format';
 
 	export let avatar = true;
