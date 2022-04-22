@@ -5,8 +5,8 @@
 	import * as modal from '$lib/utils/modal';
 
 	import Card from '$components/Card.svelte';
-	import Apply from '$components/icons/Ledger.svelte';
-	import Button from '$components/Button.svelte';
+	import Apply from 'radicle-design-system/icons/Ledger.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
 	import TitleMeta from '$components/TitleMeta.svelte';
 	import Rate from '$components/Rate.svelte';
 	import Timeframe from '$components/Timeframe.svelte';

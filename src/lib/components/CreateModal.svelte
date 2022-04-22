@@ -1,13 +1,14 @@
 <script lang="ts">
 	import * as modal from '$lib/utils/modal';
 	import Modal from '$components/Modal.svelte';
-	import Button from './Button.svelte';
-	import Dropdown from './Dropdown.svelte';
-	import TokenStreams from './icons/TokenStreams.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
+	import Dropdown from 'radicle-design-system/Dropdown.svelte';
+	import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
 	import TextInput from './TextInput.svelte';
 	import TypeSwitcher from './TypeSwitcher.svelte';
 	import { getConfig } from '$lib/config';
-	import { WorkstreamInput, WorkstreamType } from '$lib/stores/workstreams/types';
+	import type { WorkstreamInput } from '$lib/stores/workstreams/types';
+	import { WorkstreamType } from '$lib/stores/workstreams/types';
 
 	const durationOptions = [
 		{ value: '1', title: 'Days' },
@@ -74,7 +75,7 @@
 						<p>A fixed-length project.</p>
 					</div>
 					<div slot="second" class="option">
-						<h4>Workstream</h4>
+						<h4>Role</h4>
 						<p>A long-term commitment.</p>
 					</div>
 				</TypeSwitcher>

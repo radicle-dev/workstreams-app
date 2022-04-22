@@ -2,9 +2,9 @@
 	import type { Workstream } from '$lib/stores/workstreams/types';
 	import * as modal from '$lib/utils/modal';
 	import CreateModal from '$components/CreateModal.svelte';
-	import SegmentedControl from '$components/SegmentedControl.svelte';
-	import Button from '$components/Button.svelte';
-	import TokenStreamsIcon from '$components/icons/TokenStreams.svelte';
+	import SegmentedControl from 'radicle-design-system/SegmentedControl.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
+	import TokenStreamsIcon from 'radicle-design-system/icons/TokenStreams.svelte';
 	import WorkstreamCard from '$components/WorkstreamCard.svelte';
 	import { getConfig } from '$lib/config';
 	import { walletStore } from '$lib/stores/wallet/wallet';
@@ -68,6 +68,7 @@
 	{#if browser && $authStore.authenticated && $walletStore.connected}
 		<header>
 			<SegmentedControl
+				style="border: 0;"
 				active={applicationFilter}
 				options={applicationOptions}
 				on:select={(ev) => (applicationFilter = ev.detail)}

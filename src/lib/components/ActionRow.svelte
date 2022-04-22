@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Button from '$components/Button.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
 	import User from '$components/User.svelte';
-	import type { Workstream } from '$lib/types';
+	import type { Workstream } from '$lib/stores/workstreams/types';
 	export let workstream: Workstream;
 </script>
 
@@ -12,7 +12,7 @@
 	</div>
 	<div class="right">
 		<p>something in blue</p>
-		<Button variant="primary-outline">View</Button>
+		<Button variant="primary">View</Button>
 	</div>
 </div>
 

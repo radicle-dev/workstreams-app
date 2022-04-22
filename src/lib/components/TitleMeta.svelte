@@ -1,6 +1,6 @@
 <script lang="ts">
 	import User from '$components/User.svelte';
-	import Tag from '$components/Tag.svelte';
+	import Badge from 'radicle-design-system/Badge.svelte';
 
 	export let title: string;
 	export let type: string;
@@ -9,7 +9,7 @@
 
 <div class="title">
 	<h3 style="margin-right: 0.75rem;" class="typo-overflow-ellipsis">{title}</h3>
-	<Tag>{type}</Tag>
+	<Badge style="font-weight: 600;" text={type} />
 </div>
 <div class="owner">
 	<User address={creator} />

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { walletStore } from '$lib/stores/wallet/wallet';
-	import Button from '$components/Button.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
 	import { fade } from 'svelte/transition';
 	import User from '$components/User.svelte';
 	import { authStore } from '$lib/stores/auth/auth';

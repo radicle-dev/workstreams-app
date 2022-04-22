@@ -3,11 +3,11 @@
 	import * as modal from '$lib/utils/modal';
 
 	import User from '$components/User.svelte';
-	import Tag from '$components/Tag.svelte';
+	import Badge from 'radicle-design-system/Badge.svelte';
 	import ApplyModal from '$components/ApplyModal.svelte';
-	import Apply from '$components/icons/Ledger.svelte';
-	import Button from '$components/Button.svelte';
-	import Markdown from '$components/Markdown.svelte';
+	import Apply from 'radicle-design-system/icons/Ledger.svelte';
+	import Button from 'radicle-design-system/Button.svelte';
+	import Markdown from 'radicle-design-system/Markdown.svelte';
 	import type { Workstream } from '$lib/stores/workstreams/types';
 	import { walletStore } from '$lib/stores/wallet/wallet';
 
@@ -18,7 +18,7 @@
 	<div class="metadata">
 		<div class="title">
 			<h1 style="margin-right: 1rem;">{workstream.title}</h1>
-			<Tag>{workstream.type}</Tag>
+			<Badge style="font-weight: 600;" text={workstream.type} />
 		</div>
 		<div class="owner">
 			<span class="label">created by</span>

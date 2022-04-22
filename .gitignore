@@ -10,3 +10,13 @@ node_modules
 .output
 .gitsigners
 .eslintcache
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+static/styles
+static/fonts
+static/twemoji

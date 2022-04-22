@@ -11,7 +11,7 @@
 	import FlyTransition from '$lib/components/FlyTransition.svelte';
 	import '../app.css';
 
-	export let url;
+	export let url: string;
 </script>
 
 <ModalLayout />

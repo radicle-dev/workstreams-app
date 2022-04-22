@@ -9,14 +9,18 @@
 			class:selected={selected === 'first'}
 			on:click={() => (selected = 'first')}
 		>
-			<div class="option-content"><slot name="first" /></div>
+			<div class="option-content" data-theme={selected === 'first' ? 'dark' : ''}>
+				<slot name="first" />
+			</div>
 		</div>
 		<div
 			class="option second"
 			class:selected={selected === 'second'}
 			on:click={() => (selected = 'second')}
 		>
-			<div class="option-content"><slot name="second" /></div>
+			<div class="option-content" data-theme={selected === 'second' ? 'dark' : ''}>
+				<slot name="second" />
+			</div>
 		</div>
 	</div>
 	<div class="indicator-wrapper">
@@ -56,6 +60,10 @@
 		opacity: 0.5;
 		position: relative;
 		transition: opacity 0.3s;
+	}
+
+	.option-content * {
+		transition: all 0.3s;
 	}
 
 	.selected > .option-content {
