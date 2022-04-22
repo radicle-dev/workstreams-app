@@ -45,7 +45,7 @@
 		top: 0;
 		left: 0;
 		right: 0;
-		height: 80px;
+		height: 72px;
 		box-sizing: border-box;
 		background-color: var(--color-background);
 		z-index: 10;
