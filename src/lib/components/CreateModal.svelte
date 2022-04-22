@@ -75,7 +75,7 @@
 						<p>A fixed-length project.</p>
 					</div>
 					<div slot="second" class="option">
-						<h4>Workstream</h4>
+						<h4>Role</h4>
 						<p>A long-term commitment.</p>
 					</div>
 				</TypeSwitcher>
