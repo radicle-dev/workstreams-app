@@ -1,19 +1,6 @@
-<script lang="ts">
-	import Button from 'radicle-design-system/Button.svelte';
-	import User from '$components/User.svelte';
-	import type { Workstream } from '$lib/stores/workstreams/types';
-	export let workstream: Workstream;
-</script>
-
 <div class="row">
-	<div class="left">
-		<User address={workstream.creator} showAddress={false} />
-		<p>something</p>
-	</div>
-	<div class="right">
-		<p>something in blue</p>
-		<Button variant="primary">View</Button>
-	</div>
+	<slot name="left" />
+	<slot name="right" />
 </div>
 
 <style>
@@ -25,16 +12,5 @@
 		padding: 0.75rem 0.75rem 0.75rem 1.25rem;
 		margin-top: 1rem;
 		align-items: center;
-	}
-
-	.left,
-	.right {
-		display: flex;
-		gap: 0.5rem;
-		align-items: center;
-	}
-
-	.right {
-		color: var(--color-primary);
 	}
 </style>
