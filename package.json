@@ -37,7 +37,7 @@
 		"@fontsource/fira-mono": "^4.5.7",
 		"@lukeed/uuid": "^2.0.0",
 		"ethers": "5.6.4",
-		"radicle-design-system": "rudolfs/radicle-upstream#workspace=radicle-design-system",
+		"radicle-design-system": "radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=d1ef8790e950f5089bad0ad0dfb6e60be0f939d2",
 		"siwe": "^1.1.6"
 	},
 	"lint-staged": {
