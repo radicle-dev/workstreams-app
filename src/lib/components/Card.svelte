@@ -3,21 +3,21 @@
 	const dispatch = createEventDispatcher();
 
 	export let style: string | undefined = undefined;
+	export let hoverable: boolean = true;
+	let hover: boolean = false;
 </script>
 
 <div
 	on:click={() => dispatch('click')}
-	on:focus={() => dispatch('hover')}
-	on:mouseover={() => dispatch('hover')}
+	on:focus={() => dispatch('focus')}
+	on:mouseenter={() => (hover = true)}
+	on:mouseleave={() => (hover = false)}
 	class="card"
 	{style}
+	class:hover={hoverable && hover}
 >
-	<div class="top">
-		<slot name="top" />
-	</div>
-	<div class="bottom">
-		<slot name="bottom" />
-	</div>
+	<slot name="top" />
+	<slot name="bottom" />
 </div>
 
 <style>
@@ -27,18 +27,12 @@
 		padding: 1.5rem;
 		border: 1px solid var(--color-foreground-level-2);
 		border-radius: 1rem;
-		cursor: pointer;
 		justify-content: space-between;
 		transition: all 0.2s;
+		gap: 1.5rem;
 	}
-	.card:hover {
+	.card.hover {
+		cursor: pointer;
 		border: 1px solid var(--color-foreground-level-4);
-	}
-	.top {
-		margin-bottom: 1.5rem;
-	}
-	.bottom {
-		display: flex;
-		justify-content: space-between;
 	}
 </style>
