@@ -15,7 +15,7 @@
 
 	export let workstream: Workstream;
 
-	$: url = `/explore/${hyphenateString(workstream.id)}`;
+	$: url = `/workstream/${hyphenateString(workstream.id)}`;
 </script>
 
 <Card on:click={() => goto(url)} on:hover={() => prefetch(url)}>

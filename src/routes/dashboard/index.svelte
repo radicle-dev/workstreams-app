@@ -13,7 +13,8 @@
 	import EmptyState from '$lib/components/EmptyState.svelte';
 	import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
-	let workstreams: Workstream[] = [];
+	let createdWorkstreams: Workstream[] = [];
+	let appliedToWorkstreams: Workstream[] = [];
 
 	let locked: boolean;
 
@@ -42,7 +43,15 @@
 					}
 				);
 
-				workstreams = await result.json();
+				createdWorkstreams = await result.json();
+			})();
+
+			(async () => {
+				const result = await fetch(`${getConfig().API_URL_BASE}/workstreams?applied=true`, {
+					credentials: 'include'
+				});
+
+				appliedToWorkstreams = await result.json();
 			})();
 		}
 	}
@@ -77,11 +86,22 @@
 				>Create workstream</Button
 			>
 		</header>
-		<main>
-			{#each workstreams as workstream}
-				<WorkstreamCard {workstream} />
-			{/each}
-		</main>
+		{#if appliedToWorkstreams.length > 0}
+			<h3>Workstreams you've applied to</h3>
+			<main>
+				{#each appliedToWorkstreams as workstream}
+					<WorkstreamCard {workstream} />
+				{/each}
+			</main>
+		{/if}
+		{#if createdWorkstreams.length > 0}
+			<h3>Workstreams you've created</h3>
+			<main>
+				{#each createdWorkstreams as workstream}
+					<WorkstreamCard {workstream} />
+				{/each}
+			</main>
+		{/if}
 	{:else}
 		<div class="empty-wrapper">
 			<EmptyState
@@ -113,9 +133,15 @@
 		justify-content: space-between;
 		margin-bottom: 1.5rem;
 	}
+
+	h3 {
+		margin-left: 1.5rem;
+	}
+
 	main {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 1.5rem;
+		margin: 1rem 0 4.5rem;
 	}
 </style>

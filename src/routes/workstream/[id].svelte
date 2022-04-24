@@ -52,11 +52,7 @@
 </svelte:head>
 
 {#if workstream}
-	<!-- TODO: Temporarily just printing the JSON here -->
-	{#if application && connectedAndLoggedIn}
-		{JSON.stringify(application)}
-	{/if}
-	<WorkstreamDetail {workstream} />
+	<WorkstreamDetail {workstream} {application} />
 {:else}
 	<p>Sorry couldn't load the details of this workstream.</p>
 {/if}

@@ -2,16 +2,21 @@
 	import { timeframeFormat, dateFormat } from '$lib/utils/format';
 	import * as modal from '$lib/utils/modal';
 
+	import Card from '$components/Card.svelte';
 	import User from '$components/User.svelte';
 	import Badge from 'radicle-design-system/Badge.svelte';
 	import ApplyModal from '$components/ApplyModal.svelte';
+	import ApplicationModal from '$components/ApplicationModal.svelte';
 	import Apply from 'radicle-design-system/icons/Ledger.svelte';
+	import ThumbsDown from 'radicle-design-system/icons/ThumbsDown.svelte';
 	import Button from 'radicle-design-system/Button.svelte';
 	import Markdown from 'radicle-design-system/Markdown.svelte';
-	import type { Workstream } from '$lib/stores/workstreams/types';
+	import type { Application, Workstream } from '$lib/stores/workstreams/types';
+	import ActionRow from '$components/ActionRow.svelte';
 	import { walletStore } from '$lib/stores/wallet/wallet';
 
 	export let workstream: Workstream;
+	export let application: Application | undefined = undefined;
 </script>
 
 <div class="container">
@@ -25,26 +30,55 @@
 			<User address={workstream.creator} />
 			<span class="label" style="margin-left: 0.5rem;">on {dateFormat(workstream.created_at)}</span>
 		</div>
-		<div class="timerate">
-			<div style="text-align: right;">
-				<p class="typo-text-bold rate">
-					{Math.floor(workstream.payment.rate)}
-					{workstream.payment.currency} <span class="typo-regular">/ day</span>
-				</p>
-			</div>
-			{#if workstream.type === 'grant' && workstream.duration}
-				<div>
-					<p class="timeframe">{timeframeFormat(workstream.duration)}</p>
+		<Card hoverable={false}>
+			<div slot="top">
+				<h3>Applications</h3>
+				<div class="timerate">
+					<div style="text-align: right;">
+						<p class="typo-text-bold rate">
+							{Math.floor(workstream.payment.rate)}
+							{workstream.payment.currency} <span class="typo-regular">/ day</span>
+						</p>
+					</div>
+					{#if workstream.type === 'grant' && workstream.duration}
+						<div>
+							<p class="timeframe">{timeframeFormat(workstream.duration)}</p>
+						</div>
+					{/if}
+					<Button
+						disabled={$walletStore.connected &&
+							workstream.applicants?.includes($walletStore.address)}
+						icon={Apply}
+						on:click={() => modal.show(ApplyModal, undefined, { workstream })}
+					>
+						Apply
+					</Button>
 				</div>
-			{/if}
-			<Button
-				disabled={$walletStore.connected && workstream.applicants?.includes($walletStore.address)}
-				icon={Apply}
-				on:click={() => modal.show(ApplyModal, undefined, { workstream })}
-			>
-				Apply
-			</Button>
-		</div>
+			</div>
+			<div slot="bottom">
+				{#if application}
+					<ActionRow>
+						<div slot="left">
+							<User address={application.creator} />
+						</div>
+						<div slot="right" class="row-actions">
+							{#if application.counterOffer}
+								<p>
+									Proposes <span class="typo-text-bold"
+										>{application.counterOffer.rate.toFixed(2)}
+										{application.counterOffer.currency.toUpperCase()}</span
+									> / 24h
+								</p>
+							{/if}
+							<Button variant="primary" icon={ThumbsDown}>Deny</Button>
+							<Button on:click={() => modal.show(ApplicationModal, undefined, { application })}
+								>View</Button
+							>
+						</div>
+					</ActionRow>
+				{/if}
+			</div>
+		</Card>
 		<div>
 			<div class="desc">
 				<Markdown content={workstream.desc} />
@@ -74,6 +108,11 @@
 	.owner > span {
 		margin-right: 0.5rem;
 	}
+	.row-actions {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+	}
 	.desc {
 		margin-top: 0.5rem;
 		color: var(--color-foreground);
@@ -82,9 +121,6 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 1rem;
-		border: 1px solid var(--color-foreground-level-3);
-		border-radius: 1rem;
 	}
 	.timeframe {
 		color: var(--color-foreground-level-6);

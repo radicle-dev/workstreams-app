@@ -9,13 +9,14 @@
 	import Rate from '$components/Rate.svelte';
 	import Timeframe from '$components/Timeframe.svelte';
 	import ActionRow from '$components/ActionRow.svelte';
+	import User from '$components/User.svelte';
 
 	export let workstream: Workstream;
 
-	$: url = `/explore/${hyphenateString(workstream.id)}`;
+	$: url = `/workstream/${hyphenateString(workstream.id)}`;
 </script>
 
-<Card>
+<Card on:click={() => goto(url)} on:hover={() => prefetch(url)}>
 	<div slot="top">
 		<TitleMeta title={workstream.title} type={workstream.type} creator={workstream.creator} />
 	</div>
@@ -26,13 +27,16 @@
 				<Timeframe duration={workstream.duration} />
 			{/if}
 		</div>
-		<Button
-			on:click={() => goto(url)}
-			on:hover={() => prefetch(url)}
-			style="margin-top: 1rem; width: 100%; display: block; text-align: center;"
-			variant="outline">View workstream details</Button
-		>
-		<ActionRow {workstream} />
+		<ActionRow>
+			<div slot="left" class="left">
+				<User address={workstream.creator} showAddress={false} />
+				<p>something</p>
+			</div>
+			<div slot="right" class="right">
+				<p>something in blue</p>
+				<Button variant="primary-outline">View</Button>
+			</div>
+		</ActionRow>
 	</div>
 </Card>
 
@@ -45,5 +49,15 @@
 	.spread {
 		display: flex;
 		justify-content: space-between;
+	}
+	.left,
+	.right {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.right {
+		color: var(--color-primary);
 	}
 </style>

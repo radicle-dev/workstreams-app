@@ -3032,16 +3032,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"radicle-design-system@radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=d1ef8790e950f5089bad0ad0dfb6e60be0f939d2":
+"radicle-design-system@radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=e2d2e495e5ecf3cb2eed41917e31a210c06fb17f":
   version: 0.1.0
-  resolution: "radicle-design-system@https://github.com/radicle-dev/radicle-upstream.git#workspace=radicle-design-system&commit=d1ef8790e950f5089bad0ad0dfb6e60be0f939d2"
+  resolution: "radicle-design-system@https://github.com/radicle-dev/radicle-upstream.git#workspace=radicle-design-system&commit=e2d2e495e5ecf3cb2eed41917e31a210c06fb17f"
   dependencies:
     marked: ^4.0.12
     radicle-avatar: "github:radicle-dev/radicle-avatar"
     sanitize-html: ^2.7.0
     svelte: ^3.46.6
     twemoji: 14.0.2
-  checksum: 233110d2146f1c94abda715353df68d33a3ecaf25e4624d2eb45051a77007e86792debe1df2445052b5d05a2e8d8900560220e1d3a5a44e8236ec33599095717
+  checksum: 9c8242f577ac6d64501c2247bd4122b15153812366a6d698752abaec0535c105d971cd04c0b00c044a33be86be6e721f53a4d555b74ed72b4fae168ea94f6201
   languageName: node
   linkType: hard
 
@@ -3869,7 +3869,7 @@ __metadata:
     lint-staged: ^12.4.0
     prettier: ^2.6.2
     prettier-plugin-svelte: ^2.7.0
-    radicle-design-system: "radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=d1ef8790e950f5089bad0ad0dfb6e60be0f939d2"
+    radicle-design-system: "radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=e2d2e495e5ecf3cb2eed41917e31a210c06fb17f"
     siwe: ^1.1.6
     svelte: ^3.47.0
     svelte-check: ^2.7.0
