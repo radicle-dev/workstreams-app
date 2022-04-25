@@ -5,6 +5,7 @@
 
 	import Card from '$components/Card.svelte';
 	import User from '$components/User.svelte';
+	import Rate from '$components/Rate.svelte';
 	import Badge from 'radicle-design-system/Badge.svelte';
 	import ApplyModal from '$components/ApplyModal.svelte';
 	import ApplicationModal from '$components/ApplicationModal.svelte';
@@ -64,11 +65,11 @@
 							</div>
 							<div slot="right" class="row-actions">
 								{#if application.counterOffer}
-									<p>
-										Proposes <span class="typo-text-bold"
-											>{application.counterOffer.rate.toFixed(2)}
-											{application.counterOffer.currency.toUpperCase()}</span
-										> / 24h
+									<p class="proposal">
+										Proposes <Rate
+											rate={application.counterOffer.rate}
+											currency={application.counterOffer.currency}
+										/>
 									</p>
 								{/if}
 								{#if $walletStore.connected && $walletStore.address === workstream.creator}
@@ -113,6 +114,12 @@
 	}
 	.owner > span {
 		margin-right: 0.5rem;
+	}
+
+	.proposal {
+		display: flex;
+		color: var(--color-primary);
+		gap: 0.75rem;
 	}
 	.row-actions {
 		display: flex;
