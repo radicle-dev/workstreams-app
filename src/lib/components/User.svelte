@@ -18,10 +18,10 @@
 
 	onMount(() => {
 		uriData = blockyDataUri(address);
-		laodEnsData();
+		loadEnsData();
 	});
 
-	$: laodEnsData = async () => {
+	$: loadEnsData = async () => {
 		const checksummedAddress = await ethersProvider._getAddress(address.toLocaleLowerCase());
 		ensName = await ethersProvider.lookupAddress(checksummedAddress);
 		if (!ensName) {

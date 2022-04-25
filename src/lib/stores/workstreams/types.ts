@@ -60,10 +60,7 @@ export interface Application {
 	creator: string;
 	created_at: Timestamp;
 	letter: string;
-	counterOffer?: {
-		payment?: Payment;
-		length?: number;
-	};
+	counterOffer?: Payment;
 	workstreamId: string;
 }
 
