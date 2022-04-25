@@ -15,7 +15,44 @@
 	export let workstream: Workstream;
 	export let application: Application;
 
+	let actionsDisabled = false;
+
 	import Modal from '$components/Modal.svelte';
+	import { getConfig } from '$lib/config';
+
+	async function rejectApplication() {
+		actionsDisabled = true;
+		try {
+			await fetch(
+				`${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications/${
+					application.id
+				}/reject`,
+				{ method: 'POST', credentials: 'include' }
+			);
+		} catch (e) {
+			return;
+		} finally {
+			actionsDisabled = false;
+		}
+		modal.hide();
+	}
+
+	async function acceptApplication() {
+		actionsDisabled = true;
+		try {
+			await fetch(
+				`${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications/${
+					application.id
+				}/accept`,
+				{ method: 'POST', credentials: 'include' }
+			);
+		} catch (e) {
+			return;
+		} finally {
+			actionsDisabled = false;
+		}
+		modal.hide();
+	}
 </script>
 
 <Modal>
@@ -65,8 +102,8 @@
 		</div>
 		{#if $walletStore.connected && $walletStore.address === workstream.creator}
 			<div class="actions">
-				<Button variant="destructive" icon={ThumbsDown}>Deny</Button>
-				<Button variant="primary" icon={ThumbsUp}>Accept</Button>
+				<Button on:click={rejectApplication} variant="destructive" icon={ThumbsDown}>Deny</Button>
+				<Button on:click={acceptApplication} variant="primary" icon={ThumbsUp}>Accept</Button>
 			</div>
 		{/if}
 	</div>
