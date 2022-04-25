@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { timeframeFormat, dateFormat } from '$lib/utils/format';
 	import * as modal from '$lib/utils/modal';
+	import { walletStore } from '$lib/stores/wallet/wallet';
 
 	import Card from '$components/Card.svelte';
 	import User from '$components/User.svelte';
@@ -13,10 +14,9 @@
 	import Markdown from 'radicle-design-system/Markdown.svelte';
 	import type { Application, Workstream } from '$lib/stores/workstreams/types';
 	import ActionRow from '$components/ActionRow.svelte';
-	import { walletStore } from '$lib/stores/wallet/wallet';
 
 	export let workstream: Workstream;
-	export let application: Application | undefined = undefined;
+	export let applications: Application[] | undefined = undefined;
 </script>
 
 <div class="container">
@@ -56,26 +56,32 @@
 				</div>
 			</div>
 			<div slot="bottom">
-				{#if application}
-					<ActionRow>
-						<div slot="left">
-							<User address={application.creator} />
-						</div>
-						<div slot="right" class="row-actions">
-							{#if application.counterOffer}
-								<p>
-									Proposes <span class="typo-text-bold"
-										>{application.counterOffer.rate.toFixed(2)}
-										{application.counterOffer.currency.toUpperCase()}</span
-									> / 24h
-								</p>
-							{/if}
-							<Button variant="primary" icon={ThumbsDown}>Deny</Button>
-							<Button on:click={() => modal.show(ApplicationModal, undefined, { application })}
-								>View</Button
-							>
-						</div>
-					</ActionRow>
+				{#if applications}
+					{#each applications as application}
+						<ActionRow>
+							<div slot="left">
+								<User address={application.creator} />
+							</div>
+							<div slot="right" class="row-actions">
+								{#if application.counterOffer}
+									<p>
+										Proposes <span class="typo-text-bold"
+											>{application.counterOffer.rate.toFixed(2)}
+											{application.counterOffer.currency.toUpperCase()}</span
+										> / 24h
+									</p>
+								{/if}
+								{#if $walletStore.connected && $walletStore.address === workstream.creator}
+									<Button variant="primary" icon={ThumbsDown}>Deny</Button>
+								{/if}
+								<Button
+									on:click={() =>
+										modal.show(ApplicationModal, undefined, { workstream, application })}
+									>View</Button
+								>
+							</div>
+						</ActionRow>
+					{/each}
 				{/if}
 			</div>
 		</Card>
