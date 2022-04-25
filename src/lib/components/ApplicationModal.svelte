@@ -102,8 +102,18 @@
 		</div>
 		{#if $walletStore.connected && $walletStore.address === workstream.creator}
 			<div class="actions">
-				<Button on:click={rejectApplication} variant="destructive" icon={ThumbsDown}>Deny</Button>
-				<Button on:click={acceptApplication} variant="primary" icon={ThumbsUp}>Accept</Button>
+				<Button
+					disabled={actionsDisabled}
+					on:click={rejectApplication}
+					variant="destructive"
+					icon={ThumbsDown}>Deny</Button
+				>
+				<Button
+					disabled={actionsDisabled}
+					on:click={acceptApplication}
+					variant="primary"
+					icon={ThumbsUp}>Accept</Button
+				>
 			</div>
 		{/if}
 	</div>
