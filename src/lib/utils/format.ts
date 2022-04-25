@@ -11,6 +11,10 @@ export function timeframeFormat(days: number): string {
 
 	if (weeks < 1) {
 		return `${days} days`;
+	} else if (days === 1) {
+		return `${days} day`;
+	} else if (weeks === 1) {
+		return `${weeks} week`;
 	} else {
 		return `${weeks} weeks`;
 	}
