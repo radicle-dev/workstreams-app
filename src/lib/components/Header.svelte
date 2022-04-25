@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 
 	import Connect from '$components/Connect.svelte';
+	import ThemeSwitcher from '$components/ThemeSwitcher.svelte';
 
 	$: onExplore = $page.url.pathname.includes('explore') || $page.url.pathname === '/';
 	$: onDashboard = $page.url.pathname.includes('dashboard');
@@ -18,6 +19,7 @@
 		</div>
 		<div class="user">
 			<Connect />
+			<ThemeSwitcher />
 		</div>
 	</nav>
 </header>
@@ -48,5 +50,10 @@
 	.home > a.active {
 		color: var(--color-foreground);
 		background-color: var(--color-foreground-level-2);
+	}
+
+	.user {
+		display: flex;
+		gap: 0.75rem;
 	}
 </style>

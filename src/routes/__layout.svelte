@@ -23,9 +23,9 @@
 		</FlyTransition>
 	</main>
 
-	<footer>
+	<!-- <footer>
 		<p>by radicle 🌱</p>
-	</footer>
+	</footer> -->
 </div>
 
 <style>
@@ -45,11 +45,11 @@
 		display: flex;
 		flex-direction: column;
 	}
-	footer {
+	/* footer {
 		margin-top: 2rem;
 		color: var(--color-foreground-level-5);
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
+	} */
 </style>
