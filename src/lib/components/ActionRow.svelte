@@ -13,4 +13,8 @@
 		margin-top: 1rem;
 		align-items: center;
 	}
+
+	.row:first-child {
+		margin-top: 0;
+	}
 </style>

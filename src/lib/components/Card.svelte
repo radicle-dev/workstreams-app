@@ -29,7 +29,7 @@
 		border-radius: 1rem;
 		justify-content: space-between;
 		transition: all 0.2s;
-		gap: 1.5rem;
+		gap: 1rem;
 	}
 	.card.hover {
 		cursor: pointer;
