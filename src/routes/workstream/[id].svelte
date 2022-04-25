@@ -6,13 +6,20 @@
 	/* eslint-disable */
 	/** @type {import('./[slug]').Load} */
 	export async function load({ params, fetch }) {
-		const url = `${getConfig().API_URL_BASE}/workstreams/${params.id}`;
-		const response = await fetch(url, { credentials: 'include' });
+		const workstreamUrl = `${getConfig().API_URL_BASE}/workstreams/${params.id}`;
+		const applicationsUrl = `${getConfig().API_URL_BASE}/workstreams/${params.id}/applications`;
+		const fetches = [
+			fetch(workstreamUrl, { credentials: 'include' }),
+			fetch(applicationsUrl, { credentials: 'include' })
+		];
+
+		const responses = await Promise.all(fetches);
 
 		return {
-			status: response.status,
+			status: responses.every((e) => e.status === 200) ? 200 : responses[0].status,
 			props: {
-				workstream: response.ok && (await response.json())
+				workstream: responses[0].ok && (await responses[0].json()),
+				applications: responses[1].ok && (await responses[1].json())
 			}
 		};
 	}
@@ -20,22 +27,10 @@
 </script>
 
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import WorkstreamDetail from '$components/WorkstreamDetail.svelte';
 
 	export let workstream: Workstream | undefined;
-
-	let applications: Application[] | undefined;
-
-	onMount(async () => {
-		if (!workstream || !$connectedAndLoggedIn) return;
-
-		const applicationsRequest = await fetch(
-			`${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`
-		);
-
-		applications = await applicationsRequest.json();
-	});
+	export let applications: Application[] | undefined;
 </script>
 
 <svelte:head>

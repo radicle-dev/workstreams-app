@@ -7,7 +7,7 @@ const configMap = {
 		API_URL_BASE: 'https://us-central1-radicle-workstreams.cloudfunctions.net/api'
 	},
 	development: {
-		API_URL_BASE: 'http://127.0.0.1:5001/radicle-workstreams/us-central1/api'
+		API_URL_BASE: 'https://us-central1-radicle-workstreams.cloudfunctions.net/api'
 	}
 };
 
