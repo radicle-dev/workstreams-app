@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
 
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -40,8 +41,12 @@
 			>
 		</nav>
 		<div class="buttons">
-			{#if $connectedAndLoggedIn}
-				<div class="create-button">
+			{#if $connectedAndLoggedIn && onDashboard}
+				<div
+					in:fly={{ y: 10, duration: 300, delay: 300 }}
+					out:fly={{ y: 10, duration: 300 }}
+					class="create-button"
+				>
 					<Button icon={TokenStreams} on:click={() => modal.show(CreateModal)}
 						>Create workstream</Button
 					>
