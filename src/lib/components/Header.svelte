@@ -27,10 +27,6 @@
 
 <header style:box-shadow={scrolledDown ? 'var(--color-shadows)' : ''}>
 	<div class="inner">
-		<div class="logo" on:click={() => goto(`/`)}>
-			<img src="/logo.svg" height="40px" alt="Radicle Logo" />
-			<h4>Workstreams</h4>
-		</div>
 		<nav>
 			<a sveltekit:prefetch href="/" class:active={onExplore}>Explore</a>
 			<a
