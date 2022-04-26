@@ -86,12 +86,6 @@
 		height: 96px;
 	}
 
-	.logo {
-		display: flex;
-		gap: 8px;
-		align-items: center;
-		cursor: pointer;
-	}
 	nav {
 		display: flex;
 		flex: 1;
