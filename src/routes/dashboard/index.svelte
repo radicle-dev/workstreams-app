@@ -94,12 +94,12 @@
     width: 100%;
   }
 
-  .empty-wrapper {
-    display: flex;
-    min-height: 32rem;
-    justify-content: center;
-    align-items: center;
-  }
+	.empty-wrapper {
+		display: flex;
+		min-height: 32rem;
+		justify-content: center;
+		align-items: center;
+	}
 
   h3 {
     margin-left: 1.5rem;
