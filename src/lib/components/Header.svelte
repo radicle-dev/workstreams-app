@@ -49,4 +49,9 @@
 		color: var(--color-foreground);
 		background-color: var(--color-foreground-level-2);
 	}
+
+	.user {
+		display: flex;
+		gap: 0.75rem;
+	}
 </style>
