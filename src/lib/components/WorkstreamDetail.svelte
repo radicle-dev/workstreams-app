@@ -56,34 +56,20 @@
 			<User address={workstream.creator} />
 			<span class="label" style="margin-left: 0.5rem;">on {dateFormat(workstream.created_at)}</span>
 		</div>
-		<Card hoverable={false}>
-			<div slot="top">
-				<h3>Applications</h3>
-				<div class="timerate">
-					<div style="text-align: right;">
-						<Rate rate={workstream.payment.rate} currency={workstream.payment.currency} />
-					</div>
-					{#if workstream.type === 'grant' && workstream.duration}
-						<div>
-							<p class="timeframe">{timeframeFormat(workstream.duration)}</p>
+		{#if workstream.state !== WorkstreamState.ACTIVE}
+			<Card hoverable={false} style="margin-bottom: 1.5rem;">
+				<div slot="top">
+					<div class="timerate">
+						<div style="text-align: right;">
+							<Rate rate={workstream.payment.rate} currency={workstream.payment.currency} />
 						</div>
 						{#if workstream.type === 'grant' && workstream.duration}
 							<div>
 								<p class="timeframe">{timeframeFormat(workstream.duration)}</p>
 							</div>
-							<div slot="right" class="row-actions">
-								{#if application.counterOffer}
-									<p class="proposal">
-										Proposes <Rate
-											icon={false}
-											rate={application.counterOffer.rate}
-											currency={application.counterOffer.currency}
-										/>
-									</p>
-								{/if}
-								{#if $walletStore.connected && $walletStore.address === workstream.creator}
-									<Button variant="primary" icon={ThumbsDown}>Deny</Button>
-								{/if}
+						{/if}
+						{#if !creator}
+							<Tooltip value={applied ? "You've already applied" : null}>
 								<Button
 									disabled={applied}
 									icon={Apply}
@@ -250,5 +236,12 @@
 	}
 	.timeframe {
 		color: var(--color-foreground-level-6);
+	}
+
+	.stream-actions {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 1rem;
 	}
 </style>

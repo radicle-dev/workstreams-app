@@ -52,15 +52,9 @@ export type WorkstreamInput = Omit<
 >;
 
 export enum ApplicationState {
-<<<<<<< HEAD
-  WAITING = 'waiting',
-  ACCEPTED = 'accepted',
-  DECLINED = 'declined'
-=======
 	WAITING = 'waiting',
 	ACCEPTED = 'accepted',
 	REJECTED = 'rejected'
->>>>>>> 2678259 (added active stream)
 }
 
 export interface Application {
