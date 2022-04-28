@@ -12,6 +12,7 @@
   import Timeframe from '$components/Timeframe.svelte';
   import ApplyModal from '$components/ApplyModal.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
+  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
   export let workstream: Workstream;
 
@@ -39,8 +40,11 @@
     <Button
       variant="outline"
       icon={Apply}
-      disabled={$walletStore.connected &&
-        workstream.applicants?.includes($walletStore.address)}
+      disabled={!(
+        $connectedAndLoggedIn &&
+        $walletStore.connected &&
+        !workstream.applicants?.includes($walletStore.address)
+      )}
       on:click={() => modal.show(ApplyModal, undefined, { workstream })}
     >
       Apply
