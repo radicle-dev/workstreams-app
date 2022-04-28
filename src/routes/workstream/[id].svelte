@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
-	import type { Application, Workstream } from '$lib/stores/workstreams/types';
-	import { getConfig } from '$lib/config';
+  import type { Application, Workstream } from '$lib/stores/workstreams/types';
+  import { getConfig } from '$lib/config';
 
   /* eslint-disable */
   /** @type {import('./[slug]').Load} */
@@ -32,42 +32,42 @@
 </script>
 
 <script lang="ts">
-	import WorkstreamDetail from '$components/WorkstreamDetail.svelte';
-	import { onDestroy, onMount } from 'svelte';
-	import { headerContent } from '$lib/stores/headerContent';
-	import WorkstreamPageHeader from '$lib/components/WorkstreamPageHeader.svelte';
-	import { browser } from '$app/env';
+  import WorkstreamDetail from '$components/WorkstreamDetail.svelte';
+  import { onDestroy, onMount } from 'svelte';
+  import { headerContent } from '$lib/stores/headerContent';
+  import WorkstreamPageHeader from '$lib/components/WorkstreamPageHeader.svelte';
+  import { browser } from '$app/env';
 
-	export let workstream: Workstream | undefined;
-	export let applications: Application[] | undefined;
+  export let workstream: Workstream | undefined;
+  export let applications: Application[] | undefined;
 
-	if (browser) {
-		updateScrollPos();
-	}
+  if (browser) {
+    updateScrollPos();
+  }
 
-	onMount(() => {
-		$headerContent = {
-			component: WorkstreamPageHeader,
-			props: { workstream },
-			headerContentShown: false
-		};
+  onMount(() => {
+    $headerContent = {
+      component: WorkstreamPageHeader,
+      props: { workstream },
+      headerContentShown: false
+    };
 
-		if (browser) {
-			window.addEventListener('scroll', updateScrollPos);
-		}
-	});
+    if (browser) {
+      window.addEventListener('scroll', updateScrollPos);
+    }
+  });
 
-	onDestroy(() => {
-		$headerContent = {};
+  onDestroy(() => {
+    $headerContent = {};
 
-		if (browser) {
-			window.removeEventListener('scroll', updateScrollPos);
-		}
-	});
+    if (browser) {
+      window.removeEventListener('scroll', updateScrollPos);
+    }
+  });
 
-	function updateScrollPos() {
-		$headerContent.headerContentShown = window.scrollY > 180;
-	}
+  function updateScrollPos() {
+    $headerContent.headerContentShown = window.scrollY > 180;
+  }
 </script>
 
 <svelte:head>

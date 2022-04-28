@@ -1,27 +1,29 @@
 <script lang="ts">
-	import type { Workstream } from '$lib/stores/workstreams/types';
-	import WorkstreamCard from '$components/WorkstreamCard.svelte';
-	import { getConfig } from '$lib/config';
-	import { walletStore } from '$lib/stores/wallet/wallet';
-	import { authStore } from '$lib/stores/auth/auth';
-	import { browser } from '$app/env';
-	import EmptyState from '$lib/components/EmptyState.svelte';
-	import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
+  import type { Workstream } from '$lib/stores/workstreams/types';
+  import WorkstreamCard from '$components/WorkstreamCard.svelte';
+  import { getConfig } from '$lib/config';
+  import { walletStore } from '$lib/stores/wallet/wallet';
+  import { authStore } from '$lib/stores/auth/auth';
+  import { browser } from '$app/env';
+  import EmptyState from '$lib/components/EmptyState.svelte';
+  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
   let createdWorkstreams: Workstream[] = [];
   let appliedToWorkstreams: Workstream[] = [];
 
   let locked: boolean;
 
-	$: {
-		if ($walletStore.connected && $authStore.authenticated) {
-			(async () => {
-				const result = await fetch(
-					`${getConfig().API_URL_BASE}/workstreams?createdBy=${$walletStore.address}`,
-					{
-						credentials: 'include'
-					}
-				);
+  $: {
+    if ($walletStore.connected && $authStore.authenticated) {
+      (async () => {
+        const result = await fetch(
+          `${getConfig().API_URL_BASE}/workstreams?createdBy=${
+            $walletStore.address
+          }`,
+          {
+            credentials: 'include'
+          }
+        );
 
         createdWorkstreams = await result.json();
       })();
@@ -94,12 +96,12 @@
     width: 100%;
   }
 
-	.empty-wrapper {
-		display: flex;
-		min-height: 32rem;
-		justify-content: center;
-		align-items: center;
-	}
+  .empty-wrapper {
+    display: flex;
+    min-height: 32rem;
+    justify-content: center;
+    align-items: center;
+  }
 
   h3 {
     margin-left: 1.5rem;
