@@ -108,7 +108,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 72px;
+    height: 4.5rem;
     box-sizing: border-box;
     background-color: var(--color-background);
     z-index: 10;
@@ -122,16 +122,16 @@
     top: 0;
     left: 0;
     right: 0;
-    padding: 16px 24px;
+    padding: 1rem 2rem;
   }
 
   header.hide {
-    transform: translateY(-72px);
+    transform: translateY(-4.5rem);
   }
 
   .content.default {
     display: flex;
-    gap: 48px;
+    gap: 3rem;
     align-items: center;
   }
 
@@ -141,18 +141,18 @@
 
   .buttons {
     display: flex;
-    gap: 8px;
+    gap: 0.5rem;
   }
 
   .spacer {
-    height: 96px;
+    height: 6rem;
   }
 
   nav {
     display: flex;
     flex: 1;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
   }
   nav > a {
     color: var(--color-foreground-level-5);
