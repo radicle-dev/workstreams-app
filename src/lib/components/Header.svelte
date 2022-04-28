@@ -51,7 +51,7 @@
 
 <header
   class:hide
-  style:box-shadow={scrolledDown && !hide ? 'var(--shadow)' : ''}
+  style:box-shadow={scrolledDown && !hide ? 'var(--elevation-low)' : ''}
 >
   <div class="inner">
     {#if showCustomHeaderContent && $headerContent.component}
@@ -114,13 +114,6 @@
     z-index: 10;
     position: fixed;
     transition: box-shadow 0.3s, transform 0.3s;
-    --shadow: 0px 6px 16px rgba(0, 0, 0, 0.05),
-      0px 2.77398px 7.39728px rgba(0, 0, 0, 0.0370838),
-      0px 1.58721px 4.23256px rgba(0, 0, 0, 0.031339),
-      0px 0.963424px 2.56913px rgba(0, 0, 0, 0.0269974),
-      0px 0.580506px 1.54802px rgba(0, 0, 0, 0.0230026),
-      0px 0.323263px 0.862035px rgba(0, 0, 0, 0.018661),
-      0px 0.139033px 0.370755px rgba(0, 0, 0, 0.0129162);
   }
 
   .content {
