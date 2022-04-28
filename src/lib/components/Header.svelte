@@ -1,54 +1,171 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+  import { fly } from 'svelte/transition';
+
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
 
-  import Connect from '$components/Connect.svelte';
+  import * as modal from '$lib/utils/modal';
 
+  import Connect from '$components/Connect.svelte';
+  import Button from 'radicle-design-system/Button.svelte';
+  import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
+  import CreateModal from './CreateModal.svelte';
+  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
+  import { browser } from '$app/env';
+  import { headerContent } from '$lib/stores/headerContent';
+
+  let scrolledDown = false;
+  let scrollPos = 0;
+  let scrollingDown = false;
+  $: hide = scrollingDown && !$headerContent.component;
+  $: showCustomHeaderContent =
+    $headerContent.headerContentShown !== undefined
+      ? $headerContent.headerContentShown
+      : scrolledDown;
   $: onExplore =
     $page.url.pathname.includes('explore') || $page.url.pathname === '/';
   $: onDashboard = $page.url.pathname.includes('dashboard');
+
+  const animate = (node, args) =>
+    args.enable
+      ? fly(node, { y: !scrollingDown ? -args.y : args.y, duration: 300 })
+      : undefined;
+
+  if (browser) {
+    updateScrollPos();
+  }
+
+  onMount(() => {
+    if (browser) {
+      window.addEventListener('scroll', updateScrollPos);
+    }
+  });
+
+  function updateScrollPos() {
+    scrollingDown = window.scrollY > scrollPos;
+    scrolledDown = window.scrollY !== 0;
+    scrollPos = window.scrollY;
+  }
 </script>
 
-<header>
-  <nav>
-    <div class="home">
-      <a sveltekit:prefetch href="/" class:active={onExplore}>Explore</a>
-      <a
-        href="/dashboard"
-        on:click={() => goto(`/dashboard`)}
-        class:active={onDashboard}>Dashboard</a
+<header
+  class:hide
+  style:box-shadow={scrolledDown && !hide ? 'var(--elevation-low)' : ''}
+>
+  <div class="inner">
+    {#if showCustomHeaderContent && $headerContent.component}
+      <div
+        transition:animate={{ enable: headerContent, y: 20 }}
+        class="content page"
       >
-    </div>
-    <div class="user">
-      <Connect />
-    </div>
-  </nav>
+        <svelte:component
+          this={$headerContent.component}
+          {...$headerContent.props}
+        />
+      </div>
+    {:else}
+      <div
+        transition:animate={{ enable: !!$headerContent.component, y: 20 }}
+        class="content default"
+      >
+        <nav>
+          <a sveltekit:prefetch href="/" class:active={onExplore}>Explore</a>
+          <a
+            sveltekit:prefetch
+            href="/dashboard"
+            on:click={() => goto(`/dashboard`)}
+            class:active={onDashboard}>Dashboard</a
+          >
+        </nav>
+        <div class="buttons">
+          {#if $connectedAndLoggedIn && onDashboard}
+            <div
+              in:fly={{ y: 10, duration: 300, delay: 300 }}
+              out:fly={{ y: 10, duration: 300 }}
+              class="create-button"
+            >
+              <Button
+                icon={TokenStreams}
+                on:click={() => modal.show(CreateModal)}
+                >Create workstream</Button
+              >
+            </div>
+          {/if}
+          <div class="user">
+            <Connect />
+          </div>
+        </div>
+      </div>
+    {/if}
+  </div>
 </header>
 
+<div class="spacer" />
+
 <style>
+  header {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4.5rem;
+    box-sizing: border-box;
+    background-color: var(--color-background);
+    z-index: 10;
+    position: fixed;
+    transition: box-shadow 0.3s, transform 0.3s;
+  }
+
+  .content {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem 2rem;
+  }
+
+  header.hide {
+    transform: translateY(-4.5rem);
+  }
+
+  .content.default {
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .content.page {
+    height: 100%;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .spacer {
+    height: 6rem;
+  }
+
   nav {
     display: flex;
-    justify-content: space-between;
+    flex: 1;
     align-items: center;
-    margin-bottom: 2rem;
+    gap: 0.5rem;
   }
-  .home {
-    display: flex;
-    align-items: center;
-  }
-  .home > a {
+  nav > a {
     color: var(--color-foreground-level-5);
     padding: 0.5rem 1rem;
     text-decoration: none;
-    margin-right: 1rem;
     font-weight: 600;
     border-radius: 0.5rem;
     transition: all 0.3s;
   }
-  .home > a:hover {
+  nav > a:hover {
     background-color: var(--color-foreground-level-2);
   }
-  .home > a.active {
+  nav > a.active {
     color: var(--color-foreground);
     background-color: var(--color-foreground-level-2);
   }

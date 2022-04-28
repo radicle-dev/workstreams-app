@@ -9,6 +9,7 @@
   import { getConfig } from '$lib/config';
   import type { WorkstreamInput } from '$lib/stores/workstreams/types';
   import { WorkstreamType } from '$lib/stores/workstreams/types';
+  import { goto } from '$app/navigation';
 
   const durationOptions = [
     { value: '1', title: 'Days' },
@@ -60,6 +61,7 @@
     } catch (e) {
       return;
     }
+    goto('/dashboard');
     modal.hide();
   }
 </script>
