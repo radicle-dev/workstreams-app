@@ -104,6 +104,10 @@ export const authStore = (() => {
   }
 
   async function clear() {
+    await fetch(`${BACKEND_URL_BASE}/logout`, {
+      credentials: 'include'
+    });
+
     set({
       expiresAt: null,
       authenticated: false,
