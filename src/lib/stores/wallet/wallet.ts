@@ -4,97 +4,103 @@ import { get, writable } from 'svelte/store';
 import { authStore } from '../auth/auth';
 
 export type WalletData =
-	| {
-			connected: true;
-			connecting: false;
-			signer: Signer;
-			provider: ethers.providers.Web3Provider;
-			address: string;
-	  }
-	| {
-			connected: false;
-			connecting: boolean;
-	  };
+  | {
+      connected: true;
+      connecting: false;
+      signer: Signer;
+      provider: ethers.providers.Web3Provider;
+      address: string;
+    }
+  | {
+      connected: false;
+      connecting: boolean;
+    };
 
-function updateAccounts(walletData: WalletData, accounts: string[]): WalletData {
-	if (accounts[0]) {
-		const provider = new ethers.providers.Web3Provider(window.ethereum, 'rinkeby');
+function updateAccounts(
+  walletData: WalletData,
+  accounts: string[]
+): WalletData {
+  if (accounts[0]) {
+    const provider = new ethers.providers.Web3Provider(
+      window.ethereum,
+      'rinkeby'
+    );
 
-		return {
-			connected: true,
-			connecting: (walletData.connected && walletData.connecting) || false,
-			address: accounts[0].toLowerCase(),
-			provider,
-			signer: provider.getSigner()
-		};
-	} else {
-		return {
-			connected: false,
-			connecting: false
-		};
-	}
+    return {
+      connected: true,
+      connecting: (walletData.connected && walletData.connecting) || false,
+      address: accounts[0].toLowerCase(),
+      provider,
+      signer: provider.getSigner()
+    };
+  } else {
+    return {
+      connected: false,
+      connecting: false
+    };
+  }
 }
 
 export const walletStore = (() => {
-	const { subscribe, update, set } = writable<WalletData>({
-		connected: false,
-		connecting: false
-	});
+  const { subscribe, update, set } = writable<WalletData>({
+    connected: false,
+    connecting: false
+  });
 
-	if (browser) {
-		window.ethereum.on('accountsChanged', (accounts: string[]) => {
-			update((walletData) => updateAccounts(walletData, accounts));
-		});
+  if (browser) {
+    window.ethereum.on('accountsChanged', (accounts: string[]) => {
+      update((walletData) => updateAccounts(walletData, accounts));
+    });
 
-		window.ethereum.request({ method: 'eth_accounts' }).then((accounts) => {
-			update((walletData) => updateAccounts(walletData, accounts));
-		});
-	}
+    window.ethereum.request({ method: 'eth_accounts' }).then((accounts) => {
+      update((walletData) => updateAccounts(walletData, accounts));
+    });
+  }
 
-	async function connect(): Promise<WalletData> {
-		const walletData = get(walletStore);
+  async function connect(): Promise<WalletData> {
+    const walletData = get(walletStore);
 
-		const provider = walletData.connected
-			? walletData.provider
-			: new ethers.providers.Web3Provider(window.ethereum, 'rinkeby');
+    const provider = walletData.connected
+      ? walletData.provider
+      : new ethers.providers.Web3Provider(window.ethereum, 'rinkeby');
 
-		set({
-			connected: false,
-			connecting: true
-		});
+    set({
+      connected: false,
+      connecting: true
+    });
 
-		await window.ethereum.request({
-			method: 'wallet_requestPermissions',
-			params: [
-				{
-					eth_accounts: {}
-				}
-			]
-		});
-		const accounts = await provider.send('eth_requestAccounts', []);
+    await window.ethereum.request({
+      method: 'wallet_requestPermissions',
+      params: [
+        {
+          eth_accounts: {}
+        }
+      ]
+    });
+    const accounts = await provider.send('eth_requestAccounts', []);
 
-		set({
-			connected: true,
-			connecting: false,
-			address: accounts[0].toLowerCase(),
-			provider,
-			signer: provider.getSigner()
-		});
+    set({
+      connected: true,
+      connecting: false,
+      address: accounts[0].toLowerCase(),
+      provider,
+      signer: provider.getSigner()
+    });
 
-		return get(walletStore);
-	}
+    return get(walletStore);
+  }
 
-	function disconnect() {
-		set({
-			connected: false,
-			connecting: false
-		});
-		authStore.clear();
-	}
+  function disconnect() {
+    set({
+      connected: false,
+      connecting: false
+    });
+    authStore.clear();
+  }
 
-	return {
-		subscribe,
-		connect,
-		disconnect
-	};
+  return {
+    subscribe,
+    connect,
+    disconnect
+  };
 })();
