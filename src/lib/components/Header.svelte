@@ -12,46 +12,78 @@
 	import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
 	import CreateModal from './CreateModal.svelte';
 	import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
+	import { browser } from '$app/env';
+	import { headerContent } from '$lib/stores/headerContent';
 
+	let scrolledDown = false;
+	let scrollPos = 0;
+	let scrollingDown = false;
+	$: hide = scrollingDown && !$headerContent.component;
+	$: showCustomHeaderContent =
+		$headerContent.headerContentShown !== undefined
+			? $headerContent.headerContentShown
+			: scrolledDown;
 	$: onExplore = $page.url.pathname.includes('explore') || $page.url.pathname === '/';
 	$: onDashboard = $page.url.pathname.includes('dashboard');
 
-	let scrolledDown = false;
+	const animate = (node, args) =>
+		args.enable ? fly(node, { y: !scrollingDown ? -args.y : args.y, duration: 300 }) : undefined;
+
+	if (browser) {
+		updateScrollPos();
+	}
 
 	onMount(() => {
-		window.addEventListener('scroll', () => {
-			scrolledDown = window.scrollY !== 0;
-		});
+		if (browser) {
+			window.addEventListener('scroll', updateScrollPos);
+		}
 	});
+
+	function updateScrollPos() {
+		scrollingDown = window.scrollY > scrollPos;
+		scrolledDown = window.scrollY !== 0;
+		scrollPos = window.scrollY;
+	}
 </script>
 
-<header style:box-shadow={scrolledDown ? 'var(--color-shadows)' : ''}>
+<header class:hide style:box-shadow={scrolledDown && !hide ? 'var(--shadow)' : ''}>
 	<div class="inner">
-		<nav>
-			<a sveltekit:prefetch href="/" class:active={onExplore}>Explore</a>
-			<a
-				sveltekit:prefetch
-				href="/dashboard"
-				on:click={() => goto(`/dashboard`)}
-				class:active={onDashboard}>Dashboard</a
-			>
-		</nav>
-		<div class="buttons">
-			{#if $connectedAndLoggedIn && onDashboard}
-				<div
-					in:fly={{ y: 10, duration: 300, delay: 300 }}
-					out:fly={{ y: 10, duration: 300 }}
-					class="create-button"
-				>
-					<Button icon={TokenStreams} on:click={() => modal.show(CreateModal)}
-						>Create workstream</Button
-					>
-				</div>
-			{/if}
-			<div class="user">
-				<Connect />
+		{#if showCustomHeaderContent && $headerContent.component}
+			<div transition:animate={{ enable: headerContent, y: 20 }} class="content page">
+				<svelte:component this={$headerContent.component} {...$headerContent.props} />
 			</div>
-		</div>
+		{:else}
+			<div
+				transition:animate={{ enable: !!$headerContent.component, y: 20 }}
+				class="content default"
+			>
+				<nav>
+					<a sveltekit:prefetch href="/" class:active={onExplore}>Explore</a>
+					<a
+						sveltekit:prefetch
+						href="/dashboard"
+						on:click={() => goto(`/dashboard`)}
+						class:active={onDashboard}>Dashboard</a
+					>
+				</nav>
+				<div class="buttons">
+					{#if $connectedAndLoggedIn && onDashboard}
+						<div
+							in:fly={{ y: 10, duration: 300, delay: 300 }}
+							out:fly={{ y: 10, duration: 300 }}
+							class="create-button"
+						>
+							<Button icon={TokenStreams} on:click={() => modal.show(CreateModal)}
+								>Create workstream</Button
+							>
+						</div>
+					{/if}
+					<div class="user">
+						<Connect />
+					</div>
+				</div>
+			</div>
+		{/if}
 	</div>
 </header>
 
@@ -67,14 +99,36 @@
 		background-color: var(--color-background);
 		z-index: 10;
 		position: fixed;
-		padding: 16px 24px;
-		transition: box-shadow 0.3s;
+		transition: box-shadow 0.3s, transform 0.3s;
+		--shadow: 0px 6px 16px rgba(0, 0, 0, 0.05), 0px 2.77398px 7.39728px rgba(0, 0, 0, 0.0370838),
+			0px 1.58721px 4.23256px rgba(0, 0, 0, 0.031339),
+			0px 0.963424px 2.56913px rgba(0, 0, 0, 0.0269974),
+			0px 0.580506px 1.54802px rgba(0, 0, 0, 0.0230026),
+			0px 0.323263px 0.862035px rgba(0, 0, 0, 0.018661),
+			0px 0.139033px 0.370755px rgba(0, 0, 0, 0.0129162);
 	}
 
-	.inner {
+	.content {
+		width: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		padding: 16px 24px;
+	}
+
+	header.hide {
+		transform: translateY(-72px);
+	}
+
+	.content.default {
 		display: flex;
 		gap: 48px;
 		align-items: center;
+	}
+
+	.content.page {
+		height: 100%;
 	}
 
 	.buttons {
