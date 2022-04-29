@@ -3032,16 +3032,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"radicle-design-system@radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=e2d2e495e5ecf3cb2eed41917e31a210c06fb17f":
+"radicle-design-system@radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=dd7f1b165befe01c42b5ed1253696b7bd24688a4":
   version: 0.1.0
-  resolution: "radicle-design-system@https://github.com/radicle-dev/radicle-upstream.git#workspace=radicle-design-system&commit=e2d2e495e5ecf3cb2eed41917e31a210c06fb17f"
+  resolution: "radicle-design-system@https://github.com/radicle-dev/radicle-upstream.git#workspace=radicle-design-system&commit=dd7f1b165befe01c42b5ed1253696b7bd24688a4"
   dependencies:
     marked: ^4.0.12
     radicle-avatar: "github:radicle-dev/radicle-avatar"
     sanitize-html: ^2.7.0
     svelte: ^3.46.6
     twemoji: 14.0.2
-  checksum: 9c8242f577ac6d64501c2247bd4122b15153812366a6d698752abaec0535c105d971cd04c0b00c044a33be86be6e721f53a4d555b74ed72b4fae168ea94f6201
+  checksum: 97d7788dd0cada68552c34ed61f0d07691e6c06ad1f093c0733dcd878c1d68412a9216eea1015cb9b117fb8552e61e5084051d2bd0dc8932585ee9762b4f336b
   languageName: node
   linkType: hard
 
@@ -3659,14 +3659,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.1.0":
-  version: 2.3.1
-  resolution: "tslib@npm:2.3.1"
-  checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^2.4.0":
+"tslib@npm:^2.1.0, tslib@npm:^2.4.0":
   version: 2.4.0
   resolution: "tslib@npm:2.4.0"
   checksum: 8c4aa6a3c5a754bf76aefc38026134180c053b7bd2f81338cb5e5ebf96fefa0f417bff221592bf801077f5bf990562f6264fecbc42cd3309b33872cb6fc3b113
@@ -3869,7 +3862,7 @@ __metadata:
     lint-staged: ^12.4.0
     prettier: ^2.6.2
     prettier-plugin-svelte: ^2.7.0
-    radicle-design-system: "radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=e2d2e495e5ecf3cb2eed41917e31a210c06fb17f"
+    radicle-design-system: "radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=dd7f1b165befe01c42b5ed1253696b7bd24688a4"
     siwe: ^1.1.6
     svelte: ^3.47.0
     svelte-check: ^2.7.0
