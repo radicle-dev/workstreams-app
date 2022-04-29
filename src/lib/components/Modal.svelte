@@ -11,7 +11,7 @@
     padding: 2.5rem;
     background: var(--color-background);
     border-radius: 1rem;
-    box-shadow: var(--color-shadows);
+    box-shadow: var(--elevation-high);
     min-width: 32rem;
     width: 70vw;
     max-width: 40rem;
