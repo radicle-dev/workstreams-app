@@ -50,7 +50,7 @@
       title: 'Applications to review'
     },
     [SectionName.CREATED]: {
-      title: 'Workstreams you created'
+      title: 'Waiting for applications'
     },
     [SectionName.ACTIVE]: {
       title: 'Active workstreams'
