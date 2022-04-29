@@ -55,7 +55,7 @@ export type WorkstreamInput = Omit<
 export enum ApplicationState {
   WAITING = 'waiting',
   ACCEPTED = 'accepted',
-  DECLINED = 'declined'
+  REJECTED = 'rejected'
 }
 
 export interface Application {
