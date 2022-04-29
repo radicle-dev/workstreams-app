@@ -40,6 +40,7 @@
   }
 
   .title {
+    padding-left: 1.5rem;
     display: flex;
     gap: 0.5rem;
   }
