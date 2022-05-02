@@ -51,6 +51,10 @@
           {toDisplay}
         </p>
       {/key}
+      <!--
+        Placeholder without absolute position to ensure that the component
+        has the right width.
+      -->
       <p class="placeholder typo-text-bold">
         {toDisplay}
       </p>
