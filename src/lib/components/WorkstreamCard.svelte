@@ -18,11 +18,7 @@
 
 <Card on:click={() => goto(url)} on:hover={() => prefetch(url)}>
   <div slot="top">
-    <TitleMeta
-      title={workstream.title}
-      type={workstream.type}
-      creator={workstream.creator}
-    />
+    <TitleMeta title={workstream.title} creator={workstream.creator} />
   </div>
   <div slot="bottom" class="content">
     <div class="spread">
@@ -30,9 +26,7 @@
         rate={workstream.payment.rate}
         currency={workstream.payment.currency}
       />
-      {#if workstream.type === 'grant'}
-        <Timeframe duration={workstream.duration} />
-      {/if}
+      <Timeframe duration={workstream.duration} />
     </div>
     <ActionRow>
       <div slot="left" class="left">
