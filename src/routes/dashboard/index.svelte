@@ -1,41 +1,43 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
   import { flip } from 'svelte/animate';
+  import Spinner from 'radicle-design-system/Spinner.svelte';
 
   import { walletStore } from '$lib/stores/wallet/wallet';
   import { authStore } from '$lib/stores/auth/auth';
-  import { browser } from '$app/env';
-  import EmptyState from '$lib/components/EmptyState.svelte';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
-  import Section from '$lib/components/dashboard/Section.svelte';
   import { getConfig } from '$lib/config';
 
   import {
     WorkstreamState,
-    type Application,
     type Workstream
   } from '$lib/stores/workstreams/types';
+
+  import EmptyState from '$lib/components/EmptyState.svelte';
+  import Section from '$lib/components/dashboard/Section.svelte';
   import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
 
   let locked: boolean;
 
   enum SectionName {
-    APPLIED_TO,
-    PENDING,
-    APPLICATIONS_TO_REVIEW,
-    ACTIVE,
-    CREATED,
-    ENDED
+    APPLIED_TO = 'appliedTo',
+    PENDING = 'pending',
+    APPLICATIONS_TO_REVIEW = 'toReview',
+    ACTIVE = 'active',
+    CREATED = 'created',
+    ENDED = 'ended',
+    LOADING = 'loading'
   }
 
   interface SectionData {
     title: string;
-    data?: Workstream[];
+    fetched?: true;
+    display?: boolean;
+    workstreams?: Workstream[];
   }
 
   function buildUrl(params: { [key: string]: string }) {
     const paramsString = new URLSearchParams(params).toString();
-
     return `${getConfig().API_URL_BASE}/workstreams?${paramsString}`;
   }
 
@@ -57,6 +59,11 @@
     },
     [SectionName.ENDED]: {
       title: 'Ended workstreams'
+    },
+    [SectionName.LOADING]: {
+      title: 'Loading',
+      display: true,
+      fetched: true
     }
   };
 
@@ -72,7 +79,7 @@
     if (!$walletStore.connected)
       throw new Error("Can't fetch dashboard before connected to wallet");
 
-    const urls: { [key in SectionName]: string } = {
+    const urls: { [key in SectionName]?: string } = {
       [SectionName.APPLIED_TO]: buildUrl({
         applied: 'true',
         state: 'rfa'
@@ -103,12 +110,20 @@
     Object.keys(urls).forEach((sectionName) => {
       fetch(urls[sectionName], { credentials: 'include' }).then(
         async (response) => {
-          if (response.status !== 200) return;
-
           sections[sectionName] = {
             ...sections[sectionName],
-            data: await response.json()
+            fetched: true,
+            display: response.status === 200,
+            workstreams: response.status === 200 && (await response.json())
           };
+
+          if (
+            Object.keys(sections).every(
+              (sectionName) => sections[sectionName].fetched
+            )
+          ) {
+            sections[SectionName.LOADING].display = false;
+          }
         }
       );
     });
@@ -136,29 +151,35 @@
 </svelte:head>
 
 <div class="container">
-  {#if browser && $authStore.authenticated && $walletStore.connected}
-    <div class="sections">
-      {#each Object.keys(sections).filter((sn) => !!sections[sn].data) as sectionName (sectionName)}
+  {#if $authStore.authenticated && $walletStore.connected}
+    <div transition:fly={{ y: 10, duration: 300 }} class="sections">
+      {#each Object.keys(sections).filter((sn) => !!sections[sn].display) as sectionName (sectionName)}
         <div
           class="section"
           animate:flip={{ duration: 300 }}
-          in:fly={{ y: 10, duration: 300 }}
+          transition:fly={{ y: 10, duration: 300 }}
         >
-          <Section
-            title={sections[sectionName].title}
-            count={sections[sectionName].data.length}
-          >
-            <div class="workstreams">
-              {#each sections[sectionName].data as workstream}
-                <div class="workstream"><WorkstreamCard {workstream} /></div>
-              {/each}
+          {#if sectionName === SectionName.LOADING}
+            <div class="spinner">
+              <Spinner />
             </div>
-          </Section>
+          {:else}
+            <Section
+              title={sections[sectionName].title}
+              count={sections[sectionName].workstreams.length}
+            >
+              <div class="workstreams">
+                {#each sections[sectionName].workstreams as workstream}
+                  <div class="workstream"><WorkstreamCard {workstream} /></div>
+                {/each}
+              </div>
+            </Section>
+          {/if}
         </div>
       {/each}
     </div>
   {:else}
-    <div class="empty-wrapper">
+    <div transition:fly={{ y: 10, duration: 300 }} class="empty-wrapper">
       <EmptyState
         headerText="Sign in to view your workstreams"
         text="This is where the workstreams you created or are contributing to show up."
@@ -175,6 +196,7 @@
     max-width: 75rem;
     margin: 0 auto;
     width: 100%;
+    padding: 3rem 0;
   }
 
   .empty-wrapper {
@@ -188,6 +210,14 @@
     display: flex;
     flex-direction: column;
     gap: 4rem;
+  }
+
+  .spinner {
+    height: 8rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .workstreams {
