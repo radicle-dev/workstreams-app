@@ -234,6 +234,7 @@
   .desc {
     margin-top: 2rem;
     color: var(--color-foreground);
+    user-select: text;
   }
   .timerate {
     display: flex;
