@@ -7,6 +7,8 @@
 	import Card from '$components/Card.svelte';
 	import User from '$components/User.svelte';
 	import Rate from '$components/Rate.svelte';
+	import ActionRow from '$components/ActionRow.svelte';
+	import TimeRate from '$components/TimeRate.svelte';
 	import Badge from 'radicle-design-system/Badge.svelte';
 	import ApplyModal from '$components/ApplyModal.svelte';
 	import ApplicationModal from '$components/ApplicationModal.svelte';
@@ -22,7 +24,6 @@
 		type Application,
 		type Workstream
 	} from '$lib/stores/workstreams/types';
-	import ActionRow from '$components/ActionRow.svelte';
 
 	export let workstream: Workstream;
 	export let applications: Application[] | undefined = undefined;
@@ -51,10 +52,7 @@
 
 <div class="container">
 	<div class="metadata">
-		<div class="title">
-			<h1 style="margin-right: 1rem;">{workstream.title}</h1>
-			<Badge style="font-weight: 600;" text={workstream.type} />
-		</div>
+		<h1 style="margin-bottom: 0.75rem;">{workstream.title}</h1>
 		<div class="owner">
 			<span class="label">created by</span>
 			<User address={workstream.creator} />
@@ -133,14 +131,7 @@
 			<Card hoverable={false} style="margin-bottom: 1.5rem;">
 				<div slot="top">
 					<div class="timerate">
-						<div style="text-align: right;">
-							<Rate rate={workstream.payment.rate} currency={workstream.payment.currency} />
-						</div>
-						{#if workstream.type === 'grant' && workstream.duration}
-							<div>
-								<p class="timeframe">{timeframeFormat(workstream.duration)}</p>
-							</div>
-						{/if}
+						<TimeRate {workstream} />
 						{#if !creator}
 							<Tooltip value={applied ? "You've already applied" : null}>
 								<Button
@@ -212,14 +203,9 @@
 	.metadata > * {
 		margin-bottom: 2rem;
 	}
-	.title,
 	.owner {
 		display: flex;
 		align-items: center;
-	}
-	.title {
-		margin-bottom: 0.5rem;
-		justify-content: space-between;
 	}
 	.owner > span {
 		margin-right: 0.5rem;
@@ -243,6 +229,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		gap: 1.5rem;
 	}
 	.timeframe {
 		color: var(--color-foreground-level-6);

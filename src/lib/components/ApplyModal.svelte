@@ -11,8 +11,7 @@
   import Button from 'radicle-design-system/Button.svelte';
   import Card from '$components/Card.svelte';
   import TitleMeta from '$components/TitleMeta.svelte';
-  import Timeframe from '$components/Timeframe.svelte';
-  import Rate from '$components/Rate.svelte';
+  import TimeRate from '$components/TimeRate.svelte';
   import Apply from 'radicle-design-system/icons/Ledger.svelte';
   import TextInput from '$components/TextInput.svelte';
   import Dropdown from 'radicle-design-system/Dropdown.svelte';
@@ -90,20 +89,10 @@
       <h4>Applying to</h4>
       <Card style="width: 100%; margin-bottom: 2rem;">
         <div slot="top">
-          <TitleMeta
-            title={workstream.title}
-            type={workstream.type}
-            creator={workstream.creator}
-          />
+          <TitleMeta {workstream} />
         </div>
-        <div slot="bottom" class="spread">
-          {#if workstream.type === 'grant' && workstream.duration}
-            <Timeframe duration={workstream.duration} />
-          {/if}
-          <Rate
-            rate={workstream.payment.rate}
-            currency={workstream.payment.currency}
-          />
+        <div slot="bottom">
+          <TimeRate {workstream} />
         </div>
       </Card>
     </div>
@@ -217,12 +206,5 @@
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
-  }
-
-  .spread {
-    display: flex;
-    flex: 1;
-    justify-content: space-between;
-    align-items: flex-end;
   }
 </style>

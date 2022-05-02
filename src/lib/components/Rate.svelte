@@ -5,15 +5,23 @@
   export let currency: string;
   export let difference: boolean = false;
   export let icon: boolean = true;
+
+  let differenceRate: string | undefined = undefined;
+
+  if (difference) {
+    differenceRate = rate > 0 ? `+ ${Math.floor(rate)}` : `${Math.floor(rate)}`;
+  }
 </script>
 
 <p class="typo-text-bold rate" class:difference>
-  {#if difference}
-    <span>+ </span>
-  {:else if icon}
+  {#if icon && !difference}
     <TokenStreams style="fill: var(--color-primary);" />
   {/if}
-  {Math.floor(rate)}
+  {#if difference}
+    {differenceRate}
+  {:else}
+    {Math.floor(rate)}
+  {/if}
   {currency.toUpperCase()} <span class="typo-text">/ 24h</span>
 </p>
 
@@ -25,6 +33,6 @@
     gap: 0.5rem;
   }
   .rate.difference {
-    color: var(--color-negative);
+    color: var(--color-foreground-level-5);
   }
 </style>

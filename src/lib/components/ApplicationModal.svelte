@@ -6,7 +6,7 @@
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
   import TitleMeta from '$components/TitleMeta.svelte';
-  import Timeframe from '$components/Timeframe.svelte';
+  import TimeRate from '$components/TimeRate.svelte';
   import Rate from '$components/Rate.svelte';
   import ThumbsDown from 'radicle-design-system/icons/ThumbsDown.svelte';
   import ThumbsUp from 'radicle-design-system/icons/ThumbsUp.svelte';
@@ -92,20 +92,10 @@
       <h4>Applying to</h4>
       <Card style="width: 100%;">
         <div slot="top">
-          <TitleMeta
-            title={workstream.title}
-            type={workstream.type}
-            creator={workstream.creator}
-          />
+          <TitleMeta {workstream} />
         </div>
-        <div slot="bottom" class="spread">
-          {#if workstream.type === 'grant' && workstream.duration}
-            <Timeframe duration={workstream.duration} />
-          {/if}
-          <Rate
-            rate={workstream.payment.rate}
-            currency={workstream.payment.currency}
-          />
+        <div slot="bottom">
+          <TimeRate {workstream} />
         </div>
       </Card>
     </div>
@@ -160,14 +150,6 @@
     align-items: flex-start;
     gap: 0.75rem;
   }
-
-  .spread {
-    display: flex;
-    flex: 1;
-    justify-content: space-between;
-    align-items: flex-end;
-  }
-
   .proposal {
     display: flex;
     justify-content: space-between;
