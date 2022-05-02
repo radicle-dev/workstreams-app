@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { timeframeFormat } from '$lib/utils/format';
   import type { Workstream } from '$lib/stores/workstreams/types';
   import Rate from '$components/Rate.svelte';
-  import Timeframe from '$components/Timeframe.svelte';
 
   export let workstream: Workstream;
 </script>
@@ -13,14 +13,17 @@
     duration={workstream.duration}
     total={true}
   />
-  <Timeframe duration={workstream.duration} />
+  <p class="timeframe">for {timeframeFormat(workstream.duration)}</p>
 </div>
 
 <style>
   .spread {
     display: flex;
     flex: 1;
-    justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .timeframe {
+    color: var(--color-foreground-level-6);
   }
 </style>

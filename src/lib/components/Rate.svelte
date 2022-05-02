@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { roundDayRate } from '$lib/utils/format';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
   import Tooltip from 'radicle-design-system/Tooltip.svelte';
 
@@ -11,7 +12,7 @@
 </script>
 
 {#if total}
-  <Tooltip value={Math.floor(rate) + ` ${currency.toUpperCase()} / 24h`}>
+  <Tooltip value={roundDayRate(rate) + ` ${currency.toUpperCase()} / 24h`}>
     <p class="typo-text-bold rate">
       {#if icon}
         <TokenStreams style="fill: var(--color-primary);" />
@@ -22,7 +23,7 @@
   </Tooltip>
 {:else if difference}
   <p class="typo-text-bold rate difference">
-    {rate > 0 ? `+ ${Math.floor(rate)}` : `${Math.floor(rate)}`}
+    {rate > 0 ? `+ ${roundDayRate(rate)}` : `${roundDayRate(rate)}`}
     {currency.toUpperCase()} <span class="typo-text">/ 24h</span>
   </p>
 {:else}
@@ -30,7 +31,7 @@
     {#if icon}
       <TokenStreams style="fill: var(--color-primary);" />
     {/if}
-    {Math.floor(rate)}
+    {roundDayRate(rate)}
     {currency.toUpperCase()} <span class="typo-text">/ 24h</span>
   </p>
 {/if}

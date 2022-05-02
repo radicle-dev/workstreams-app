@@ -11,7 +11,7 @@ export function formatAddress(input: string): string {
 export function timeframeFormat(days: number): string {
   const weeks = Math.floor(days / 7);
 
-  if (weeks < 1) {
+  if (days < 7 && days > 1) {
     return `${days} days`;
   } else if (days === 1) {
     return `${days} day`;
@@ -32,4 +32,8 @@ export function dateFormat(timestamp: Timestamp): string {
 
 export function hyphenateString(str: string): string {
   return str.replace(/ +/g, '-').toLowerCase();
+}
+
+export function roundDayRate(rate: number): number {
+  return Math.round((rate + Number.EPSILON) * 100) / 100
 }
