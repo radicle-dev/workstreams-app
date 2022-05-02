@@ -2,36 +2,27 @@
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   import { createIcon } from 'radicle-design-system/lib/blockies.ts';
+  import { fade } from 'svelte/transition';
 
   import { onMount } from 'svelte';
-  import { ethers } from 'ethers';
   import { formatAddress } from '$lib/utils/format';
+  import ensNames from '$lib/stores/ensNames';
 
-  export let avatar = true;
+  export let showAvatar = true;
   export let showAddress = true;
   export let address: string;
   export let style: string = undefined;
 
-  const ethersProvider = ethers.getDefaultProvider();
   let uriData: string;
-  let ensName: string;
+  $: ensName = $ensNames[address]?.name;
+  $: avatarUrl = $ensNames[address]?.pic;
+  $: toDisplay = ensName ? ensName : formatAddress(address.toLocaleLowerCase());
 
   onMount(() => {
     uriData = blockyDataUri(address);
-    loadEnsData();
-  });
 
-  $: loadEnsData = async () => {
-    const checksummedAddress = await ethersProvider._getAddress(
-      address.toLocaleLowerCase()
-    );
-    ensName = await ethersProvider.lookupAddress(checksummedAddress);
-    if (!ensName) {
-      return;
-    } else {
-      return ensName;
-    }
-  };
+    ensNames.lookup(address);
+  });
 
   const blockyDataUri = (urn: string) => {
     return createIcon({
@@ -44,12 +35,24 @@
 
 {#if address}
   <div class="container" {style}>
-    {#if avatar}
-      <img class="avatar" src={uriData} alt="user-avatar" />
+    {#if showAvatar}
+      {#key avatarUrl}
+        <img
+          transition:fade={{ duration: 200 }}
+          class="avatar"
+          src={avatarUrl || uriData}
+          alt="user-avatar"
+        />
+      {/key}
     {/if}
     {#if showAddress}
-      <p class="address typo-text-bold">
-        {ensName ? ensName : formatAddress(address.toLocaleLowerCase())}
+      {#key ensName}
+        <p transition:fade={{ duration: 200 }} class="address typo-text-bold">
+          {toDisplay}
+        </p>
+      {/key}
+      <p class="placeholder typo-text-bold">
+        {toDisplay}
       </p>
     {/if}
   </div>
@@ -57,7 +60,8 @@
 
 <style>
   .container {
-    display: grid;
+    height: 1.5rem;
+    position: relative;
     grid-template-columns: 1.5rem auto;
   }
   .avatar {
@@ -65,10 +69,20 @@
     height: 1.5rem;
     border-radius: 0.75rem;
     user-select: none;
+    left: 0;
+    position: absolute;
     background-color: var(--color-foreground-level-5);
   }
   .address {
-    margin-left: 0.5rem;
+    position: absolute;
+    left: 2rem;
     white-space: nowrap;
+  }
+
+  .placeholder {
+    margin-left: 2rem;
+    opacity: 0;
+    white-space: nowrap;
+    width: fit-content;
   }
 </style>
