@@ -82,6 +82,16 @@
               </div>
             </div>
           </div>
+          <div class="input-with-label rate">
+            <h4 style="color: var(--color-foreground-level-4);">Stream rate</h4>
+            {#if streamRate}
+              <p>
+                {Math.round((streamRate + Number.EPSILON) * 100) / 100} DAI / 24h
+              </p>
+            {:else}
+              <p>0 DAI / 24h</p>
+            {/if}
+          </div>
         </div>
       </div>
       <div class="input-with-label">
@@ -152,7 +162,14 @@
   }
 
   .duration .unit {
-    width: 7rem;
+    width: fit-content;
+  }
+
+  .rate > p {
+    display: flex;
+    height: 2.5rem;
+    align-items: center;
+    color: var(--color-foreground-level-4);
   }
 
   .actions {
