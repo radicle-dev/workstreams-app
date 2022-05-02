@@ -41,15 +41,19 @@
     return `${getConfig().API_URL_BASE}/workstreams?${paramsString}`;
   }
 
+  /*
+    The order of sections in this map determines their ordering
+    on-screen — and with that their relative "importance".
+  */
   let sections: { [key in SectionName]: SectionData } = {
-    [SectionName.APPLIED_TO]: {
-      title: 'Workstreams you applied to'
+    [SectionName.APPLICATIONS_TO_REVIEW]: {
+      title: 'Applications to review'
     },
     [SectionName.PENDING]: {
       title: 'Workstreams pending payment setup'
     },
-    [SectionName.APPLICATIONS_TO_REVIEW]: {
-      title: 'Applications to review'
+    [SectionName.APPLIED_TO]: {
+      title: 'Workstreams you applied to'
     },
     [SectionName.CREATED]: {
       title: 'Waiting for applications'
