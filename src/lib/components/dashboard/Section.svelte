@@ -35,9 +35,9 @@
   }
 
   .title > .count {
-    height: 32px;
-    min-width: 32px;
-    border-radius: 16px;
+    height: 2rem;
+    min-width: 2rem;
+    border-radius: 1rem;
     background-color: var(--color-foreground-level-2);
     color: var(--color-foreground-level-6);
     display: flex;
