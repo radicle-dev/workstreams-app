@@ -65,16 +65,19 @@
     </p>
     <div class="input-with-label">
       <h4>Application</h4>
-      <Card style="width: 100%; margin-bottom: 2rem; text-align: left;">
+      <Card
+        style="width: 100%; margin-bottom: 2rem; text-align: left;"
+        hoverable={false}
+      >
         <div slot="top">
-          <p>{application.letter}</p>
+          <p style="user-select: text">{application.letter}</p>
         </div>
       </Card>
     </div>
     {#if application.counterOffer}
       <div class="input-with-label">
         <h4>Proposed rate</h4>
-        <Card style="width: 100%; margin-bottom: 2rem;">
+        <Card style="width: 100%; margin-bottom: 2rem;" hoverable={false}>
           <div slot="top" class="proposal">
             <Rate
               rate={application.counterOffer.rate}
@@ -90,7 +93,7 @@
     {/if}
     <div class="input-with-label">
       <h4>Applying to</h4>
-      <Card style="width: 100%;">
+      <Card style="width: 100%;" hoverable={false}>
         <div slot="top">
           <TitleMeta {workstream} />
         </div>
