@@ -13,7 +13,8 @@ const configMap = {
 };
 
 function getConfig(): Config {
-  return process.env.NODE_ENV === 'production'
+  return process.env.NODE_ENV === 'production' ||
+    import.meta.env.VITE_USE_PROD_CONFIG === 'true'
     ? configMap.production
     : configMap.development;
 }
