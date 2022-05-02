@@ -20,8 +20,21 @@
 <script lang="ts">
   import ExploreCard from '$lib/components/ExploreCard.svelte';
   import type { Workstream } from '$lib/stores/workstreams/types';
+  import { WorkstreamState } from '$lib/stores/workstreams/types';
 
   export let workstreams: Workstream[] = [];
+
+  let activeWorkstreams: Workstream[] = [];
+  let openWorkstreams: Workstream[] = [];
+
+  $: {
+    openWorkstreams = workstreams.filter(
+      (workstream) => workstream.state === WorkstreamState.RFA
+    );
+    activeWorkstreams = workstreams.filter(
+      (workstream) => workstream.state === WorkstreamState.ACTIVE
+    );
+  }
 </script>
 
 <svelte:head>
@@ -29,7 +42,7 @@
 </svelte:head>
 
 <div class="overview">
-  {#each workstreams as workstream}
+  {#each openWorkstreams as workstream}
     <ExploreCard {workstream} />
   {/each}
 </div>
