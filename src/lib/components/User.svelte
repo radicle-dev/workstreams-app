@@ -44,6 +44,7 @@
           alt="user-avatar"
         />
       {/key}
+      <div class="avatar-placeholder" />
     {/if}
     {#if showAddress}
       {#key ensName}
@@ -55,7 +56,7 @@
         Placeholder without absolute position to ensure that the component
         has the right width.
       -->
-      <p class="placeholder typo-text-bold">
+      <p class="address-placeholder typo-text-bold">
         {toDisplay}
       </p>
     {/if}
@@ -65,6 +66,8 @@
 <style>
   .container {
     height: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
     position: relative;
     grid-template-columns: 1.5rem auto;
   }
@@ -73,9 +76,16 @@
     height: 1.5rem;
     border-radius: 0.75rem;
     user-select: none;
+    top: 0;
     left: 0;
     position: absolute;
     background-color: var(--color-foreground-level-5);
+  }
+
+  .avatar-placeholder {
+    width: 1.5rem;
+    height: 1.5rem;
+    opacity: 0;
   }
   .address {
     position: absolute;
@@ -83,8 +93,7 @@
     white-space: nowrap;
   }
 
-  .placeholder {
-    margin-left: 2rem;
+  .address-placeholder {
     opacity: 0;
     white-space: nowrap;
     width: fit-content;
