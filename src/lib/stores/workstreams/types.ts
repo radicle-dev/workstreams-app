@@ -30,6 +30,7 @@ export interface WorkstreamBase {
   applicants?: string[];
   rejectedApplications?: string[];
   applicationsToReview?: string[];
+  acceptedApplication?: string;
 }
 
 export interface Payment {
