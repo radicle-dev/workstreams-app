@@ -12,6 +12,7 @@
     padding: 0.75rem 0.75rem 0.75rem 1.25rem;
     margin-top: 1rem;
     align-items: center;
+    height: 4rem;
   }
 
   .row:first-child {
