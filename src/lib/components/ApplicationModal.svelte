@@ -58,7 +58,7 @@
 <Modal>
   <div slot="body">
     <span class="emoji">👔</span>
-    <h1>{workstream.type} application</h1>
+    <h1>Workstream application</h1>
     <p class="applicant typo-text-bold">
       by <User address={application.creator} />
     </p>
@@ -92,11 +92,7 @@
       <h4>Applying to</h4>
       <Card style="width: 100%;">
         <div slot="top">
-          <TitleMeta
-            title={workstream.title}
-            type={workstream.type}
-            creator={workstream.creator}
-          />
+          <TitleMeta title={workstream.title} creator={workstream.creator} />
         </div>
         <div slot="bottom" class="spread">
           {#if workstream.type === 'grant' && workstream.duration}
