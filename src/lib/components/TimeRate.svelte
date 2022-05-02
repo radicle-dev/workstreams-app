@@ -1,16 +1,17 @@
 <script lang="ts">
   import type { Workstream } from '$lib/stores/workstreams/types';
-  import RateTotal from '$components/RateTotal.svelte';
+  import Rate from '$components/Rate.svelte';
   import Timeframe from '$components/Timeframe.svelte';
 
   export let workstream: Workstream;
 </script>
 
 <div class="spread">
-  <RateTotal
+  <Rate
     rate={workstream.payment.rate}
     currency={workstream.payment.currency}
     duration={workstream.duration}
+    total={true}
   />
   <Timeframe duration={workstream.duration} />
 </div>

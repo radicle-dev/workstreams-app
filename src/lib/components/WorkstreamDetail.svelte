@@ -7,7 +7,6 @@
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
   import Rate from '$components/Rate.svelte';
-  import RateTotal from '$components/RateTotal.svelte';
   import ActionRow from '$components/ActionRow.svelte';
   import TimeRate from '$components/TimeRate.svelte';
   import ApplyModal from '$components/ApplyModal.svelte';
@@ -170,8 +169,9 @@
                 <div slot="right" class="row-actions">
                   {#if application.counterOffer}
                     <p class="proposal">
-                      Proposes <RateTotal
+                      Proposes <Rate
                         icon={false}
+                        total={true}
                         rate={application.counterOffer.rate}
                         currency={application.counterOffer.currency}
                         duration={workstream.duration}
