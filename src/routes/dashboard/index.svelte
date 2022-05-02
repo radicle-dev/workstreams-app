@@ -50,8 +50,6 @@
       locked = false;
     }
   }
-
-  let applicationFilter = 'all';
 </script>
 
 <svelte:head>
