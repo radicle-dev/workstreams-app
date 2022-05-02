@@ -1,8 +1,5 @@
 <script lang="ts">
-  import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
-
   export let title: string;
-  export let earningPerDay: number | undefined = undefined;
   export let count: number | undefined = undefined;
 </script>
 
@@ -14,17 +11,9 @@
         <div class="count"><h3>{count}</h3></div>
       {/if}
     </div>
-    {#if earningPerDay}
-      <div class="earning-per-day">
-        <TokenStreams />
-        <p>
-          You are earning <span class="typo-text-bold">{earningPerDay} DAI</span
-          > / day
-        </p>
-      </div>
-    {/if}
+    <slot name="subtitle" />
   </div>
-  <slot />
+  <slot name="content" />
 </div>
 
 <style>
@@ -37,10 +26,10 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    padding-left: 1.5rem;
   }
 
   .title {
-    padding-left: 1.5rem;
     display: flex;
     gap: 0.5rem;
   }
@@ -55,12 +44,5 @@
     align-items: center;
     justify-content: center;
     padding: 0 0.5rem;
-  }
-
-  .earning-per-day {
-    display: flex;
-    gap: 0.25rem;
-    align-items: center;
-    color: var(--color-foreground-level-6);
   }
 </style>

@@ -2,6 +2,7 @@
   import { fly } from 'svelte/transition';
   import { flip } from 'svelte/animate';
   import Spinner from 'radicle-design-system/Spinner.svelte';
+  import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
 
   import { walletStore } from '$lib/stores/wallet/wallet';
   import { authStore } from '$lib/stores/auth/auth';
@@ -135,6 +136,13 @@
     });
   }
 
+  function calculateStreamTotal(workstreams: Workstream[]) {
+    let totalRate = 0;
+    workstreams.forEach((ws) => (totalRate = totalRate + ws.payment.rate));
+
+    return Math.round(totalRate);
+  }
+
   async function authenticate() {
     locked = true;
     try {
@@ -168,7 +176,18 @@
               title={sections[sectionName].title}
               count={sections[sectionName].workstreams.length}
             >
-              <div class="workstreams">
+              <div slot="subtitle" class="earning-per-day">
+                {#if sectionName === SectionName.ACTIVE}
+                  <TokenStreams />
+                  <p>
+                    You are earning <span class="typo-text-bold"
+                      >{calculateStreamTotal(sections[sectionName].workstreams)}
+                      DAI</span
+                    > per day
+                  </p>
+                {/if}
+              </div>
+              <div slot="content" class="workstreams">
                 {#each sections[sectionName].workstreams as workstream}
                   <div class="workstream"><WorkstreamCard {workstream} /></div>
                 {/each}
@@ -210,6 +229,13 @@
     display: flex;
     flex-direction: column;
     gap: 4rem;
+  }
+
+  .earning-per-day {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    color: var(--color-foreground-level-6);
   }
 
   .spinner {
