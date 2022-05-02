@@ -1,44 +1,146 @@
 <script lang="ts">
-  import type { Workstream } from '$lib/stores/workstreams/types';
-  import WorkstreamCard from '$components/WorkstreamCard.svelte';
-  import { getConfig } from '$lib/config';
+  import { fly } from 'svelte/transition';
+  import { flip } from 'svelte/animate';
+  import Spinner from 'radicle-design-system/Spinner.svelte';
+  import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
+
   import { walletStore } from '$lib/stores/wallet/wallet';
   import { authStore } from '$lib/stores/auth/auth';
-  import { browser } from '$app/env';
-  import EmptyState from '$lib/components/EmptyState.svelte';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
+  import { getConfig } from '$lib/config';
 
-  let createdWorkstreams: Workstream[] = [];
-  let appliedToWorkstreams: Workstream[] = [];
+  import {
+    WorkstreamState,
+    type Workstream
+  } from '$lib/stores/workstreams/types';
+
+  import EmptyState from '$lib/components/EmptyState.svelte';
+  import Section from '$lib/components/dashboard/Section.svelte';
+  import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
 
   let locked: boolean;
 
-  $: {
-    if ($walletStore.connected && $authStore.authenticated) {
-      (async () => {
-        const result = await fetch(
-          `${getConfig().API_URL_BASE}/workstreams?createdBy=${
-            $walletStore.address
-          }`,
-          {
-            credentials: 'include'
-          }
-        );
+  enum SectionName {
+    APPLIED_TO = 'appliedTo',
+    PENDING = 'pending',
+    APPLICATIONS_TO_REVIEW = 'toReview',
+    ACTIVE = 'active',
+    CREATED = 'created',
+    ENDED = 'ended'
+  }
 
-        createdWorkstreams = await result.json();
-      })();
+  interface SectionData {
+    title: string;
+    fetched?: true;
+    display?: boolean;
+    workstreams?: Workstream[];
+  }
 
-      (async () => {
-        const result = await fetch(
-          `${getConfig().API_URL_BASE}/workstreams?applied=true`,
-          {
-            credentials: 'include'
-          }
-        );
+  function buildUrl(params: { [key: string]: string }) {
+    const paramsString = new URLSearchParams(params).toString();
+    return `${getConfig().API_URL_BASE}/workstreams?${paramsString}`;
+  }
 
-        appliedToWorkstreams = await result.json();
-      })();
+  /*
+    The order of sections in this map determines their ordering
+    on-screen — and with that their relative "importance".
+  */
+  let sections: { [key in SectionName]: SectionData } = {
+    [SectionName.APPLICATIONS_TO_REVIEW]: {
+      title: 'Applications to review'
+    },
+    [SectionName.PENDING]: {
+      title: 'Workstreams pending payment setup'
+    },
+    [SectionName.APPLIED_TO]: {
+      title: 'Workstreams you applied to'
+    },
+    [SectionName.CREATED]: {
+      title: 'Waiting for applications'
+    },
+    [SectionName.ACTIVE]: {
+      title: 'Active workstreams'
+    },
+    [SectionName.ENDED]: {
+      title: 'Ended workstreams'
     }
+  };
+
+  $: {
+    if ($connectedAndLoggedIn) {
+      fetchSectionData();
+    } else {
+      clearSectionData();
+    }
+  }
+
+  let loading = true;
+
+  function fetchSectionData() {
+    if (!$walletStore.connected)
+      throw new Error("Can't fetch dashboard before connected to wallet");
+
+    const urls: { [key in SectionName]?: string } = {
+      [SectionName.APPLIED_TO]: buildUrl({
+        applied: 'true',
+        state: 'rfa'
+      }),
+      [SectionName.CREATED]: buildUrl({
+        state: 'rfa',
+        createdBy: $walletStore.address,
+        hasApplicationsToReview: 'false'
+      }),
+      [SectionName.PENDING]: buildUrl({
+        state: WorkstreamState.PENDING,
+        createdBy: $walletStore.address
+      }),
+      [SectionName.APPLICATIONS_TO_REVIEW]: buildUrl({
+        createdBy: $walletStore.address,
+        hasApplicationsToReview: 'true'
+      }),
+      [SectionName.ACTIVE]: buildUrl({
+        state: WorkstreamState.ACTIVE,
+        assignee: $walletStore.address
+      }),
+      [SectionName.ENDED]: buildUrl({
+        state: WorkstreamState.CLOSED,
+        assignee: $walletStore.address
+      })
+    };
+
+    Object.keys(urls).forEach((sectionName) => {
+      fetch(urls[sectionName], { credentials: 'include' }).then(
+        async (response) => {
+          sections[sectionName] = {
+            ...sections[sectionName],
+            fetched: true,
+            display: response.status === 200,
+            workstreams: response.status === 200 && (await response.json())
+          };
+
+          if (
+            Object.keys(sections).every(
+              (sectionName) => sections[sectionName].fetched
+            )
+          ) {
+            loading = false;
+          }
+        }
+      );
+    });
+  }
+
+  function clearSectionData() {
+    Object.keys(sections).forEach((sectionName) => {
+      sections[sectionName].data = undefined;
+    });
+  }
+
+  function calculateStreamTotal(workstreams: Workstream[]) {
+    let totalRate = 0;
+    workstreams.forEach((ws) => (totalRate = totalRate + ws.payment.rate));
+
+    return Math.round(totalRate);
   }
 
   async function authenticate() {
@@ -50,8 +152,6 @@
       locked = false;
     }
   }
-
-  let applicationFilter = 'all';
 </script>
 
 <svelte:head>
@@ -59,25 +159,45 @@
 </svelte:head>
 
 <div class="container">
-  {#if browser && $authStore.authenticated && $walletStore.connected}
-    {#if appliedToWorkstreams.length > 0}
-      <h3>Workstreams you've applied to</h3>
-      <main>
-        {#each appliedToWorkstreams as workstream}
-          <WorkstreamCard {workstream} />
-        {/each}
-      </main>
-    {/if}
-    {#if createdWorkstreams.length > 0}
-      <h3>Workstreams you've created</h3>
-      <main>
-        {#each createdWorkstreams as workstream}
-          <WorkstreamCard {workstream} />
-        {/each}
-      </main>
-    {/if}
+  {#if $authStore.authenticated && $walletStore.connected}
+    <div transition:fly={{ y: 10, duration: 300 }} class="sections">
+      {#each Object.keys(sections).filter((sn) => !!sections[sn].display) as sectionName (sectionName)}
+        <div
+          class="section"
+          animate:flip={{ duration: 300 }}
+          transition:fly={{ y: 10, duration: 300 }}
+        >
+          <Section
+            title={sections[sectionName].title}
+            count={sections[sectionName].workstreams.length}
+          >
+            <div slot="subtitle" class="earning-per-day">
+              {#if sectionName === SectionName.ACTIVE}
+                <TokenStreams />
+                <p>
+                  You are earning <span class="typo-text-bold"
+                    >{calculateStreamTotal(sections[sectionName].workstreams)}
+                    DAI</span
+                  > per day
+                </p>
+              {/if}
+            </div>
+            <div slot="content" class="workstreams">
+              {#each sections[sectionName].workstreams as workstream}
+                <div class="workstream"><WorkstreamCard {workstream} /></div>
+              {/each}
+            </div>
+          </Section>
+        </div>
+      {/each}
+      {#if loading}
+        <div transition:fly={{ y: 10, duration: 300 }} class="spinner">
+          <Spinner />
+        </div>
+      {/if}
+    </div>
   {:else}
-    <div class="empty-wrapper">
+    <div transition:fly={{ y: 10, duration: 300 }} class="empty-wrapper">
       <EmptyState
         headerText="Sign in to view your workstreams"
         text="This is where the workstreams you created or are contributing to show up."
@@ -94,6 +214,7 @@
     max-width: 75rem;
     margin: 0 auto;
     width: 100%;
+    padding: 3rem 0;
   }
 
   .empty-wrapper {
@@ -103,14 +224,34 @@
     align-items: center;
   }
 
-  h3 {
-    margin-left: 1.5rem;
+  .sections {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
   }
 
-  main {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
-    margin: 1rem 0 4.5rem;
+  .earning-per-day {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    color: var(--color-foreground-level-6);
+  }
+
+  .spinner {
+    height: 8rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .workstreams {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .workstreams > .workstream {
+    width: calc(50% - 0.5rem);
   }
 </style>

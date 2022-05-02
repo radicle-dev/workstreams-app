@@ -7,7 +7,8 @@ export enum WorkstreamState {
   RFA = 'rfa', // Request for Applications. Initial state of Workstream
   ACTIVE = 'active',
   CLOSED = 'closed',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
+  PENDING = 'pending'
 }
 
 export enum Currency {
