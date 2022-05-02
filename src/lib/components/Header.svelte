@@ -88,7 +88,7 @@
               <Button
                 icon={TokenStreams}
                 on:click={() => modal.show(CreateModal)}
-                >Create workstream</Button
+                >Create Workstream</Button
               >
             </div>
           {/if}

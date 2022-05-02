@@ -74,5 +74,6 @@
   main {
     display: flex;
     flex-direction: column;
+    margin-bottom: 4rem;
   }
 </style>

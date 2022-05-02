@@ -114,7 +114,7 @@
         disabled={creatingWorkstream || !canSubmit}
         on:click={createWorkstream}
       >
-        Create workstream</Button
+        Create Workstream</Button
       >
     </div>
   </div>
