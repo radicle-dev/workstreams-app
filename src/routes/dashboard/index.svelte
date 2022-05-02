@@ -26,8 +26,7 @@
     APPLICATIONS_TO_REVIEW = 'toReview',
     ACTIVE = 'active',
     CREATED = 'created',
-    ENDED = 'ended',
-    LOADING = 'loading'
+    ENDED = 'ended'
   }
 
   interface SectionData {
@@ -60,11 +59,6 @@
     },
     [SectionName.ENDED]: {
       title: 'Ended workstreams'
-    },
-    [SectionName.LOADING]: {
-      title: 'Loading',
-      display: true,
-      fetched: true
     }
   };
 
@@ -75,6 +69,8 @@
       clearSectionData();
     }
   }
+
+  let loading = true;
 
   function fetchSectionData() {
     if (!$walletStore.connected)
@@ -123,7 +119,7 @@
               (sectionName) => sections[sectionName].fetched
             )
           ) {
-            sections[SectionName.LOADING].display = false;
+            loading = false;
           }
         }
       );
@@ -167,35 +163,34 @@
           animate:flip={{ duration: 300 }}
           transition:fly={{ y: 10, duration: 300 }}
         >
-          {#if sectionName === SectionName.LOADING}
-            <div class="spinner">
-              <Spinner />
+          <Section
+            title={sections[sectionName].title}
+            count={sections[sectionName].workstreams.length}
+          >
+            <div slot="subtitle" class="earning-per-day">
+              {#if sectionName === SectionName.ACTIVE}
+                <TokenStreams />
+                <p>
+                  You are earning <span class="typo-text-bold"
+                    >{calculateStreamTotal(sections[sectionName].workstreams)}
+                    DAI</span
+                  > per day
+                </p>
+              {/if}
             </div>
-          {:else}
-            <Section
-              title={sections[sectionName].title}
-              count={sections[sectionName].workstreams.length}
-            >
-              <div slot="subtitle" class="earning-per-day">
-                {#if sectionName === SectionName.ACTIVE}
-                  <TokenStreams />
-                  <p>
-                    You are earning <span class="typo-text-bold"
-                      >{calculateStreamTotal(sections[sectionName].workstreams)}
-                      DAI</span
-                    > per day
-                  </p>
-                {/if}
-              </div>
-              <div slot="content" class="workstreams">
-                {#each sections[sectionName].workstreams as workstream}
-                  <div class="workstream"><WorkstreamCard {workstream} /></div>
-                {/each}
-              </div>
-            </Section>
-          {/if}
+            <div slot="content" class="workstreams">
+              {#each sections[sectionName].workstreams as workstream}
+                <div class="workstream"><WorkstreamCard {workstream} /></div>
+              {/each}
+            </div>
+          </Section>
         </div>
       {/each}
+      {#if loading}
+        <div transition:fly={{ y: 10, duration: 300 }} class="spinner">
+          <Spinner />
+        </div>
+      {/if}
     </div>
   {:else}
     <div transition:fly={{ y: 10, duration: 300 }} class="empty-wrapper">
