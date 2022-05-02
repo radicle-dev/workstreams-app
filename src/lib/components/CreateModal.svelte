@@ -5,10 +5,8 @@
   import Dropdown from 'radicle-design-system/Dropdown.svelte';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
   import TextInput from './TextInput.svelte';
-  import TypeSwitcher from './TypeSwitcher.svelte';
   import { getConfig } from '$lib/config';
   import type { WorkstreamInput } from '$lib/stores/workstreams/types';
-  import { WorkstreamType } from '$lib/stores/workstreams/types';
   import { goto } from '$app/navigation';
 
   const durationOptions = [
@@ -23,20 +21,13 @@
   let duration: string;
   let durationUnit: string = durationOptions[1].value;
   let description: string;
-  let selectedType: 'first' | 'second';
-
-  $: workstreamType =
-    selectedType === 'first' ? WorkstreamType.GRANT : WorkstreamType.ROLE;
 
   $: streamRate =
-    workstreamType === WorkstreamType.GRANT
-      ? parseInt(total) / (parseInt(duration) * parseInt(durationUnit))
-      : parseInt(total) / 365;
+    parseInt(total) / (parseInt(duration) * parseInt(durationUnit));
 
-  $: canSubmit =
-    workstreamType === WorkstreamType.GRANT
-      ? [title, total, duration, durationUnit, description].every((v) => v)
-      : [title, total, description].every((v) => v);
+  $: canSubmit = [title, total, duration, durationUnit, description].every(
+    (v) => v
+  );
 
   let creatingWorkstream = false;
 
@@ -54,7 +45,6 @@
           },
           title,
           desc: description,
-          type: workstreamType,
           duration: parseInt(duration) * parseInt(durationUnit)
         } as WorkstreamInput)
       });
@@ -71,52 +61,28 @@
     <span class="emoji">👔</span>
     <h1>Create a Workstream</h1>
     <form>
-      <div class="workstream-type">
-        <TypeSwitcher bind:selected={selectedType}>
-          <div slot="first" class="option">
-            <h4>Grant</h4>
-            <p>A fixed-length project.</p>
-          </div>
-          <div slot="second" class="option">
-            <h4>Role</h4>
-            <p>A long-term commitment.</p>
-          </div>
-        </TypeSwitcher>
-      </div>
       <div class="input-with-label">
         <h4>Title</h4>
         <TextInput bind:value={title} placeholder="Max 256 characters" />
       </div>
       <div class="payment">
-        {#if selectedType === 'first'}
-          <div class="inner">
-            <div class="input-with-label payout">
-              <h4>Total Payout</h4>
-              <TextInput bind:value={total} placeholder="0" suffix="DAI" />
-            </div>
-            <div class="input-with-label duration">
-              <h4>Duration</h4>
-              <div class="input-group">
-                <div class="number">
-                  <TextInput bind:value={duration} placeholder="0" />
-                </div>
-                <div class="unit">
-                  <Dropdown
-                    bind:value={durationUnit}
-                    options={durationOptions}
-                  />
-                </div>
+        <div class="inner">
+          <div class="input-with-label payout">
+            <h4>Total Payout</h4>
+            <TextInput bind:value={total} placeholder="0" suffix="DAI" />
+          </div>
+          <div class="input-with-label duration">
+            <h4>Duration</h4>
+            <div class="input-group">
+              <div class="number">
+                <TextInput bind:value={duration} placeholder="0" />
+              </div>
+              <div class="unit">
+                <Dropdown bind:value={durationUnit} options={durationOptions} />
               </div>
             </div>
           </div>
-        {:else}
-          <div class="inner">
-            <div class="input-with-label payout">
-              <h4>Yearly Salary</h4>
-              <TextInput bind:value={total} placeholder="0" suffix="DAI" />
-            </div>
-          </div>
-        {/if}
+        </div>
       </div>
       <div class="input-with-label">
         <h4>Description</h4>
@@ -158,21 +124,6 @@
   }
   .emoji {
     font-size: 2rem;
-  }
-
-  .workstream-type .option {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  .option > h4 {
-    color: var(--color-foreground);
-  }
-
-  .option > p {
-    color: var(--color-foreground-level-6);
   }
 
   .input-with-label {

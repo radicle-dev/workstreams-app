@@ -5,7 +5,6 @@
     ApplicationInput,
     Workstream
   } from '$lib/stores/workstreams/types';
-  import { WorkstreamType } from '$lib/stores/workstreams/types';
 
   import Modal from '$components/Modal.svelte';
   import Button from 'radicle-design-system/Button.svelte';
@@ -28,28 +27,18 @@
   ];
 
   let applicationText: string;
-  let duration: string | undefined =
-    workstream.type === WorkstreamType.GRANT
-      ? `${workstream.duration}`
-      : undefined;
+  let duration: string = `${workstream.duration}`;
   let durationUnit: string = durationOptions[0].value;
-  let total: string =
-    workstream.type === WorkstreamType.GRANT
-      ? `${
-          workstream.payment.rate *
-          (parseInt(duration) * parseInt(durationUnit))
-        }`
-      : `${workstream.payment.rate * 365}`;
+  let total: string = `${
+    workstream.payment.rate * (parseInt(duration) * parseInt(durationUnit))
+  }`;
 
   $: streamRate =
-    workstream.type === WorkstreamType.GRANT
-      ? parseInt(total) / (parseInt(duration) * parseInt(durationUnit))
-      : parseInt(total) / 365;
+    parseInt(total) / (parseInt(duration) * parseInt(durationUnit));
 
-  $: canSubmit =
-    workstream.type === WorkstreamType.GRANT
-      ? [applicationText, total, duration, durationUnit].every((v) => v)
-      : [applicationText, total].every((v) => v);
+  $: canSubmit = [applicationText, total, duration, durationUnit].every(
+    (v) => v
+  );
 
   let creatingApplication = false;
 
@@ -85,21 +74,15 @@
 <Modal>
   <div slot="body">
     <span class="emoji">👔</span>
-    <h1>{workstream.type} application</h1>
+    <h1>Workstream application</h1>
     <div class="input-with-label">
       <h4>Applying to</h4>
       <Card style="width: 100%; margin-bottom: 2rem;">
         <div slot="top">
-          <TitleMeta
-            title={workstream.title}
-            type={workstream.type}
-            creator={workstream.creator}
-          />
+          <TitleMeta title={workstream.title} creator={workstream.creator} />
         </div>
         <div slot="bottom" class="spread">
-          {#if workstream.type === 'grant' && workstream.duration}
-            <Timeframe duration={workstream.duration} />
-          {/if}
+          <Timeframe duration={workstream.duration} />
           <Rate
             rate={workstream.payment.rate}
             currency={workstream.payment.currency}
@@ -117,35 +100,23 @@
         />
       </div>
       <div class="payment">
-        {#if workstream.type === 'grant'}
-          <div class="inner">
-            <div class="input-with-label payout">
-              <h4>Total Payout</h4>
-              <TextInput bind:value={total} placeholder="0" suffix="DAI" />
-            </div>
-            <div class="input-with-label duration">
-              <h4>Duration</h4>
-              <div class="input-group">
-                <div class="number">
-                  <TextInput bind:value={duration} placeholder="0" />
-                </div>
-                <div class="unit">
-                  <Dropdown
-                    bind:value={durationUnit}
-                    options={durationOptions}
-                  />
-                </div>
+        <div class="inner">
+          <div class="input-with-label payout">
+            <h4>Total Payout</h4>
+            <TextInput bind:value={total} placeholder="0" suffix="DAI" />
+          </div>
+          <div class="input-with-label duration">
+            <h4>Duration</h4>
+            <div class="input-group">
+              <div class="number">
+                <TextInput bind:value={duration} placeholder="0" />
+              </div>
+              <div class="unit">
+                <Dropdown bind:value={durationUnit} options={durationOptions} />
               </div>
             </div>
           </div>
-        {:else if workstream.type === 'role'}
-          <div class="inner">
-            <div class="input-with-label payout">
-              <h4>Yearly Salary</h4>
-              <TextInput bind:value={total} placeholder="0" suffix="DAI" />
-            </div>
-          </div>
-        {/if}
+        </div>
       </div>
     </form>
     <div class="actions">
@@ -159,7 +130,7 @@
         disabled={creatingApplication || !canSubmit}
         on:click={createApplication}
       >
-        Apply for {workstream.type}</Button
+        Apply for workstream</Button
       >
     </div>
   </div>

@@ -11,16 +11,11 @@ export enum WorkstreamState {
   PENDING = 'pending'
 }
 
-export enum WorkstreamType {
-  GRANT = 'grant',
-  ROLE = 'role'
-}
-
 export enum Currency {
   DAI = 'dai'
 }
 
-export interface WorkstreamBase {
+export interface Workstream {
   id: string;
   state: WorkstreamState;
   creator: string;
@@ -29,23 +24,13 @@ export interface WorkstreamBase {
   title: string;
   desc: string;
   applicants?: string[];
+  duration: number;
 }
 
 export interface Payment {
   currency: Currency;
   rate: number;
 }
-
-export interface Grant extends WorkstreamBase {
-  type: WorkstreamType.GRANT;
-  duration: number;
-}
-
-export interface Role extends WorkstreamBase {
-  type: WorkstreamType.ROLE;
-}
-
-export type Workstream = Grant | Role;
 
 export type WorkstreamInput = Omit<
   Workstream,
