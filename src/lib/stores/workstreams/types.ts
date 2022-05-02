@@ -28,6 +28,8 @@ export interface WorkstreamBase {
   title: string;
   desc: string;
   applicants?: string[];
+  rejectedApplications?: string[];
+  applicationsToReview?: string[];
 }
 
 export interface Payment {

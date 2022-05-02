@@ -8,6 +8,7 @@
   import TitleMeta from '$components/TitleMeta.svelte';
   import TimeRate from '$components/TimeRate.svelte';
   import Rate from '$components/Rate.svelte';
+  import RateDifference from '$components/RateDifference.svelte';
   import ThumbsDown from 'radicle-design-system/icons/ThumbsDown.svelte';
   import ThumbsUp from 'radicle-design-system/icons/ThumbsUp.svelte';
   import Button from 'radicle-design-system/Button.svelte';
@@ -79,10 +80,9 @@
               rate={application.counterOffer.rate}
               currency={application.counterOffer.currency}
             />
-            <Rate
+            <RateDifference
               rate={application.counterOffer.rate - workstream.payment.rate}
               currency={application.counterOffer.currency}
-              difference={true}
             />
           </div>
         </Card>

@@ -1,24 +1,31 @@
 <script lang="ts">
-	import type { Workstream } from '$lib/stores/workstreams/types';
-	import { WorkstreamType } from '$lib/stores/workstreams/types';
-	import Rate from '$components/Rate.svelte';
-	import Timeframe from '$components/Timeframe.svelte';
+  import type { Workstream } from '$lib/stores/workstreams/types';
+  import { WorkstreamType } from '$lib/stores/workstreams/types';
+  import RateTotal from '$components/RateTotal.svelte';
+  import Timeframe from '$components/Timeframe.svelte';
 
-	export let workstream: Workstream;
+  export let workstream: Workstream;
+
+  let duration =
+    workstream.type === WorkstreamType.GRANT && workstream.duration
+      ? workstream.duration
+      : undefined;
 </script>
 
 <div class="spread">
-	<Rate rate={workstream.payment.rate} currency={workstream.payment.currency} />
-	{#if workstream.type === WorkstreamType.GRANT && workstream.duration}
-		<Timeframe duration={workstream.duration} />
-	{/if}
+  <RateTotal
+    rate={workstream.payment.rate}
+    currency={workstream.payment.currency}
+    {duration}
+  />
+  <Timeframe {duration} />
 </div>
 
 <style>
-	.spread {
-		display: flex;
-		flex: 1;
-		justify-content: space-between;
-		align-items: flex-end;
-	}
+  .spread {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
 </style>
