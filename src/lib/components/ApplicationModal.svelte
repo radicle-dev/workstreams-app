@@ -59,7 +59,7 @@
 <Modal>
   <div slot="body">
     <span class="emoji">👔</span>
-    <h1>{workstream.type} application</h1>
+    <h1>Workstream application</h1>
     <p class="applicant typo-text-bold">
       by <User address={application.creator} />
     </p>

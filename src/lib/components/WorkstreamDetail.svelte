@@ -216,6 +216,7 @@
     display: flex;
     align-items: center;
   }
+
   .owner > span {
     margin-right: 0.5rem;
   }

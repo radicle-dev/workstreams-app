@@ -13,7 +13,6 @@
   import ActionRow from '$components/ActionRow.svelte';
   import Apply from 'radicle-design-system/icons/Ledger.svelte';
   import Button from 'radicle-design-system/Button.svelte';
-  import Tooltip from 'radicle-design-system/Tooltip.svelte';
 
   export let workstream: Workstream;
 
