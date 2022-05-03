@@ -22,7 +22,8 @@
 
   enum SectionName {
     APPLIED_TO = 'appliedTo',
-    PENDING = 'pending',
+    PENDING_SETUP = 'pending_setup',
+    WAITING_SETUP = 'waiting_setup',
     APPLICATIONS_TO_REVIEW = 'toReview',
     ACTIVE = 'active',
     CREATED = 'created',
@@ -49,8 +50,11 @@
     [SectionName.APPLICATIONS_TO_REVIEW]: {
       title: 'Applications to review'
     },
-    [SectionName.PENDING]: {
+    [SectionName.PENDING_SETUP]: {
       title: 'Workstreams pending payment setup'
+    },
+    [SectionName.WAITING_SETUP]: {
+      title: 'Workstreams waiting for payment setup'
     },
     [SectionName.APPLIED_TO]: {
       title: 'Workstreams you applied to'
@@ -90,9 +94,13 @@
         createdBy: $walletStore.address,
         hasApplicationsToReview: 'false'
       }),
-      [SectionName.PENDING]: buildUrl({
+      [SectionName.PENDING_SETUP]: buildUrl({
         state: WorkstreamState.PENDING,
         createdBy: $walletStore.address
+      }),
+      [SectionName.WAITING_SETUP]: buildUrl({
+        state: WorkstreamState.PENDING,
+        assignedTo: $walletStore.address
       }),
       [SectionName.APPLICATIONS_TO_REVIEW]: buildUrl({
         createdBy: $walletStore.address,
@@ -100,11 +108,11 @@
       }),
       [SectionName.ACTIVE]: buildUrl({
         state: WorkstreamState.ACTIVE,
-        assignee: $walletStore.address
+        assignedTo: $walletStore.address
       }),
       [SectionName.ENDED]: buildUrl({
         state: WorkstreamState.CLOSED,
-        assignee: $walletStore.address
+        assignedTo: $walletStore.address
       })
     };
 
