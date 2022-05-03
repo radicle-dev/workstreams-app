@@ -26,12 +26,12 @@
   });
 
   function lookup() {
-    ensNames.lookup(address, $walletStore.connected && $walletStore.provider);
+    ensNames.lookup(address, $walletStore.provider);
   }
 
   // Reload ens names if network changes.
   $: {
-    $walletStore.connected && $walletStore.chainId;
+    $walletStore.chainId;
     lookup();
   }
 

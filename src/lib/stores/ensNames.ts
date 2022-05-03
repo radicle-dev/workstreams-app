@@ -21,8 +21,6 @@ export default (() => {
       */
       store.update((v) => ({ ...v, [address]: {} }));
 
-      console.log(provider?.network);
-
       const name = await (provider || defaultProvider).lookupAddress(address);
 
       /*

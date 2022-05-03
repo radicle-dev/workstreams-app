@@ -32,12 +32,9 @@
 
   let applied: boolean =
     $connectedAndLoggedIn &&
-    $walletStore.connected &&
-    workstream.applicants?.includes($walletStore.address);
+    workstream.applicants?.includes($walletStore.accounts[0]);
   let creator: boolean =
-    $connectedAndLoggedIn &&
-    $walletStore.connected &&
-    workstream.creator === $walletStore.address;
+    $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
 
   $: {
     if (workstream.state === WorkstreamState.ACTIVE) {
@@ -117,7 +114,7 @@
                   {#if application.counterOffer}
                     <p class="proposal">Rejected</p>
                   {/if}
-                  {#if $connectedAndLoggedIn && $walletStore.connected && $walletStore.address === workstream.creator}
+                  {#if $connectedAndLoggedIn && $walletStore.accounts[0] === workstream.creator}
                     <Button variant="primary" icon={ThumbsDown}>Deny</Button>
                   {/if}
                   <Button
@@ -141,7 +138,7 @@
             {#if !creator}
               <Tooltip value={applied ? "You've already applied" : null}>
                 <Button
-                  disabled={applied}
+                  disabled={applied || !$connectedAndLoggedIn}
                   icon={Apply}
                   on:click={() =>
                     modal.show(ApplyModal, undefined, { workstream })}
@@ -178,7 +175,7 @@
                       />
                     </p>
                   {/if}
-                  {#if $connectedAndLoggedIn && $walletStore.connected && $walletStore.address === workstream.creator}
+                  {#if $connectedAndLoggedIn && $walletStore.connected && $walletStore.accounts[0] === workstream.creator}
                     <Button variant="primary" icon={ThumbsDown}>Deny</Button>
                   {/if}
                   <Button

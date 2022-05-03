@@ -18,6 +18,11 @@
     }
   }
 
+  async function logOut() {
+    walletStore.disconnect();
+    authStore.clear();
+  }
+
   let hover = false;
 </script>
 
@@ -25,7 +30,7 @@
   {#if $connectedAndLoggedIn}
     {#if hover}
       <div
-        on:click={() => walletStore.disconnect()}
+        on:click={logOut}
         transition:fade={{ duration: 100 }}
         class="log-out-overlay"
       >
@@ -39,6 +44,10 @@
     </div>
   {:else if locked}
     <Button disabled variant="outline">. . .</Button>
+  {:else if !$walletStore.initialized}
+    <Button disabled variant="outline">Initializing...</Button>
+  {:else if $walletStore.walletPresent === false}
+    <Button disabled variant="outline">Install MetaMask to log in</Button>
   {:else}
     <Button on:click={() => logIn()} variant="outline"
       >Sign in with Ethereum</Button

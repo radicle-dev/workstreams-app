@@ -78,14 +78,14 @@ export const authStore = (() => {
     if (!walletData.connected) throw new Error('Initialize Wallet first');
 
     const message = await createSiweMessage(
-      walletData.address,
+      walletData.accounts[0],
       'Please sign this message to log in to Radicle Workstreams. Since this' +
         ' is not a transaction, there will be no transaction costs.'
     );
 
-    const signature = await walletData.signer.signMessage(
-      message.prepareMessage()
-    );
+    const signature = await walletData.provider
+      .getSigner()
+      .signMessage(message.prepareMessage());
 
     const result = await sendSignatureForVerification(
       message.prepareMessage(),
@@ -96,7 +96,7 @@ export const authStore = (() => {
       set({
         expiresAt: message.expirationTime,
         authenticated: true,
-        address: walletData.address
+        address: walletData.accounts[0]
       });
     }
 
