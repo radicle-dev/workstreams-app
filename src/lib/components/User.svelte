@@ -7,6 +7,7 @@
   import { onMount } from 'svelte';
   import { formatAddress } from '$lib/utils/format';
   import ensNames from '$lib/stores/ensNames';
+  import { walletStore } from '$lib/stores/wallet/wallet';
 
   export let showAvatar = true;
   export let showAddress = true;
@@ -21,8 +22,18 @@
   onMount(() => {
     uriData = blockyDataUri(address);
 
-    ensNames.lookup(address);
+    lookup();
   });
+
+  function lookup() {
+    ensNames.lookup(address, $walletStore.connected && $walletStore.provider);
+  }
+
+  // Reload ens names if network changes.
+  $: {
+    $walletStore.connected && $walletStore.chainId;
+    lookup();
+  }
 
   const blockyDataUri = (urn: string) => {
     return createIcon({

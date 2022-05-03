@@ -8,6 +8,7 @@ export type WalletData =
       connected: true;
       connecting: false;
       signer: Signer;
+      chainId: number;
       provider: ethers.providers.Web3Provider;
       address: string;
     }
@@ -18,12 +19,16 @@ export type WalletData =
 
 function updateAccounts(
   walletData: WalletData,
-  accounts: string[]
+  accounts: string[],
+  chainId: number
 ): WalletData {
+  if (![1, 4].includes(chainId))
+    throw new Error('We currently only support Rinkeby and Mainnet.');
+
   if (accounts[0]) {
     const provider = new ethers.providers.Web3Provider(
       window.ethereum,
-      'rinkeby'
+      chainId
     );
 
     return {
@@ -31,6 +36,7 @@ function updateAccounts(
       connecting: (walletData.connected && walletData.connecting) || false,
       address: accounts[0].toLowerCase(),
       provider,
+      chainId,
       signer: provider.getSigner()
     };
   } else {
@@ -48,13 +54,42 @@ export const walletStore = (() => {
   });
 
   if (browser) {
-    window.ethereum.on('accountsChanged', (accounts: string[]) => {
-      update((walletData) => updateAccounts(walletData, accounts));
+    window.ethereum.on('chainChanged', (chainId: string) => {
+      update((walletData) => {
+        if (!walletData.connected)
+          throw new Error(
+            'Expected to be connected to wallet when receiving chainChanged'
+          );
+
+        return updateAccounts(
+          walletData,
+          [walletData.address],
+          parseInt(chainId, 16)
+        );
+      });
+
+      location.reload();
     });
 
-    window.ethereum.request({ method: 'eth_accounts' }).then((accounts) => {
-      update((walletData) => updateAccounts(walletData, accounts));
+    window.ethereum.on('accountsChanged', async (accounts: string[]) => {
+      const chainId: string = await window.ethereum.request({
+        method: 'eth_chainId'
+      });
+      update((walletData) =>
+        updateAccounts(walletData, accounts, parseInt(chainId))
+      );
     });
+
+    window.ethereum
+      .request({ method: 'eth_accounts' })
+      .then(async (accounts) => {
+        const chainId: string = await window.ethereum.request({
+          method: 'eth_chainId'
+        });
+        update((walletData) =>
+          updateAccounts(walletData, accounts, parseInt(chainId))
+        );
+      });
   }
 
   async function connect(): Promise<WalletData> {
@@ -78,12 +113,16 @@ export const walletStore = (() => {
       ]
     });
     const accounts = await provider.send('eth_requestAccounts', []);
+    const chainId: string = await window.ethereum.request({
+      method: 'eth_chainId'
+    });
 
     set({
       connected: true,
       connecting: false,
       address: accounts[0].toLowerCase(),
       provider,
+      chainId: parseInt(chainId, 16),
       signer: provider.getSigner()
     });
 
