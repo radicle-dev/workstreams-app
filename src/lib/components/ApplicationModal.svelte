@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { currencyFormat } from '$lib/utils/format';
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import type { Workstream, Application } from '$lib/stores/workstreams/types';
@@ -16,6 +17,10 @@
   export let application: Application;
 
   let actionsDisabled = false;
+  let totalCounterOfferDifference = application.counterOffer
+    ? application.counterOffer.rate * workstream.duration -
+      workstream.payment.rate * workstream.duration
+    : null;
 
   import Modal from '$components/Modal.svelte';
   import { getConfig } from '$lib/config';
@@ -63,6 +68,17 @@
       by <User address={application.creator} />
     </p>
     <div class="input-with-label">
+      <h4>Applying to</h4>
+      <Card style="width: 100%; margin-bottom: 2rem;" hoverable={false}>
+        <div slot="top">
+          <TitleMeta {workstream} />
+        </div>
+        <div slot="bottom">
+          <TimeRate {workstream} />
+        </div>
+      </Card>
+    </div>
+    <div class="input-with-label">
       <h4>Application</h4>
       <Card
         style="width: 100%; margin-bottom: 2rem; text-align: left;"
@@ -73,35 +89,36 @@
         </div>
       </Card>
     </div>
-    {#if application.counterOffer}
-      <div class="input-with-label">
-        <h4>Proposed rate</h4>
-        <Card style="width: 100%; margin-bottom: 2rem;" hoverable={false}>
-          <div slot="top" class="proposal">
+    <div class="input-with-label">
+      <h4>Proposed rate</h4>
+      <Card style="width: 100%;" hoverable={false}>
+        <div slot="top" class="proposal">
+          {#if application.counterOffer}
             <Rate
+              total={true}
+              duration={workstream.duration}
               rate={application.counterOffer.rate}
               currency={application.counterOffer.currency}
             />
+            <p class="typo-text-bold difference">
+              {totalCounterOfferDifference > 0
+                ? `+ ${currencyFormat(totalCounterOfferDifference)}`
+                : `${currencyFormat(totalCounterOfferDifference)}`}
+              {workstream.payment.currency.toUpperCase()}
+              <span class="typo-text">in total</span>
+            </p>
+          {:else}
             <Rate
-              difference={true}
-              rate={application.counterOffer.rate - workstream.payment.rate}
-              currency={application.counterOffer.currency}
+              total={true}
+              duration={workstream.duration}
+              rate={workstream.payment.rate}
+              currency={workstream.payment.currency}
             />
-          </div>
-        </Card>
-      </div>
-    {/if}
-    <div class="input-with-label">
-      <h4>Applying to</h4>
-      <Card style="width: 100%;" hoverable={false}>
-        <div slot="top">
-          <TitleMeta {workstream} />
-        </div>
-        <div slot="bottom">
-          <TimeRate {workstream} />
+          {/if}
         </div>
       </Card>
     </div>
+
     {#if $walletStore.connected && $walletStore.address === workstream.creator}
       <div class="actions">
         <Button
@@ -157,7 +174,9 @@
     display: flex;
     justify-content: space-between;
   }
-
+  .difference {
+    color: var(--color-foreground-level-5);
+  }
   .actions {
     margin-top: 2rem;
     display: flex;

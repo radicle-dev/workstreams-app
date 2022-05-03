@@ -17,6 +17,8 @@ export function timeframeFormat(days: number): string {
     return `${days} day`;
   } else if (weeks === 1) {
     return `${weeks} week`;
+  } else if (weeks === 52) {
+    return `1 year`
   } else {
     return `${weeks} weeks`;
   }
@@ -34,6 +36,8 @@ export function hyphenateString(str: string): string {
   return str.replace(/ +/g, '-').toLowerCase();
 }
 
-export function roundDayRate(rate: number): number {
-  return Math.round((rate + Number.EPSILON) * 100) / 100
+export function currencyFormat(rate: number): string {
+  const formatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
+
+  return formatter.format(rate)
 }
