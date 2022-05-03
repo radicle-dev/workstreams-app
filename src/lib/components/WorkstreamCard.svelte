@@ -6,8 +6,7 @@
   import Card from '$components/Card.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import TitleMeta from '$components/TitleMeta.svelte';
-  import Rate from '$components/Rate.svelte';
-  import Timeframe from '$components/Timeframe.svelte';
+  import TimeRate from '$components/TimeRate.svelte';
   import ActionRow from '$components/ActionRow.svelte';
   import User from '$components/User.svelte';
 
@@ -18,16 +17,10 @@
 
 <Card on:click={() => goto(url)} on:hover={() => prefetch(url)}>
   <div slot="top">
-    <TitleMeta title={workstream.title} creator={workstream.creator} />
+    <TitleMeta {workstream} />
   </div>
   <div slot="bottom" class="content">
-    <div class="spread">
-      <Rate
-        rate={workstream.payment.rate}
-        currency={workstream.payment.currency}
-      />
-      <Timeframe duration={workstream.duration} />
-    </div>
+    <TimeRate {workstream} />
     <ActionRow>
       <div slot="left" class="left">
         <User address={workstream.creator} showAddress={false} />
@@ -46,10 +39,6 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-  }
-  .spread {
-    display: flex;
-    justify-content: space-between;
   }
   .left,
   .right {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { currencyFormat } from '$lib/utils/format';
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import type { Workstream, Application } from '$lib/stores/workstreams/types';
@@ -6,7 +7,7 @@
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
   import TitleMeta from '$components/TitleMeta.svelte';
-  import Timeframe from '$components/Timeframe.svelte';
+  import TimeRate from '$components/TimeRate.svelte';
   import Rate from '$components/Rate.svelte';
   import ThumbsDown from 'radicle-design-system/icons/ThumbsDown.svelte';
   import ThumbsUp from 'radicle-design-system/icons/ThumbsUp.svelte';
@@ -16,6 +17,10 @@
   export let application: Application;
 
   let actionsDisabled = false;
+  let totalCounterOfferDifference = application.counterOffer
+    ? application.counterOffer.rate * workstream.duration -
+      workstream.payment.rate * workstream.duration
+    : null;
 
   import Modal from '$components/Modal.svelte';
   import { getConfig } from '$lib/config';
@@ -63,48 +68,57 @@
       by <User address={application.creator} />
     </p>
     <div class="input-with-label">
-      <h4>Application</h4>
-      <Card style="width: 100%; margin-bottom: 2rem; text-align: left;">
+      <h4>Applying to</h4>
+      <Card style="width: 100%; margin-bottom: 2rem;" hoverable={false}>
         <div slot="top">
-          <p>{application.letter}</p>
+          <TitleMeta {workstream} />
+        </div>
+        <div slot="bottom">
+          <TimeRate {workstream} />
         </div>
       </Card>
     </div>
-    {#if application.counterOffer}
-      <div class="input-with-label">
-        <h4>Proposed rate</h4>
-        <Card style="width: 100%; margin-bottom: 2rem;">
-          <div slot="top" class="proposal">
+    <div class="input-with-label">
+      <h4>Application</h4>
+      <Card
+        style="width: 100%; margin-bottom: 2rem; text-align: left;"
+        hoverable={false}
+      >
+        <div slot="top">
+          <p style="user-select: text">{application.letter}</p>
+        </div>
+      </Card>
+    </div>
+    <div class="input-with-label">
+      <h4>Proposed rate</h4>
+      <Card style="width: 100%;" hoverable={false}>
+        <div slot="top" class="proposal">
+          {#if application.counterOffer}
             <Rate
+              total={true}
+              duration={workstream.duration}
               rate={application.counterOffer.rate}
               currency={application.counterOffer.currency}
             />
+            <p class="typo-text-bold difference">
+              {totalCounterOfferDifference > 0
+                ? `+ ${currencyFormat(totalCounterOfferDifference)}`
+                : `${currencyFormat(totalCounterOfferDifference)}`}
+              {workstream.payment.currency.toUpperCase()}
+              <span class="typo-text">in total</span>
+            </p>
+          {:else}
             <Rate
-              rate={application.counterOffer.rate - workstream.payment.rate}
-              currency={application.counterOffer.currency}
-              difference={true}
+              total={true}
+              duration={workstream.duration}
+              rate={workstream.payment.rate}
+              currency={workstream.payment.currency}
             />
-          </div>
-        </Card>
-      </div>
-    {/if}
-    <div class="input-with-label">
-      <h4>Applying to</h4>
-      <Card style="width: 100%;">
-        <div slot="top">
-          <TitleMeta title={workstream.title} creator={workstream.creator} />
-        </div>
-        <div slot="bottom" class="spread">
-          {#if workstream.type === 'grant' && workstream.duration}
-            <Timeframe duration={workstream.duration} />
           {/if}
-          <Rate
-            rate={workstream.payment.rate}
-            currency={workstream.payment.currency}
-          />
         </div>
       </Card>
     </div>
+
     {#if $walletStore.connected && $walletStore.address === workstream.creator}
       <div class="actions">
         <Button
@@ -156,19 +170,13 @@
     align-items: flex-start;
     gap: 0.75rem;
   }
-
-  .spread {
-    display: flex;
-    flex: 1;
-    justify-content: space-between;
-    align-items: flex-end;
-  }
-
   .proposal {
     display: flex;
     justify-content: space-between;
   }
-
+  .difference {
+    color: var(--color-foreground-level-5);
+  }
   .actions {
     margin-top: 2rem;
     display: flex;

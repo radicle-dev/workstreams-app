@@ -11,12 +11,14 @@ export function formatAddress(input: string): string {
 export function timeframeFormat(days: number): string {
   const weeks = Math.floor(days / 7);
 
-  if (weeks < 1) {
+  if (days < 7 && days > 1) {
     return `${days} days`;
   } else if (days === 1) {
     return `${days} day`;
   } else if (weeks === 1) {
     return `${weeks} week`;
+  } else if (weeks === 52) {
+    return `1 year`
   } else {
     return `${weeks} weeks`;
   }
@@ -32,4 +34,10 @@ export function dateFormat(timestamp: Timestamp): string {
 
 export function hyphenateString(str: string): string {
   return str.replace(/ +/g, '-').toLowerCase();
+}
+
+export function currencyFormat(rate: number): string {
+  const formatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
+
+  return formatter.format(rate)
 }

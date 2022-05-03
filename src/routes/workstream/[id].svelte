@@ -77,5 +77,5 @@
 {#if workstream}
   <WorkstreamDetail {workstream} {applications} />
 {:else}
-  <p>Sorry couldn't load the details of this workstream.</p>
+  <p>Sorry couldn't load the details of this Workstream.</p>
 {/if}

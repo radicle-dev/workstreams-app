@@ -24,6 +24,9 @@ export interface Workstream {
   title: string;
   desc: string;
   applicants?: string[];
+  rejectedApplications?: string[];
+  applicationsToReview?: string[];
+  acceptedApplication?: string;
   duration: number;
 }
 

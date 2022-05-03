@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { timeframeFormat, dateFormat } from '$lib/utils/format';
+  import { dateFormat } from '$lib/utils/format';
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
@@ -7,7 +7,8 @@
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
   import Rate from '$components/Rate.svelte';
-  import Badge from 'radicle-design-system/Badge.svelte';
+  import ActionRow from '$components/ActionRow.svelte';
+  import TimeRate from '$components/TimeRate.svelte';
   import ApplyModal from '$components/ApplyModal.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
   import Apply from 'radicle-design-system/icons/Ledger.svelte';
@@ -22,7 +23,6 @@
     type Application,
     type Workstream
   } from '$lib/stores/workstreams/types';
-  import ActionRow from '$components/ActionRow.svelte';
 
   export let workstream: Workstream;
   export let applications: Application[] | undefined = undefined;
@@ -53,9 +53,7 @@
 
 <div class="container">
   <div class="metadata">
-    <div class="title">
-      <h1 style="margin-right: 1rem;">{workstream.title}</h1>
-    </div>
+    <h1 style="margin-bottom: 0.75rem;">{workstream.title}</h1>
     <div class="owner">
       <span class="label">created by</span>
       <User address={workstream.creator} />
@@ -139,15 +137,7 @@
       <Card hoverable={false} style="margin-bottom: 1.5rem;">
         <div slot="top">
           <div class="timerate">
-            <div style="text-align: right;">
-              <Rate
-                rate={workstream.payment.rate}
-                currency={workstream.payment.currency}
-              />
-            </div>
-            <div>
-              <p class="timeframe">{timeframeFormat(workstream.duration)}</p>
-            </div>
+            <TimeRate {workstream} />
             {#if !creator}
               <Tooltip value={applied ? "You've already applied" : null}>
                 <Button
@@ -181,8 +171,10 @@
                     <p class="proposal">
                       Proposes <Rate
                         icon={false}
+                        total={true}
                         rate={application.counterOffer.rate}
                         currency={application.counterOffer.currency}
+                        duration={workstream.duration}
                       />
                     </p>
                   {/if}
@@ -220,15 +212,11 @@
   .metadata > * {
     margin-bottom: 2rem;
   }
-  .title,
   .owner {
     display: flex;
     align-items: center;
   }
-  .title {
-    margin-bottom: 0.5rem;
-    justify-content: space-between;
-  }
+
   .owner > span {
     margin-right: 0.5rem;
   }
@@ -246,11 +234,13 @@
   .desc {
     margin-top: 2rem;
     color: var(--color-foreground);
+    user-select: text;
   }
   .timerate {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1.5rem;
   }
   .timeframe {
     color: var(--color-foreground-level-6);

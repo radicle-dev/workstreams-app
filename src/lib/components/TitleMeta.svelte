@@ -1,15 +1,16 @@
 <script lang="ts">
+  import type { Workstream } from '$lib/stores/workstreams/types';
   import User from '$components/User.svelte';
-
-  export let title: string;
-  export let creator: string;
+  export let workstream: Workstream;
 </script>
 
 <div class="title">
-  <h3 style="margin-right: 0.75rem;" class="typo-overflow-ellipsis">{title}</h3>
+  <h3 style="margin-right: 0.75rem;" class="typo-overflow-ellipsis">
+    {workstream.title}
+  </h3>
 </div>
 <div class="owner">
-  <User address={creator} />
+  <User address={workstream.creator} />
 </div>
 
 <style>

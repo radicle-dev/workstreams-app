@@ -199,8 +199,8 @@
   {:else}
     <div transition:fly={{ y: 10, duration: 300 }} class="empty-wrapper">
       <EmptyState
-        headerText="Sign in to view your workstreams"
-        text="This is where the workstreams you created or are contributing to show up."
+        headerText="Sign in to view your Workstreams"
+        text="This is where the Workstreams you created or are contributing to show up."
         primaryActionText="Sign in with Ethereum"
         on:primaryAction={authenticate}
         primaryActionDisabled={locked}
