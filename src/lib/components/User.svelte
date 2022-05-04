@@ -29,12 +29,6 @@
     ensNames.lookup(address, $walletStore.provider);
   }
 
-  // Reload ens names if network changes.
-  $: {
-    $walletStore.chainId;
-    lookup();
-  }
-
   const blockyDataUri = (urn: string) => {
     return createIcon({
       seed: urn.toLowerCase(),

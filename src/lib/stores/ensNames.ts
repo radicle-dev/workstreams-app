@@ -12,31 +12,35 @@ export default (() => {
     address: string,
     provider?: ethers.providers.BaseProvider
   ) {
-    /*
-      Write an empty object initially in order to prevent
-      multiple in-flight requests for the same address.
-    */
-    store.update((v) => ({ ...v, [address]: {} }));
+    const saved = get(store)[address];
 
-    const name = await (provider || defaultProvider).lookupAddress(address);
+    if (!saved) {
+      /*
+        Write an empty object initially in order to prevent
+        multiple in-flight requests for the same address.
+      */
+      store.update((v) => ({ ...v, [address]: {} }));
 
-    /*
-      Updating with only the name already since the avatar
-      tends to be slow.
-    */
-    store.update((v) => ({ ...v, [address]: { name } }));
+      const name = await (provider || defaultProvider).lookupAddress(address);
 
-    let pic: string;
+      /*
+        Updating with only the name already since the avatar
+        tends to be slow.
+      */
+      store.update((v) => ({ ...v, [address]: { name } }));
 
-    if (name) {
-      pic = (
-        await (
-          await (provider || defaultProvider).getResolver(name)
-        ).getAvatar()
-      )?.url;
+      let pic: string;
+
+      if (name) {
+        pic = (
+          await (
+            await (provider || defaultProvider).getResolver(name)
+          ).getAvatar()
+        )?.url;
+      }
+
+      store.update((v) => ({ ...v, [address]: { name, pic } }));
     }
-
-    store.update((v) => ({ ...v, [address]: { name, pic } }));
   }
 
   return {
