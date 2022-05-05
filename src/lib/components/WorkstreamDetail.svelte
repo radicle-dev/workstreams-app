@@ -23,6 +23,8 @@
     type Application,
     type Workstream
   } from '$lib/stores/workstreams/types';
+  import drips from '$lib/stores/drips';
+  import { getConfig } from '$lib/config';
 
   export let workstream: Workstream;
   export let applications: Application[] | undefined = undefined;
@@ -46,6 +48,26 @@
       );
     }
   }
+
+  async function setUpPayment() {
+    const application: Application = await (
+      await fetch(
+        `${getConfig().API_URL_BASE}/workstreams/${
+          workstream.id
+        }/applications/${workstream.acceptedApplication}`,
+        {
+          credentials: 'include'
+        }
+      )
+    ).json();
+
+    await drips.createDrip(0, 0, [
+      {
+        receiver: application.creator,
+        amtPerSec: 1
+      }
+    ]);
+  }
 </script>
 
 <div class="container">
@@ -58,6 +80,9 @@
         >on {dateFormat(workstream.created_at)}</span
       >
     </div>
+    {#if workstream.state === WorkstreamState.PENDING && workstream.creator === $walletStore.accounts[0]}
+      <Button on:click={setUpPayment}>Set up payment</Button>
+    {/if}
     {#if workstream.state === WorkstreamState.ACTIVE}
       <Card hoverable={false}>
         <div slot="top">
