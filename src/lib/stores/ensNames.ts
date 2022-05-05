@@ -1,14 +1,17 @@
 import { ethers } from 'ethers';
 import { get, writable } from 'svelte/store';
 
-const ethersProvider = ethers.getDefaultProvider();
+const defaultProvider = ethers.getDefaultProvider();
 
 export default (() => {
   const store = writable<{
     [address: string]: { name?: string; pic?: string };
   }>({});
 
-  async function lookup(address: string) {
+  async function lookup(
+    address: string,
+    provider?: ethers.providers.BaseProvider
+  ) {
     const saved = get(store)[address];
 
     if (!saved) {
@@ -18,7 +21,7 @@ export default (() => {
       */
       store.update((v) => ({ ...v, [address]: {} }));
 
-      const name = await ethersProvider.lookupAddress(address);
+      const name = await (provider || defaultProvider).lookupAddress(address);
 
       /*
         Updating with only the name already since the avatar
@@ -29,7 +32,11 @@ export default (() => {
       let pic: string;
 
       if (name) {
-        pic = (await (await ethersProvider.getResolver(name)).getAvatar())?.url;
+        pic = (
+          await (
+            await (provider || defaultProvider).getResolver(name)
+          ).getAvatar()
+        )?.url;
       }
 
       store.update((v) => ({ ...v, [address]: { name, pic } }));

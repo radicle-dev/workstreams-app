@@ -11,6 +11,7 @@
   import Header from '$components/Header.svelte';
   import ModalLayout from '$components/ModalLayout.svelte';
   import FlyTransition from '$lib/components/FlyTransition.svelte';
+  import { walletStore } from '$lib/stores/wallet/wallet';
   import { onMount } from 'svelte';
   import '../app.css';
 
@@ -33,6 +34,12 @@
     }
   }
 
+  /*
+    We should wait for the wallet store to be initialized in order to
+    be sure that we know the right chain when mounting components.
+  */
+  $: initialized = $walletStore.initialized;
+
   onMount(() => {
     if (browser) {
       prefersDarkThemes = window.matchMedia(
@@ -49,14 +56,16 @@
 </script>
 
 <ModalLayout />
-<div class="wrapper" class:loading={$navigating}>
-  <Header />
-  <main>
-    <FlyTransition {url}>
-      <slot />
-    </FlyTransition>
-  </main>
-</div>
+{#if initialized}
+  <div class="wrapper" class:loading={$navigating}>
+    <Header />
+    <main>
+      <FlyTransition {url}>
+        <slot />
+      </FlyTransition>
+    </main>
+  </div>
+{/if}
 
 <style>
   .wrapper {

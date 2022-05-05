@@ -119,7 +119,7 @@
       </Card>
     </div>
 
-    {#if $walletStore.connected && $walletStore.address === workstream.creator}
+    {#if $walletStore.accounts[0] === workstream.creator}
       <div class="actions">
         <Button
           disabled={actionsDisabled}

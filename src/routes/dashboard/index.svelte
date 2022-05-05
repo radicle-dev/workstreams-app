@@ -91,28 +91,28 @@
       }),
       [SectionName.CREATED]: buildUrl({
         state: 'rfa',
-        createdBy: $walletStore.address,
+        createdBy: $walletStore.accounts[0],
         hasApplicationsToReview: 'false'
       }),
       [SectionName.PENDING_SETUP]: buildUrl({
         state: WorkstreamState.PENDING,
-        createdBy: $walletStore.address
+        createdBy: $walletStore.accounts[0]
       }),
       [SectionName.WAITING_SETUP]: buildUrl({
         state: WorkstreamState.PENDING,
-        assignedTo: $walletStore.address
+        assignedTo: $walletStore.accounts[0]
       }),
       [SectionName.APPLICATIONS_TO_REVIEW]: buildUrl({
-        createdBy: $walletStore.address,
+        createdBy: $walletStore.accounts[0],
         hasApplicationsToReview: 'true'
       }),
       [SectionName.ACTIVE]: buildUrl({
         state: WorkstreamState.ACTIVE,
-        assignedTo: $walletStore.address
+        assignedTo: $walletStore.accounts[0]
       }),
       [SectionName.ENDED]: buildUrl({
         state: WorkstreamState.CLOSED,
-        assignedTo: $walletStore.address
+        assignedTo: $walletStore.accounts[0]
       })
     };
 

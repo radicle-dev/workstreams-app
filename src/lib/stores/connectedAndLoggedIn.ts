@@ -5,9 +5,7 @@ import { walletStore } from './wallet/wallet';
 const connectedAndLoggedIn = derived(
   [walletStore, authStore],
   ([$walletStore, $authStore]) =>
-    $walletStore.connected &&
-    $authStore.authenticated &&
-    $walletStore.address === $authStore.address
+    $authStore.authenticated && $walletStore.accounts[0] === $authStore.address
 );
 
 export default connectedAndLoggedIn;

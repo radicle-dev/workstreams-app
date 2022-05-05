@@ -1,74 +1,116 @@
 import { browser } from '$app/env';
-import { ethers, Signer } from 'ethers';
+import { ethers } from 'ethers';
 import { get, writable } from 'svelte/store';
-import { authStore } from '../auth/auth';
 
-export type WalletData =
-  | {
-      connected: true;
-      connecting: false;
-      signer: Signer;
-      provider: ethers.providers.Web3Provider;
-      address: string;
-    }
-  | {
-      connected: false;
-      connecting: boolean;
-    };
+export type WalletData = {
+  initialized: boolean;
+  walletPresent?: boolean;
+  connected: boolean;
+  chainId?: number;
+  accounts: string[];
+  provider?: ethers.providers.Web3Provider;
+};
 
-function updateAccounts(
-  walletData: WalletData,
-  accounts: string[]
-): WalletData {
-  if (accounts[0]) {
-    const provider = new ethers.providers.Web3Provider(
-      window.ethereum,
-      'rinkeby'
-    );
-
-    return {
-      connected: true,
-      connecting: (walletData.connected && walletData.connecting) || false,
-      address: accounts[0].toLowerCase(),
-      provider,
-      signer: provider.getSigner()
-    };
-  } else {
-    return {
-      connected: false,
-      connecting: false
-    };
-  }
+function checkForWallet(): boolean {
+  return typeof window.ethereum !== 'undefined';
 }
 
 export const walletStore = (() => {
-  const { subscribe, update, set } = writable<WalletData>({
+  const walletStore = writable<WalletData>({
+    initialized: false,
     connected: false,
-    connecting: false
+    accounts: []
   });
 
+  const { subscribe, update, set } = walletStore;
+
   if (browser) {
-    window.ethereum.on('accountsChanged', (accounts: string[]) => {
-      update((walletData) => updateAccounts(walletData, accounts));
+    initialize();
+    if (checkForWallet()) registerListeners();
+  }
+
+  async function initialize() {
+    if (!checkForWallet()) {
+      set({
+        initialized: true,
+        walletPresent: false,
+        connected: false,
+        accounts: []
+      });
+
+      return;
+    }
+
+    const chainId: string = await window.ethereum.request({
+      method: 'eth_chainId'
     });
 
-    window.ethereum.request({ method: 'eth_accounts' }).then((accounts) => {
-      update((walletData) => updateAccounts(walletData, accounts));
+    const parsedChainId = parseInt(chainId, 16);
+
+    const provider = new ethers.providers.Web3Provider(
+      window.ethereum,
+      parsedChainId
+    );
+
+    const accounts: string[] = await provider.send('eth_requestAccounts', []);
+
+    if (accounts.length > 0) {
+      set({
+        initialized: true,
+        walletPresent: true,
+        connected: true,
+        chainId: parseInt(chainId, 16),
+        accounts,
+        provider
+      });
+    } else {
+      set({
+        initialized: true,
+        walletPresent: true,
+        connected: false,
+        chainId: parseInt(chainId, 16),
+        provider,
+        accounts: []
+      });
+    }
+  }
+
+  function registerListeners() {
+    // Handle the user switching their network.
+    window.ethereum.on('chainChanged', (chainId: string) => {
+      const parsedChainId = parseInt(chainId, 16);
+
+      update((wd) => ({
+        ...wd,
+        chainId: parseInt(chainId, 16),
+        provider: new ethers.providers.Web3Provider(
+          window.ethereum,
+          parsedChainId
+        )
+      }));
+
+      location.reload();
+    });
+
+    // Handle a new account being created or account being removed.
+    window.ethereum.on('accountsChanged', async (accounts: string[]) => {
+      update((wd) => ({
+        ...wd,
+        accounts
+      }));
     });
   }
 
-  async function connect(): Promise<WalletData> {
-    const walletData = get(walletStore);
+  async function connect() {
+    const wd = get(walletStore);
 
-    const provider = walletData.connected
-      ? walletData.provider
-      : new ethers.providers.Web3Provider(window.ethereum, 'rinkeby');
+    if (!wd.initialized)
+      throw new Error('Wallet store is not yet initialized. Please wait...');
 
-    set({
-      connected: false,
-      connecting: true
-    });
+    if (!wd.walletPresent)
+      throw new Error('No wallet is installed. Cannot connect.');
 
+    // Bring up Metamask account picker if the wallet has not yet been connected.
     await window.ethereum.request({
       method: 'wallet_requestPermissions',
       params: [
@@ -77,25 +119,33 @@ export const walletStore = (() => {
         }
       ]
     });
-    const accounts = await provider.send('eth_requestAccounts', []);
+
+    const accounts: string[] = await wd.provider.send(
+      'eth_requestAccounts',
+      []
+    );
+
+    const chainId: string = await window.ethereum.request({
+      method: 'eth_chainId'
+    });
 
     set({
       connected: true,
-      connecting: false,
-      address: accounts[0].toLowerCase(),
-      provider,
-      signer: provider.getSigner()
+      initialized: true,
+      walletPresent: true,
+      provider: wd.provider,
+      accounts,
+      chainId: parseInt(chainId, 16)
     });
-
-    return get(walletStore);
   }
 
   function disconnect() {
-    set({
-      connected: false,
-      connecting: false
-    });
-    authStore.clear();
+    update((wd) => ({
+      ...wd,
+      initialized: true,
+      walletPresent: true,
+      connected: false
+    }));
   }
 
   return {
