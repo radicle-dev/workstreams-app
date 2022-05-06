@@ -40,8 +40,10 @@
     <div>
       <Button variant="outline" on:mouseenter={() => (hover = true)}>
         <User address={$authStore.address} />
-        {#if $walletStore.chainId !== 1}
+        {#if $walletStore.chainId === 4}
           <div class="network">⚠️ {$walletStore.provider.network.name}</div>
+        {:else if $walletStore.chainId !== 1}
+          <div class="network">⚠️ Unsupported Network</div>
         {/if}
       </Button>
     </div>
