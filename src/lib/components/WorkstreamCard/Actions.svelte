@@ -1,7 +1,5 @@
 <script lang="ts">
   import { getConfig } from '$lib/config';
-  import { goto, prefetch } from '$app/navigation';
-  import { hyphenateString } from '$lib/utils/format';
   import type { Workstream, Application } from '$lib/stores/workstreams/types';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
@@ -10,6 +8,7 @@
   import Button from 'radicle-design-system/Button.svelte';
   import ActionRow from '$components/ActionRow.svelte';
   import User from '$components/User.svelte';
+  import FacePile from '$components/FacePile.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
 
   export let workstream: Workstream;
@@ -17,7 +16,8 @@
   let creator: boolean =
     $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
   let assignee: boolean =
-    $connectedAndLoggedIn && workstream.assignee === $walletStore.accounts[0];
+    $connectedAndLoggedIn &&
+    workstream.acceptedApplication === $walletStore.accounts[0];
   let applicant: boolean =
     $connectedAndLoggedIn &&
     workstream.applicants &&
@@ -31,15 +31,13 @@
 
     return response.ok && (await response.json());
   }
-
-  $: url = `/workstream/${hyphenateString(workstream.id)}`;
 </script>
 
 {#if creator}
   {#if workstream.applicationsToReview.length > 0}
     <ActionRow>
       <div slot="left" class="left">
-        <!-- Todo (julien) add facepile of applicants -->
+        <FacePile addresses={workstream.applicationsToReview} />
         <p>
           {workstream.applicationsToReview.length} pending application{workstream
             .applicationsToReview.length > 1
@@ -47,18 +45,11 @@
             : ``}
         </p>
       </div>
-      <div slot="right" class="right">
-        <Button
-          variant="primary-outline"
-          on:click={() => goto(url)}
-          on:hover={() => prefetch(url)}>View</Button
-        >
-      </div>
     </ActionRow>
   {:else if workstream.acceptedApplication}
     <ActionRow>
       <div slot="left" class="left">
-        <User address={workstream.assignee} showAddress={false} />
+        <User address={workstream.acceptedApplication} showAddress={false} />
         <p>You've accepted an application</p>
       </div>
       <div slot="right" class="right">
@@ -98,7 +89,14 @@
         <p>Your application is pending review.</p>
       </div>
       <div slot="right" class="right">
-        <Button variant="primary-outline">View</Button>
+        <Button
+          variant="primary-outline"
+          on:click={() =>
+            modal.show(ApplicationModal, undefined, {
+              workstream,
+              application: getApplication($walletStore.accounts[0])
+            })}>View</Button
+        >
       </div>
     </ActionRow>
   {/if}
