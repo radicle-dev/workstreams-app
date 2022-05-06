@@ -38,6 +38,5 @@ export function hyphenateString(str: string): string {
 
 export function currencyFormat(rate: number): string {
   const formatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
-
   return formatter.format(rate)
 }
