@@ -14,9 +14,9 @@
     type Workstream
   } from '$lib/stores/workstreams/types';
 
-  import EmptyState from '$lib/components/EmptyState.svelte';
-  import Section from '$lib/components/dashboard/Section.svelte';
-  import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
+  import EmptyState from '$components/EmptyState.svelte';
+  import Section from '$components/dashboard/Section.svelte';
+  import WorkstreamCard from '$components/WorkstreamCard/index.svelte';
 
   let locked: boolean;
 
