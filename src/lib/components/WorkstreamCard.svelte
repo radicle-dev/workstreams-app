@@ -81,14 +81,15 @@
             <p>Your application has been accepted</p>
           </div>
           <div slot="right" class="right">
-            <Button
+            <Button variant="primary-outline">View</Button>
+            <!-- <Button
               variant="primary-outline"
               on:click={() =>
                 modal.show(ApplicationModal, undefined, {
                   workstream,
                   application
                 })}>View</Button
-            >
+            > -->
           </div>
         </ActionRow>
       {:else}
@@ -97,14 +98,15 @@
             <p>Your application is pending review.</p>
           </div>
           <div slot="right" class="right">
-            <Button
+            <Button variant="primary-outline">View</Button>
+            <!-- <Button
               variant="primary-outline"
               on:click={() =>
                 modal.show(ApplicationModal, undefined, {
                   workstream,
                   application
                 })}>View</Button
-            >
+            > -->
           </div>
         </ActionRow>
       {/if}
