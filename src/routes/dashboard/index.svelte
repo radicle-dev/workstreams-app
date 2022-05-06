@@ -192,7 +192,7 @@
             </div>
             <div slot="content" class="workstreams">
               {#each sections[sectionName].workstreams as workstream}
-                <div class="workstream"><WorkstreamCard {workstream} /></div>
+                <WorkstreamCard {workstream} />
               {/each}
             </div>
           </Section>
@@ -254,12 +254,8 @@
   }
 
   .workstreams {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .workstreams > .workstream {
-    width: calc(50% - 0.5rem);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
   }
 </style>
