@@ -23,6 +23,7 @@ export interface Workstream {
   payment: Payment;
   title: string;
   desc: string;
+  assignee?: string;
   applicants?: string[];
   rejectedApplications?: string[];
   applicationsToReview?: string[];
