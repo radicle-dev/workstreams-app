@@ -14,10 +14,13 @@
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { browser } from '$app/env';
   import { headerContent } from '$lib/stores/headerContent';
+  import drips from '$lib/stores/drips';
 
   let scrolledDown = false;
   let scrollPos = 0;
   let scrollingDown = false;
+  let collectable: string | undefined;
+
   $: hide = scrollingDown && !$headerContent.component;
   $: showCustomHeaderContent =
     $headerContent.headerContentShown !== undefined
@@ -36,9 +39,11 @@
     updateScrollPos();
   }
 
-  onMount(() => {
+  onMount(async () => {
     if (browser) {
       window.addEventListener('scroll', updateScrollPos);
+
+      collectable = await drips.getCollectable();
     }
   });
 
@@ -93,6 +98,7 @@
             </div>
           {/if}
           <div class="user">
+            Collectable: {collectable}
             <Connect />
           </div>
         </div>

@@ -1,14 +1,22 @@
 import query from '$lib/api';
-import { GET_DRIPS_CONFIGS } from '$lib/api/queries';
+import { GET_LAST_DRIP_ENTRY } from '$lib/api/queries';
+import type { DripsConfigs_dripsConfigs_receivers } from '$lib/api/__generated__/DripsConfigs';
 import type {
-  DripsConfigs,
-  DripsConfigsVariables,
-  DripsConfigs_dripsConfigs_receivers
-} from '$lib/api/__generated__/DripsConfigs';
+  lastDripsEntry,
+  lastDripsEntryVariables
+} from '$lib/api/__generated__/lastDripsEntry';
 import type { Provider } from '@ethersproject/abstract-provider';
-import { BigNumber, Contract } from 'ethers';
+import {
+  BigNumber,
+  Contract,
+  ethers,
+  type BigNumberish,
+  type ContractTransaction
+} from 'ethers';
+import { formatEther } from 'ethers/lib/utils';
 import { get, writable } from 'svelte/store';
 import { walletStore } from '../wallet/wallet';
+import daiInfo from './contracts/Dai';
 import daiDripsHubInfo from './contracts/DaiDripsHub';
 import type { ContractInfoFactory } from './contracts/types';
 
@@ -50,14 +58,70 @@ function getDripsWithdrawable(
   return withdrawable;
 }
 
+export const round = (num: number, dec = 2) =>
+  (Math.floor(num * 100) / 100).toFixed(dec);
+
+export const toDai = (wei: BigNumber, roundTo?: number): string => {
+  const dai = parseInt(formatEther(wei));
+
+  // tiny amount
+  if (dai > 0 && dai < 0.01) {
+    return '<0.01';
+  }
+
+  // rounding
+  return round(dai, roundTo);
+};
+
 export default (() => {
   const { subscribe } = writable();
 
+  async function getAllowance(): Promise<BigNumber> {
+    const ws = get(walletStore);
+    const daiAddress = daiDripsHubInfo(ws.chainId).address;
+
+    const daiContract = getContract(daiInfo, ws.chainId, ws.provider);
+
+    return daiContract.allowance(ws.accounts[0], daiAddress);
+  }
+
+  async function approveDaiSpend(): Promise<ContractTransaction> {
+    const ws = get(walletStore);
+
+    if (!ws.connected) throw new Error('Connect your wallet first.');
+    if (!ws.provider) throw new Error('No Provider available.');
+
+    const daiAddress = daiDripsHubInfo(ws.chainId).address;
+    const daiContract = getContract(daiInfo, ws.chainId, ws.provider);
+
+    const contractSigner = daiContract.connect(ws.provider.getSigner());
+
+    const amount = ethers.constants.MaxUint256;
+
+    return contractSigner.approve(daiAddress, amount);
+  }
+
+  async function getCollectable(): Promise<string> {
+    const ws = get(walletStore);
+
+    if (!ws.connected) throw new Error('Connect your wallet first.');
+    if (!ws.provider) throw new Error('No Provider available.');
+
+    const contract = getContract(
+      daiDripsHubInfo,
+      ws.chainId,
+      ws.provider
+    ).connect(ws.provider.getSigner());
+    // get...
+
+    const rs = await contract.collectable(ws.accounts[0], []);
+    return toDai(rs[0].add(rs[1]));
+  }
+
   async function createDrip(
-    account: number,
-    topUpAmt = 0,
-    receivers: { receiver: string; amtPerSec: number }[] = []
-  ) {
+    receivers: { receiver: string; amtPerSec: number }[] = [],
+    topUpAmt = 0
+  ): Promise<ContractTransaction> {
     const ws = get(walletStore);
 
     if (!ws.connected) throw new Error('Connect your wallet first.');
@@ -69,48 +133,46 @@ export default (() => {
       ws.provider
     ).connect(ws.provider.getSigner());
 
-    const lastUpdate = await query<DripsConfigs, DripsConfigsVariables>({
-      query: GET_DRIPS_CONFIGS,
-      variables: {
-        id: ws.accounts[0]
-      },
-      chainId: ws.chainId
-    });
+    const lastDripsEntry = (
+      await query<lastDripsEntry, lastDripsEntryVariables>({
+        query: GET_LAST_DRIP_ENTRY,
+        variables: {
+          user: ws.accounts[0]
+        },
+        chainId: ws.chainId
+      })
+    ).dripsEntries[0];
 
-    let callConfig = {
+    const callConfig = {
       balance: 0,
       timestamp: 0,
-      receivers: [],
+      currentReceivers: [],
       withdrawable: BigNumber.from(0)
     };
 
-    console.log(lastUpdate);
+    const accountId = lastDripsEntry ? lastDripsEntry.account + 1 : 0;
 
-    if (lastUpdate.dripsConfigs.length !== 0) {
-      const { balance, timestamp, receivers } = lastUpdate.dripsConfigs[0];
-
-      callConfig = {
-        balance,
-        timestamp,
-        receivers,
-        withdrawable: getDripsWithdrawable(receivers, balance, timestamp)
-      };
-    }
-
-    return contract[
+    const tx = await contract[
       'setDrips(uint256,uint64,uint128,(address,uint128)[],int128,(address,uint128)[])'
     ](
-      account,
+      accountId,
       callConfig.timestamp,
       callConfig.balance,
-      callConfig.receivers,
+      callConfig.currentReceivers,
       topUpAmt,
       receivers
     );
+
+    // TODO: Persist TX in localStorage
+
+    return tx;
   }
 
   return {
     subscribe,
-    createDrip
+    createDrip,
+    getAllowance,
+    approveDaiSpend,
+    getCollectable
   };
 })();

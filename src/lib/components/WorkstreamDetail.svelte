@@ -61,12 +61,29 @@
       )
     ).json();
 
-    await drips.createDrip(0, 0, [
-      {
-        receiver: application.creator,
-        amtPerSec: 1
-      }
-    ]);
+    const allowance = await drips.getAllowance();
+
+    if (allowance.isZero()) {
+      const tx = await drips.approveDaiSpend();
+
+      await tx.wait(1);
+
+      console.log('Allowance set', tx);
+    }
+
+    const tx = await drips.createDrip(
+      [
+        {
+          receiver: application.creator,
+          amtPerSec: 1
+        }
+      ],
+      10
+    );
+
+    await tx.wait(1);
+
+    console.log('Donesies', tx);
   }
 </script>
 
