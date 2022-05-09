@@ -38,6 +38,7 @@ export function hyphenateString(str: string): string {
 }
 
 export function currencyFormat(input: Money | bigint): string {
+  console.log(input);
   const formatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 2
   });
@@ -46,7 +47,7 @@ export function currencyFormat(input: Money | bigint): string {
 
   if (typeof wei !== 'bigint') wei = BigInt(wei);
 
-  const dai = wei / BigInt('1000000000000000000');
+  const dai = formatEther(wei);
 
-  return formatter.format(dai);
+  return formatter.format(Math.round(Number(dai)));
 }

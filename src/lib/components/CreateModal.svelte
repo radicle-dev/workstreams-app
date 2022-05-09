@@ -8,7 +8,7 @@
   import { getConfig } from '$lib/config';
   import type { WorkstreamInput } from '$lib/stores/workstreams/types';
   import { goto } from '$app/navigation';
-  import { parseUnits } from 'ethers/lib/utils';
+  import { formatEther, parseEther, parseUnits } from 'ethers/lib/utils';
 
   const durationOptions = [
     { value: '1', title: 'Days' },
@@ -36,9 +36,9 @@
     creatingWorkstream = true;
 
     const daiPerDay =
-      (parseInt(total) / parseInt(duration)) * parseInt(durationUnit);
-    const weiPerDay = parseUnits(daiPerDay.toString()).toBigInt();
-    const weiPerSecond = weiPerDay / BigInt(86400);
+      parseInt(total) / (parseInt(duration) * parseInt(durationUnit));
+    const weiPerDay = parseUnits(daiPerDay.toString());
+    const weiPerSecond = weiPerDay.div(86400);
 
     try {
       await fetch(`${getConfig().API_URL_BASE}/workstreams`, {

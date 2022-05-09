@@ -16,6 +16,7 @@
   import TextInput from '$components/TextInput.svelte';
   import Dropdown from 'radicle-design-system/Dropdown.svelte';
   import { getConfig } from '$lib/config';
+  import { currencyFormat } from '$lib/utils/format';
 
   export let workstream: Workstream;
 
@@ -29,7 +30,7 @@
   let applicationText: string;
   let duration = `${workstream.durationDays}`;
   let durationUnit: string = durationOptions[0].value;
-  let total = formatEther(workstream.total.wei.toString()).toString();
+  let total = currencyFormat(workstream.total);
 
   $: canSubmit = [applicationText, total, duration, durationUnit].every(
     (v) => v
