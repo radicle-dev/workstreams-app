@@ -6,14 +6,8 @@ import type {
   lastDripsEntryVariables
 } from '$lib/api/__generated__/lastDripsEntry';
 import type { Provider } from '@ethersproject/abstract-provider';
-import {
-  BigNumber,
-  Contract,
-  ethers,
-  type BigNumberish,
-  type ContractTransaction
-} from 'ethers';
-import { formatEther } from 'ethers/lib/utils';
+import { BigNumber, Contract, ethers, type ContractTransaction } from 'ethers';
+import { formatEther, parseUnits } from 'ethers/lib/utils';
 import { get, writable } from 'svelte/store';
 import { walletStore } from '../wallet/wallet';
 import daiInfo from './contracts/Dai';
@@ -64,12 +58,10 @@ export const round = (num: number, dec = 2) =>
 export const toDai = (wei: BigNumber, roundTo?: number): string => {
   const dai = parseInt(formatEther(wei));
 
-  // tiny amount
   if (dai > 0 && dai < 0.01) {
     return '<0.01';
   }
 
-  // rounding
   return round(dai, roundTo);
 };
 
@@ -112,15 +104,15 @@ export default (() => {
       ws.chainId,
       ws.provider
     ).connect(ws.provider.getSigner());
-    // get...
 
     const rs = await contract.collectable(ws.accounts[0], []);
     return toDai(rs[0].add(rs[1]));
   }
 
   async function createDrip(
-    receivers: { receiver: string; amtPerSec: number }[] = [],
-    topUpAmt = 0
+    receiver: string,
+    daiPerDay: BigNumber,
+    topUpDaiWei: BigNumber
   ): Promise<ContractTransaction> {
     const ws = get(walletStore);
 
@@ -152,6 +144,9 @@ export default (() => {
 
     const accountId = lastDripsEntry ? lastDripsEntry.account + 1 : 0;
 
+    const daiWeiPerDay = parseUnits(daiPerDay.toString(), 'ether');
+    const daiWeiPerSec = daiWeiPerDay.div(86400);
+
     const tx = await contract[
       'setDrips(uint256,uint64,uint128,(address,uint128)[],int128,(address,uint128)[])'
     ](
@@ -159,8 +154,8 @@ export default (() => {
       callConfig.timestamp,
       callConfig.balance,
       callConfig.currentReceivers,
-      topUpAmt,
-      receivers
+      topUpDaiWei,
+      [{ address: receiver, amtPerSec: daiWeiPerSec }]
     );
 
     // TODO: Persist TX in localStorage
