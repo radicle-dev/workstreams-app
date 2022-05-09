@@ -8,12 +8,11 @@
 
 <div class="spread">
   <Rate
-    rate={workstream.payment.rate}
-    currency={workstream.payment.currency}
-    duration={workstream.duration}
-    total={true}
+    ratePerSecond={workstream.ratePerSecond}
+    total={workstream.total}
+    showTotal={true}
   />
-  <p class="timeframe">for {timeframeFormat(workstream.duration)}</p>
+  <p class="timeframe">for {timeframeFormat(workstream.durationDays)}</p>
 </div>
 
 <style>

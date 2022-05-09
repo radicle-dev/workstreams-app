@@ -18,8 +18,7 @@
 
   let actionsDisabled = false;
   let totalCounterOfferDifference = application.counterOffer
-    ? application.counterOffer.rate * workstream.duration -
-      workstream.payment.rate * workstream.duration
+    ? BigInt(application.counterOffer.total.wei) - BigInt(workstream.total.wei)
     : null;
 
   import Modal from '$components/Modal.svelte';
@@ -95,24 +94,22 @@
         <div slot="top" class="proposal">
           {#if application.counterOffer}
             <Rate
-              total={true}
-              duration={workstream.duration}
-              rate={application.counterOffer.rate}
-              currency={application.counterOffer.currency}
+              showTotal={true}
+              ratePerSecond={application.counterOffer.ratePerSecond}
+              total={application.counterOffer.total}
             />
             <p class="typo-text-bold difference">
               {totalCounterOfferDifference > 0
                 ? `+ ${currencyFormat(totalCounterOfferDifference)}`
                 : `${currencyFormat(totalCounterOfferDifference)}`}
-              {workstream.payment.currency.toUpperCase()}
+              {workstream.ratePerSecond.currency.toUpperCase()}
               <span class="typo-text">in total</span>
             </p>
           {:else}
             <Rate
-              total={true}
-              duration={workstream.duration}
-              rate={workstream.payment.rate}
-              currency={workstream.payment.currency}
+              showTotal={true}
+              ratePerSecond={workstream.ratePerSecond}
+              total={workstream.total}
             />
           {/if}
         </div>

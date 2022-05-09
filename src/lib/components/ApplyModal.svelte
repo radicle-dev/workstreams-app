@@ -1,5 +1,6 @@
 <script lang="ts">
-  // import { getConfig } from '$lib/config';
+  import { formatEther, parseEther, parseUnits } from 'ethers/lib/utils';
+
   import * as modal from '$lib/utils/modal';
   import type {
     ApplicationInput,
@@ -26,14 +27,9 @@
   ];
 
   let applicationText: string;
-  let duration: string = `${workstream.duration}`;
+  let duration = `${workstream.durationDays}`;
   let durationUnit: string = durationOptions[0].value;
-  let total: string = `${
-    workstream.payment.rate * (parseInt(duration) * parseInt(durationUnit))
-  }`;
-
-  $: streamRate =
-    parseInt(total) / (parseInt(duration) * parseInt(durationUnit));
+  let total = formatEther(workstream.total.wei.toString()).toString();
 
   $: canSubmit = [applicationText, total, duration, durationUnit].every(
     (v) => v
@@ -44,6 +40,11 @@
   async function createApplication() {
     creatingApplication = true;
 
+    const daiPerDay =
+      (parseInt(total) / parseInt(duration)) * parseInt(durationUnit);
+    const weiPerDay = parseUnits(daiPerDay.toString()).toBigInt();
+    const weiPerSecond = weiPerDay / BigInt(86400);
+
     try {
       await fetch(
         `${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`,
@@ -52,10 +53,10 @@
           credentials: 'include',
           body: JSON.stringify({
             letter: applicationText,
-            counterOffer:
-              streamRate !== workstream.payment.rate
+            ratePerSecond:
+              weiPerSecond !== workstream.ratePerSecond.wei
                 ? {
-                    rate: streamRate,
+                    wei: weiPerSecond.toString(),
                     currency: 'dai'
                   }
                 : undefined

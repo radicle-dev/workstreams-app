@@ -8,6 +8,7 @@
   import { getConfig } from '$lib/config';
   import type { WorkstreamInput } from '$lib/stores/workstreams/types';
   import { goto } from '$app/navigation';
+  import { parseUnits } from 'ethers/lib/utils';
 
   const durationOptions = [
     { value: '1', title: 'Days' },
@@ -34,18 +35,23 @@
   async function createWorkstream() {
     creatingWorkstream = true;
 
+    const daiPerDay =
+      (parseInt(total) / parseInt(duration)) * parseInt(durationUnit);
+    const weiPerDay = parseUnits(daiPerDay.toString()).toBigInt();
+    const weiPerSecond = weiPerDay / BigInt(86400);
+
     try {
       await fetch(`${getConfig().API_URL_BASE}/workstreams`, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({
-          payment: {
+          ratePerSecond: {
             currency: 'dai',
-            rate: streamRate
+            wei: weiPerSecond.toString()
           },
           title,
           desc: description,
-          duration: parseInt(duration) * parseInt(durationUnit)
+          durationDays: parseInt(duration) * parseInt(durationUnit)
         } as WorkstreamInput)
       });
     } catch (e) {

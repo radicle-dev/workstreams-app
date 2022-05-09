@@ -1,3 +1,5 @@
+import type { BigNumberish } from 'ethers';
+
 export interface Timestamp {
   _seconds: number;
   _nanoseconds: number;
@@ -18,27 +20,35 @@ export enum Currency {
 export interface Workstream {
   id: string;
   state: WorkstreamState;
+  applicationsToReview: string[];
+  rejectedApplications?: string[];
+  acceptedApplication?: string;
   creator: string;
+  durationDays: number;
   created_at: Timestamp;
-  payment: Payment;
+  ratePerSecond: Money;
+  total: Money;
   title: string;
   desc: string;
   applicants?: string[];
-  rejectedApplications?: string[];
-  applicationsToReview?: string[];
-  acceptedApplication?: string;
-  duration: number;
 }
 
-export interface Payment {
+export interface Money {
   currency: Currency;
-  rate: number;
+  wei: bigint;
 }
 
-export type WorkstreamInput = Omit<
-  Workstream,
-  'id' | 'state' | 'creator' | 'created_at'
->;
+export interface MoneyInput {
+  currency: Currency;
+  wei: BigNumberish;
+}
+
+export interface WorkstreamInput {
+  ratePerSecond: MoneyInput;
+  title: string;
+  desc: string;
+  durationDays: number;
+}
 
 export enum ApplicationState {
   WAITING = 'waiting',
@@ -52,11 +62,15 @@ export interface Application {
   creator: string;
   created_at: Timestamp;
   letter: string;
-  counterOffer?: Payment;
+  counterOffer?: {
+    ratePerSecond: Money;
+    total: Money;
+  };
+  toUser: string;
   workstreamId: string;
 }
 
-export type ApplicationInput = Omit<
-  Application,
-  'id' | 'state' | 'creator' | 'created_at' | 'workstreamId'
->;
+export interface ApplicationInput {
+  letter: string;
+  ratePerSecond?: MoneyInput;
+}
