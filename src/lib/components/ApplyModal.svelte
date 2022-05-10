@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatEther, parseEther, parseUnits } from 'ethers/lib/utils';
+  import { parseUnits } from 'ethers/lib/utils';
 
   import * as modal from '$lib/utils/modal';
   import type {

@@ -24,15 +24,11 @@
 
   export let workstreams: Workstream[] = [];
 
-  let activeWorkstreams: Workstream[] = [];
   let openWorkstreams: Workstream[] = [];
 
   $: {
     openWorkstreams = workstreams.filter(
       (workstream) => workstream.state === WorkstreamState.RFA
-    );
-    activeWorkstreams = workstreams.filter(
-      (workstream) => workstream.state === WorkstreamState.ACTIVE
     );
   }
 </script>
