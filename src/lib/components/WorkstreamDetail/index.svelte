@@ -1,6 +1,5 @@
 <script lang="ts">
   import { dateFormat } from '$lib/utils/format';
-  import { getConfig } from '$lib/config';
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
@@ -10,13 +9,12 @@
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
   import Rate from '$components/Rate.svelte';
-  import Row from '$components/Row.svelte';
+  import ActionRow from '$components/ActionRow.svelte';
   import TimeRate from '$components/TimeRate.svelte';
   import ApplyModal from '$components/ApplyModal.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
   import Apply from 'radicle-design-system/icons/Ledger.svelte';
   import Cross from 'radicle-design-system/icons/Cross.svelte';
-  import ThumbsDown from 'radicle-design-system/icons/ThumbsDown.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import Tooltip from 'radicle-design-system/Tooltip.svelte';
   import Markdown from 'radicle-design-system/Markdown.svelte';
@@ -37,24 +35,6 @@
   let applied: boolean = false;
   let creator: boolean =
     $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
-
-  let actionsDisabled = false;
-
-  async function rejectApplication(id: string) {
-    actionsDisabled = true;
-    try {
-      await fetch(
-        `${getConfig().API_URL_BASE}/workstreams/${
-          workstream.id
-        }/applications/${id}/reject`,
-        { method: 'POST', credentials: 'include' }
-      );
-    } catch (e) {
-      return;
-    } finally {
-      actionsDisabled = false;
-    }
-  }
 
   $: {
     applied =
@@ -101,7 +81,7 @@
           </div>
         </div>
         <div slot="bottom">
-          <Row>
+          <ActionRow>
             <div slot="left">
               <User address={acceptedApplication.creator} />
             </div>
@@ -115,7 +95,7 @@
                   })}>View application</Button
               >
             </div>
-          </Row>
+          </ActionRow>
           <div class="stream-actions">
             <p>5000 of 8000 DAI topped up</p>
             <div style="display: flex; gap: .75rem;">
