@@ -1,16 +1,13 @@
 <script context="module" lang="ts">
-  import { getConfig } from '$lib/config';
-
   /* eslint-disable */
   /** @type {import('./[slug]').Load} */
   export async function load({ fetch }) {
-    const url = `${getConfig().API_URL_BASE}/workstreams`;
-    const response = await fetch(url, { credentials: 'include' });
+    const workstreams = await workstreamsStore.getWorkstreams(fetch);
 
     return {
-      status: response.status,
+      status: workstreams.ok ? 200 : 500,
       props: {
-        workstreams: response.ok && (await response.json())
+        workstreams: workstreams.ok && workstreams.data
       }
     };
   }
@@ -21,18 +18,15 @@
   import ExploreCard from '$lib/components/ExploreCard.svelte';
   import type { Workstream } from '$lib/stores/workstreams/types';
   import { WorkstreamState } from '$lib/stores/workstreams/types';
+  import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
 
   export let workstreams: Workstream[] = [];
 
-  let activeWorkstreams: Workstream[] = [];
   let openWorkstreams: Workstream[] = [];
 
   $: {
     openWorkstreams = workstreams.filter(
       (workstream) => workstream.state === WorkstreamState.RFA
-    );
-    activeWorkstreams = workstreams.filter(
-      (workstream) => workstream.state === WorkstreamState.ACTIVE
     );
   }
 </script>

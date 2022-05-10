@@ -65,8 +65,8 @@
           <div class="timerate">
             <div style="text-align: right;">
               <Rate
-                rate={workstream.payment.rate}
-                currency={workstream.payment.currency}
+                ratePerSecond={workstream.ratePerSecond}
+                total={workstream.total}
               />
             </div>
             <div>
@@ -168,10 +168,9 @@
                     <p class="proposal">
                       Proposes <Rate
                         icon={false}
-                        total={true}
-                        rate={application.counterOffer.rate}
-                        currency={application.counterOffer.currency}
-                        duration={workstream.duration}
+                        total={application.counterOffer.total}
+                        showTotal={true}
+                        ratePerSecond={application.counterOffer.ratePerSecond}
                       />
                     </p>
                   {/if}

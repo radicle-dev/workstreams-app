@@ -1,23 +1,27 @@
 <script lang="ts">
+  import type { Money } from '$lib/stores/workstreams/types';
+
   import { currencyFormat } from '$lib/utils/format';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
   import Tooltip from 'radicle-design-system/Tooltip.svelte';
 
-  export let rate: number;
-  export let currency: string;
-  export let duration: number | undefined = undefined;
-  export let icon: boolean = true;
-  export let total: boolean = false;
+  export let ratePerSecond: Money;
+  export let total: Money;
+  export let showTotal = false;
+  export let icon = true;
 </script>
 
-{#if total}
-  <Tooltip value={currencyFormat(rate) + ` ${currency.toUpperCase()} / 24h`}>
+{#if showTotal}
+  <Tooltip
+    value={currencyFormat(ratePerSecond) +
+      ` ${ratePerSecond.currency.toUpperCase()} / 24h`}
+  >
     <p class="typo-text-bold rate">
       {#if icon}
         <TokenStreams style="fill: var(--color-primary);" />
       {/if}
-      {currencyFormat(rate * duration)}
-      {currency.toUpperCase()}
+      {currencyFormat(total)}
+      {ratePerSecond.currency.toUpperCase()}
     </p>
   </Tooltip>
 {:else}
@@ -25,8 +29,8 @@
     {#if icon}
       <TokenStreams style="fill: var(--color-primary);" />
     {/if}
-    {currencyFormat(rate)}
-    {currency.toUpperCase()} <span class="typo-text">/ 24h</span>
+    {currencyFormat(ratePerSecond)}
+    {ratePerSecond.currency.toUpperCase()} <span class="typo-text">/ 24h</span>
   </p>
 {/if}
 
