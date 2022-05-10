@@ -38,9 +38,7 @@
   {#if workstream.applicationsToReview.length > 0}
     <ActionRow
       facePile={workstream.applicationsToReview}
-      leftString={`${
-        workstream.applicationsToReview.length
-      } pending application${
+      leftString={`${workstream.applicationsToReview.length} application${
         workstream.applicationsToReview.length > 1 ? `s` : ``
       } to review`}
     />
