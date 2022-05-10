@@ -5,10 +5,7 @@
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import * as modal from '$lib/utils/modal';
 
-  import Button from 'radicle-design-system/Button.svelte';
-  import ActionRow from '$components/ActionRow.svelte';
-  import User from '$components/User.svelte';
-  import FacePile from '$components/FacePile.svelte';
+  import ActionRow from './ActionRow.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
 
   export let workstream: Workstream;
@@ -22,6 +19,10 @@
     $connectedAndLoggedIn &&
     workstream.applicants &&
     workstream.applicants.includes($walletStore.accounts[0]);
+  let rejectant: boolean =
+    $connectedAndLoggedIn &&
+    workstream.rejectedApplications &&
+    workstream.rejectedApplications.includes($walletStore.accounts[0]);
 
   async function getApplication(id: string): Promise<Application | null> {
     const url = `${getConfig().API_URL_BASE}/workstreams/${
@@ -35,82 +36,58 @@
 
 {#if creator}
   {#if workstream.applicationsToReview.length > 0}
-    <ActionRow>
-      <div slot="left" class="left">
-        <FacePile addresses={workstream.applicationsToReview} />
-        <p>
-          {workstream.applicationsToReview.length} pending application{workstream
-            .applicationsToReview.length > 1
-            ? `s`
-            : ``}
-        </p>
-      </div>
-    </ActionRow>
+    <ActionRow
+      facePile={workstream.applicationsToReview}
+      leftString={`${
+        workstream.applicationsToReview.length
+      } pending application${
+        workstream.applicationsToReview.length > 1 ? `s` : ``
+      } to review`}
+    />
   {:else if workstream.acceptedApplication}
-    <ActionRow>
-      <div slot="left" class="left">
-        <User address={workstream.acceptedApplication} showAddress={false} />
-        <p>You've accepted an application</p>
-      </div>
-      <div slot="right" class="right">
-        <Button variant="primary-outline">Set up stream</Button>
-      </div>
-    </ActionRow>
+    <ActionRow
+      userAddress={workstream.acceptedApplication}
+      leftString="You've accepted an application"
+      outlineActionText="Set up stream"
+      on:outlineAction={() => console.log('Set up stream')}
+    />
   {:else}
-    <ActionRow>
-      <div slot="left" class="left">
-        <p>Your workstream is waiting for applications</p>
-      </div>
-      <div slot="right" class="right">
-        <Button variant="primary-outline">Share</Button>
-      </div>
-    </ActionRow>
+    <ActionRow
+      leftString="Your workstream is waiting for applications"
+      outlineActionText="Share"
+      on:outlineAction={() => console.log('Share stream')}
+    />
   {/if}
 {:else if applicant}
-  {#if assignee}
-    <ActionRow>
-      <div slot="left" class="left">
-        <p>Your application has been accepted</p>
-      </div>
-      <div slot="right" class="right">
-        <Button
-          variant="primary-outline"
-          on:click={() =>
-            modal.show(ApplicationModal, undefined, {
-              workstream,
-              application: getApplication(workstream.acceptedApplication)
-            })}>View</Button
-        >
-      </div>
-    </ActionRow>
+  {#if rejectant}
+    <ActionRow
+      leftString="Your application is rejected."
+      outlineActionText="View"
+      on:outlineAction={() =>
+        modal.show(ApplicationModal, undefined, {
+          workstream,
+          application: getApplication($walletStore.accounts[0])
+        })}
+    />
+  {:else if assignee}
+    <ActionRow
+      leftString="Your application has been accepted"
+      outlineActionText="View"
+      on:outlineAction={() =>
+        modal.show(ApplicationModal, undefined, {
+          workstream,
+          application: getApplication(workstream.acceptedApplication)
+        })}
+    />
   {:else}
-    <ActionRow>
-      <div slot="left" class="left">
-        <p>Your application is pending review.</p>
-      </div>
-      <div slot="right" class="right">
-        <Button
-          variant="primary-outline"
-          on:click={() =>
-            modal.show(ApplicationModal, undefined, {
-              workstream,
-              application: getApplication($walletStore.accounts[0])
-            })}>View</Button
-        >
-      </div>
-    </ActionRow>
+    <ActionRow
+      leftString="Your application is pending review."
+      outlineActionText="View"
+      on:outlineAction={() =>
+        modal.show(ApplicationModal, undefined, {
+          workstream,
+          application: getApplication($walletStore.accounts[0])
+        })}
+    />
   {/if}
 {/if}
-
-<style>
-  .left,
-  .right {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-  }
-
-  .right {
-    color: var(--color-primary);
-  }
-</style>
