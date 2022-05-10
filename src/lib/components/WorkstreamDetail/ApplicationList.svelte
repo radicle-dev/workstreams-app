@@ -5,7 +5,7 @@
   import ApplicationModal from '$components/ApplicationModal.svelte';
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
-  import ActionRow from '$components/ActionRow.svelte';
+  import Row from '$components/Row.svelte';
   import Rate from '$components/Rate.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import ThumbsDown from 'radicle-design-system/icons/ThumbsDown.svelte';
@@ -47,7 +47,7 @@
   </div>
   <div slot="bottom">
     {#each applications as application}
-      <ActionRow>
+      <Row>
         <div slot="left">
           <User address={application.creator} />
         </div>
@@ -82,7 +82,7 @@
               })}>View</Button
           >
         </div>
-      </ActionRow>
+      </Row>
     {/each}
   </div>
 </Card>

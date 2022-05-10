@@ -141,6 +141,7 @@
     {/if}
     {#if rejectedApplications.length > 0}
       <ApplicationList
+        style="margin-top: 1.5rem;"
         applications={rejectedApplications}
         title="Rejected applications"
         {workstream}
