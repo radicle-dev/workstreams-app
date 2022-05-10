@@ -16,7 +16,7 @@
 
   import EmptyState from '$lib/components/EmptyState.svelte';
   import Section from '$lib/components/dashboard/Section.svelte';
-  import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
+  import WorkstreamCard from '$lib/components/WorkstreamCard/index.svelte';
   import { currencyFormat } from '$lib/utils/format';
 
   let locked: boolean;
