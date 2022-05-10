@@ -5,25 +5,21 @@
   /* eslint-disable */
   /** @type {import('./[slug]').Load} */
   export async function load({ params, fetch }) {
-    const workstreamUrl = `${getConfig().API_URL_BASE}/workstreams/${
-      params.id
-    }`;
     const applicationsUrl = `${getConfig().API_URL_BASE}/workstreams/${
       params.id
     }/applications`;
+
     const fetches = [
-      fetch(workstreamUrl, { credentials: 'include' }),
+      workstreamsStore.getWorkstream(params.id, fetch),
       fetch(applicationsUrl, { credentials: 'include' })
     ];
 
     const responses = await Promise.all(fetches);
 
     return {
-      status: responses.every((e) => e.status === 200)
-        ? 200
-        : responses[0].status,
+      status: responses.every((r) => r.ok) ? 200 : responses[0].status,
       props: {
-        workstream: responses[0].ok && (await responses[0].json()),
+        workstream: responses[0].ok && responses[0].data,
         applications: responses[1].ok && (await responses[1].json())
       }
     };
@@ -37,6 +33,7 @@
   import { headerContent } from '$lib/stores/headerContent';
   import WorkstreamPageHeader from '$lib/components/WorkstreamPageHeader.svelte';
   import { browser } from '$app/env';
+  import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
 
   export let workstream: Workstream | undefined;
   export let applications: Application[] | undefined;

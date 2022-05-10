@@ -19,7 +19,7 @@ export const workstreamsStore = (() => {
 
   async function getWorkstreams(fetcher?: typeof fetch) {
     const url = `${getConfig().API_URL_BASE}/workstreams`;
-    const response = await _fetch(fetcher, url);
+    const response = await _fetch(url, fetcher);
 
     if (response.ok) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream[];
@@ -37,7 +37,7 @@ export const workstreamsStore = (() => {
 
   async function getWorkstream(id: string, fetcher?: typeof fetch) {
     const url = `${getConfig().API_URL_BASE}/workstreams/${id}`;
-    const response = await _fetch(fetcher, url);
+    const response = await _fetch(url, fetcher);
 
     if (response.ok) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream;
@@ -53,12 +53,13 @@ export const workstreamsStore = (() => {
     }
   }
 
-  async function _fetch(fetcher?: typeof fetch, url: string) {
+  async function _fetch(url: string, fetcher?: typeof fetch) {
     return (fetcher || fetch)(url, { credentials: 'include' });
   }
 
   return {
     subscribe,
-    getWorkstreams
+    getWorkstreams,
+    getWorkstream
   };
 })();
