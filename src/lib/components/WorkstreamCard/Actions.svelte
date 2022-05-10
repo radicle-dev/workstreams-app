@@ -21,8 +21,7 @@
     workstream.applicants.includes($walletStore.accounts[0]);
   let rejectant: boolean =
     $connectedAndLoggedIn &&
-    workstream.rejectedApplications &&
-    workstream.rejectedApplications.includes($walletStore.accounts[0]);
+    workstream.rejectedApplications?.includes($walletStore.accounts[0]);
 
   async function getApplication(id: string): Promise<Application | null> {
     const url = `${getConfig().API_URL_BASE}/workstreams/${
