@@ -75,73 +75,20 @@
   <div slot="body">
     <span class="emoji">👔</span>
     <h1>Workstream application</h1>
-    <p class="applicant typo-text-bold">
-      by <User address={resolvedApplication.creator} />
-    </p>
-    <div class="input-with-label">
-      <h4>Applying to</h4>
-      <Card style="width: 100%; margin-bottom: 2rem;" hoverable={false}>
-        <div slot="top">
-          <TitleMeta {workstream} />
-        </div>
-        <div slot="bottom">
-          <TimeRate {workstream} />
-        </div>
-      </Card>
-    </div>
-    <div class="input-with-label">
-      <h4>Application</h4>
-      <Card
-        style="width: 100%; margin-bottom: 2rem; text-align: left;"
-        hoverable={false}
-      >
-        <div slot="top">
-          <p style="user-select: text">{resolvedApplication.letter}</p>
-        </div>
-      </Card>
-    </div>
-    <div class="input-with-label">
-      <h4>Proposed rate</h4>
-      <Card style="width: 100%;" hoverable={false}>
-        <div slot="top" class="proposal">
-          {#if resolvedApplication.counterOffer}
-            <Rate
-              showTotal={true}
-              ratePerSecond={resolvedApplication.counterOffer.ratePerSecond}
-              total={resolvedApplication.counterOffer.total}
-            />
-            <p class="typo-text-bold difference">
-              {totalCounterOfferDifference > 0
-                ? `+ ${currencyFormat(totalCounterOfferDifference)}`
-                : `${currencyFormat(totalCounterOfferDifference)}`}
-              {workstream.ratePerSecond.currency.toUpperCase()}
-              <span class="typo-text">in total</span>
-            </p>
-          {:else}
-            <Rate
-              showTotal={true}
-              ratePerSecond={workstream.ratePerSecond}
-              total={workstream.total}
-            />
-          {/if}
-        </div>
-      </Card>
-    </div>
-
-    {#if $walletStore.accounts[0] === workstream.creator}
-      <div class="actions">
-        <Button
-          disabled={actionsDisabled}
-          on:click={rejectApplication}
-          variant="destructive"
-          icon={ThumbsDown}>Deny</Button
-        >
-        <Button
-          disabled={actionsDisabled}
-          on:click={acceptApplication}
-          variant="primary"
-          icon={ThumbsUp}>Accept</Button
-        >
+    {#if resolvedApplication}
+      <p class="applicant typo-text-bold">
+        by <User address={resolvedApplication.creator} />
+      </p>
+      <div class="input-with-label">
+        <h4>Applying to</h4>
+        <Card style="width: 100%; margin-bottom: 2rem;" hoverable={false}>
+          <div slot="top">
+            <TitleMeta {workstream} />
+          </div>
+          <div slot="bottom">
+            <TimeRate {workstream} />
+          </div>
+        </Card>
       </div>
       <div class="input-with-label">
         <h4>Application</h4>
@@ -197,6 +144,61 @@
             icon={ThumbsUp}>Accept</Button
           >
         </div>
+        <div class="input-with-label">
+          <h4>Application</h4>
+          <Card
+            style="width: 100%; margin-bottom: 2rem; text-align: left;"
+            hoverable={false}
+          >
+            <div slot="top">
+              <p style="user-select: text">{resolvedApplication.letter}</p>
+            </div>
+          </Card>
+        </div>
+        <div class="input-with-label">
+          <h4>Proposed rate</h4>
+          <Card style="width: 100%;" hoverable={false}>
+            <div slot="top" class="proposal">
+              {#if resolvedApplication.counterOffer}
+                <Rate
+                  showTotal={true}
+                  ratePerSecond={resolvedApplication.counterOffer.ratePerSecond}
+                  total={resolvedApplication.counterOffer.total}
+                />
+                <p class="typo-text-bold difference">
+                  {totalCounterOfferDifference > 0
+                    ? `+ ${currencyFormat(totalCounterOfferDifference)}`
+                    : `${currencyFormat(totalCounterOfferDifference)}`}
+                  {workstream.ratePerSecond.currency.toUpperCase()}
+                  <span class="typo-text">in total</span>
+                </p>
+              {:else}
+                <Rate
+                  showTotal={true}
+                  ratePerSecond={workstream.ratePerSecond}
+                  total={workstream.total}
+                />
+              {/if}
+            </div>
+          </Card>
+        </div>
+
+        {#if $walletStore.accounts[0] === workstream.creator}
+          <div class="actions">
+            <Button
+              disabled={actionsDisabled}
+              on:click={rejectApplication}
+              variant="destructive"
+              icon={ThumbsDown}>Deny</Button
+            >
+            <Button
+              disabled={actionsDisabled}
+              on:click={acceptApplication}
+              variant="primary"
+              icon={ThumbsUp}>Accept</Button
+            >
+          </div>
+        {/if}
       {/if}
     {:else}
       <Spinner />
