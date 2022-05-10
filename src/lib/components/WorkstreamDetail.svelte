@@ -32,9 +32,7 @@
   let openApplications: Application[] | undefined = undefined;
   let rejectedApplications: Application[] | undefined = undefined;
 
-  let applied: boolean =
-    $connectedAndLoggedIn &&
-    workstream.applicants?.includes($walletStore.accounts[0]);
+  let applied: boolean = false;
   let creator: boolean =
     $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
 
@@ -57,6 +55,9 @@
   }
 
   $: {
+    applied =
+      $connectedAndLoggedIn &&
+      workstream.applicants?.includes($walletStore.accounts[0]);
     if (applications) {
       acceptedApplication = applications.find(
         (application) => application.state === ApplicationState.ACCEPTED
@@ -198,14 +199,14 @@
                     />
                   </p>
                 {/if}
-                <!-- {#if $connectedAndLoggedIn && $walletStore.connected && $walletStore.accounts[0] === workstream.creator}
+                {#if $connectedAndLoggedIn && $walletStore.connected && $walletStore.accounts[0] === workstream.creator}
                   <Button
                     disabled={actionsDisabled}
-                    on:click={rejectApplication(application.id)}
+                    on:click={() => rejectApplication(application.id)}
                     variant="primary"
                     icon={ThumbsDown}>Deny</Button
                   >
-                {/if} -->
+                {/if}
                 <Button
                   on:click={() =>
                     modal.show(ApplicationModal, undefined, {
