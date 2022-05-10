@@ -34,7 +34,7 @@
   let openApplications: Application[] | undefined = undefined;
   let rejectedApplications: Application[] | undefined = undefined;
 
-  let applied: boolean = false;
+  let applied = false;
   let creator: boolean =
     $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
 
@@ -219,7 +219,7 @@
         </div>
       </Card>
     {/if}
-    {#if workstream.state === WorkstreamState.RFA && openApplications.length > 0}
+    {#if workstream.state === WorkstreamState.RFA && openApplications?.length > 0}
       <Card hoverable={false}>
         <div slot="top">
           <h3>Open applications</h3>
@@ -262,7 +262,7 @@
         </div>
       </Card>
     {/if}
-    {#if rejectedApplications.length > 0}
+    {#if rejectedApplications?.length > 0}
       <Card hoverable={false} style="margin-top: 1rem;">
         <div slot="top">
           <h3>Rejected applications</h3>
