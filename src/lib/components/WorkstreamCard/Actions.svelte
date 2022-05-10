@@ -17,8 +17,7 @@
     workstream.acceptedApplication === $walletStore.accounts[0];
   let applicant: boolean =
     $connectedAndLoggedIn &&
-    workstream.applicants &&
-    workstream.applicants.includes($walletStore.accounts[0]);
+    workstream.applicants?.includes($walletStore.accounts[0]);
   let rejectant: boolean =
     $connectedAndLoggedIn &&
     workstream.rejectedApplications?.includes($walletStore.accounts[0]);
