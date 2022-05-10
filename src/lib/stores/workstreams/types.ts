@@ -30,7 +30,6 @@ export interface Workstream {
   total: Money;
   title: string;
   desc: string;
-  assignee?: string;
   applicants?: string[];
 }
 
