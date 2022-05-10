@@ -8,7 +8,7 @@
   import { getConfig } from '$lib/config';
   import type { WorkstreamInput } from '$lib/stores/workstreams/types';
   import { goto } from '$app/navigation';
-  import { parseUnits } from 'ethers/lib/utils';
+  import { utils } from 'ethers';
 
   const durationOptions = [
     { value: '1', title: 'Days' },
@@ -37,7 +37,7 @@
 
     const daiPerDay =
       parseInt(total) / (parseInt(duration) * parseInt(durationUnit));
-    const weiPerDay = parseUnits(daiPerDay.toString());
+    const weiPerDay = utils.parseUnits(daiPerDay.toString());
     const weiPerSecond = weiPerDay.div(86400);
 
     try {

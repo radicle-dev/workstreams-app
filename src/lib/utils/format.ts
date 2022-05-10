@@ -1,9 +1,8 @@
 import type { Money, Timestamp } from '$lib/stores/workstreams/types';
-import { ethers } from 'ethers';
-import { formatEther } from 'ethers/lib/utils';
+import { utils } from 'ethers';
 
 export function formatAddress(input: string): string {
-  const addr = ethers.utils.getAddress(input).replace(/^0x/, '');
+  const addr = utils.getAddress(input).replace(/^0x/, '');
   return (
     addr.substring(0, 4) + ' – ' + addr.substring(addr.length - 4, addr.length)
   );
@@ -46,7 +45,7 @@ export function currencyFormat(input: Money | bigint): string {
 
   if (typeof wei !== 'bigint') wei = BigInt(wei);
 
-  const dai = formatEther(wei);
+  const dai = utils.formatEther(wei);
 
   return formatter.format(Math.round(Number(dai)));
 }
