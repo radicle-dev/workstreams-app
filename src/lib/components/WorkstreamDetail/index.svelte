@@ -5,11 +5,10 @@
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
   import ApplicationList from './ApplicationList.svelte';
-
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
   import Rate from '$components/Rate.svelte';
-  import ActionRow from '$components/ActionRow.svelte';
+  import Row from '$components/Row.svelte';
   import TimeRate from '$components/TimeRate.svelte';
   import ApplyModal from '$components/ApplyModal.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
@@ -81,7 +80,7 @@
           </div>
         </div>
         <div slot="bottom">
-          <ActionRow>
+          <Row>
             <div slot="left">
               <User address={acceptedApplication.creator} />
             </div>
@@ -95,7 +94,7 @@
                   })}>View application</Button
               >
             </div>
-          </ActionRow>
+          </Row>
           <div class="stream-actions">
             <p>5000 of 8000 DAI topped up</p>
             <div style="display: flex; gap: .75rem;">
