@@ -1,5 +1,6 @@
 <script lang="ts">
   import { dateFormat } from '$lib/utils/format';
+  import { getConfig } from '$lib/config';
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
@@ -7,7 +8,7 @@
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
   import Rate from '$components/Rate.svelte';
-  import ActionRow from '$components/ActionRow.svelte';
+  import Row from '$components/Row.svelte';
   import TimeRate from '$components/TimeRate.svelte';
   import ApplyModal from '$components/ApplyModal.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
@@ -27,19 +28,42 @@
   export let workstream: Workstream;
   export let applications: Application[] | undefined = undefined;
 
-  let activeApplication: Application | undefined = undefined;
+  let acceptedApplication: Application | undefined = undefined;
+  let openApplications: Application[] | undefined = undefined;
   let rejectedApplications: Application[] | undefined = undefined;
 
-  let applied: boolean =
-    $connectedAndLoggedIn &&
-    workstream.applicants?.includes($walletStore.accounts[0]);
+  let applied: boolean = false;
   let creator: boolean =
     $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
 
+  let actionsDisabled = false;
+
+  async function rejectApplication(id: string) {
+    actionsDisabled = true;
+    try {
+      await fetch(
+        `${getConfig().API_URL_BASE}/workstreams/${
+          workstream.id
+        }/applications/${id}/reject`,
+        { method: 'POST', credentials: 'include' }
+      );
+    } catch (e) {
+      return;
+    } finally {
+      actionsDisabled = false;
+    }
+  }
+
   $: {
-    if (workstream.state === WorkstreamState.ACTIVE) {
-      activeApplication = applications.find(
+    applied =
+      $connectedAndLoggedIn &&
+      workstream.applicants?.includes($walletStore.accounts[0]);
+    if (applications) {
+      acceptedApplication = applications.find(
         (application) => application.state === ApplicationState.ACCEPTED
+      );
+      openApplications = applications.filter(
+        (application) => application.state === ApplicationState.WAITING
       );
       rejectedApplications = applications.filter(
         (application) => application.state === ApplicationState.REJECTED
@@ -75,9 +99,9 @@
           </div>
         </div>
         <div slot="bottom">
-          <ActionRow>
+          <Row>
             <div slot="left">
-              <User address={activeApplication.creator} />
+              <User address={acceptedApplication.creator} />
             </div>
             <div slot="right" class="row-actions">
               <p class="proposal">4020 DAI left (8.04 days)</p>
@@ -85,11 +109,11 @@
                 on:click={() =>
                   modal.show(ApplicationModal, undefined, {
                     workstream,
-                    activeApplication
+                    acceptedApplication
                   })}>View application</Button
               >
             </div>
-          </ActionRow>
+          </Row>
           <div class="stream-actions">
             <p>5000 of 8000 DAI topped up</p>
             <div style="display: flex; gap: .75rem;">
@@ -99,35 +123,37 @@
           </div>
         </div>
       </Card>
-      <Card hoverable={false} style="margin-top: 1rem;">
+    {:else if workstream.state === WorkstreamState.PENDING && acceptedApplication}
+      <Card hoverable={false}>
         <div slot="top">
-          <h3>Rejected applications</h3>
+          <h3>Accepted application</h3>
         </div>
         <div slot="bottom">
-          {#if rejectedApplications}
-            {#each rejectedApplications as application}
-              <ActionRow>
-                <div slot="left">
-                  <User address={application.creator} />
-                </div>
-                <div slot="right" class="row-actions">
-                  {#if application.counterOffer}
-                    <p class="proposal">Rejected</p>
-                  {/if}
-                  {#if $connectedAndLoggedIn && $walletStore.accounts[0] === workstream.creator}
-                    <Button variant="primary" icon={ThumbsDown}>Deny</Button>
-                  {/if}
-                  <Button
-                    on:click={() =>
-                      modal.show(ApplicationModal, undefined, {
-                        workstream,
-                        application
-                      })}>View</Button
-                  >
-                </div>
-              </ActionRow>
-            {/each}
-          {/if}
+          <Row>
+            <div slot="left">
+              <User address={acceptedApplication.creator} />
+            </div>
+            <div slot="right" class="row-actions">
+              {#if acceptedApplication.counterOffer}
+                <p class="proposal">
+                  Proposes <Rate
+                    icon={false}
+                    showTotal={true}
+                    ratePerSecond={acceptedApplication.counterOffer
+                      .ratePerSecond}
+                    total={acceptedApplication.counterOffer.total}
+                  />
+                </p>
+              {/if}
+              <Button
+                on:click={() =>
+                  modal.show(ApplicationModal, undefined, {
+                    workstream,
+                    acceptedApplication
+                  })}>View</Button
+              >
+            </div>
+          </Row>
         </div>
       </Card>
     {:else}
@@ -151,43 +177,74 @@
         </div>
       </Card>
     {/if}
-    {#if workstream.state === WorkstreamState.RFA && applications.length > 0}
+    {#if workstream.state === WorkstreamState.RFA && openApplications.length > 0}
       <Card hoverable={false}>
         <div slot="top">
           <h3>Open applications</h3>
         </div>
         <div slot="bottom">
-          {#if applications}
-            {#each applications as application}
-              <ActionRow>
-                <div slot="left">
-                  <User address={application.creator} />
-                </div>
-                <div slot="right" class="row-actions">
-                  {#if application.counterOffer}
-                    <p class="proposal">
-                      Proposes <Rate
-                        icon={false}
-                        total={application.counterOffer.total}
-                        showTotal={true}
-                        ratePerSecond={application.counterOffer.ratePerSecond}
-                      />
-                    </p>
-                  {/if}
-                  {#if $connectedAndLoggedIn && $walletStore.connected && $walletStore.accounts[0] === workstream.creator}
-                    <Button variant="primary" icon={ThumbsDown}>Deny</Button>
-                  {/if}
+          {#each openApplications as application}
+            <Row>
+              <div slot="left">
+                <User address={application.creator} />
+              </div>
+              <div slot="right" class="row-actions">
+                {#if application.counterOffer}
+                  <p class="proposal">
+                    Proposes <Rate
+                      icon={false}
+                      showTotal={true}
+                      ratePerSecond={application.counterOffer.ratePerSecond}
+                      total={application.counterOffer.total}
+                    />
+                  </p>
+                {/if}
+                {#if $connectedAndLoggedIn && $walletStore.connected && $walletStore.accounts[0] === workstream.creator}
                   <Button
-                    on:click={() =>
-                      modal.show(ApplicationModal, undefined, {
-                        workstream,
-                        application
-                      })}>View</Button
+                    disabled={actionsDisabled}
+                    on:click={() => rejectApplication(application.id)}
+                    variant="primary"
+                    icon={ThumbsDown}>Deny</Button
                   >
-                </div>
-              </ActionRow>
-            {/each}
-          {/if}
+                {/if}
+                <Button
+                  on:click={() =>
+                    modal.show(ApplicationModal, undefined, {
+                      workstream,
+                      application
+                    })}>View</Button
+                >
+              </div>
+            </Row>
+          {/each}
+        </div>
+      </Card>
+    {/if}
+    {#if rejectedApplications.length > 0}
+      <Card hoverable={false} style="margin-top: 1rem;">
+        <div slot="top">
+          <h3>Rejected applications</h3>
+        </div>
+        <div slot="bottom">
+          {#each rejectedApplications as application}
+            <Row>
+              <div slot="left">
+                <User address={application.creator} />
+              </div>
+              <div slot="right" class="row-actions">
+                {#if application.counterOffer}
+                  <p class="proposal">Rejected</p>
+                {/if}
+                <Button
+                  on:click={() =>
+                    modal.show(ApplicationModal, undefined, {
+                      workstream,
+                      application
+                    })}>View</Button
+                >
+              </div>
+            </Row>
+          {/each}
         </div>
       </Card>
     {/if}
