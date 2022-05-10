@@ -1,6 +1,5 @@
 <script lang="ts">
   import { dateFormat } from '$lib/utils/format';
-  import { getConfig } from '$lib/config';
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
@@ -24,8 +23,8 @@
     type Application,
     type Workstream
   } from '$lib/stores/workstreams/types';
-  import drips from '$lib/stores/drips';
   import { getConfig } from '$lib/config';
+  import SetUpPaymentModal from './SetUpPaymentModal/SetUpPaymentModal.svelte';
 
   export let workstream: Workstream;
   export let applications: Application[] | undefined = undefined;
@@ -72,43 +71,6 @@
       );
     }
   }
-
-  async function setUpPayment() {
-    const application: Application = await (
-      await fetch(
-        `${getConfig().API_URL_BASE}/workstreams/${
-          workstream.id
-        }/applications/${workstream.acceptedApplication}`,
-        {
-          credentials: 'include'
-        }
-      )
-    ).json();
-
-    const allowance = await drips.getAllowance();
-
-    if (allowance.isZero()) {
-      const tx = await drips.approveDaiSpend();
-
-      await tx.wait(1);
-
-      console.log('Allowance set', tx);
-    }
-
-    const tx = await drips.createDrip(
-      [
-        {
-          receiver: application.creator,
-          amtPerSec: 1
-        }
-      ],
-      10
-    );
-
-    await tx.wait(1);
-
-    console.log('Donesies', tx);
-  }
 </script>
 
 <div class="container">
@@ -122,7 +84,13 @@
       >
     </div>
     {#if workstream.state === WorkstreamState.PENDING && workstream.creator === $walletStore.accounts[0]}
-      <Button on:click={setUpPayment}>Set up payment</Button>
+      <Button
+        on:click={() =>
+          modal.show(SetUpPaymentModal, undefined, {
+            workstream,
+            application: acceptedApplication
+          })}>Set up payment</Button
+      >
     {/if}
     {#if workstream.state === WorkstreamState.ACTIVE}
       <Card hoverable={false}>

@@ -19,7 +19,7 @@ export const workstreamsStore = (() => {
 
   async function getWorkstreams(fetcher?: typeof fetch) {
     const url = `${getConfig().API_URL_BASE}/workstreams`;
-    const response = await _fetch(url, fetcher);
+    const response = await _fetch(url, undefined, fetcher);
 
     if (response.ok) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream[];
@@ -37,7 +37,7 @@ export const workstreamsStore = (() => {
 
   async function getWorkstream(id: string, fetcher?: typeof fetch) {
     const url = `${getConfig().API_URL_BASE}/workstreams/${id}`;
-    const response = await _fetch(url, fetcher);
+    const response = await _fetch(url, undefined, fetcher);
 
     if (response.ok) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream;
@@ -53,13 +53,37 @@ export const workstreamsStore = (() => {
     }
   }
 
-  async function _fetch(url: string, fetcher?: typeof fetch) {
-    return (fetcher || fetch)(url, { credentials: 'include' });
+  async function activateWorkstream(id: string, fetcher?: typeof fetch) {
+    const url = `${getConfig().API_URL_BASE}/workstreams/${id}/activate`;
+    const response = await _fetch(url, { method: 'POST' }, fetcher);
+
+    if (response.ok) {
+      return {
+        ok: true
+      };
+    } else {
+      return {
+        ok: false,
+        error: await response.json()
+      };
+    }
+  }
+
+  async function _fetch(
+    url: string,
+    config?: Partial<RequestInfo>,
+    fetcher?: typeof fetch
+  ) {
+    return (fetcher || fetch)(url, {
+      ...(config as object),
+      credentials: 'include'
+    });
   }
 
   return {
     subscribe,
     getWorkstreams,
-    getWorkstream
+    getWorkstream,
+    activateWorkstream
   };
 })();

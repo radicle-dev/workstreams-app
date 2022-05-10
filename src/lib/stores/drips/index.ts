@@ -7,9 +7,10 @@ import type {
 } from '$lib/api/__generated__/lastDripsEntry';
 import type { Provider } from '@ethersproject/abstract-provider';
 import { BigNumber, Contract, ethers, type ContractTransaction } from 'ethers';
-import { formatEther, parseUnits } from 'ethers/lib/utils';
+import { formatEther } from 'ethers/lib/utils';
 import { get, writable } from 'svelte/store';
 import { walletStore } from '../wallet/wallet';
+import type { Money } from '../workstreams/types';
 import daiInfo from './contracts/Dai';
 import daiDripsHubInfo from './contracts/DaiDripsHub';
 import type { ContractInfoFactory } from './contracts/types';
@@ -68,6 +69,8 @@ export const toDai = (wei: BigNumber, roundTo?: number): string => {
 export default (() => {
   const { subscribe } = writable();
 
+  // TODO: Caching
+
   async function getAllowance(): Promise<BigNumber> {
     const ws = get(walletStore);
     const daiAddress = daiDripsHubInfo(ws.chainId).address;
@@ -111,8 +114,8 @@ export default (() => {
 
   async function createDrip(
     receiver: string,
-    daiPerDay: BigNumber,
-    topUpDaiWei: BigNumber
+    ratePerSecond: Money,
+    topUpDaiWei: bigint
   ): Promise<ContractTransaction> {
     const ws = get(walletStore);
 
@@ -144,9 +147,6 @@ export default (() => {
 
     const accountId = lastDripsEntry ? lastDripsEntry.account + 1 : 0;
 
-    const daiWeiPerDay = parseUnits(daiPerDay.toString(), 'ether');
-    const daiWeiPerSec = daiWeiPerDay.div(86400);
-
     const tx = await contract[
       'setDrips(uint256,uint64,uint128,(address,uint128)[],int128,(address,uint128)[])'
     ](
@@ -155,10 +155,8 @@ export default (() => {
       callConfig.balance,
       callConfig.currentReceivers,
       topUpDaiWei,
-      [{ address: receiver, amtPerSec: daiWeiPerSec }]
+      [{ address: receiver, amtPerSec: ratePerSecond.wei }]
     );
-
-    // TODO: Persist TX in localStorage
 
     return tx;
   }

@@ -7,6 +7,7 @@
 
   import ActionRow from './ActionRow.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
+  import SetUpPaymentModal from '../SetUpPaymentModal/SetUpPaymentModal.svelte';
 
   export let workstream: Workstream;
 
@@ -45,7 +46,11 @@
       userAddress={workstream.acceptedApplication}
       leftString="You've accepted an application"
       outlineActionText="Set up stream"
-      on:outlineAction={() => console.log('Set up stream')}
+      on:outlineAction={() =>
+        modal.show(SetUpPaymentModal, undefined, {
+          workstream,
+          application: getApplication(workstream.acceptedApplication)
+        })}
     />
   {:else}
     <ActionRow
