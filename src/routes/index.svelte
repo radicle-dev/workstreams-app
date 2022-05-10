@@ -1,6 +1,4 @@
 <script context="module" lang="ts">
-  import { getConfig } from '$lib/config';
-
   /* eslint-disable */
   /** @type {import('./[slug]').Load} */
   export async function load({ fetch }) {
