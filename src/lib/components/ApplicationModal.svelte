@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { currencyFormat } from '$lib/utils/format';
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
@@ -11,19 +12,29 @@
   import Rate from '$components/Rate.svelte';
   import ThumbsDown from 'radicle-design-system/icons/ThumbsDown.svelte';
   import ThumbsUp from 'radicle-design-system/icons/ThumbsUp.svelte';
+  import Spinner from 'radicle-design-system/Spinner.svelte';
   import Button from 'radicle-design-system/Button.svelte';
 
   export let workstream: Workstream;
-  export let application: Application;
+  export let application: Application | Promise<Application>;
+
+  let resolvedApplication: Application | undefined;
 
   let actionsDisabled = false;
-  let totalCounterOfferDifference = application.counterOffer
-    ? application.counterOffer.rate * workstream.duration -
-      workstream.payment.rate * workstream.duration
-    : null;
+
+  let totalCounterOfferDifference: bigint | null;
 
   import Modal from '$components/Modal.svelte';
   import { getConfig } from '$lib/config';
+
+  onMount(async () => {
+    resolvedApplication = await application;
+
+    totalCounterOfferDifference = resolvedApplication.counterOffer
+      ? BigInt(resolvedApplication.counterOffer.total.wei) -
+        BigInt(workstream.total.wei)
+      : null;
+  });
 
   async function rejectApplication() {
     actionsDisabled = true;
@@ -31,7 +42,7 @@
       await fetch(
         `${getConfig().API_URL_BASE}/workstreams/${
           workstream.id
-        }/applications/${application.id}/reject`,
+        }/applications/${resolvedApplication.id}/reject`,
         { method: 'POST', credentials: 'include' }
       );
     } catch (e) {
@@ -48,7 +59,7 @@
       await fetch(
         `${getConfig().API_URL_BASE}/workstreams/${
           workstream.id
-        }/applications/${application.id}/accept`,
+        }/applications/${resolvedApplication.id}/accept`,
         { method: 'POST', credentials: 'include' }
       );
     } catch (e) {
@@ -64,76 +75,133 @@
   <div slot="body">
     <span class="emoji">👔</span>
     <h1>Workstream application</h1>
-    <p class="applicant typo-text-bold">
-      by <User address={application.creator} />
-    </p>
-    <div class="input-with-label">
-      <h4>Applying to</h4>
-      <Card style="width: 100%; margin-bottom: 2rem;" hoverable={false}>
-        <div slot="top">
-          <TitleMeta {workstream} />
-        </div>
-        <div slot="bottom">
-          <TimeRate {workstream} />
-        </div>
-      </Card>
-    </div>
-    <div class="input-with-label">
-      <h4>Application</h4>
-      <Card
-        style="width: 100%; margin-bottom: 2rem; text-align: left;"
-        hoverable={false}
-      >
-        <div slot="top">
-          <p style="user-select: text">{application.letter}</p>
-        </div>
-      </Card>
-    </div>
-    <div class="input-with-label">
-      <h4>Proposed rate</h4>
-      <Card style="width: 100%;" hoverable={false}>
-        <div slot="top" class="proposal">
-          {#if application.counterOffer}
-            <Rate
-              total={true}
-              duration={workstream.duration}
-              rate={application.counterOffer.rate}
-              currency={application.counterOffer.currency}
-            />
-            <p class="typo-text-bold difference">
-              {totalCounterOfferDifference > 0
-                ? `+ ${currencyFormat(totalCounterOfferDifference)}`
-                : `${currencyFormat(totalCounterOfferDifference)}`}
-              {workstream.payment.currency.toUpperCase()}
-              <span class="typo-text">in total</span>
-            </p>
-          {:else}
-            <Rate
-              total={true}
-              duration={workstream.duration}
-              rate={workstream.payment.rate}
-              currency={workstream.payment.currency}
-            />
-          {/if}
-        </div>
-      </Card>
-    </div>
-
-    {#if $walletStore.accounts[0] === workstream.creator}
-      <div class="actions">
-        <Button
-          disabled={actionsDisabled}
-          on:click={rejectApplication}
-          variant="destructive"
-          icon={ThumbsDown}>Deny</Button
-        >
-        <Button
-          disabled={actionsDisabled}
-          on:click={acceptApplication}
-          variant="primary"
-          icon={ThumbsUp}>Accept</Button
-        >
+    {#if resolvedApplication}
+      <p class="applicant typo-text-bold">
+        by <User address={resolvedApplication.creator} />
+      </p>
+      <div class="input-with-label">
+        <h4>Applying to</h4>
+        <Card style="width: 100%; margin-bottom: 2rem;" hoverable={false}>
+          <div slot="top">
+            <TitleMeta {workstream} />
+          </div>
+          <div slot="bottom">
+            <TimeRate {workstream} />
+          </div>
+        </Card>
       </div>
+      <div class="input-with-label">
+        <h4>Application</h4>
+        <Card
+          style="width: 100%; margin-bottom: 2rem; text-align: left;"
+          hoverable={false}
+        >
+          <div slot="top">
+            <p style="user-select: text">{resolvedApplication.letter}</p>
+          </div>
+        </Card>
+      </div>
+      <div class="input-with-label">
+        <h4>Proposed rate</h4>
+        <Card style="width: 100%;" hoverable={false}>
+          <div slot="top" class="proposal">
+            {#if resolvedApplication.counterOffer}
+              <Rate
+                showTotal={true}
+                ratePerSecond={resolvedApplication.counterOffer.ratePerSecond}
+                total={resolvedApplication.counterOffer.total}
+              />
+              <p class="typo-text-bold difference">
+                {totalCounterOfferDifference > 0
+                  ? `+ ${currencyFormat(totalCounterOfferDifference)}`
+                  : `${currencyFormat(totalCounterOfferDifference)}`}
+                {workstream.ratePerSecond.currency.toUpperCase()}
+                <span class="typo-text">in total</span>
+              </p>
+            {:else}
+              <Rate
+                showTotal={true}
+                ratePerSecond={workstream.ratePerSecond}
+                total={workstream.total}
+              />
+            {/if}
+          </div>
+        </Card>
+      </div>
+
+      {#if $walletStore.accounts[0] === workstream.creator}
+        <div class="actions">
+          <Button
+            disabled={actionsDisabled}
+            on:click={rejectApplication}
+            variant="destructive"
+            icon={ThumbsDown}>Deny</Button
+          >
+          <Button
+            disabled={actionsDisabled}
+            on:click={acceptApplication}
+            variant="primary"
+            icon={ThumbsUp}>Accept</Button
+          >
+        </div>
+        <div class="input-with-label">
+          <h4>Application</h4>
+          <Card
+            style="width: 100%; margin-bottom: 2rem; text-align: left;"
+            hoverable={false}
+          >
+            <div slot="top">
+              <p style="user-select: text">{resolvedApplication.letter}</p>
+            </div>
+          </Card>
+        </div>
+        <div class="input-with-label">
+          <h4>Proposed rate</h4>
+          <Card style="width: 100%;" hoverable={false}>
+            <div slot="top" class="proposal">
+              {#if resolvedApplication.counterOffer}
+                <Rate
+                  showTotal={true}
+                  ratePerSecond={resolvedApplication.counterOffer.ratePerSecond}
+                  total={resolvedApplication.counterOffer.total}
+                />
+                <p class="typo-text-bold difference">
+                  {totalCounterOfferDifference > 0
+                    ? `+ ${currencyFormat(totalCounterOfferDifference)}`
+                    : `${currencyFormat(totalCounterOfferDifference)}`}
+                  {workstream.ratePerSecond.currency.toUpperCase()}
+                  <span class="typo-text">in total</span>
+                </p>
+              {:else}
+                <Rate
+                  showTotal={true}
+                  ratePerSecond={workstream.ratePerSecond}
+                  total={workstream.total}
+                />
+              {/if}
+            </div>
+          </Card>
+        </div>
+
+        {#if $walletStore.accounts[0] === workstream.creator}
+          <div class="actions">
+            <Button
+              disabled={actionsDisabled}
+              on:click={rejectApplication}
+              variant="destructive"
+              icon={ThumbsDown}>Deny</Button
+            >
+            <Button
+              disabled={actionsDisabled}
+              on:click={acceptApplication}
+              variant="primary"
+              icon={ThumbsUp}>Accept</Button
+            >
+          </div>
+        {/if}
+      {/if}
+    {:else}
+      <Spinner />
     {/if}
   </div>
 </Modal>

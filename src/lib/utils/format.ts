@@ -1,8 +1,8 @@
-import type { Timestamp } from '$lib/stores/workstreams/types';
-import { ethers } from 'ethers';
+import type { Money, Timestamp } from '$lib/stores/workstreams/types';
+import { utils } from 'ethers';
 
 export function formatAddress(input: string): string {
-  const addr = ethers.utils.getAddress(input).replace(/^0x/, '');
+  const addr = utils.getAddress(input).replace(/^0x/, '');
   return (
     addr.substring(0, 4) + ' – ' + addr.substring(addr.length - 4, addr.length)
   );
@@ -18,7 +18,7 @@ export function timeframeFormat(days: number): string {
   } else if (weeks === 1) {
     return `${weeks} week`;
   } else if (weeks === 52) {
-    return `1 year`
+    return `1 year`;
   } else {
     return `${weeks} weeks`;
   }
@@ -36,8 +36,16 @@ export function hyphenateString(str: string): string {
   return str.replace(/ +/g, '-').toLowerCase();
 }
 
-export function currencyFormat(rate: number): string {
-  const formatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
+export function currencyFormat(input: Money | bigint): string {
+  const formatter = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 2
+  });
 
-  return formatter.format(rate)
+  let wei = typeof input === 'bigint' ? input : (input as Money).wei;
+
+  if (typeof wei !== 'bigint') wei = BigInt(wei);
+
+  const dai = utils.formatEther(wei);
+
+  return formatter.format(Math.round(Number(dai)));
 }

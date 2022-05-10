@@ -16,7 +16,8 @@
 
   import EmptyState from '$lib/components/EmptyState.svelte';
   import Section from '$lib/components/dashboard/Section.svelte';
-  import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
+  import WorkstreamCard from '$lib/components/WorkstreamCard/index.svelte';
+  import { currencyFormat } from '$lib/utils/format';
 
   let locked: boolean;
 
@@ -145,10 +146,14 @@
   }
 
   function calculateStreamTotal(workstreams: Workstream[]) {
-    let totalRate = 0;
-    workstreams.forEach((ws) => (totalRate = totalRate + ws.payment.rate));
+    let totalWeiPerSec = BigInt(0);
+    workstreams.forEach(
+      (ws) => (totalWeiPerSec = totalWeiPerSec + ws.ratePerSecond.wei)
+    );
 
-    return Math.round(totalRate);
+    const totalWeiPerDay = totalWeiPerSec * BigInt(86400);
+
+    return currencyFormat(totalWeiPerDay);
   }
 
   async function authenticate() {
@@ -192,7 +197,7 @@
             </div>
             <div slot="content" class="workstreams">
               {#each sections[sectionName].workstreams as workstream}
-                <div class="workstream"><WorkstreamCard {workstream} /></div>
+                <WorkstreamCard {workstream} />
               {/each}
             </div>
           </Section>
@@ -254,12 +259,8 @@
   }
 
   .workstreams {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .workstreams > .workstream {
-    width: calc(50% - 0.5rem);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
   }
 </style>
