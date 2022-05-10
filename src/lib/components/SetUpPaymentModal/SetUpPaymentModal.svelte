@@ -41,7 +41,12 @@
           />
         </div>
       {/key}
-      <!-- Placeholder to get the modal to be the right height. -->
+      <!--
+        Placeholder to get the modal to be the right height. 
+        Rendering the component twice is an insane solution and
+        dangerous since mounting it may have side effects. I'll
+        try to find a better solution before the PR is ready.
+      -->
       <div class="placeholder">
         <svelte:component
           this={steps[currentStepIndex]}
