@@ -20,7 +20,10 @@
     <div class="timerate">
       <TimeRate {workstream} />
       {#if !creator}
-        <Tooltip value={applied ? "You've already applied" : null}>
+        <Tooltip
+          position="top"
+          value={applied ? "You've already applied" : null}
+        >
           <Button
             disabled={applied || !$connectedAndLoggedIn}
             icon={Apply}

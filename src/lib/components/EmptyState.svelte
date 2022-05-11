@@ -30,7 +30,7 @@
     <p class="text">{text}</p>
   {/if}
   {#if primaryActionText}
-    <Tooltip value={tooltipMessage} position="bottom">
+    <Tooltip value={tooltipMessage} position="top">
       <Button
         disabled={primaryActionDisabled}
         dataCy="primary-action"
