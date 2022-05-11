@@ -2,7 +2,7 @@
   /* eslint-disable */
   /** @type {import('./[slug]').Load} */
   export async function load({ fetch }) {
-    const workstreams = await workstreamsStore.getWorkstreams(fetch);
+    const workstreams = await workstreamsStore.getWorkstreams(undefined, fetch);
 
     return {
       status: workstreams.ok ? 200 : 500,
