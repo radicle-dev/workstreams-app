@@ -33,6 +33,6 @@
   }
   .card.hover {
     cursor: pointer;
-    border: 1px solid var(--color-foreground-level-4);
+    border: 1px solid var(--color-foreground-level-3);
   }
 </style>

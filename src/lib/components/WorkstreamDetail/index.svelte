@@ -109,6 +109,8 @@
         applications={[acceptedApplication]}
         title="Accepted applications"
         {workstream}
+        {creator}
+        accepted={creator}
       />
     {:else}
       <Card hoverable={false} style="margin-bottom: 1.5rem;">

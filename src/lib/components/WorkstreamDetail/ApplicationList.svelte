@@ -9,6 +9,7 @@
   import Rate from '$components/Rate.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import ThumbsDown from 'radicle-design-system/icons/ThumbsDown.svelte';
+  import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
 
   import {
     ApplicationState,
@@ -21,6 +22,7 @@
   export let style: string = '';
   export let title: string = '';
   export let creator: boolean | undefined = undefined;
+  export let accepted: boolean | undefined = undefined;
 
   let actionsDisabled = false;
 
@@ -66,12 +68,19 @@
               </p>
             {/if}
           {/if}
-          {#if creator}
+          {#if creator && !accepted}
             <Button
               disabled={actionsDisabled}
               on:click={() => rejectApplication(application.id)}
-              variant="primary"
+              variant="primary-outline"
               icon={ThumbsDown}>Deny</Button
+            >
+          {:else if accepted}
+            <Button
+              disabled={actionsDisabled}
+              on:click={() => console.log('start streaming')}
+              variant="primary-outline"
+              icon={TokenStreams}>Set up stream</Button
             >
           {/if}
           <Button
