@@ -12,7 +12,10 @@ import { walletStore } from '../wallet/wallet';
 import type { Money } from '../workstreams/types';
 import daiInfo from './contracts/Dai';
 import daiDripsHubInfo from './contracts/DaiDripsHub';
-import { DaiAbi__factory, DaiDripsHubAbi__factory } from './contracts/types/';
+import {
+  DaiAbi__factory,
+  DaiDripsHubAbi__factory
+} from './contracts/types/index';
 
 /*
   Lifted from drips-app
@@ -63,14 +66,18 @@ export default (() => {
 
   async function getAllowance(): Promise<BigNumber> {
     const ws = get(walletStore);
-    const daiAddress = daiInfo(ws.chainId).address;
+    const daiDripsHubAddress = daiDripsHubInfo(ws.chainId).address;
 
     const daiContract = DaiAbi__factory.connect(
-      daiAddress,
+      daiInfo(ws.chainId).address,
       ws.provider.getSigner()
     );
 
-    return daiContract.allowance(ws.accounts[0], daiAddress);
+    const rs = await daiContract.allowance(ws.accounts[0], daiDripsHubAddress);
+
+    console.log(rs.toString());
+
+    return rs;
   }
 
   async function approveDaiSpend(): Promise<ContractTransaction> {
@@ -79,15 +86,25 @@ export default (() => {
     if (!ws.connected) throw new Error('Connect your wallet first.');
     if (!ws.provider) throw new Error('No Provider available.');
 
-    const daiAddress = daiInfo(ws.chainId).address;
     const daiContract = DaiAbi__factory.connect(
-      daiAddress,
+      daiInfo(ws.chainId).address,
       ws.provider.getSigner()
     );
 
     const amount = ethers.constants.MaxUint256;
 
-    return daiContract.approve(daiAddress, amount);
+    return daiContract.approve(daiDripsHubInfo(ws.chainId).address, amount);
+  }
+
+  async function getDaiBalance(): Promise<BigNumber> {
+    const ws = get(walletStore);
+
+    const daiContract = DaiAbi__factory.connect(
+      daiInfo(ws.chainId).address,
+      ws.provider.getSigner()
+    );
+
+    return daiContract.balanceOf(ws.accounts[0]);
   }
 
   async function getCollectable(): Promise<string> {
@@ -110,7 +127,7 @@ export default (() => {
     receiver: string,
     ratePerSecond: Money,
     topUpDaiWei: bigint
-  ): Promise<ContractTransaction> {
+  ) {
     const ws = get(walletStore);
 
     if (!ws.connected) throw new Error('Connect your wallet first.');
@@ -135,11 +152,10 @@ export default (() => {
     const callConfig = {
       balance: 0,
       timestamp: 0,
-      currentReceivers: [],
-      withdrawable: BigNumber.from(0)
+      currentReceivers: []
     };
 
-    const accountId = lastDripsEntry ? lastDripsEntry.account + 1 : 0;
+    const accountId = lastDripsEntry ? parseInt(lastDripsEntry.account) + 1 : 0;
 
     const tx = await contract[
       'setDrips(uint256,uint64,uint128,(address,uint128)[],int128,(address,uint128)[])'
@@ -152,13 +168,17 @@ export default (() => {
       [{ receiver, amtPerSec: ratePerSecond.wei }]
     );
 
-    return tx;
+    return {
+      tx,
+      accountId
+    };
   }
 
   return {
     subscribe,
     createDrip,
     getAllowance,
+    getDaiBalance,
     approveDaiSpend,
     getCollectable
   };

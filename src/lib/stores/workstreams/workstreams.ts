@@ -53,9 +53,22 @@ export const workstreamsStore = (() => {
     }
   }
 
-  async function activateWorkstream(id: string, fetcher?: typeof fetch) {
+  async function activateWorkstream(
+    id: string,
+    accountId: number,
+    fetcher?: typeof fetch
+  ) {
     const url = `${getConfig().API_URL_BASE}/workstreams/${id}/activate`;
-    const response = await _fetch(url, { method: 'POST' }, fetcher);
+    const response = await _fetch(
+      url,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          accountId
+        })
+      },
+      fetcher
+    );
 
     if (response.ok) {
       return {
@@ -71,7 +84,7 @@ export const workstreamsStore = (() => {
 
   async function _fetch(
     url: string,
-    config?: Partial<RequestInfo>,
+    config?: RequestInit,
     fetcher?: typeof fetch
   ) {
     return (fetcher || fetch)(url, {
