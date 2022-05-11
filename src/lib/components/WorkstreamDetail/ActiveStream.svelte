@@ -8,10 +8,7 @@
   import ApplicationModal from '$components/ApplicationModal.svelte';
   import Cross from 'radicle-design-system/icons/Cross.svelte';
   import Button from 'radicle-design-system/Button.svelte';
-  import {
-    type Application,
-    type Workstream
-  } from '$lib/stores/workstreams/types';
+  import type { Application, Workstream } from '$lib/stores/workstreams/types';
 
   export let workstream: Workstream;
   export let acceptedApplication: Application | undefined = undefined;

@@ -8,7 +8,7 @@
   import Apply from 'radicle-design-system/icons/Ledger.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import Tooltip from 'radicle-design-system/Tooltip.svelte';
-  import { type Workstream } from '$lib/stores/workstreams/types';
+  import type { Workstream } from '$lib/stores/workstreams/types';
 
   export let workstream: Workstream;
   export let creator: boolean = false;

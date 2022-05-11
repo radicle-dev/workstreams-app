@@ -3,7 +3,11 @@
   import { currencyFormat } from '$lib/utils/format';
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
-  import type { Workstream, Application } from '$lib/stores/workstreams/types';
+  import {
+    type Workstream,
+    type Application,
+    ApplicationState
+  } from '$lib/stores/workstreams/types';
 
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
@@ -129,7 +133,7 @@
         </Card>
       </div>
 
-      {#if $walletStore.accounts[0] === workstream.creator}
+      {#if $walletStore.accounts[0] === workstream.creator && resolvedApplication.state === ApplicationState.WAITING}
         <div class="actions">
           <Button
             disabled={actionsDisabled}
