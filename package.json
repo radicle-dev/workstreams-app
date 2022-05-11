@@ -13,11 +13,13 @@
     "prepare": "husky install",
     "postinstall": "scripts/install-twemoji-assets.sh && scripts/install-design-system-static-assets.sh",
     "apollo:update-schema": "npx apollo service:download --endpoint=https://api.thegraph.com/subgraphs/name/gh0stwheel/drips-on-ethereum graphql-schema.json",
+    "typechain:generate-contract-types": "npx typechain --target ethers-v5 --out-dir './src/lib/stores/drips/contracts/types' './src/lib/stores/drips/contracts/**/*.json'",
     "apollo:generate-types": "npx apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --tagName=gql"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/kit": "next",
+    "@typechain/ethers-v5": "^10.0.0",
     "@types/graphql": "^14.5.0",
     "@types/marked": "^4.0.3",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
@@ -34,6 +36,7 @@
     "svelte-check": "^2.7.0",
     "svelte-preprocess": "^4.10.6",
     "tslib": "^2.4.0",
+    "typechain": "^8.0.0",
     "typescript": "^4.6.3"
   },
   "type": "module",

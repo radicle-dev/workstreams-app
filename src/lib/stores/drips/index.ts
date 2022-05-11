@@ -5,24 +5,14 @@ import type {
   lastDripsEntry,
   lastDripsEntryVariables
 } from '$lib/api/__generated__/lastDripsEntry';
-import type { Provider } from '@ethersproject/abstract-provider';
-import { BigNumber, Contract, ethers, type ContractTransaction } from 'ethers';
+import { BigNumber, ethers, type ContractTransaction } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import { get, writable } from 'svelte/store';
 import { walletStore } from '../wallet/wallet';
 import type { Money } from '../workstreams/types';
 import daiInfo from './contracts/Dai';
 import daiDripsHubInfo from './contracts/DaiDripsHub';
-import type { ContractInfoFactory } from './contracts/types';
-
-function getContract(
-  infoFunc: ContractInfoFactory,
-  chainId: number,
-  provider: Provider
-) {
-  const info = infoFunc(chainId);
-  return new Contract(info.address, info.abi, provider);
-}
+import { DaiAbi__factory, DaiDripsHubAbi__factory } from './contracts/types/';
 
 /*
   Lifted from drips-app
@@ -73,9 +63,12 @@ export default (() => {
 
   async function getAllowance(): Promise<BigNumber> {
     const ws = get(walletStore);
-    const daiAddress = daiDripsHubInfo(ws.chainId).address;
+    const daiAddress = daiInfo(ws.chainId).address;
 
-    const daiContract = getContract(daiInfo, ws.chainId, ws.provider);
+    const daiContract = DaiAbi__factory.connect(
+      daiAddress,
+      ws.provider.getSigner()
+    );
 
     return daiContract.allowance(ws.accounts[0], daiAddress);
   }
@@ -86,14 +79,15 @@ export default (() => {
     if (!ws.connected) throw new Error('Connect your wallet first.');
     if (!ws.provider) throw new Error('No Provider available.');
 
-    const daiAddress = daiDripsHubInfo(ws.chainId).address;
-    const daiContract = getContract(daiInfo, ws.chainId, ws.provider);
-
-    const contractSigner = daiContract.connect(ws.provider.getSigner());
+    const daiAddress = daiInfo(ws.chainId).address;
+    const daiContract = DaiAbi__factory.connect(
+      daiAddress,
+      ws.provider.getSigner()
+    );
 
     const amount = ethers.constants.MaxUint256;
 
-    return contractSigner.approve(daiAddress, amount);
+    return daiContract.approve(daiAddress, amount);
   }
 
   async function getCollectable(): Promise<string> {
@@ -102,11 +96,11 @@ export default (() => {
     if (!ws.connected) throw new Error('Connect your wallet first.');
     if (!ws.provider) throw new Error('No Provider available.');
 
-    const contract = getContract(
-      daiDripsHubInfo,
-      ws.chainId,
-      ws.provider
-    ).connect(ws.provider.getSigner());
+    const daiDripsHubAddress = daiDripsHubInfo(ws.chainId).address;
+    const contract = DaiDripsHubAbi__factory.connect(
+      daiDripsHubAddress,
+      ws.provider.getSigner()
+    );
 
     const rs = await contract.collectable(ws.accounts[0], []);
     return toDai(rs[0].add(rs[1]));
@@ -122,11 +116,11 @@ export default (() => {
     if (!ws.connected) throw new Error('Connect your wallet first.');
     if (!ws.provider) throw new Error('No Provider available.');
 
-    const contract = getContract(
-      daiDripsHubInfo,
-      ws.chainId,
-      ws.provider
-    ).connect(ws.provider.getSigner());
+    const daiDripsHubAddress = daiDripsHubInfo(ws.chainId).address;
+    const contract = DaiDripsHubAbi__factory.connect(
+      daiDripsHubAddress,
+      ws.provider.getSigner()
+    );
 
     const lastDripsEntry = (
       await query<lastDripsEntry, lastDripsEntryVariables>({
@@ -155,7 +149,7 @@ export default (() => {
       callConfig.balance,
       callConfig.currentReceivers,
       topUpDaiWei,
-      [{ address: receiver, amtPerSec: ratePerSecond.wei }]
+      [{ receiver, amtPerSec: ratePerSecond.wei }]
     );
 
     return tx;
