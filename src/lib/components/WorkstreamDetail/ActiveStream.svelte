@@ -9,7 +9,6 @@
   import Pause from 'radicle-design-system/icons/Pause.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import type { Application, Workstream } from '$lib/stores/workstreams/types';
-
   export let workstream: Workstream;
   export let acceptedApplication: Application | undefined = undefined;
 </script>
