@@ -1,12 +1,17 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
-  import User from '$lib/components/User.svelte';
+  import User from '$components/User.svelte';
+  import Card from '$components/Card.svelte';
   import drips from '$lib/stores/drips';
-  import type { Application, Workstream } from '$lib/stores/workstreams/types';
+  import TextInput from '$components/TextInput.svelte';
+  import type {
+    Application,
+    Money,
+    Workstream
+  } from '$lib/stores/workstreams/types';
   import { currencyFormat } from '$lib/utils/format';
   import ButtonRow from '../components/ButtonRow.svelte';
   import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
-  import TextInput from '$lib/components/TextInput.svelte';
   import { parseUnits } from 'ethers/lib/utils';
 
   const dispatch = createEventDispatcher();
@@ -18,6 +23,10 @@
   let daiBalance: bigint | undefined;
 
   let topUpAmount = '0';
+  let totalAmount: string = currencyFormat(workstream.total);
+
+  const weiPerDay = workstream.ratePerSecond.wei * BigInt(86400);
+  const daiPerDay = currencyFormat(weiPerDay);
 
   onMount(async () => {
     daiBalance = (await drips.getDaiBalance()).toBigInt();
@@ -58,18 +67,57 @@
 </script>
 
 <div>
+  <span class="emoji">💸</span>
+  <h1>Set up payment stream</h1>
   <p>
     Here's the drips config we're gonna set up. This should probably be editable
     at some point.
-    <br />
-    Streaming to:
-    <span class="inline-user"><User address={application.creator} /></span><br
-    />
-    Dai wei per second: {workstream.ratePerSecond.wei.toString()}<br />
-    Workstream total: {currencyFormat(workstream.total)}<br />
-    Your current DAI balance: {daiBalance && currencyFormat(daiBalance)}<br />
-    Top up for: <TextInput bind:value={topUpAmount} suffix="DAI" />
   </p>
+  <form>
+    <div class="input-with-label">
+      <h4>Streaming to</h4>
+      <Card hoverable={false} style="width: 100%">
+        <div slot="top">
+          <User address={application.creator} />
+        </div>
+      </Card>
+    </div>
+    <div class="inner">
+      <div class="input-with-label">
+        <h4>Total amount</h4>
+        <!-- TODO: wired up to update the stream rate + that's what you're submitting -->
+        <TextInput
+          bind:value={totalAmount}
+          suffix="DAI"
+          style="width: fit-content;"
+        />
+      </div>
+      <div class="input-with-label rate">
+        <h4 style="color: var(--color-foreground-level-4);">Stream rate</h4>
+        <p>
+          {daiPerDay} DAI / 24h
+        </p>
+      </div>
+    </div>
+    <div class="inner">
+      <div class="input-with-label">
+        <h4>Top up amount</h4>
+        <TextInput
+          bind:value={topUpAmount}
+          suffix="DAI"
+          style="width: fit-content;"
+        />
+      </div>
+      <div class="input-with-label rate">
+        <h4 style="color: var(--color-foreground-level-4);">
+          Already topped up
+        </h4>
+        <p>
+          {daiBalance && currencyFormat(daiBalance)} DAI
+        </p>
+      </div>
+    </div>
+  </form>
   <ButtonRow
     disabled={actionInFlight ||
       daiBalance < parseUnits(topUpAmount || '0').toBigInt()}
@@ -79,7 +127,35 @@
 </div>
 
 <style>
-  .inline-user {
-    display: inline-block;
+  h1 {
+    margin: 1rem 0 2rem;
+    color: var(--color-foreground);
+  }
+
+  .emoji {
+    font-size: 2rem;
+  }
+
+  form > * {
+    margin-bottom: 32px;
+  }
+
+  .input-with-label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .inner {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .rate > p {
+    display: flex;
+    height: 2.5rem;
+    align-items: center;
+    color: var(--color-foreground-level-4);
   }
 </style>

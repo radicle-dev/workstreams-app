@@ -35,9 +35,10 @@
 </script>
 
 <div>
+  <span class="emoji">💸</span>
+  <h1>Grant permissions</h1>
   {#if approvalGranted === false}
-    First, you need to allow the Drips contract to spend your DAI. Please grant
-    permission below.
+    You need to allow the Drips contract to spend your DAI.
     <ButtonRow
       disabled={actionInFlight}
       buttonText="Allow drips contract"
@@ -47,3 +48,14 @@
     <Spinner />
   {/if}
 </div>
+
+<style>
+  h1 {
+    margin: 1rem 0 2rem;
+    color: var(--color-foreground);
+  }
+
+  .emoji {
+    font-size: 2rem;
+  }
+</style>
