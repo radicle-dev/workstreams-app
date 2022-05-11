@@ -131,7 +131,7 @@
         </div>
       </Card>
     {/if}
-    {#if workstream.state === WorkstreamState.RFA && openApplications.length > 0}
+    {#if workstream.state === WorkstreamState.RFA && openApplications?.length > 0}
       <ApplicationList
         applications={openApplications}
         title="Open applications"
@@ -139,7 +139,7 @@
         {workstream}
       />
     {/if}
-    {#if rejectedApplications.length > 0}
+    {#if rejectedApplications?.length > 0}
       <ApplicationList
         style="margin-top: 1.5rem;"
         applications={rejectedApplications}
