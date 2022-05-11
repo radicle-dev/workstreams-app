@@ -18,6 +18,10 @@
   import Section from '$lib/components/dashboard/Section.svelte';
   import WorkstreamCard from '$lib/components/WorkstreamCard/index.svelte';
   import { currencyFormat } from '$lib/utils/format';
+  import {
+    workstreamsStore,
+    type WorkstreamsFilterConfig
+  } from '$lib/stores/workstreams/workstreams';
 
   let locked: boolean;
 
@@ -85,46 +89,49 @@
     if (!$walletStore.connected)
       throw new Error("Can't fetch dashboard before connected to wallet");
 
-    const urls: { [key in SectionName]?: string } = {
-      [SectionName.APPLIED_TO]: buildUrl({
+    const sectionFilters: {
+      [key in SectionName]?: Partial<WorkstreamsFilterConfig>;
+    } = {
+      [SectionName.APPLIED_TO]: {
         applied: 'true',
-        state: 'rfa'
-      }),
-      [SectionName.CREATED]: buildUrl({
-        state: 'rfa',
+        state: WorkstreamState.RFA
+      },
+      [SectionName.CREATED]: {
+        state: WorkstreamState.RFA,
         createdBy: $walletStore.accounts[0],
         hasApplicationsToReview: 'false'
-      }),
-      [SectionName.PENDING_SETUP]: buildUrl({
+      },
+      [SectionName.PENDING_SETUP]: {
         state: WorkstreamState.PENDING,
         createdBy: $walletStore.accounts[0]
-      }),
-      [SectionName.WAITING_SETUP]: buildUrl({
+      },
+      [SectionName.WAITING_SETUP]: {
         state: WorkstreamState.PENDING,
         assignedTo: $walletStore.accounts[0]
-      }),
-      [SectionName.APPLICATIONS_TO_REVIEW]: buildUrl({
+      },
+      [SectionName.APPLICATIONS_TO_REVIEW]: {
         createdBy: $walletStore.accounts[0],
         hasApplicationsToReview: 'true'
-      }),
-      [SectionName.ACTIVE]: buildUrl({
+      },
+      [SectionName.ACTIVE]: {
         state: WorkstreamState.ACTIVE,
         assignedTo: $walletStore.accounts[0]
-      }),
-      [SectionName.ENDED]: buildUrl({
+      },
+      [SectionName.ENDED]: {
         state: WorkstreamState.CLOSED,
         assignedTo: $walletStore.accounts[0]
-      })
+      }
     };
 
-    Object.keys(urls).forEach((sectionName) => {
-      fetch(urls[sectionName], { credentials: 'include' }).then(
-        async (response) => {
+    for (const sectionName of Object.keys(sectionFilters)) {
+      workstreamsStore
+        .getWorkstreams(sectionFilters[sectionName])
+        .then(async (response) => {
           sections[sectionName] = {
             ...sections[sectionName],
             fetched: true,
-            display: response.status === 200,
-            workstreams: response.status === 200 && (await response.json())
+            display: response.ok,
+            workstreams: response.ok && response.data
           };
 
           if (
@@ -134,9 +141,8 @@
           ) {
             loading = false;
           }
-        }
-      );
-    });
+        });
+    }
   }
 
   function clearSectionData() {

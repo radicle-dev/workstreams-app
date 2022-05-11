@@ -1,5 +1,8 @@
 import { writable } from 'svelte/store';
-import type { Workstream } from '$lib/stores/workstreams/types';
+import type {
+  Workstream,
+  WorkstreamState
+} from '$lib/stores/workstreams/types';
 import { getConfig } from '$lib/config';
 
 const reviver: (key: string, value: unknown) => unknown = (key, value) => {
@@ -12,16 +15,33 @@ const reviver: (key: string, value: unknown) => unknown = (key, value) => {
   return output;
 };
 
+export interface WorkstreamsFilterConfig {
+  applied: 'true' | 'false';
+  state: WorkstreamState;
+  createdBy: string;
+  hasApplicationsToReview: 'true' | 'false';
+  assignedTo: string;
+}
+
 export const workstreamsStore = (() => {
   const { subscribe } = writable<Workstream[]>([]);
 
   // TODO: caching
 
-  async function getWorkstreams(fetcher?: typeof fetch) {
-    const url = `${getConfig().API_URL_BASE}/workstreams`;
+  async function getWorkstreams(
+    filters?: Partial<WorkstreamsFilterConfig>,
+    fetcher?: typeof fetch
+  ) {
+    const paramsString =
+      filters && Object.keys(filters).length > 0
+        ? new URLSearchParams(filters).toString()
+        : '';
+
+    const url = `${getConfig().API_URL_BASE}/workstreams?${paramsString}`;
+
     const response = await _fetch(url, fetcher);
 
-    if (response.ok) {
+    if (response.status === 200) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream[];
       return {
         data: parsed,
@@ -30,7 +50,7 @@ export const workstreamsStore = (() => {
     } else {
       return {
         ok: false,
-        error: await response.json()
+        error: await response.text()
       };
     }
   }
