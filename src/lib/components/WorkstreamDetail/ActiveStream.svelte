@@ -6,13 +6,9 @@
   import Rate from '$components/Rate.svelte';
   import Row from '$components/Row.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
-  import Cross from 'radicle-design-system/icons/Cross.svelte';
+  import Pause from 'radicle-design-system/icons/Pause.svelte';
   import Button from 'radicle-design-system/Button.svelte';
-  import {
-    type Application,
-    type Workstream
-  } from '$lib/stores/workstreams/types';
-
+  import type { Application, Workstream } from '$lib/stores/workstreams/types';
   export let workstream: Workstream;
   export let acceptedApplication: Application | undefined = undefined;
 </script>
@@ -51,7 +47,7 @@
     <div class="stream-actions">
       <p>5000 of 8000 DAI topped up</p>
       <div style="display: flex; gap: .75rem;">
-        <Button variant="primary-outline" icon={Cross}>Pause</Button>
+        <Button variant="primary-outline" icon={Pause}>Pause</Button>
         <Button>Top up</Button>
       </div>
     </div>

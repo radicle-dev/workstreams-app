@@ -13,6 +13,7 @@
 
 {#if showTotal}
   <Tooltip
+    position="top"
     value={currencyFormat(ratePerSecond) +
       ` ${ratePerSecond.currency.toUpperCase()} / 24h`}
   >
