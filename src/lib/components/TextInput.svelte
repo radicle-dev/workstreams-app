@@ -12,6 +12,7 @@
     | { type: 'invalid'; message: string };
 
   export let textarea = false;
+  export let number = false;
 
   export let autofocus = false;
   export let disabled = false;
@@ -22,7 +23,7 @@
   export let inputStyle: string | undefined = undefined;
   export let style: string | undefined = undefined;
 
-  export let value: string | undefined = undefined;
+  export let value: string | number | undefined = undefined;
   export let placeholder: string | undefined = undefined;
 
   export let hint: string | undefined = undefined;
@@ -55,6 +56,26 @@
       style={`${inputStyle}; padding-right: ${
         rightContainerWidth ? `${rightContainerWidth}px` : 'auto'
       };`}
+      class:invalid={validationState.type === 'invalid'}
+      data-cy={dataCy}
+      {placeholder}
+      {disabled}
+      {readonly}
+      spellcheck={false}
+      bind:value
+      bind:this={inputElement}
+      on:change
+      on:click
+      on:input
+      on:keydown
+      on:keypress
+    />
+  {:else if number}
+    <input
+      style={`${inputStyle}; padding-right: ${
+        rightContainerWidth ? `${rightContainerWidth}px` : 'auto'
+      };`}
+      type="number"
       class:invalid={validationState.type === 'invalid'}
       data-cy={dataCy}
       {placeholder}

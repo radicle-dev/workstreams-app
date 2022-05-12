@@ -36,6 +36,16 @@ export function hyphenateString(str: string): string {
   return str.replace(/ +/g, '-').toLowerCase();
 }
 
+export function weiToDai(input: Money | bigint): number {
+  let wei = typeof input === 'bigint' ? input : (input as Money).wei;
+
+  if (typeof wei !== 'bigint') wei = BigInt(wei);
+
+  const dai = wei / BigInt(1000000000000000000);
+
+  return Number(dai);
+}
+
 export function currencyFormat(input: Money | bigint): string {
   const formatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 4
