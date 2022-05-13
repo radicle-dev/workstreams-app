@@ -75,8 +75,6 @@ export default (() => {
 
     const rs = await daiContract.allowance(ws.accounts[0], daiDripsHubAddress);
 
-    console.log(rs.toString());
-
     return rs;
   }
 
