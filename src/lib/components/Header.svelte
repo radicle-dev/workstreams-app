@@ -30,7 +30,7 @@
     $page.url.pathname.includes('explore') || $page.url.pathname === '/';
   $: onDashboard = $page.url.pathname.includes('dashboard');
 
-  const animate = (node: Element, args: { y: number; enable: boolean }) =>
+  const animate = (node, args) =>
     args.enable
       ? fly(node, { y: !scrollingDown ? -args.y : args.y, duration: 300 })
       : undefined;
@@ -61,7 +61,7 @@
   <div class="inner">
     {#if showCustomHeaderContent && $headerContent.component}
       <div
-        transition:animate={{ enable: !!headerContent, y: 20 }}
+        transition:animate={{ enable: headerContent, y: 20 }}
         class="content page"
       >
         <svelte:component
