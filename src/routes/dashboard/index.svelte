@@ -233,7 +233,6 @@
     max-width: 75rem;
     margin: 0 auto;
     width: 100%;
-    padding: 3rem 0;
   }
 
   .empty-wrapper {
