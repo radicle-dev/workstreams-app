@@ -4,10 +4,11 @@
   import Card from '$components/Card.svelte';
   import drips from '$lib/stores/drips';
   import TextInput from '$components/TextInput.svelte';
-  import type {
-    Application,
-    Money,
-    Workstream
+  import {
+    Currency,
+    type Application,
+    type Money,
+    type Workstream
   } from '$lib/stores/workstreams/types';
   import { currencyFormat, weiToDai } from '$lib/utils/format';
   import ButtonRow from '../components/ButtonRow.svelte';
@@ -27,8 +28,10 @@
 
   $: topUpExceedsBalance = daiBalance < BigInt(topUpAmount);
 
-  const weiPerDay = workstream.ratePerSecond.wei * BigInt(86400);
-  const daiPerDay = currencyFormat(weiPerDay);
+  $: weiPerDay =
+    parseUnits(totalAmount.toString()).toBigInt() /
+    BigInt(workstream.durationDays);
+  $: daiPerDay = currencyFormat(weiPerDay);
 
   onMount(async () => {
     daiBalance = (await drips.getDaiBalance()).toBigInt();
@@ -45,7 +48,10 @@
     try {
       const createDripCall = await drips.createDrip(
         application.creator,
-        workstream.ratePerSecond,
+        {
+          currency: Currency.DAI,
+          wei: weiPerDay / BigInt(86400)
+        },
         parseUnits(topUpAmount.toString()).toBigInt()
       );
 
