@@ -1,5 +1,5 @@
 <script lang="ts">
-  import drips from '$lib/stores/drips';
+  import * as modal from '$lib/utils/modal';
   import { fly } from 'svelte/transition';
   import Modal from '../Modal.svelte';
   import type { Application, Workstream } from '$lib/stores/workstreams/types';
@@ -9,6 +9,8 @@
   import Intro from './steps/Intro.svelte';
   import ConfirmValues from './steps/ConfirmValues.svelte';
   import SetDaiAllowance from './steps/SetDaiAllowance.svelte';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
 
   export let application: Application | Promise<Application>;
   export let workstream: Workstream;
@@ -22,6 +24,15 @@
   ];
 
   let currentStepIndex = 0;
+
+  function advance() {
+    if (steps[currentStepIndex + 1]) {
+      currentStepIndex++;
+    } else {
+      modal.hide();
+      goto($page.url.pathname);
+    }
+  }
 
   onMount(async () => {
     resolvedApplication = await application;
@@ -37,7 +48,7 @@
             this={steps[currentStepIndex]}
             {workstream}
             {application}
-            on:continue={() => currentStepIndex++}
+            on:continue={advance}
           />
         </div>
       {/key}
