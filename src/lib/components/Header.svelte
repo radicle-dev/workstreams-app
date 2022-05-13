@@ -14,13 +14,10 @@
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { browser } from '$app/env';
   import { headerContent } from '$lib/stores/headerContent';
-  import drips from '$lib/stores/drips';
 
   let scrolledDown = false;
   let scrollPos = 0;
   let scrollingDown = false;
-  let collectable: string | undefined;
-
   $: hide = scrollingDown && !$headerContent.component;
   $: showCustomHeaderContent =
     $headerContent.headerContentShown !== undefined
@@ -30,7 +27,7 @@
     $page.url.pathname.includes('explore') || $page.url.pathname === '/';
   $: onDashboard = $page.url.pathname.includes('dashboard');
 
-  const animate = (node, args) =>
+  const animate = (node: Element, args: { y: number; enable: boolean }) =>
     args.enable
       ? fly(node, { y: !scrollingDown ? -args.y : args.y, duration: 300 })
       : undefined;
@@ -39,11 +36,9 @@
     updateScrollPos();
   }
 
-  onMount(async () => {
+  onMount(() => {
     if (browser) {
       window.addEventListener('scroll', updateScrollPos);
-
-      collectable = await drips.getCollectable();
     }
   });
 
@@ -61,7 +56,7 @@
   <div class="inner">
     {#if showCustomHeaderContent && $headerContent.component}
       <div
-        transition:animate={{ enable: headerContent, y: 20 }}
+        transition:animate={{ enable: !!headerContent, y: 20 }}
         class="content page"
       >
         <svelte:component
@@ -98,7 +93,6 @@
             </div>
           {/if}
           <div class="user">
-            Collectable: {collectable}
             <Connect />
           </div>
         </div>
