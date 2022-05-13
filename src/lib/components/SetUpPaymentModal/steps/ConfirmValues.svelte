@@ -26,18 +26,20 @@
   let topUpAmount = 0;
   let totalAmount: number = weiToDai(workstream.total);
 
-  $: topUpExceedsBalance = daiBalance < BigInt(topUpAmount);
+  $: topUpExceedsBalance =
+    daiBalance < parseUnits(topUpAmount.toString()).toBigInt();
 
   $: weiPerDay =
     parseUnits(totalAmount.toString()).toBigInt() /
     BigInt(workstream.durationDays);
   $: daiPerDay = currencyFormat(weiPerDay);
+  $: totalWei = weiPerDay * BigInt(workstream.durationDays);
 
   onMount(async () => {
     daiBalance = (await drips.getDaiBalance()).toBigInt();
 
     topUpAmount =
-      daiBalance < workstream.total.wei
+      daiBalance < totalWei
         ? weiToDai(daiBalance)
         : weiToDai(workstream.total.wei);
   });
