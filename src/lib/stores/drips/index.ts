@@ -17,35 +17,6 @@ import {
   DaiDripsHubAbi__factory
 } from './contracts/types/index';
 
-/*
-  Lifted from drips-app
-  https://discord.com/channels/841318878125490186/875668327614255164/918094059732623411
-  - Look at the latest user's DripsUpdated, it has a timestamp, uint128 balance and DripsReceiver[] receivers
-  - Add up all the receiers' amtPerSec, it's totalAmtPerSec
-  - withdrawable = eventBalance - (currTimestamp - eventTimestamp) * totalAmtPerSec
-  - if withdrawable < 0, withdrawable = eventBalance % totalAmtPerSec
-*/
-function getDripsWithdrawable(
-  receivers: DripsConfigs_dripsConfigs_receivers[],
-  balance: string,
-  timestamp: number
-) {
-  const currTimestamp = Math.floor(new Date().getTime() / 1000); // sec
-  const totalAmtPerSec = receivers.reduce(
-    (acc, curr) => acc.add(curr.amtPerSec),
-    BigNumber.from(0)
-  );
-  const eventBalance = BigNumber.from(balance);
-  let withdrawable = eventBalance.sub(
-    totalAmtPerSec.mul(currTimestamp - timestamp)
-  );
-  if (withdrawable.lt(0)) {
-    withdrawable = eventBalance.mod(totalAmtPerSec);
-  }
-
-  return withdrawable;
-}
-
 export const round = (num: number, dec = 2) =>
   (Math.floor(num * 100) / 100).toFixed(dec);
 
