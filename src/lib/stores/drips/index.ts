@@ -6,7 +6,7 @@ import type {
   lastDripsEntryVariables
 } from '$lib/api/__generated__/lastDripsEntry';
 import { BigNumber, ethers, type ContractTransaction } from 'ethers';
-import { formatEther } from 'ethers/lib/utils';
+import { utils } from 'ethers';
 import { get, writable } from 'svelte/store';
 import { walletStore } from '../wallet/wallet';
 import type { Money } from '../workstreams/types';
@@ -50,7 +50,7 @@ export const round = (num: number, dec = 2) =>
   (Math.floor(num * 100) / 100).toFixed(dec);
 
 export const toDai = (wei: BigNumber, roundTo?: number): string => {
-  const dai = parseInt(formatEther(wei));
+  const dai = parseInt(utils.formatEther(wei));
 
   if (dai > 0 && dai < 0.01) {
     return '<0.01';

@@ -13,7 +13,7 @@
   import { currencyFormat, weiToDai } from '$lib/utils/format';
   import ButtonRow from '../components/ButtonRow.svelte';
   import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
-  import { parseUnits } from 'ethers/lib/utils';
+  import { utils } from 'ethers';
 
   const dispatch = createEventDispatcher();
 
@@ -27,10 +27,10 @@
   let totalAmount: number = weiToDai(workstream.total);
 
   $: topUpExceedsBalance =
-    daiBalance < parseUnits(topUpAmount.toString()).toBigInt();
+    daiBalance < utils.parseUnits(topUpAmount.toString()).toBigInt();
 
   $: weiPerDay =
-    parseUnits(totalAmount.toString()).toBigInt() /
+    utils.parseUnits(totalAmount.toString()).toBigInt() /
     BigInt(workstream.durationDays);
   $: daiPerDay = currencyFormat(weiPerDay);
   $: totalWei = weiPerDay * BigInt(workstream.durationDays);
@@ -54,7 +54,7 @@
           currency: Currency.DAI,
           wei: weiPerDay / BigInt(86400)
         },
-        parseUnits(topUpAmount.toString()).toBigInt()
+        utils.parseUnits(topUpAmount.toString()).toBigInt()
       );
 
       const receipt = await createDripCall.tx.wait(1);

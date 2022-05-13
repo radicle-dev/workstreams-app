@@ -1,5 +1,5 @@
 import type { DocumentNode } from 'graphql/language/ast';
-import { print } from 'graphql/language/printer';
+import { print } from 'graphql';
 
 const graphUrl: { [chainId: number]: string } = {
   1: 'https://api.thegraph.com/subgraphs/name/gh0stwheel/drips-on-ethereum',
