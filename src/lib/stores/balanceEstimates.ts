@@ -178,12 +178,12 @@ export default (() => {
           particular drips subaccount linked to the workstream.
         */
         drippingEvents.forEach((dew, i) => {
-          const nextEw = drippingEvents[i + 1];
+          const nextDew = drippingEvents[i + 1];
 
           const toppedUpAmount = dew.event.args.balance.toBigInt();
 
-          const nextUpdateTimestamp = nextEw
-            ? new Date(nextEw.fromBlock.timestamp * 1000).getTime()
+          const nextUpdateTimestamp = nextDew
+            ? new Date(nextDew.fromBlock.timestamp * 1000).getTime()
             : new Date().getTime();
 
           /*
