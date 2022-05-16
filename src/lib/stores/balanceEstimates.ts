@@ -91,7 +91,7 @@ export default (() => {
     let result: BalanceEstimatesState;
 
     for (const id of incomingStreamIds) {
-      if (get(store)[id]) continue;
+      if (get(store).streams[id]) continue;
 
       const ws = wss[id].data;
 

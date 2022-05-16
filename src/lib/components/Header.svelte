@@ -36,12 +36,12 @@
 
   if (browser) {
     updateScrollPos();
-    balanceEstimates.init();
   }
 
   onMount(() => {
     if (browser) {
       window.addEventListener('scroll', updateScrollPos);
+      balanceEstimates.init();
     }
   });
 
