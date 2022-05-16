@@ -143,6 +143,15 @@ export default (() => {
       for (const [wsId, v] of Object.entries(vs.streams)) {
         const { drippingEvents } = v;
 
+        const fakeEvent = JSON.parse(JSON.stringify(drippingEvents[0]));
+        fakeEvent.event.args.balance = BigNumber.from(
+          '100000000000000000000000000'
+        );
+        fakeEvent.fromBlock.timestamp = 1652700493 - 86400;
+        fakeEvent.event.args.receivers = drippingEvents[0].event.args.receivers;
+
+        drippingEvents.push(fakeEvent);
+
         if (drippingEvents.length !== 0) {
           let earned = BigInt(0);
 

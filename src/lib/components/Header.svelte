@@ -16,6 +16,7 @@
   import { headerContent } from '$lib/stores/headerContent';
   import balanceEstimates from '$lib/stores/balanceEstimates';
   import { currencyFormat } from '$lib/utils/format';
+  import BalanceButton from './BalanceButton.svelte';
 
   let scrolledDown = false;
   let scrollPos = 0;
@@ -82,8 +83,6 @@
           >
         </nav>
         <div class="buttons">
-          {$balanceEstimates.totalBalance &&
-            currencyFormat($balanceEstimates.totalBalance)}
           {#if $connectedAndLoggedIn && onDashboard}
             <div
               in:fly={{ y: 10, duration: 300, delay: 300 }}
@@ -96,6 +95,9 @@
                 >Create Workstream</Button
               >
             </div>
+          {/if}
+          {#if $connectedAndLoggedIn}
+            <BalanceButton />
           {/if}
           <div class="user">
             <Connect />
