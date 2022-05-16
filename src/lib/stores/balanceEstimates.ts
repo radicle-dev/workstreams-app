@@ -1,15 +1,11 @@
 import { browser } from '$app/env';
 import type { Block } from '@ethersproject/abstract-provider';
 import { get, writable } from 'svelte/store';
-import type {
-  Dripping_address_uint256_address_uint128_uint64_Event,
-  DripsUpdated_address_uint256_uint128_tuple_array_Event
-} from './drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
+import type { DripsUpdated_address_uint256_uint128_tuple_array_Event } from './drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
 import { walletStore } from './wallet/wallet';
 import drips from './drips/index';
 import { Currency, WorkstreamState, type Money } from './workstreams/types';
 import { workstreamsStore } from './workstreams/workstreams';
-import { BigNumber } from 'ethers';
 
 interface DrippingEventWrapper {
   event: DripsUpdated_address_uint256_uint128_tuple_array_Event;
@@ -143,14 +139,14 @@ export default (() => {
       for (const [wsId, v] of Object.entries(vs.streams)) {
         const { drippingEvents } = v;
 
-        const fakeEvent = JSON.parse(JSON.stringify(drippingEvents[0]));
-        fakeEvent.event.args.balance = BigNumber.from(
-          '100000000000000000000000000'
-        );
-        fakeEvent.fromBlock.timestamp = 1652700493 - 86400;
-        fakeEvent.event.args.receivers = drippingEvents[0].event.args.receivers;
+        // const fakeEvent = JSON.parse(JSON.stringify(drippingEvents[0]));
+        // fakeEvent.event.args.balance = BigNumber.from(
+        //   '100000000000000000000000000'
+        // );
+        // fakeEvent.fromBlock.timestamp = 1652700493 - 86400;
+        // fakeEvent.event.args.receivers = drippingEvents[0].event.args.receivers;
 
-        drippingEvents.push(fakeEvent);
+        // drippingEvents.push(fakeEvent);
 
         if (drippingEvents.length !== 0) {
           let earned = BigInt(0);

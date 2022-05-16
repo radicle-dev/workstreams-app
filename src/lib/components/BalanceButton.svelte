@@ -36,8 +36,8 @@
     const decimalLength = parts[1]?.length || 0;
 
     return decimalLength !== 0
-      ? input + '0'.repeat(4 - decimalLength)
-      : input + '.' + '0'.repeat(4 - decimalLength);
+      ? input + '0'.repeat(2 - decimalLength)
+      : input + '.' + '0'.repeat(2 - decimalLength);
   }
 </script>
 
