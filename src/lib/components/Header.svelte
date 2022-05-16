@@ -42,7 +42,6 @@
   onMount(() => {
     if (browser) {
       window.addEventListener('scroll', updateScrollPos);
-      balanceEstimates.init();
     }
   });
 

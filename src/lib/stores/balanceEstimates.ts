@@ -26,6 +26,7 @@ interface BalanceEstimatesState {
 interface InternalState {
   currentCycleStart: Date;
   currentCollectable: Money;
+  currentAddress: string;
 }
 
 function bigintMin(...args: bigint[]): bigint {
@@ -49,6 +50,11 @@ export default (() => {
 
   const internal = writable<InternalState | undefined>(undefined);
 
+  /**
+   * Initialize the store by fetching the cycle length from the Drips Hub
+   * contract and populating private store values. Must be called once to
+   * start estimation. A wallet must be connected and initialized via WalletStore.
+   */
   async function init() {
     if (!browser) throw new Error('Cannot init balance estimates server-side');
 
@@ -64,6 +70,7 @@ export default (() => {
 
     internal.set({
       currentCycleStart,
+      currentAddress: get(walletStore).accounts[0],
       currentCollectable: {
         currency: Currency.DAI,
         wei: currentCollectable
@@ -73,6 +80,22 @@ export default (() => {
     setInterval(estimateBalance, 1000);
   }
 
+  /**
+   * Automatically initialize the store if the user connects a wallet (or
+   * changes the selected account).
+   */
+  walletStore.subscribe((v) => {
+    const internalState = get(internal);
+    if (v.accounts[0] !== internalState?.currentAddress) {
+      init();
+    }
+  });
+
+  /**
+   * Subscribe to newly fetched workstreams and automatically begin
+   * calculating the estimated total for all active workstreams assigned
+   * to the currently logged-in user.
+   */
   workstreamsStore.subscribe(async (wss) => {
     const incomingStreamIds = Object.keys(wss).filter((k) => {
       const ws = wss[k].data;
@@ -131,6 +154,11 @@ export default (() => {
     if (result) store.set(result);
   });
 
+  /**
+   * Gets called once per second and calculates the current total balance
+   * of all active workstreams assigned to the current user, and at the end
+   * updates the total global balance from all workstreams.
+   */
   function estimateBalance() {
     const internalState = get(internal);
     if (!internalState) return;
@@ -139,49 +167,58 @@ export default (() => {
       for (const [wsId, v] of Object.entries(vs.streams)) {
         const { drippingEvents } = v;
 
-        // const fakeEvent = JSON.parse(JSON.stringify(drippingEvents[0]));
-        // fakeEvent.event.args.balance = BigNumber.from(
-        //   '100000000000000000000000000'
-        // );
-        // fakeEvent.fromBlock.timestamp = 1652700493 - 86400;
-        // fakeEvent.event.args.receivers = drippingEvents[0].event.args.receivers;
-
-        // drippingEvents.push(fakeEvent);
-
-        if (drippingEvents.length !== 0) {
-          let earned = BigInt(0);
-
-          drippingEvents.forEach((dew, i) => {
-            const nextEw = drippingEvents[i + 1];
-
-            const toppedUpAmount = dew.event.args.balance.toBigInt();
-
-            const nextUpdateTimestamp = nextEw
-              ? new Date(nextEw.fromBlock.timestamp * 1000).getTime()
-              : new Date().getTime();
-
-            const updateValidForSecs = Math.floor(
-              (nextUpdateTimestamp -
-                new Date(dew.fromBlock.timestamp * 1000).getTime()) /
-                1000
-            );
-
-            earned += bigintMin(
-              BigInt(updateValidForSecs) *
-                dew.event.args.receivers[0].amtPerSec.toBigInt(),
-              toppedUpAmount
-            );
-          });
-
-          vs.streams[wsId].currentBalance = {
-            wei: earned,
-            currency: vs.streams[wsId].currentBalance.currency
-          };
-        } else {
+        if (drippingEvents.length === 0) {
           throw new Error(`Drips not set up for active workstream ${wsId}`);
         }
+
+        let earned = BigInt(0);
+
+        /*
+          Iterate over all `dripsUpdated` events associated with the
+          particular drips subaccount linked to the workstream.
+        */
+        drippingEvents.forEach((dew, i) => {
+          const nextEw = drippingEvents[i + 1];
+
+          const toppedUpAmount = dew.event.args.balance.toBigInt();
+
+          const nextUpdateTimestamp = nextEw
+            ? new Date(nextEw.fromBlock.timestamp * 1000).getTime()
+            : new Date().getTime();
+
+          /*
+            Count the amount of seconds the current `dripsUpdated` event
+            has been valid for so far — either until the next `dripsUpdated`
+            event, or until the current time if it is the latest one.
+          */
+          const updateValidForSecs = Math.floor(
+            (nextUpdateTimestamp -
+              new Date(dew.fromBlock.timestamp * 1000).getTime()) /
+              1000
+          );
+
+          /* 
+            If the theoretically earned amount from this workstream exceeds
+            the balance that the workstream was topped up for at the time
+            of the update, we limit the amount earned to the topped-up amount.
+          */
+          earned += bigintMin(
+            BigInt(updateValidForSecs) *
+              dew.event.args.receivers[0].amtPerSec.toBigInt(),
+            toppedUpAmount
+          );
+        });
+
+        vs.streams[wsId].currentBalance = {
+          wei: earned,
+          currency: vs.streams[wsId].currentBalance.currency
+        };
       }
 
+      /*
+        Sum up the amount earned from all active streams in the store to
+        calculcate the global earned amount.
+      */
       const totalWeiEarned = Object.values(vs.streams).reduce<bigint>(
         (acc, val) => {
           return acc + val.currentBalance.wei;
