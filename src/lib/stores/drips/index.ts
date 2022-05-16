@@ -55,7 +55,7 @@ export default (() => {
     );
 
     const filter = dripsHub.filters[
-      'Dripping(address,uint256,address,uint128,uint64)'
+      'DripsUpdated(address,uint256,uint128,(address,uint128)[])'
     ](user, account);
 
     return dripsHub.queryFilter(filter);

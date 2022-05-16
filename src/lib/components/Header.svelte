@@ -39,11 +39,6 @@
     balanceEstimates.init();
   }
 
-  $: console.log(
-    $balanceEstimates.totalBalance &&
-      currencyFormat($balanceEstimates.totalBalance)
-  );
-
   onMount(() => {
     if (browser) {
       window.addEventListener('scroll', updateScrollPos);
@@ -87,6 +82,8 @@
           >
         </nav>
         <div class="buttons">
+          {$balanceEstimates.totalBalance &&
+            currencyFormat($balanceEstimates.totalBalance)}
           {#if $connectedAndLoggedIn && onDashboard}
             <div
               in:fly={{ y: 10, duration: 300, delay: 300 }}

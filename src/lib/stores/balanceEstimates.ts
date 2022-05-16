@@ -1,14 +1,18 @@
 import { browser } from '$app/env';
 import type { Block } from '@ethersproject/abstract-provider';
 import { get, writable } from 'svelte/store';
-import type { Dripping_address_uint256_address_uint128_uint64_Event } from './drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
+import type {
+  Dripping_address_uint256_address_uint128_uint64_Event,
+  DripsUpdated_address_uint256_uint128_tuple_array_Event
+} from './drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
 import { walletStore } from './wallet/wallet';
 import drips from './drips/index';
 import { Currency, WorkstreamState, type Money } from './workstreams/types';
 import { workstreamsStore } from './workstreams/workstreams';
+import { BigNumber } from 'ethers';
 
 interface DrippingEventWrapper {
-  event: Dripping_address_uint256_address_uint128_uint64_Event;
+  event: DripsUpdated_address_uint256_uint128_tuple_array_Event;
   fromBlock: Block;
 }
 
@@ -26,6 +30,19 @@ interface BalanceEstimatesState {
 interface InternalState {
   currentCycleStart: Date;
   currentCollectable: Money;
+}
+
+function bigintMin(...args: bigint[]): bigint {
+  if (args.length < 1) {
+    throw 'Min of empty list';
+  }
+  let m = args[0];
+  args.forEach((a) => {
+    if (a < m) {
+      m = a;
+    }
+  });
+  return m;
 }
 
 export default (() => {
@@ -85,6 +102,7 @@ export default (() => {
         ws.creator,
         ws.dripsData.accountId
       );
+
       const drippingEventsPromises: Promise<DrippingEventWrapper>[] =
         events.map(
           (e) =>
@@ -122,46 +140,36 @@ export default (() => {
     if (!internalState) return;
 
     store.update((vs) => {
-      const { currentCycleStart } = internalState;
-
-      const secondsSinceCycleStart = Math.floor(
-        (new Date().getTime() - currentCycleStart.getTime()) / 1000
-      );
-
       for (const [wsId, v] of Object.entries(vs.streams)) {
         const { drippingEvents } = v;
 
-        if (drippingEvents.length === 1) {
-          const earnedSinceCycleStart =
-            BigInt(secondsSinceCycleStart) *
-            drippingEvents[0].event.args.amtPerSec.toBigInt();
+        if (drippingEvents.length !== 0) {
+          let earned = BigInt(0);
 
-          vs.streams[wsId].currentBalance = {
-            wei: earnedSinceCycleStart,
-            currency: vs.streams[wsId].currentBalance.currency
-          };
-        } else if (drippingEvents.length > 1) {
-          let earnedSinceCycleStart: bigint;
+          drippingEvents.forEach((dew, i) => {
+            const nextEw = drippingEvents[i + 1];
 
-          const drippingEventsDuringCurrentCycle = drippingEvents.filter(
-            (ew) => new Date(ew.fromBlock.timestamp) > currentCycleStart
-          );
-
-          drippingEventsDuringCurrentCycle.forEach((ew, i) => {
-            const nextEw = drippingEventsDuringCurrentCycle[i + 1];
+            const toppedUpAmount = dew.event.args.balance.toBigInt();
 
             const nextUpdateTimestamp = nextEw
-              ? new Date(nextEw.fromBlock.timestamp).getTime()
+              ? new Date(nextEw.fromBlock.timestamp * 1000).getTime()
               : new Date().getTime();
-            const updateValidForSecs =
-              nextUpdateTimestamp - new Date(ew.fromBlock.timestamp).getDate();
 
-            earnedSinceCycleStart +=
-              BigInt(updateValidForSecs) * ew.event.args.amtPerSec.toBigInt();
+            const updateValidForSecs = Math.floor(
+              (nextUpdateTimestamp -
+                new Date(dew.fromBlock.timestamp * 1000).getTime()) /
+                1000
+            );
+
+            earned += bigintMin(
+              BigInt(updateValidForSecs) *
+                dew.event.args.receivers[0].amtPerSec.toBigInt(),
+              toppedUpAmount
+            );
           });
 
           vs.streams[wsId].currentBalance = {
-            wei: earnedSinceCycleStart,
+            wei: earned,
             currency: vs.streams[wsId].currentBalance.currency
           };
         } else {
@@ -169,16 +177,14 @@ export default (() => {
         }
       }
 
-      const { currentCollectable } = internalState;
-
-      const totalWeiFromCurrentCycle = Object.values(vs.streams).reduce<bigint>(
+      const totalWeiEarned = Object.values(vs.streams).reduce<bigint>(
         (acc, val) => {
           return acc + val.currentBalance.wei;
         },
         BigInt(0)
       );
 
-      vs.totalBalance = currentCollectable.wei + totalWeiFromCurrentCycle;
+      vs.totalBalance = totalWeiEarned;
 
       return vs;
     });
