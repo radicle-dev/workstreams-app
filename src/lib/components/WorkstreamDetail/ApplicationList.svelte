@@ -16,11 +16,12 @@
     type Application,
     type Workstream
   } from '$lib/stores/workstreams/types';
+  import SetUpPaymentModal from '../SetUpPaymentModal/SetUpPaymentModal.svelte';
 
   export let workstream: Workstream;
   export let applications: Application[];
-  export let style: string = '';
-  export let title: string = '';
+  export let style = '';
+  export let title = '';
   export let creator: boolean | undefined = undefined;
   export let accepted: boolean | undefined = undefined;
 
@@ -78,7 +79,11 @@
           {:else if accepted}
             <Button
               disabled={actionsDisabled}
-              on:click={() => console.log('start streaming')}
+              on:click={() =>
+                modal.show(SetUpPaymentModal, undefined, {
+                  workstream,
+                  application
+                })}
               variant="primary-outline"
               icon={TokenStreams}>Set up stream</Button
             >

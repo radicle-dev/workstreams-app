@@ -112,7 +112,7 @@
     <div class="actions">
       <Button
         disabled={creatingWorkstream}
-        variant="outline"
+        variant="transparent"
         on:click={modal.hide}>Cancel</Button
       >
       <Button

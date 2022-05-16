@@ -36,9 +36,19 @@ export function hyphenateString(str: string): string {
   return str.replace(/ +/g, '-').toLowerCase();
 }
 
+export function weiToDai(input: Money | bigint): number {
+  let wei = typeof input === 'bigint' ? input : (input as Money).wei;
+
+  if (typeof wei !== 'bigint') wei = BigInt(wei);
+
+  const dai = wei / BigInt(1000000000000000000);
+
+  return Number(dai);
+}
+
 export function currencyFormat(input: Money | bigint): string {
   const formatter = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 2
+    maximumFractionDigits: 4
   });
 
   let wei = typeof input === 'bigint' ? input : (input as Money).wei;
@@ -47,5 +57,5 @@ export function currencyFormat(input: Money | bigint): string {
 
   const dai = utils.formatEther(wei);
 
-  return formatter.format(Math.round(Number(dai)));
+  return formatter.format(Number(dai));
 }

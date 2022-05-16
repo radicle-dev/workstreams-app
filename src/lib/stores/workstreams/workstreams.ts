@@ -39,7 +39,7 @@ export const workstreamsStore = (() => {
 
     const url = `${getConfig().API_URL_BASE}/workstreams?${paramsString}`;
 
-    const response = await _fetch(url, fetcher);
+    const response = await _fetch(url, undefined, fetcher);
 
     if (response.status === 200) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream[];
@@ -57,7 +57,7 @@ export const workstreamsStore = (() => {
 
   async function getWorkstream(id: string, fetcher?: typeof fetch) {
     const url = `${getConfig().API_URL_BASE}/workstreams/${id}`;
-    const response = await _fetch(url, fetcher);
+    const response = await _fetch(url, undefined, fetcher);
 
     if (response.ok) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream;
@@ -73,13 +73,50 @@ export const workstreamsStore = (() => {
     }
   }
 
-  async function _fetch(url: string, fetcher?: typeof fetch) {
-    return (fetcher || fetch)(url, { credentials: 'include' });
+  async function activateWorkstream(
+    id: string,
+    accountId: number,
+    fetcher?: typeof fetch
+  ) {
+    const url = `${getConfig().API_URL_BASE}/workstreams/${id}/activate`;
+    const response = await _fetch(
+      url,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          accountId
+        })
+      },
+      fetcher
+    );
+
+    if (response.ok) {
+      return {
+        ok: true
+      };
+    } else {
+      return {
+        ok: false,
+        error: await response.json()
+      };
+    }
+  }
+
+  async function _fetch(
+    url: string,
+    config?: RequestInit,
+    fetcher?: typeof fetch
+  ) {
+    return (fetcher || fetch)(url, {
+      ...(config as object),
+      credentials: 'include'
+    });
   }
 
   return {
     subscribe,
     getWorkstreams,
-    getWorkstream
+    getWorkstream,
+    activateWorkstream
   };
 })();

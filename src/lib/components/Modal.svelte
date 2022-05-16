@@ -16,5 +16,6 @@
     width: 70vw;
     max-width: 40rem;
     text-align: center;
+    overflow: hidden;
   }
 </style>

@@ -22,7 +22,7 @@
   let openApplications: Application[] | undefined = undefined;
   let rejectedApplications: Application[] | undefined = undefined;
 
-  let applied: boolean = false;
+  let applied = false;
   let creator: boolean =
     $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
 

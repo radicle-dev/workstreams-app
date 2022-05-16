@@ -11,8 +11,8 @@
   import type { Workstream } from '$lib/stores/workstreams/types';
 
   export let workstream: Workstream;
-  export let creator: boolean = false;
-  export let applied: boolean = false;
+  export let creator = false;
+  export let applied = false;
 </script>
 
 <Card hoverable={false} style="margin-bottom: 1.5rem;">

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { parseUnits } from 'ethers/lib/utils';
+  import { utils } from 'ethers';
 
   import * as modal from '$lib/utils/modal';
   import type {
@@ -43,7 +43,7 @@
 
     const daiPerDay =
       (parseInt(total) / parseInt(duration)) * parseInt(durationUnit);
-    const weiPerDay = parseUnits(daiPerDay.toString()).toBigInt();
+    const weiPerDay = utils.parseUnits(daiPerDay.toString()).toBigInt();
     const weiPerSecond = weiPerDay / BigInt(86400);
 
     try {
