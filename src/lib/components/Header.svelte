@@ -14,6 +14,8 @@
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { browser } from '$app/env';
   import { headerContent } from '$lib/stores/headerContent';
+  import balanceEstimates from '$lib/stores/balanceEstimates';
+  import { currencyFormat } from '$lib/utils/format';
 
   let scrolledDown = false;
   let scrollPos = 0;
@@ -34,7 +36,13 @@
 
   if (browser) {
     updateScrollPos();
+    balanceEstimates.init();
   }
+
+  $: console.log(
+    $balanceEstimates.totalBalance &&
+      currencyFormat($balanceEstimates.totalBalance)
+  );
 
   onMount(() => {
     if (browser) {
