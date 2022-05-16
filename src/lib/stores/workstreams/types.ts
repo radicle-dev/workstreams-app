@@ -30,6 +30,9 @@ export interface Workstream {
   total: Money;
   title: string;
   desc: string;
+  dripsData?: {
+    accountId: number;
+  };
   applicants?: string[];
 }
 
