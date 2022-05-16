@@ -1,6 +1,5 @@
 import query from '$lib/api';
 import { GET_LAST_DRIP_ENTRY } from '$lib/api/queries';
-import type { DripsConfigs_dripsConfigs_receivers } from '$lib/api/__generated__/DripsConfigs';
 import type {
   lastDripsEntry,
   lastDripsEntryVariables

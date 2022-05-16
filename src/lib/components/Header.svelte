@@ -37,7 +37,13 @@
 
   if (browser) {
     updateScrollPos();
+    balanceEstimates.init();
   }
+
+  $: console.log(
+    $balanceEstimates.totalBalance &&
+      currencyFormat($balanceEstimates.totalBalance)
+  );
 
   onMount(() => {
     if (browser) {

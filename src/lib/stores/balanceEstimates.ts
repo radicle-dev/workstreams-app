@@ -127,7 +127,6 @@ export default (() => {
         ws.creator,
         ws.dripsData.accountId
       );
-
       const drippingEventsPromises: Promise<DrippingEventWrapper>[] =
         events.map(
           (e) =>
