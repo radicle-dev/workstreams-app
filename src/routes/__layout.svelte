@@ -68,7 +68,7 @@
   {#if $walletStore.chainId === 4}
     <div class="network"><span />{$walletStore.provider.network.name}</div>
   {:else if $walletStore.chainId !== 1}
-    <div class="network">Unsupported Network</div>
+    <div class="network error"><span />Unsupported Network</div>
   {/if}
 {/if}
 
@@ -95,12 +95,21 @@
     align-items: center;
   }
 
+  .error {
+    background-color: var(--color-negative-level-1);
+    color: var(--color-negative);
+  }
+
   .network > span {
     display: block;
     height: 0.375rem;
     width: 0.375rem;
     border-radius: 50%;
     background-color: var(--color-caution);
+  }
+
+  .error > span {
+    background-color: var(--color-negative);
   }
 
   .wrapper.loading {
