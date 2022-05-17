@@ -1,8 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
 
+  import Emoji from '$components/Emoji.svelte';
   import Button from 'radicle-design-system/Button.svelte';
-  import Emoji from 'radicle-design-system/Emoji.svelte';
   import Tooltip from 'radicle-design-system/Tooltip.svelte';
 
   const dispatch = createEventDispatcher();

@@ -25,6 +25,7 @@
 </script>
 
 <script lang="ts">
+  import { utils } from 'ethers';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
@@ -37,6 +38,18 @@
 
   export let createdWorkstreams: Workstream[] = [];
   export let assignedWorkstreams: Workstream[] = [];
+
+  const formatAddress = (addr: string) => {
+    if (addr.length > 10) {
+      return (
+        addr.substring(0, 4) +
+        ' – ' +
+        addr.substring(addr.length - 4, addr.length)
+      );
+    } else {
+      return addr;
+    }
+  };
 </script>
 
 <svelte:head>
@@ -44,40 +57,53 @@
 </svelte:head>
 
 <div class="container">
-  <UserBig address={$page.params.address} />
-  <div class="overview">
-    {#if !assignedWorkstreams && !createdWorkstreams}
-      <EmptyState
-        emoji="👀"
-        headerText="Nothing to see here"
-        text="This address has no associated workstreams"
-        primaryActionText="Go explore"
-        on:primaryAction={() => goto(`/`)}
-      />
-    {:else}
-      {#if assignedWorkstreams?.length > 0}
-        <Section
-          title="Assigned workstreams"
-          count={assignedWorkstreams.length}
-        >
-          <div slot="content" class="workstreams">
-            {#each assignedWorkstreams as workstream}
-              <ExploreCard {workstream} />
-            {/each}
-          </div>
-        </Section>
+  {#if utils.isAddress($page.params.address)}
+    <UserBig address={$page.params.address} />
+    <div class="overview">
+      {#if !assignedWorkstreams && !createdWorkstreams}
+        <EmptyState
+          emoji="👀"
+          headerText="Nothing to see here"
+          text="This address has no associated workstreams"
+          primaryActionText="Go explore"
+          on:primaryAction={() => goto(`/`)}
+        />
+      {:else}
+        {#if assignedWorkstreams?.length > 0}
+          <Section
+            title="Assigned workstreams"
+            count={assignedWorkstreams.length}
+          >
+            <div slot="content" class="workstreams">
+              {#each assignedWorkstreams as workstream}
+                <ExploreCard {workstream} />
+              {/each}
+            </div>
+          </Section>
+        {/if}
+        {#if createdWorkstreams?.length > 0}
+          <Section
+            title="Created workstreams"
+            count={createdWorkstreams.length}
+          >
+            <div slot="content" class="workstreams">
+              {#each createdWorkstreams as workstream}
+                <ExploreCard {workstream} />
+              {/each}
+            </div>
+          </Section>
+        {/if}
       {/if}
-      {#if createdWorkstreams?.length > 0}
-        <Section title="Created workstreams" count={createdWorkstreams.length}>
-          <div slot="content" class="workstreams">
-            {#each createdWorkstreams as workstream}
-              <ExploreCard {workstream} />
-            {/each}
-          </div>
-        </Section>
-      {/if}
-    {/if}
-  </div>
+    </div>
+  {:else}
+    <EmptyState
+      emoji="🏚"
+      headerText="Invalid address"
+      text={`It seems that ${formatAddress(
+        $page.params.address
+      )} is not a valid ethereum address.`}
+    />
+  {/if}
 </div>
 
 <style>
