@@ -94,7 +94,7 @@
 <style>
   .container {
     max-width: 54rem;
-    margin: 4rem auto;
+    margin: 0 auto;
     width: 100%;
   }
   .metadata > * {

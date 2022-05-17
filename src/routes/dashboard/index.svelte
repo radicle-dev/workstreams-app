@@ -15,7 +15,7 @@
   } from '$lib/stores/workstreams/types';
 
   import EmptyState from '$lib/components/EmptyState.svelte';
-  import Section from '$lib/components/dashboard/Section.svelte';
+  import Section from '$lib/components/Section.svelte';
   import WorkstreamCard from '$lib/components/WorkstreamCard/index.svelte';
   import { currencyFormat } from '$lib/utils/format';
   import {
@@ -233,7 +233,6 @@
     max-width: 75rem;
     margin: 0 auto;
     width: 100%;
-    padding: 3rem 0;
   }
 
   .empty-wrapper {
