@@ -60,14 +60,6 @@
     position: relative;
   }
 
-  .network {
-    display: flex;
-    padding: 0 0.5rem;
-    background-color: var(--color-caution-level-1);
-    color: var(--color-caution-level-6);
-    height: 1.5rem;
-    border-radius: 0.75rem;
-  }
   .log-out-overlay {
     position: absolute;
     top: 0;
