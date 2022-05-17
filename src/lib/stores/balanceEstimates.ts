@@ -114,7 +114,7 @@ export default (() => {
 
       const ws = wss[id].data;
 
-      if (ws.dripsData?.accountId)
+      if (!ws.dripsData?.accountId)
         throw new Error(`No drips config for active workstream ${id}`);
 
       const events = await drips.getDripsUpdatedEvents(
