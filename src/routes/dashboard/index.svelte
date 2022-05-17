@@ -15,7 +15,7 @@
   } from '$lib/stores/workstreams/types';
 
   import EmptyState from '$lib/components/EmptyState.svelte';
-  import Section from '$lib/components/Dashboard/Section.svelte';
+  import Section from '$lib/components/Section.svelte';
   import WorkstreamCard from '$lib/components/WorkstreamCard/index.svelte';
   import { currencyFormat } from '$lib/utils/format';
   import {

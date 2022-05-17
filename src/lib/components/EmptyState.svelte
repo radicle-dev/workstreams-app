@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
 
   import Button from 'radicle-design-system/Button.svelte';
-  import Emoji from './Emoji.svelte';
+  import Emoji from 'radicle-design-system/Emoji.svelte';
   import Tooltip from 'radicle-design-system/Tooltip.svelte';
 
   const dispatch = createEventDispatcher();

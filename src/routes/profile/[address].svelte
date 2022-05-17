@@ -29,7 +29,7 @@
   import type { Workstream } from '$lib/stores/workstreams/types';
 
   import UserBig from '$components/UserBig.svelte';
-  import Section from '$components/Dashboard/Section.svelte';
+  import Section from '$lib/components/Section.svelte';
   import ExploreCard from '$components/ExploreCard.svelte';
   import EmptyState from '$components/EmptyState.svelte';
 
