@@ -12,7 +12,7 @@
     );
 
     return {
-      status: createdWorkstreams.ok && assignedWorkstreams.ok ? 200 : 500,
+      // status: createdWorkstreams.ok || assignedWorkstreams.ok ? 200 : 500,
       props: {
         createdWorkstreams: createdWorkstreams.ok && createdWorkstreams.data,
         assignedWorkstreams: assignedWorkstreams.ok && assignedWorkstreams.data,
@@ -24,12 +24,14 @@
 </script>
 
 <script lang="ts">
+  import { goto } from '$app/navigation';
   import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
   import type { Workstream } from '$lib/stores/workstreams/types';
 
   import UserBig from '$components/UserBig.svelte';
   import Section from '$components/Dashboard/Section.svelte';
-  import ExploreCard from '$lib/components/ExploreCard.svelte';
+  import ExploreCard from '$components/ExploreCard.svelte';
+  import EmptyState from '$components/EmptyState.svelte';
 
   export let createdWorkstreams: Workstream[] = [];
   export let assignedWorkstreams: Workstream[] = [];
@@ -43,23 +45,36 @@
 <div class="container">
   <UserBig {address} />
   <div class="overview">
-    {#if assignedWorkstreams.length > 0}
-      <Section title="Assigned workstreams" count={assignedWorkstreams.length}>
-        <div slot="content" class="workstreams">
-          {#each assignedWorkstreams as workstream}
-            <ExploreCard {workstream} />
-          {/each}
-        </div>
-      </Section>
-    {/if}
-    {#if createdWorkstreams.length > 0}
-      <Section title="Created workstreams" count={createdWorkstreams.length}>
-        <div slot="content" class="workstreams">
-          {#each createdWorkstreams as workstream}
-            <ExploreCard {workstream} />
-          {/each}
-        </div>
-      </Section>
+    {#if !assignedWorkstreams && !createdWorkstreams}
+      <EmptyState
+        emoji="👀"
+        headerText="Nothing to see here"
+        text="This address has no associated workstreams"
+        primaryActionText="Go explore"
+        on:primaryAction={() => goto(`/`)}
+      />
+    {:else}
+      {#if assignedWorkstreams.length > 0}
+        <Section
+          title="Assigned workstreams"
+          count={assignedWorkstreams.length}
+        >
+          <div slot="content" class="workstreams">
+            {#each assignedWorkstreams as workstream}
+              <ExploreCard {workstream} />
+            {/each}
+          </div>
+        </Section>
+      {/if}
+      {#if createdWorkstreams.length > 0}
+        <Section title="Created workstreams" count={createdWorkstreams.length}>
+          <div slot="content" class="workstreams">
+            {#each createdWorkstreams as workstream}
+              <ExploreCard {workstream} />
+            {/each}
+          </div>
+        </Section>
+      {/if}
     {/if}
   </div>
 </div>
