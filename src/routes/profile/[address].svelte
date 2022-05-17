@@ -2,21 +2,22 @@
   /* eslint-disable */
   /** @type {import('./[slug]').Load} */
   export async function load({ params, fetch }) {
-    const createdWorkstreams = await workstreamsStore.getWorkstreams(
-      { createdBy: params.address },
-      fetch
-    );
-    const assignedWorkstreams = await workstreamsStore.getWorkstreams(
-      { assignedTo: params.address },
-      fetch
-    );
+    const fetches = [
+      workstreamsStore.getWorkstreams(
+        { createdBy: params.address.toLowerCase() },
+        fetch
+      ),
+      workstreamsStore.getWorkstreams(
+        { assignedTo: params.address.toLowerCase() },
+        fetch
+      )
+    ];
+    const responses = await Promise.all(fetches);
 
     return {
-      // status: createdWorkstreams.ok || assignedWorkstreams.ok ? 200 : 500,
       props: {
-        createdWorkstreams: createdWorkstreams.ok && createdWorkstreams.data,
-        assignedWorkstreams: assignedWorkstreams.ok && assignedWorkstreams.data,
-        address: params.address
+        createdWorkstreams: responses[0].ok && responses[0].data,
+        assignedWorkstreams: responses[1].ok && responses[1].data
       }
     };
   }
@@ -25,6 +26,7 @@
 
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
   import type { Workstream } from '$lib/stores/workstreams/types';
 
@@ -35,7 +37,6 @@
 
   export let createdWorkstreams: Workstream[] = [];
   export let assignedWorkstreams: Workstream[] = [];
-  export let address: string;
 </script>
 
 <svelte:head>
@@ -43,7 +44,7 @@
 </svelte:head>
 
 <div class="container">
-  <UserBig {address} />
+  <UserBig address={$page.params.address} />
   <div class="overview">
     {#if !assignedWorkstreams && !createdWorkstreams}
       <EmptyState
@@ -54,7 +55,7 @@
         on:primaryAction={() => goto(`/`)}
       />
     {:else}
-      {#if assignedWorkstreams.length > 0}
+      {#if assignedWorkstreams?.length > 0}
         <Section
           title="Assigned workstreams"
           count={assignedWorkstreams.length}
@@ -66,7 +67,7 @@
           </div>
         </Section>
       {/if}
-      {#if createdWorkstreams.length > 0}
+      {#if createdWorkstreams?.length > 0}
         <Section title="Created workstreams" count={createdWorkstreams.length}>
           <div slot="content" class="workstreams">
             {#each createdWorkstreams as workstream}
