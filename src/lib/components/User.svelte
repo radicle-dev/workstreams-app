@@ -14,6 +14,7 @@
   export let showAddress = true;
   export let address: string;
   export let style: string = undefined;
+  let hover: boolean = false;
 
   let uriData: string;
   $: ensName = $ensNames[address]?.name;
@@ -46,7 +47,11 @@
     class="container"
     {style}
     on:click|stopPropagation={() => goto(url)}
-    on:mouseenter={() => prefetch(url)}
+    on:mouseenter={() => {
+      prefetch(url);
+      hover = true;
+    }}
+    on:mouseleave={() => (hover = false)}
   >
     {#if showAvatar}
       {#key avatarUrl}
@@ -61,7 +66,11 @@
     {/if}
     {#if showAddress}
       {#key ensName}
-        <p transition:fade={{ duration: 200 }} class="address typo-text-bold">
+        <p
+          transition:fade={{ duration: 200 }}
+          class="address typo-text-bold"
+          class:hover
+        >
           {toDisplay}
         </p>
       {/key}
@@ -83,6 +92,7 @@
     gap: 0.5rem;
     position: relative;
     grid-template-columns: 1.5rem auto;
+    cursor: pointer;
   }
   .avatar {
     width: 1.5rem;
@@ -100,10 +110,15 @@
     height: 1.5rem;
     opacity: 0;
   }
+
   .address {
     position: absolute;
     left: 2rem;
     white-space: nowrap;
+  }
+
+  .address.hover {
+    text-decoration: underline;
   }
 
   .address-placeholder {
