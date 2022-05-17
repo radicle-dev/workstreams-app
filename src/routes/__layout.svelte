@@ -65,6 +65,11 @@
       </FlyTransition>
     </main>
   </div>
+  {#if $walletStore.chainId === 4}
+    <div class="network"><span />{$walletStore.provider.network.name}</div>
+  {:else if $walletStore.chainId !== 1}
+    <div class="network error"><span />Unsupported Network</div>
+  {/if}
 {/if}
 
 <style>
@@ -75,6 +80,36 @@
     margin: 0 auto;
     padding: 1.5rem;
     transition: opacity 0.3s;
+  }
+
+  .network {
+    position: fixed;
+    background-color: var(--color-caution-level-1);
+    color: var(--color-caution);
+    border-radius: 2rem;
+    padding: 0.5rem 1rem;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .error {
+    background-color: var(--color-negative-level-1);
+    color: var(--color-negative);
+  }
+
+  .network > span {
+    display: block;
+    height: 0.375rem;
+    width: 0.375rem;
+    border-radius: 50%;
+    background-color: var(--color-caution);
+  }
+
+  .error > span {
+    background-color: var(--color-negative);
   }
 
   .wrapper.loading {
