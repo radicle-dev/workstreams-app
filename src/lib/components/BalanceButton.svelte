@@ -83,7 +83,7 @@
       <div class="info">
         <InfoCircle />
         <p>
-          While you’re earning in real-time, your collectable amount is updated
+          While you’re earning in real-time, your withdrawable amount is updated
           once a week.
           {#if nextCycleStart}
             It will update next on {Intl.DateTimeFormat('en-US', {
