@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
+  import Emoji from 'radicle-design-system/Emoji.svelte';
   import User from '$components/User.svelte';
   import Card from '$components/Card.svelte';
   import drips from '$lib/stores/drips';
@@ -82,7 +83,7 @@
 </script>
 
 <div>
-  <span class="emoji">💸</span>
+  <Emoji emoji="💸" size="large" />
   <h1>Set up payment stream</h1>
   <p>Here's the drips config we're gonna set up.</p>
   <form>
@@ -141,10 +142,6 @@
   h1 {
     margin: 1rem 0 2rem;
     color: var(--color-foreground);
-  }
-
-  .emoji {
-    font-size: 2rem;
   }
 
   form > * {

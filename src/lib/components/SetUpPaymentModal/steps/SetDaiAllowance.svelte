@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import drips from '$lib/stores/drips';
+  import Emoji from 'radicle-design-system/Emoji.svelte';
   import Spinner from 'radicle-design-system/Spinner.svelte';
   import { onMount } from 'svelte';
   import ButtonRow from '../components/ButtonRow.svelte';
@@ -35,7 +36,7 @@
 </script>
 
 <div>
-  <span class="emoji">💸</span>
+  <Emoji emoji="💸" size="large" />
   <h1>Grant permissions</h1>
   {#if approvalGranted === false}
     You need to allow the Drips contract to spend your DAI.
@@ -53,9 +54,5 @@
   h1 {
     margin: 1rem 0 2rem;
     color: var(--color-foreground);
-  }
-
-  .emoji {
-    font-size: 2rem;
   }
 </style>

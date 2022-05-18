@@ -9,6 +9,7 @@
 
   import Modal from '$components/Modal.svelte';
   import Button from 'radicle-design-system/Button.svelte';
+  import Emoji from 'radicle-design-system/Emoji.svelte';
   import Card from '$components/Card.svelte';
   import TitleMeta from '$components/TitleMeta.svelte';
   import TimeRate from '$components/TimeRate.svelte';
@@ -74,7 +75,7 @@
 
 <Modal>
   <div slot="body">
-    <span class="emoji">👔</span>
+    <Emoji emoji="👔" size="large" />
     <h1>Workstream application</h1>
     <div class="input-with-label">
       <h4>Applying to</h4>
@@ -147,9 +148,6 @@
 
   h4 {
     color: var(--color-foreground-level-6);
-  }
-  .emoji {
-    font-size: 2rem;
   }
 
   .input-with-label {
