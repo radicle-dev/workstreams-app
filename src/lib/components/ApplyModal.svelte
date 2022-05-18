@@ -2,7 +2,10 @@
   import { utils } from 'ethers';
 
   import * as modal from '$lib/utils/modal';
-  import type { Workstream } from '$lib/stores/workstreams/types';
+  import type {
+    ApplicationInput,
+    Workstream
+  } from '$lib/stores/workstreams/types';
 
   import Modal from '$components/Modal.svelte';
   import Button from 'radicle-design-system/Button.svelte';
@@ -13,6 +16,7 @@
   import TextInput from '$components/TextInput.svelte';
   import Dropdown from 'radicle-design-system/Dropdown.svelte';
   import { weiToDai } from '$lib/utils/format';
+  import { getConfig } from '$lib/config';
 
   export let workstream: Workstream;
 
@@ -41,31 +45,29 @@
     const weiPerDay = utils.parseUnits(daiPerDay.toString()).toBigInt();
     const weiPerSecond = weiPerDay / BigInt(86400);
 
-    console.log(daiPerDay);
+    try {
+      await fetch(
+        `${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify({
+            letter: applicationText,
+            ratePerSecond:
+              weiPerSecond !== workstream.ratePerSecond.wei
+                ? {
+                    wei: weiPerSecond.toString(),
+                    currency: 'dai'
+                  }
+                : undefined
+          } as ApplicationInput)
+        }
+      );
+    } catch (e) {
+      return;
+    }
 
-    // try {
-    //   await fetch(
-    //     `${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`,
-    //     {
-    //       method: 'POST',
-    //       credentials: 'include',
-    //       body: JSON.stringify({
-    //         letter: applicationText,
-    //         ratePerSecond:
-    //           weiPerSecond !== workstream.ratePerSecond.wei
-    //             ? {
-    //                 wei: weiPerSecond.toString(),
-    //                 currency: 'dai'
-    //               }
-    //             : undefined
-    //       } as ApplicationInput)
-    //     }
-    //   );
-    // } catch (e) {
-    //   return;
-    // }
-
-    // modal.hide();
+    modal.hide();
   }
 </script>
 
