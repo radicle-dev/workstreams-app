@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as modal from '$lib/utils/modal';
   import Modal from '$components/Modal.svelte';
+  import Emoji from 'radicle-design-system/Emoji.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import Dropdown from 'radicle-design-system/Dropdown.svelte';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
@@ -64,7 +65,7 @@
 
 <Modal>
   <div slot="body">
-    <span class="emoji">👔</span>
+    <Emoji emoji="👔" size="large" />
     <h1>Create a Workstream</h1>
     <form>
       <div class="input-with-label">
@@ -137,9 +138,6 @@
 
   h4 {
     color: var(--color-foreground-level-6);
-  }
-  .emoji {
-    font-size: 2rem;
   }
 
   .input-with-label {
