@@ -9,7 +9,15 @@
   const clickOutside = () => {
     modal.hide();
   };
+
+  const pressEscapeKey = (event) => {
+    if (event.key === 'Escape') {
+      modal.hide();
+    }
+  };
 </script>
+
+<svelte:window on:keydown={pressEscapeKey} />
 
 {#if store !== null}
   <div class="modal-layout" data-cy="modal-layout">

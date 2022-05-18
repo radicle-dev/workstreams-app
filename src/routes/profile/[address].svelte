@@ -39,15 +39,17 @@
   export let createdWorkstreams: Workstream[] = [];
   export let assignedWorkstreams: Workstream[] = [];
 
-  const formatAddress = (addr: string) => {
-    if (addr.length > 10) {
-      return (
-        addr.substring(0, 4) +
-        ' – ' +
-        addr.substring(addr.length - 4, addr.length)
-      );
-    } else {
-      return addr;
+  const formatAddress = (addr?: string | undefined) => {
+    if (addr) {
+      if (addr.length > 10) {
+        return (
+          addr.substring(0, 4) +
+          ' – ' +
+          addr.substring(addr.length - 4, addr.length)
+        );
+      } else {
+        return addr;
+      }
     }
   };
 </script>

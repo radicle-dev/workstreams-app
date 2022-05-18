@@ -103,6 +103,7 @@
   .owner {
     display: flex;
     align-items: center;
+    user-select: none;
   }
 
   .owner > span {
