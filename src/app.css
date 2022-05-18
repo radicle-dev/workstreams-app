@@ -1,8 +1,8 @@
-@import '../static/styles/reset.css';
-@import '../static/styles/global.css';
-@import '../static/styles/colors.css';
-@import '../static/styles/elevation.css';
-@import '../static/styles/typography.css';
+@import 'radicle-design-system/static/reset.css';
+@import 'radicle-design-system/static/global.css';
+@import 'radicle-design-system/static/colors.css';
+@import 'radicle-design-system/static/elevation.css';
+@import 'radicle-design-system/static/typography.css';
 
 /* All design system style overrides go here. */
 html,

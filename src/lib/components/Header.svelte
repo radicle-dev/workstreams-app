@@ -128,7 +128,7 @@
     top: 0;
     left: 0;
     right: 0;
-    padding: 1rem 2rem;
+    padding: 1rem;
   }
 
   header.hide {

@@ -4,17 +4,13 @@
   import { createIcon } from 'radicle-design-system/lib/blockies.ts';
   import { fade } from 'svelte/transition';
 
-  import { goto, prefetch } from '$app/navigation';
   import { onMount } from 'svelte';
   import { formatAddress } from '$lib/utils/format';
   import ensNames from '$lib/stores/ensNames';
   import { walletStore } from '$lib/stores/wallet/wallet';
 
-  export let showAvatar = true;
-  export let showAddress = true;
   export let address: string;
   export let style: string = undefined;
-  let hover: boolean = false;
 
   let uriData: string;
   $: ensName = $ensNames[address]?.name;
@@ -38,66 +34,47 @@
       scale: 16
     }).toDataURL();
   };
-
-  $: url = `/profile/${address}`;
 </script>
 
 {#if address}
-  <div
-    class="container"
-    {style}
-    on:click|stopPropagation={() => goto(url)}
-    on:mouseenter={() => {
-      prefetch(url);
-      hover = true;
-    }}
-    on:mouseleave={() => (hover = false)}
-  >
-    {#if showAvatar}
-      {#key avatarUrl}
-        <img
-          transition:fade={{ duration: 200 }}
-          class="avatar"
-          src={avatarUrl || uriData}
-          alt="user-avatar"
-        />
-      {/key}
-      <div class="avatar-placeholder" />
-    {/if}
-    {#if showAddress}
-      {#key ensName}
-        <p
-          transition:fade={{ duration: 200 }}
-          class="address typo-text-bold"
-          class:hover
-        >
-          {toDisplay}
-        </p>
-      {/key}
-      <!--
+  <div class="container" {style}>
+    {#key avatarUrl}
+      <img
+        transition:fade={{ duration: 200 }}
+        class="avatar"
+        src={avatarUrl || uriData}
+        alt="user-avatar"
+      />
+    {/key}
+    <div class="avatar-placeholder" />
+    {#key ensName}
+      <h2 transition:fade={{ duration: 200 }} class="address">
+        {toDisplay}
+      </h2>
+    {/key}
+    <!--
         Placeholder without absolute position to ensure that the component
         has the right width.
       -->
-      <p class="address-placeholder typo-text-bold">
-        {toDisplay}
-      </p>
-    {/if}
+    <h2 class="address-placeholder">
+      {toDisplay}
+    </h2>
   </div>
 {/if}
 
 <style>
   .container {
-    height: 1.5rem;
+    height: 3rem;
     display: flex;
-    gap: 0.5rem;
+    gap: 1rem;
     position: relative;
-    grid-template-columns: 1.5rem auto;
-    cursor: pointer;
+    grid-template-columns: 3rem auto;
+    align-items: center;
   }
   .avatar {
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 0.75rem;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
     user-select: none;
     top: 0;
     left: 0;
@@ -106,19 +83,14 @@
   }
 
   .avatar-placeholder {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 3rem;
+    height: 3rem;
     opacity: 0;
   }
-
   .address {
     position: absolute;
-    left: 2rem;
+    left: 4rem;
     white-space: nowrap;
-  }
-
-  .address.hover {
-    text-decoration: underline;
   }
 
   .address-placeholder {

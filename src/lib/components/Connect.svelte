@@ -40,11 +40,6 @@
     <div>
       <Button variant="outline" on:mouseenter={() => (hover = true)}>
         <User address={$authStore.address} />
-        {#if $walletStore.chainId === 4}
-          <div class="network">⚠️ {$walletStore.provider.network.name}</div>
-        {:else if $walletStore.chainId !== 1}
-          <div class="network">⚠️ Unsupported Network</div>
-        {/if}
       </Button>
     </div>
   {:else if locked}
@@ -65,14 +60,6 @@
     position: relative;
   }
 
-  .network {
-    display: flex;
-    padding: 0 0.5rem;
-    background-color: var(--color-caution-level-1);
-    color: var(--color-caution-level-6);
-    height: 1.5rem;
-    border-radius: 0.75rem;
-  }
   .log-out-overlay {
     position: absolute;
     top: 0;
