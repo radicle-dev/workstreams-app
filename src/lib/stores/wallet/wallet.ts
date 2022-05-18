@@ -122,10 +122,9 @@ export const walletStore = (() => {
       ]
     });
 
-    const accounts: string[] = await wd.provider.send(
-      'eth_requestAccounts',
-      []
-    );
+    const accounts: string[] = await window.ethereum.request({
+      method: 'eth_accounts'
+    });
 
     const chainId: string = await window.ethereum.request({
       method: 'eth_chainId'
