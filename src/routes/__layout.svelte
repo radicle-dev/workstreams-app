@@ -1,9 +1,3 @@
-<script context="module">
-  /* eslint-disable */
-  export const load = async ({ url }) => ({ props: { url } });
-  /* eslint-enable */
-</script>
-
 <script lang="ts">
   import { browser } from '$app/env';
 
@@ -13,8 +7,6 @@
   import { walletStore } from '$lib/stores/wallet/wallet';
   import { onMount } from 'svelte';
   import '../app.css';
-
-  export let url: string;
 
   enum Theme {
     DARK = 'dark',
