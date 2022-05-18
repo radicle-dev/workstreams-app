@@ -10,5 +10,4 @@ set -Eeou pipefail
 
 echo "Installing Radicle Design System assets"
 
-cp ./node_modules/radicle-design-system/static/*.css ./static/styles
 cp ./node_modules/radicle-design-system/static/fonts/*.otf ./static/fonts
