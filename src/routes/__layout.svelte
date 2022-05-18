@@ -63,11 +63,9 @@
 
 <style>
   .wrapper {
-    height: 100vh;
     max-width: 90rem;
-    min-width: 40rem;
     margin: 0 auto;
-    padding: 1.5rem;
+    padding: 6rem 1rem 3rem 1rem;
     transition: opacity 0.3s;
   }
 
@@ -108,6 +106,5 @@
   main {
     display: flex;
     flex-direction: column;
-    margin: 1rem 0 4rem;
   }
 </style>
