@@ -1,4 +1,3 @@
-import { browser } from '$app/env';
 import type { Block } from '@ethersproject/abstract-provider';
 import { get, writable } from 'svelte/store';
 import type { DripsUpdated_address_uint256_uint128_tuple_array_Event } from './drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
@@ -6,6 +5,7 @@ import { walletStore } from './wallet/wallet';
 import drips from './drips/index';
 import { Currency, WorkstreamState, type Money } from './workstreams/types';
 import { workstreamsStore } from './workstreams/workstreams';
+import { browser } from '$app/env';
 
 interface DrippingEventWrapper {
   event: DripsUpdated_address_uint256_uint128_tuple_array_Event;
@@ -67,6 +67,12 @@ export default (() => {
     );
 
     const currentCollectable = await drips.getCollectable();
+    const currentAddress = get(walletStore).accounts[0];
+
+    // Ensure all workstreams assigned to user are in local state
+    await workstreamsStore.getWorkstreams({
+      assignedTo: currentAddress
+    });
 
     internal.set({
       currentCycleStart,
