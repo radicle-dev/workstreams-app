@@ -2,10 +2,7 @@
   import { utils } from 'ethers';
 
   import * as modal from '$lib/utils/modal';
-  import type {
-    ApplicationInput,
-    Workstream
-  } from '$lib/stores/workstreams/types';
+  import type { Workstream } from '$lib/stores/workstreams/types';
 
   import Modal from '$components/Modal.svelte';
   import Button from 'radicle-design-system/Button.svelte';
@@ -15,8 +12,7 @@
   import Apply from 'radicle-design-system/icons/Ledger.svelte';
   import TextInput from '$components/TextInput.svelte';
   import Dropdown from 'radicle-design-system/Dropdown.svelte';
-  import { getConfig } from '$lib/config';
-  import { currencyFormat } from '$lib/utils/format';
+  import { weiToDai } from '$lib/utils/format';
 
   export let workstream: Workstream;
 
@@ -28,9 +24,9 @@
   ];
 
   let applicationText: string;
-  let duration = `${workstream.durationDays}`;
+  let duration = workstream.durationDays;
   let durationUnit: string = durationOptions[0].value;
-  let total = currencyFormat(workstream.total);
+  let total = weiToDai(workstream.total.wei);
 
   $: canSubmit = [applicationText, total, duration, durationUnit].every(
     (v) => v
@@ -41,34 +37,35 @@
   async function createApplication() {
     creatingApplication = true;
 
-    const daiPerDay =
-      (parseInt(total) / parseInt(duration)) * parseInt(durationUnit);
+    const daiPerDay = total / (duration * parseInt(durationUnit));
     const weiPerDay = utils.parseUnits(daiPerDay.toString()).toBigInt();
     const weiPerSecond = weiPerDay / BigInt(86400);
 
-    try {
-      await fetch(
-        `${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          body: JSON.stringify({
-            letter: applicationText,
-            ratePerSecond:
-              weiPerSecond !== workstream.ratePerSecond.wei
-                ? {
-                    wei: weiPerSecond.toString(),
-                    currency: 'dai'
-                  }
-                : undefined
-          } as ApplicationInput)
-        }
-      );
-    } catch (e) {
-      return;
-    }
+    console.log(daiPerDay);
 
-    modal.hide();
+    // try {
+    //   await fetch(
+    //     `${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`,
+    //     {
+    //       method: 'POST',
+    //       credentials: 'include',
+    //       body: JSON.stringify({
+    //         letter: applicationText,
+    //         ratePerSecond:
+    //           weiPerSecond !== workstream.ratePerSecond.wei
+    //             ? {
+    //                 wei: weiPerSecond.toString(),
+    //                 currency: 'dai'
+    //               }
+    //             : undefined
+    //       } as ApplicationInput)
+    //     }
+    //   );
+    // } catch (e) {
+    //   return;
+    // }
+
+    // modal.hide();
   }
 </script>
 
@@ -100,13 +97,13 @@
         <div class="inner">
           <div class="input-with-label payout">
             <h4>Total Payout</h4>
-            <TextInput bind:value={total} placeholder="0" suffix="DAI" />
+            <TextInput bind:value={total} number placeholder="0" suffix="DAI" />
           </div>
           <div class="input-with-label duration">
             <h4>Duration</h4>
             <div class="input-group">
               <div class="number">
-                <TextInput bind:value={duration} placeholder="0" />
+                <TextInput bind:value={duration} number placeholder="0" />
               </div>
               <div class="unit">
                 <Dropdown bind:value={durationUnit} options={durationOptions} />
@@ -174,7 +171,7 @@
   }
 
   .duration .number {
-    width: 4rem;
+    width: 5rem;
   }
 
   .duration .unit {
