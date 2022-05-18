@@ -52,7 +52,9 @@ export const walletStore = (() => {
       parsedChainId
     );
 
-    const accounts: string[] = await provider.send('eth_requestAccounts', []);
+    const accounts: string[] = await window.ethereum.request({
+      method: 'eth_accounts'
+    });
 
     if (accounts.length > 0) {
       set({
