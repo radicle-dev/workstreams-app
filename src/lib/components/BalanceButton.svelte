@@ -7,8 +7,6 @@
   import drips from '$lib/stores/drips';
   import { currencyFormat } from '$lib/utils/format';
   import { onMount } from 'svelte';
-  import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
-  import { walletStore } from '$lib/stores/wallet/wallet';
 
   $: estimate =
     $balanceEstimates.totalBalance !== undefined &&
