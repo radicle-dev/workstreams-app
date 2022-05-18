@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { fly } from 'svelte/transition';
   import { flip } from 'svelte/animate';
   import Spinner from 'radicle-design-system/Spinner.svelte';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
@@ -179,13 +178,9 @@
 
 <div class="container">
   {#if $authStore.authenticated && $walletStore.connected}
-    <div transition:fly={{ y: 10, duration: 300 }} class="sections">
+    <div class="sections">
       {#each Object.keys(sections).filter((sn) => !!sections[sn].display) as sectionName (sectionName)}
-        <div
-          class="section"
-          animate:flip={{ duration: 300 }}
-          transition:fly={{ y: 10, duration: 300 }}
-        >
+        <div class="section">
           <Section
             title={sections[sectionName].title}
             count={sections[sectionName].workstreams.length}
@@ -210,13 +205,13 @@
         </div>
       {/each}
       {#if loading}
-        <div transition:fly={{ y: 10, duration: 300 }} class="spinner">
+        <div class="spinner">
           <Spinner />
         </div>
       {/if}
     </div>
   {:else}
-    <div transition:fly={{ y: 10, duration: 300 }} class="empty-wrapper">
+    <div class="empty-wrapper">
       <EmptyState
         headerText="Sign in to view your Workstreams"
         text="This is where the Workstreams you created or are contributing to show up."

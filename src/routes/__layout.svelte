@@ -10,7 +10,6 @@
   import { navigating } from '$app/stores';
   import Header from '$components/Header.svelte';
   import ModalLayout from '$components/ModalLayout.svelte';
-  import FlyTransition from '$lib/components/FlyTransition.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import { onMount } from 'svelte';
   import '../app.css';
@@ -60,9 +59,7 @@
   <div class="wrapper" class:loading={$navigating}>
     <Header />
     <main>
-      <FlyTransition {url}>
-        <slot />
-      </FlyTransition>
+      <slot />
     </main>
   </div>
   {#if $walletStore.chainId === 4}
@@ -115,6 +112,7 @@
   .wrapper.loading {
     opacity: 0.3;
   }
+
   main {
     display: flex;
     flex-direction: column;
