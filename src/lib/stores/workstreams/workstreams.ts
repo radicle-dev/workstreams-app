@@ -17,6 +17,7 @@ import type {
   DripsAccount,
   DripsAccountVariables
 } from '$lib/api/__generated__/DripsAccount';
+import connectedAndLoggedIn from '../connectedAndLoggedIn';
 
 const reviver: (key: string, value: unknown) => unknown = (key, value) => {
   let output = value;
@@ -56,12 +57,18 @@ export const workstreamsStore = (() => {
   const store = writable<WorkstreamsState>({});
 
   async function enrich(item: Workstream): Promise<EnrichedWorkstream> {
-    if (item.state === WorkstreamState.ACTIVE) {
+    const ws = get(walletStore);
+    const loggedIn = get(connectedAndLoggedIn);
+
+    if (
+      item.state === WorkstreamState.ACTIVE &&
+      loggedIn &&
+      (ws.accounts[0] === item.creator ||
+        ws.accounts[0] === item.acceptedApplication)
+    ) {
       const { id, creator, acceptedApplication: assignee, dripsData } = item;
 
       if (!dripsData) throw new Error(`No drips data for ws ${id}`);
-
-      const ws = get(walletStore);
 
       const dripsAccount = (
         await query<DripsAccount, DripsAccountVariables>({

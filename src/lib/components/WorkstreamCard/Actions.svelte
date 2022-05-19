@@ -20,8 +20,6 @@
   let workstream = enrichedWorkstream.data;
   $: workstream = enrichedWorkstream.data;
 
-  console.log(workstream);
-
   let creator: boolean =
     $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
   let assignee: boolean =
