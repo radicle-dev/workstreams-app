@@ -76,6 +76,7 @@
         rightContainerWidth ? `${rightContainerWidth}px` : 'auto'
       };`}
       type="number"
+      min="0"
       class:invalid={validationState.type === 'invalid'}
       data-cy={dataCy}
       {placeholder}

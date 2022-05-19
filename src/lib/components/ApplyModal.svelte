@@ -9,14 +9,15 @@
 
   import Modal from '$components/Modal.svelte';
   import Button from 'radicle-design-system/Button.svelte';
+  import Emoji from 'radicle-design-system/Emoji.svelte';
   import Card from '$components/Card.svelte';
   import TitleMeta from '$components/TitleMeta.svelte';
   import TimeRate from '$components/TimeRate.svelte';
   import Apply from 'radicle-design-system/icons/Ledger.svelte';
   import TextInput from '$components/TextInput.svelte';
   import Dropdown from 'radicle-design-system/Dropdown.svelte';
+  import { weiToDai } from '$lib/utils/format';
   import { getConfig } from '$lib/config';
-  import { currencyFormat } from '$lib/utils/format';
 
   export let workstream: Workstream;
 
@@ -28,9 +29,9 @@
   ];
 
   let applicationText: string;
-  let duration = `${workstream.durationDays}`;
+  let duration = workstream.durationDays;
   let durationUnit: string = durationOptions[0].value;
-  let total = currencyFormat(workstream.total);
+  let total = weiToDai(workstream.total.wei);
 
   $: canSubmit = [applicationText, total, duration, durationUnit].every(
     (v) => v
@@ -41,8 +42,7 @@
   async function createApplication() {
     creatingApplication = true;
 
-    const daiPerDay =
-      (parseInt(total) / parseInt(duration)) * parseInt(durationUnit);
+    const daiPerDay = total / (duration * parseInt(durationUnit));
     const weiPerDay = utils.parseUnits(daiPerDay.toString()).toBigInt();
     const weiPerSecond = weiPerDay / BigInt(86400);
 
@@ -74,7 +74,7 @@
 
 <Modal>
   <div slot="body">
-    <span class="emoji">👔</span>
+    <Emoji emoji="👔" size="large" />
     <h1>Workstream application</h1>
     <div class="input-with-label">
       <h4>Applying to</h4>
@@ -100,13 +100,13 @@
         <div class="inner">
           <div class="input-with-label payout">
             <h4>Total Payout</h4>
-            <TextInput bind:value={total} placeholder="0" suffix="DAI" />
+            <TextInput bind:value={total} number placeholder="0" suffix="DAI" />
           </div>
           <div class="input-with-label duration">
             <h4>Duration</h4>
             <div class="input-group">
               <div class="number">
-                <TextInput bind:value={duration} placeholder="0" />
+                <TextInput bind:value={duration} number placeholder="0" />
               </div>
               <div class="unit">
                 <Dropdown bind:value={durationUnit} options={durationOptions} />
@@ -148,9 +148,6 @@
   h4 {
     color: var(--color-foreground-level-6);
   }
-  .emoji {
-    font-size: 2rem;
-  }
 
   .input-with-label {
     display: flex;
@@ -174,7 +171,7 @@
   }
 
   .duration .number {
-    width: 4rem;
+    width: 5rem;
   }
 
   .duration .unit {

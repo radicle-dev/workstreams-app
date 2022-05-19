@@ -117,7 +117,7 @@ export const workstreamsStore = (() => {
     } else {
       return {
         ok: false,
-        error: await response.json()
+        error: await response.text()
       };
     }
   }
@@ -162,7 +162,7 @@ export const workstreamsStore = (() => {
     } else {
       return {
         ok: false,
-        error: await response.json()
+        error: await response.text()
       };
     }
   }

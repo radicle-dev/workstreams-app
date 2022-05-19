@@ -107,8 +107,6 @@
   </div>
 </header>
 
-<div class="spacer" />
-
 <style>
   header {
     top: 0;
@@ -148,10 +146,6 @@
   .buttons {
     display: flex;
     gap: 0.5rem;
-  }
-
-  .spacer {
-    height: 6rem;
   }
 
   nav {

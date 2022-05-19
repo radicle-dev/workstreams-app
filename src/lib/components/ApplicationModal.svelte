@@ -14,6 +14,7 @@
   import TitleMeta from '$components/TitleMeta.svelte';
   import TimeRate from '$components/TimeRate.svelte';
   import Rate from '$components/Rate.svelte';
+  import Emoji from 'radicle-design-system/Emoji.svelte';
   import ThumbsDown from 'radicle-design-system/icons/ThumbsDown.svelte';
   import ThumbsUp from 'radicle-design-system/icons/ThumbsUp.svelte';
   import Spinner from 'radicle-design-system/Spinner.svelte';
@@ -77,7 +78,7 @@
 
 <Modal>
   <div slot="body">
-    <span class="emoji">👔</span>
+    <Emoji emoji="👔" size="large" />
     <h1>Workstream application</h1>
     {#if resolvedApplication}
       <p class="applicant typo-text-bold">
@@ -177,10 +178,6 @@
   h4 {
     color: var(--color-foreground-level-6);
   }
-  .emoji {
-    font-size: 2rem;
-  }
-
   .input-with-label {
     display: flex;
     flex-direction: column;

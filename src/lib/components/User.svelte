@@ -14,7 +14,9 @@
   export let showAddress = true;
   export let address: string;
   export let style: string = undefined;
-  let hover: boolean = false;
+  let hover = false;
+
+  let firstRender = true;
 
   let uriData: string;
   $: ensName = $ensNames[address]?.name;
@@ -39,6 +41,8 @@
     }).toDataURL();
   };
 
+  onMount(() => (firstRender = false));
+
   $: url = `/profile/${address}`;
 </script>
 
@@ -56,7 +60,7 @@
     {#if showAvatar}
       {#key avatarUrl}
         <img
-          transition:fade={{ duration: 200 }}
+          in:fade={{ duration: firstRender ? 0 : 200 }}
           class="avatar"
           src={avatarUrl || uriData}
           alt="user-avatar"
@@ -67,7 +71,7 @@
     {#if showAddress}
       {#key ensName}
         <p
-          transition:fade={{ duration: 200 }}
+          in:fade={{ duration: firstRender ? 0 : 200 }}
           class="address typo-text-bold"
           class:hover
         >

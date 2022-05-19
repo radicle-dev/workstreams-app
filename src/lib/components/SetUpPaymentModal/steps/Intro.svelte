@@ -1,9 +1,10 @@
 <script lang="ts">
+  import Emoji from 'radicle-design-system/Emoji.svelte';
   import ButtonRow from '../components/ButtonRow.svelte';
 </script>
 
 <div>
-  <span class="emoji">💸</span>
+  <Emoji emoji="💸" size="large" />
   <h1>Set up payment stream</h1>
   <div class="left-align">
     <h4>Here's how this works:</h4>
@@ -24,10 +25,6 @@
   h1 {
     margin: 1rem 0 2rem;
     color: var(--color-foreground);
-  }
-
-  .emoji {
-    font-size: 2rem;
   }
 
   li {
