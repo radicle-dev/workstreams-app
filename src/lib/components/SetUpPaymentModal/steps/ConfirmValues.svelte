@@ -47,8 +47,6 @@
   async function setUpPayment() {
     actionInFlight = true;
 
-    console.log(weiPerDay / BigInt(86400));
-
     try {
       const createDripCall = await drips.createDrip(
         application.creator,
