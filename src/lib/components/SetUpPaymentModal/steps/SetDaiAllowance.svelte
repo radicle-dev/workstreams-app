@@ -23,13 +23,20 @@
 
   async function grantPermission() {
     actionInFlight = true;
-    const tx = await drips.approveDaiSpend();
 
-    const waitResult = await tx.wait(1);
+    try {
+      const tx = await drips.approveDaiSpend();
 
-    if (waitResult.status === 1) {
-      dispatch('continue');
-    } else {
+      const waitFor = async () => {
+        const receipt = await tx.wait(1);
+
+        if (receipt.status === 0) {
+          throw new Error(`TX failed. ${receipt}`);
+        }
+      };
+
+      dispatch('awaitPending', waitFor);
+    } catch {
       actionInFlight = false;
     }
   }
