@@ -1,6 +1,5 @@
 <script lang="ts">
   import { getConfig } from '$lib/config';
-  import type { Workstream, Application } from '$lib/stores/workstreams/types';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import * as modal from '$lib/utils/modal';
@@ -8,8 +7,15 @@
   import ActionRow from './ActionRow.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
   import SetUpPaymentModal from '../SetUpPaymentModal/SetUpPaymentModal.svelte';
+  import type { EnrichedWorkstream } from '$lib/stores/workstreams/workstreams';
+  import type { Application } from '$lib/stores/workstreams/types';
 
-  export let workstream: Workstream;
+  export let enrichedWorkstream: EnrichedWorkstream;
+
+  let workstream = enrichedWorkstream.data;
+  $: workstream = enrichedWorkstream.data;
+
+  console.log(workstream);
 
   let creator: boolean =
     $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];

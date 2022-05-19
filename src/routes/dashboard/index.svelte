@@ -6,7 +6,6 @@
   import { walletStore } from '$lib/stores/wallet/wallet';
   import { authStore } from '$lib/stores/auth/auth';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
-  import { getConfig } from '$lib/config';
 
   import {
     WorkstreamState,
@@ -19,6 +18,7 @@
   import { currencyFormat } from '$lib/utils/format';
   import {
     workstreamsStore,
+    type EnrichedWorkstream,
     type WorkstreamsFilterConfig
   } from '$lib/stores/workstreams/workstreams';
 
@@ -38,12 +38,7 @@
     title: string;
     fetched?: true;
     display?: boolean;
-    workstreams?: Workstream[];
-  }
-
-  function buildUrl(params: { [key: string]: string }) {
-    const paramsString = new URLSearchParams(params).toString();
-    return `${getConfig().API_URL_BASE}/workstreams?${paramsString}`;
+    workstreams?: EnrichedWorkstream[];
   }
 
   /*
@@ -130,7 +125,7 @@
             ...sections[sectionName],
             fetched: true,
             display: response.ok,
-            workstreams: response.ok && response.data
+            workstreams: response.ok && response.enriched
           };
 
           if (
@@ -150,10 +145,10 @@
     });
   }
 
-  function calculateStreamTotal(workstreams: Workstream[]) {
+  function calculateStreamTotal(enrichedWorkstreams: EnrichedWorkstream[]) {
     let totalWeiPerSec = BigInt(0);
-    workstreams.forEach(
-      (ws) => (totalWeiPerSec = totalWeiPerSec + ws.ratePerSecond.wei)
+    enrichedWorkstreams.forEach(
+      (eWs) => (totalWeiPerSec += eWs.onChainData.amtPerSec.wei)
     );
 
     const totalWeiPerDay = totalWeiPerSec * BigInt(86400);
@@ -198,7 +193,7 @@
             </div>
             <div slot="content" class="workstreams">
               {#each sections[sectionName].workstreams as workstream}
-                <WorkstreamCard {workstream} />
+                <WorkstreamCard enrichedWorkstream={workstream} />
               {/each}
             </div>
           </Section>

@@ -1,10 +1,22 @@
 import { get, writable } from 'svelte/store';
 import {
+  Currency,
   WorkstreamState,
+  type Money,
   type Workstream
 } from '$lib/stores/workstreams/types';
 import { getConfig } from '$lib/config';
-import { browser } from '$app/env';
+import query from '$lib/api';
+import type {
+  DripsConfig_dripsConfig_dripsAccount,
+  DripsConfig_dripsConfig_dripsEntries
+} from '$lib/api/__generated__/dripsConfig';
+import { GET_DRIPS_ACCOUNT } from '$lib/api/queries';
+import { walletStore } from '../wallet/wallet';
+import type {
+  DripsAccount,
+  DripsAccountVariables
+} from '$lib/api/__generated__/DripsAccount';
 
 const reviver: (key: string, value: unknown) => unknown = (key, value) => {
   let output = value;
@@ -25,30 +37,76 @@ export interface WorkstreamsFilterConfig {
 }
 
 interface WorkstreamsState {
-  [workstreamId: string]: {
-    fetchedAt: Date;
-    data: Workstream;
-  };
+  [workstreamId: string]: EnrichedWorkstream;
+}
+
+export interface EnrichedWorkstream {
+  fetchedAt: Date;
+  onChainData?: OnChainData;
+  data: Workstream;
+}
+
+export interface OnChainData {
+  amtPerSec: Money;
+  dripsEntries: DripsConfig_dripsConfig_dripsEntries[];
+  dripsAccount: DripsConfig_dripsConfig_dripsAccount;
 }
 
 export const workstreamsStore = (() => {
   const store = writable<WorkstreamsState>({});
 
-  async function pushState(workstreams: Workstream[]) {
+  async function enrich(item: Workstream): Promise<EnrichedWorkstream> {
+    if (item.state === WorkstreamState.ACTIVE) {
+      const { id, creator, acceptedApplication: assignee, dripsData } = item;
+
+      if (!dripsData) throw new Error(`No drips data for ws ${id}`);
+
+      const ws = get(walletStore);
+
+      const dripsAccount = (
+        await query<DripsAccount, DripsAccountVariables>({
+          query: GET_DRIPS_ACCOUNT,
+          variables: {
+            id: `${creator}-${dripsData.accountId}`
+          },
+          chainId: ws.chainId
+        })
+      ).dripsAccount;
+
+      const amtPerSec = {
+        wei: BigInt(
+          dripsAccount.dripsEntries.find(
+            (e) => (e.receiver as string).toLowerCase() === assignee
+          ).amtPerSec
+        ),
+        currency: Currency.DAI
+      };
+
+      return {
+        data: item,
+        fetchedAt: new Date(),
+        onChainData: {
+          amtPerSec,
+          dripsEntries: dripsAccount.dripsEntries,
+          dripsAccount: dripsAccount
+        }
+      };
+    } else {
+      return {
+        data: item,
+        fetchedAt: new Date()
+      };
+    }
+  }
+
+  async function pushState(enrichedWorkstreams: EnrichedWorkstream[]) {
     store.update((v) => {
       let toAppend: WorkstreamsState = {};
 
-      for (const workstream of workstreams) {
-        if (Object.keys(v).find((k) => k === workstream.id)) {
-          continue;
-        }
-
+      for (const enrichedWorkstream of enrichedWorkstreams) {
         toAppend = {
           ...toAppend,
-          [workstream.id]: {
-            fetchedAt: new Date(),
-            data: workstream
-          }
+          [enrichedWorkstream.data.id]: enrichedWorkstream
         };
       }
 
@@ -84,11 +142,15 @@ export const workstreamsStore = (() => {
 
     if (response.status === 200) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream[];
+      const enrichPromises = parsed.map((w) => enrich(w));
 
-      pushState(parsed);
+      const enriched = await Promise.all(enrichPromises);
+
+      pushState(enriched);
 
       return {
         data: parsed,
+        enriched,
         ok: true
       };
     } else {
@@ -108,10 +170,13 @@ export const workstreamsStore = (() => {
     if (response.ok) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream;
 
-      pushState([parsed]);
+      const enriched = await enrich(parsed);
+
+      pushState([enriched]);
 
       return {
         data: parsed,
+        enriched,
         ok: true
       };
     } else {

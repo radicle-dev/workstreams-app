@@ -1,8 +1,8 @@
 import query from '$lib/api';
 import { GET_LAST_DRIP_ENTRY } from '$lib/api/queries';
 import type {
-  lastDripsEntry,
-  lastDripsEntryVariables
+  LastDripsEntry,
+  LastDripsEntryVariables
 } from '$lib/api/__generated__/lastDripsEntry';
 import { BigNumber, ethers, type ContractTransaction } from 'ethers';
 import { utils } from 'ethers';
@@ -134,7 +134,7 @@ export default (() => {
     );
 
     const lastDripsEntry = (
-      await query<lastDripsEntry, lastDripsEntryVariables>({
+      await query<LastDripsEntry, LastDripsEntryVariables>({
         query: GET_LAST_DRIP_ENTRY,
         variables: {
           user: ws.accounts[0]
