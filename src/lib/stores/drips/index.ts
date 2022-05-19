@@ -6,7 +6,7 @@ import type {
 } from '$lib/api/__generated__/lastDripsEntry';
 import { BigNumber, ethers, type ContractTransaction } from 'ethers';
 import { utils } from 'ethers';
-import { get, writable } from 'svelte/store';
+import { get } from 'svelte/store';
 import { walletStore } from '../wallet/wallet';
 import type { Money } from '../workstreams/types';
 import daiInfo from './contracts/Dai';
@@ -30,8 +30,6 @@ export const toDai = (wei: BigNumber, roundTo?: number): string => {
 };
 
 export default (() => {
-  const { subscribe, set, update } = writable();
-
   // TODO: Caching
 
   async function getCycleSecs(): Promise<BigNumber> {

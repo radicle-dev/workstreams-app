@@ -16,7 +16,8 @@ interface BalanceEstimatesState {
   totalBalance: bigint | undefined;
   streams: {
     [activeWorkstreamId: string]: {
-      currentBalance: Money | undefined;
+      currentBalance?: Money;
+      remainingBalance?: Money;
       drippingEvents: DrippingEventWrapper[];
       fromBlock: Block;
     };
@@ -146,10 +147,6 @@ export default (() => {
         streams: {
           ...result?.streams,
           [id]: {
-            currentBalance: {
-              wei: undefined,
-              currency: Currency.DAI
-            },
             drippingEvents,
             fromBlock: block
           }
@@ -178,6 +175,7 @@ export default (() => {
         }
 
         let earned = BigInt(0);
+        let remainingBalance = BigInt(0);
 
         /*
           Iterate over all `dripsUpdated` events associated with the
@@ -208,16 +206,27 @@ export default (() => {
             the balance that the workstream was topped up for at the time
             of the update, we limit the amount earned to the topped-up amount.
           */
-          earned += bigintMin(
+          const earnedDuringUpdate = bigintMin(
             BigInt(updateValidForSecs) *
               dew.event.args.receivers[0].amtPerSec.toBigInt(),
             toppedUpAmount
           );
+
+          earned += earnedDuringUpdate;
+
+          if (!nextDew) {
+            remainingBalance = toppedUpAmount - earnedDuringUpdate;
+          }
         });
 
         vs.streams[wsId].currentBalance = {
           wei: earned,
-          currency: vs.streams[wsId].currentBalance.currency
+          currency: Currency.DAI
+        };
+
+        vs.streams[wsId].remainingBalance = {
+          wei: remainingBalance,
+          currency: Currency.DAI
         };
       }
 

@@ -8,7 +8,12 @@
   import ApplicationModal from '$components/ApplicationModal.svelte';
   import SetUpPaymentModal from '../SetUpPaymentModal/SetUpPaymentModal.svelte';
   import type { EnrichedWorkstream } from '$lib/stores/workstreams/workstreams';
-  import type { Application } from '$lib/stores/workstreams/types';
+  import {
+    WorkstreamState,
+    type Application
+  } from '$lib/stores/workstreams/types';
+  import balanceEstimates from '$lib/stores/balanceEstimates';
+  import { currencyFormat, padFloatString } from '$lib/utils/format';
 
   export let enrichedWorkstream: EnrichedWorkstream;
 
@@ -28,6 +33,10 @@
   let rejectant: boolean =
     $connectedAndLoggedIn &&
     workstream.rejectedApplications?.includes($walletStore.accounts[0]);
+
+  $: remainingBalance =
+    workstream.state === WorkstreamState.ACTIVE &&
+    $balanceEstimates.streams[workstream.id]?.remainingBalance;
 
   async function getApplication(id: string): Promise<Application | null> {
     const url = `${getConfig().API_URL_BASE}/workstreams/${
@@ -66,7 +75,13 @@
     />
   {/if}
 {:else if applicant}
-  {#if rejectant}
+  {#if workstream.state === WorkstreamState.ACTIVE && remainingBalance}
+    <ActionRow
+      leftString={`${padFloatString(
+        currencyFormat(remainingBalance.wei)
+      )} DAI left`}
+    />
+  {:else if rejectant}
     <ActionRow
       leftString="Your application is rejected."
       outlineActionText="View"
