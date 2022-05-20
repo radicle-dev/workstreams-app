@@ -1,9 +1,10 @@
-import { writable } from 'svelte/store';
-import type {
-  Workstream,
-  WorkstreamState
+import { get, writable } from 'svelte/store';
+import {
+  WorkstreamState,
+  type Workstream
 } from '$lib/stores/workstreams/types';
 import { getConfig } from '$lib/config';
+import { browser } from '$app/env';
 
 const reviver: (key: string, value: unknown) => unknown = (key, value) => {
   let output = value;
@@ -23,10 +24,50 @@ export interface WorkstreamsFilterConfig {
   assignedTo: string;
 }
 
-export const workstreamsStore = (() => {
-  const { subscribe } = writable<Workstream[]>([]);
+interface WorkstreamsState {
+  [workstreamId: string]: {
+    fetchedAt: Date;
+    data: Workstream;
+  };
+}
 
-  // TODO: caching
+export const workstreamsStore = (() => {
+  const store = writable<WorkstreamsState>({});
+
+  async function pushState(workstreams: Workstream[]) {
+    store.update((v) => {
+      let toAppend: WorkstreamsState = {};
+
+      for (const workstream of workstreams) {
+        if (Object.keys(v).find((k) => k === workstream.id)) {
+          continue;
+        }
+
+        toAppend = {
+          ...toAppend,
+          [workstream.id]: {
+            fetchedAt: new Date(),
+            data: workstream
+          }
+        };
+      }
+
+      return { ...v, ...toAppend };
+    });
+  }
+
+  function serveFromCache(
+    id: string
+  ): { ok: true; data: Workstream } | undefined {
+    const data = get(store)[id]?.data;
+
+    return data
+      ? {
+          ok: true,
+          data
+        }
+      : undefined;
+  }
 
   async function getWorkstreams(
     filters?: Partial<WorkstreamsFilterConfig>,
@@ -43,6 +84,9 @@ export const workstreamsStore = (() => {
 
     if (response.status === 200) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream[];
+
+      pushState(parsed);
+
       return {
         data: parsed,
         ok: true
@@ -56,11 +100,16 @@ export const workstreamsStore = (() => {
   }
 
   async function getWorkstream(id: string, fetcher?: typeof fetch) {
+    if (serveFromCache(id)) return serveFromCache(id);
+
     const url = `${getConfig().API_URL_BASE}/workstreams/${id}`;
     const response = await _fetch(url, undefined, fetcher);
 
     if (response.ok) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream;
+
+      pushState([parsed]);
+
       return {
         data: parsed,
         ok: true
@@ -91,6 +140,22 @@ export const workstreamsStore = (() => {
     );
 
     if (response.ok) {
+      store.update((v) => {
+        const workstreamInState = v[id];
+
+        if (workstreamInState) {
+          v[id] = {
+            ...v[id],
+            data: {
+              ...v[id].data,
+              state: WorkstreamState.ACTIVE
+            }
+          };
+        }
+
+        return v;
+      });
+
       return {
         ok: true
       };
@@ -114,7 +179,7 @@ export const workstreamsStore = (() => {
   }
 
   return {
-    subscribe,
+    subscribe: store.subscribe,
     getWorkstreams,
     getWorkstream,
     activateWorkstream

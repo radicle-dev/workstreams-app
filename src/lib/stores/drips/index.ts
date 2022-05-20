@@ -31,9 +31,35 @@ export const toDai = (wei: BigNumber, roundTo?: number): string => {
 };
 
 export default (() => {
-  const { subscribe } = writable();
+  const { subscribe, set, update } = writable();
 
   // TODO: Caching
+
+  async function getCycleSecs(): Promise<BigNumber> {
+    const ws = get(walletStore);
+
+    const dripsHub = DaiDripsHubAbi__factory.connect(
+      daiDripsHubInfo(ws.chainId).address,
+      ws.provider.getSigner()
+    );
+
+    return dripsHub.cycleSecs();
+  }
+
+  async function getDripsUpdatedEvents(user?: string, account?: number) {
+    const ws = get(walletStore);
+
+    const dripsHub = DaiDripsHubAbi__factory.connect(
+      daiDripsHubInfo(ws.chainId).address,
+      ws.provider.getSigner()
+    );
+
+    const filter = dripsHub.filters[
+      'DripsUpdated(address,uint256,uint128,(address,uint128)[])'
+    ](user, account);
+
+    return dripsHub.queryFilter(filter);
+  }
 
   async function getAllowance(): Promise<BigNumber> {
     const ws = get(walletStore);
@@ -76,7 +102,7 @@ export default (() => {
     return daiContract.balanceOf(ws.accounts[0]);
   }
 
-  async function getCollectable(): Promise<string> {
+  async function getCollectable(): Promise<bigint> {
     const ws = get(walletStore);
 
     if (!ws.connected) throw new Error('Connect your wallet first.');
@@ -89,7 +115,7 @@ export default (() => {
     );
 
     const rs = await contract.collectable(ws.accounts[0], []);
-    return toDai(rs[0].add(rs[1]));
+    return rs[0].add(rs[1]).toBigInt();
   }
 
   async function createDrip(
@@ -144,8 +170,9 @@ export default (() => {
   }
 
   return {
-    subscribe,
     createDrip,
+    getDripsUpdatedEvents,
+    getCycleSecs,
     getAllowance,
     getDaiBalance,
     approveDaiSpend,

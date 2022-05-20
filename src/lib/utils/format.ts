@@ -48,7 +48,7 @@ export function weiToDai(input: Money | bigint): number {
 
 export function currencyFormat(input: Money | bigint): string {
   const formatter = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 4
+    maximumFractionDigits: 2
   });
 
   let wei = typeof input === 'bigint' ? input : (input as Money).wei;
