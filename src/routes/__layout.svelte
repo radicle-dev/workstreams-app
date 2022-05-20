@@ -6,7 +6,11 @@
   import ModalLayout from '$components/ModalLayout.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import { onMount } from 'svelte';
-  import '../app.css';
+  import 'radicle-design-system/static/reset.css';
+  import 'radicle-design-system/static/global.css';
+  import 'radicle-design-system/static/colors.css';
+  import 'radicle-design-system/static/elevation.css';
+  import 'radicle-design-system/static/typography.css';
 
   enum Theme {
     DARK = 'dark',
@@ -62,6 +66,11 @@
 {/if}
 
 <style>
+  :global(html, body) {
+    /* All design system style overrides go here. */
+    display: block;
+  }
+
   .wrapper {
     max-width: 90rem;
     margin: 0 auto;
