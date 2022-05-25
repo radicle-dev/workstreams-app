@@ -56,6 +56,10 @@ export interface OnChainData {
 export const workstreamsStore = (() => {
   const store = writable<WorkstreamsState>({});
 
+  async function clear() {
+    store.set({});
+  }
+
   async function enrich(item: Workstream): Promise<EnrichedWorkstream> {
     const ws = get(walletStore);
     const loggedIn = get(connectedAndLoggedIn);
@@ -252,6 +256,7 @@ export const workstreamsStore = (() => {
 
   return {
     subscribe: store.subscribe,
+    clear,
     getWorkstreams,
     getWorkstream,
     activateWorkstream
