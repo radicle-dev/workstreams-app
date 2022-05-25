@@ -8,10 +8,7 @@
   import { authStore } from '$lib/stores/auth/auth';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
-  import {
-    WorkstreamState,
-    type Workstream
-  } from '$lib/stores/workstreams/types';
+  import { WorkstreamState } from '$lib/stores/workstreams/types';
 
   import EmptyState from '$lib/components/EmptyState.svelte';
   import Section from '$lib/components/Section.svelte';
