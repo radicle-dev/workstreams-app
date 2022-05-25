@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fly } from 'svelte/transition';
   import { flip } from 'svelte/animate';
   import Spinner from 'radicle-design-system/Spinner.svelte';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
@@ -21,6 +22,7 @@
     type EnrichedWorkstream,
     type WorkstreamsFilterConfig
   } from '$lib/stores/workstreams/workstreams';
+  import { goto } from '$app/navigation';
 
   let locked: boolean;
 
@@ -173,6 +175,10 @@
       locked = false;
     }
   }
+
+  $: sectionsToDisplay = Object.keys(sections).filter(
+    (sn) => !!sections[sn].display
+  );
 </script>
 
 <svelte:head>
@@ -181,9 +187,13 @@
 
 <div class="container">
   {#if $authStore.authenticated && $walletStore.connected}
-    <div class="sections">
-      {#each Object.keys(sections).filter((sn) => !!sections[sn].display) as sectionName (sectionName)}
-        <div class="section">
+    <div transition:fly|local={{ y: 10, duration: 300 }} class="sections">
+      {#each sectionsToDisplay as sectionName (sectionName)}
+        <div
+          class="section"
+          animate:flip={{ duration: 300 }}
+          transition:fly={{ y: 10, duration: 300 }}
+        >
           <Section
             title={sections[sectionName].title}
             count={sections[sectionName].workstreams.length}
@@ -216,8 +226,17 @@
         </div>
       {/each}
       {#if loading}
-        <div class="spinner">
+        <div transition:fly={{ y: 10, duration: 300 }} class="spinner">
           <Spinner />
+        </div>
+      {:else if Object.keys(sectionsToDisplay).length === 0}
+        <div transition:fly={{ y: 10, duration: 300 }} class="empty-wrapper">
+          <EmptyState
+            headerText="Nothing to see here"
+            text="This is where the Workstreams you created or are contributing to show up."
+            primaryActionText="Discover workstreams"
+            on:primaryAction={() => goto('/')}
+          />
         </div>
       {/if}
     </div>
