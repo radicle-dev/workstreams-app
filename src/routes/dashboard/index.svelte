@@ -30,6 +30,7 @@
     WAITING_SETUP = 'waiting_setup',
     APPLICATIONS_TO_REVIEW = 'toReview',
     ACTIVE = 'active',
+    OUTBOUND_ACTIVE = 'outboundActive',
     CREATED = 'created',
     ENDED = 'ended'
   }
@@ -62,10 +63,13 @@
       title: 'Waiting for applications'
     },
     [SectionName.ACTIVE]: {
-      title: 'Active workstreams'
+      title: 'Incoming funds'
     },
     [SectionName.ENDED]: {
       title: 'Ended workstreams'
+    },
+    [SectionName.OUTBOUND_ACTIVE]: {
+      title: 'Outgoing funds'
     }
   };
 
@@ -114,6 +118,10 @@
       [SectionName.ENDED]: {
         state: WorkstreamState.CLOSED,
         assignedTo: $walletStore.accounts[0]
+      },
+      [SectionName.OUTBOUND_ACTIVE]: {
+        state: WorkstreamState.ACTIVE,
+        createdBy: $walletStore.accounts[0]
       }
     };
 
@@ -185,6 +193,14 @@
                 <TokenStreams />
                 <p>
                   You are earning <span class="typo-text-bold"
+                    >{calculateStreamTotal(sections[sectionName].workstreams)}
+                    DAI</span
+                  > per day
+                </p>
+              {:else if sectionName === SectionName.OUTBOUND_ACTIVE}
+                <TokenStreams />
+                <p>
+                  You are streaming <span class="typo-text-bold"
                     >{calculateStreamTotal(sections[sectionName].workstreams)}
                     DAI</span
                   > per day

@@ -16,6 +16,7 @@ interface BalanceEstimatesState {
   totalBalance: bigint | undefined;
   streams: {
     [activeWorkstreamId: string]: {
+      direction: 'incoming' | 'outgoing';
       currentBalance?: Money;
       remainingBalance?: Money;
       drippingEvents: DrippingEventWrapper[];
@@ -104,13 +105,14 @@ export default (() => {
    * to the currently logged-in user.
    */
   workstreamsStore.subscribe(async (wss) => {
+    const ownAddress = get(walletStore).accounts[0];
+
     const incomingStreamIds = Object.keys(wss).filter((k) => {
       const ws = wss[k].data;
-      const ownAddress = get(walletStore).accounts[0];
 
       return (
         ws.state === WorkstreamState.ACTIVE &&
-        ws.acceptedApplication === ownAddress
+        (ws.acceptedApplication === ownAddress || ws.creator === ownAddress)
       );
     });
 
@@ -148,7 +150,8 @@ export default (() => {
           ...result?.streams,
           [id]: {
             drippingEvents,
-            fromBlock: block
+            fromBlock: block,
+            direction: ws.creator === ownAddress ? 'outgoing' : 'incoming'
           }
         }
       };
@@ -236,7 +239,9 @@ export default (() => {
       */
       const totalWeiEarned = Object.values(vs.streams).reduce<bigint>(
         (acc, val) => {
-          return acc + val.currentBalance.wei;
+          return val.direction === 'incoming'
+            ? acc + val.currentBalance.wei
+            : acc;
         },
         BigInt(0)
       );

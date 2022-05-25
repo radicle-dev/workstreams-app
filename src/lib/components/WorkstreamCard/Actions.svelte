@@ -47,7 +47,13 @@
 </script>
 
 {#if creator}
-  {#if workstream.applicationsToReview.length > 0}
+  {#if workstream.state === WorkstreamState.ACTIVE && remainingBalance}
+    <ActionRow
+      leftString={`${padFloatString(
+        currencyFormat(remainingBalance.wei)
+      )} DAI left`}
+    />
+  {:else if workstream.applicationsToReview.length > 0}
     <ActionRow
       facePile={workstream.applicationsToReview}
       leftString={`${workstream.applicationsToReview.length} application${
