@@ -11,6 +11,7 @@
   import SetDaiAllowance from './steps/SetDaiAllowance.svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
+  import WaitPromise from './steps/WaitPromise.svelte';
 
   export let application: Application | Promise<Application>;
   export let workstream: Workstream;
@@ -24,14 +25,36 @@
   ];
 
   let currentStepIndex = 0;
+  let currentStep: typeof SvelteComponent = steps[0];
+  let pending: () => Promise<void> | undefined;
 
   function advance() {
+    pending = undefined;
+
     if (steps[currentStepIndex + 1]) {
       currentStepIndex++;
+      currentStep = steps[currentStepIndex];
     } else {
       modal.hide();
       goto($page.url.pathname);
     }
+  }
+
+  function goBack() {
+    pending = undefined;
+
+    if (steps[currentStepIndex - 1]) {
+      currentStepIndex--;
+      currentStep = steps[currentStepIndex];
+    } else {
+      modal.hide();
+      goto($page.url.pathname);
+    }
+  }
+
+  function awaitPending(event: CustomEvent) {
+    pending = event.detail;
+    currentStep = WaitPromise;
   }
 
   onMount(async () => {
@@ -42,13 +65,16 @@
 <Modal>
   <div slot="body" class="body">
     {#if resolvedApplication}
-      {#key currentStepIndex}
+      {#key currentStep}
         <div in:fly={{ x: 50 }} out:fly={{ x: -50 }} class="content">
           <svelte:component
-            this={steps[currentStepIndex]}
+            this={currentStep}
             {workstream}
-            {application}
+            application={resolvedApplication}
+            {pending}
             on:continue={advance}
+            on:goBack={goBack}
+            on:awaitPending={awaitPending}
           />
         </div>
       {/key}
@@ -60,9 +86,9 @@
       -->
       <div class="placeholder">
         <svelte:component
-          this={steps[currentStepIndex]}
+          this={currentStep}
           {workstream}
-          {application}
+          application={resolvedApplication}
         />
       </div>
     {:else}

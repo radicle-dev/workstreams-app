@@ -8,7 +8,6 @@
   import {
     Currency,
     type Application,
-    type Money,
     type Workstream
   } from '$lib/stores/workstreams/types';
   import { currencyFormat, weiToDai } from '$lib/utils/format';
@@ -58,26 +57,28 @@
         utils.parseUnits(topUpAmount.toString()).toBigInt()
       );
 
-      const receipt = await createDripCall.tx.wait(1);
+      const waitFor = async () => {
+        const receipt = await createDripCall.tx.wait(1);
 
-      if (receipt.status === 0) {
-        console.error(receipt);
-        return;
-      }
+        if (receipt.status === 0) {
+          console.error(receipt);
+          return;
+        }
 
-      const activateCall = await workstreamsStore.activateWorkstream(
-        workstream.id,
-        createDripCall.accountId
-      );
+        const activateCall = await workstreamsStore.activateWorkstream(
+          workstream.id,
+          createDripCall.accountId
+        );
 
-      if (activateCall.ok) {
-        dispatch('continue');
-      } else {
-        console.error(activateCall.error);
-      }
-    } catch (e) {
-      console.error(e);
+        if (!activateCall.ok) {
+          throw new Error(activateCall.error);
+        }
+      };
+
+      dispatch('awaitPending', waitFor);
+    } catch {
       actionInFlight = false;
+      return;
     }
   }
 </script>

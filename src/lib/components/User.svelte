@@ -21,7 +21,7 @@
   let uriData: string;
   $: ensName = $ensNames[address]?.name;
   $: avatarUrl = $ensNames[address]?.pic;
-  $: toDisplay = ensName ? ensName : formatAddress(address.toLocaleLowerCase());
+  $: toDisplay = ensName ? ensName : formatAddress(address.toLowerCase());
 
   onMount(() => {
     uriData = blockyDataUri(address);
