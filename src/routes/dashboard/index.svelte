@@ -223,11 +223,14 @@
         </div>
       {/each}
       {#if loading}
-        <div transition:fly={{ y: 10, duration: 300 }} class="spinner">
+        <div transition:fly|local={{ y: 10, duration: 300 }} class="spinner">
           <Spinner />
         </div>
       {:else if Object.keys(sectionsToDisplay).length === 0}
-        <div transition:fly={{ y: 10, duration: 300 }} class="empty-wrapper">
+        <div
+          transition:fly|local={{ y: 10, duration: 300 }}
+          class="empty-wrapper"
+        >
           <EmptyState
             headerText="Nothing to see here"
             text="This is where the Workstreams you created or are contributing to show up."
