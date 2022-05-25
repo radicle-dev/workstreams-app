@@ -81,6 +81,11 @@ export default (() => {
       assignedTo: currentAddress
     });
 
+    // Ensure all workstreams assigned to user are in local state
+    await workstreamsStore.getWorkstreams({
+      createdBy: currentAddress
+    });
+
     internal.set({
       currentCycleStart,
       currentAddress: get(walletStore).accounts[0],
@@ -112,7 +117,7 @@ export default (() => {
   workstreamsStore.subscribe(async (wss) => {
     const ownAddress = get(walletStore).accounts[0];
 
-    const incomingStreamIds = Object.keys(wss).filter((k) => {
+    const streamIds = Object.keys(wss).filter((k) => {
       const ws = wss[k].data;
 
       return (
@@ -123,9 +128,7 @@ export default (() => {
 
     let result: BalanceEstimatesState;
 
-    for (const id of incomingStreamIds) {
-      if (get(store).streams[id]) continue;
-
+    for (const id of streamIds) {
       const ws = wss[id].data;
 
       if (ws.dripsData?.accountId === undefined)
