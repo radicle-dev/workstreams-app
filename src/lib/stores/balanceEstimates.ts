@@ -71,6 +71,11 @@ export default (() => {
     const currentCollectable = await drips.getCollectable();
     const currentAddress = get(walletStore).accounts[0];
 
+    store.set({
+      totalBalance: undefined,
+      streams: {}
+    });
+
     // Ensure all workstreams assigned to user are in local state
     await workstreamsStore.getWorkstreams({
       assignedTo: currentAddress
