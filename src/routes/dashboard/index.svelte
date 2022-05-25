@@ -189,7 +189,7 @@
         <div
           class="section"
           animate:flip={{ duration: 300 }}
-          transition:fly={{ y: 10, duration: 300 }}
+          transition:fly|local={{ y: 10, duration: 300 }}
         >
           <Section
             title={sections[sectionName].title}
