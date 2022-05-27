@@ -9,7 +9,7 @@
   import { onMount } from 'svelte';
 
   $: estimate =
-    $balanceEstimates.totalBalance !== undefined &&
+    $balanceEstimates?.totalBalance !== undefined &&
     currencyFormat($balanceEstimates.totalBalance);
 
   let withdrawable: string | undefined = undefined;

@@ -1,7 +1,6 @@
 import type { Block } from '@ethersproject/abstract-provider';
 import { get, writable } from 'svelte/store';
 import type { DripsUpdated_address_uint256_uint128_tuple_array_Event } from './drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
-import { walletStore } from './wallet/wallet';
 import drips from './drips/index';
 import { Currency, WorkstreamState, type Money } from './workstreams/types';
 import { workstreamsStore } from './workstreams/workstreams';
@@ -29,6 +28,7 @@ interface InternalState {
   currentCycleStart: Date;
   currentCollectable: Money;
   currentAddress: string;
+  intervalId?: NodeJS.Timer;
 }
 
 function bigintMin(...args: bigint[]): bigint {
@@ -45,19 +45,16 @@ function bigintMin(...args: bigint[]): bigint {
 }
 
 export default (() => {
-  const store = writable<BalanceEstimatesState>({
-    totalBalance: undefined,
-    streams: {}
-  });
+  const store = writable<BalanceEstimatesState>();
 
   const internal = writable<InternalState | undefined>(undefined);
 
   /**
    * Initialize the store by fetching the cycle length from the Drips Hub
    * contract and populating private store values. Must be called once to
-   * start estimation. A wallet must be connected and initialized via WalletStore.
+   * start estimation.
    */
-  async function init() {
+  async function init(accounts: string[]) {
     if (!browser) throw new Error('Cannot init balance estimates server-side');
 
     const cycleSecs = await drips.getCycleSecs();
@@ -69,7 +66,7 @@ export default (() => {
     );
 
     const currentCollectable = await drips.getCollectable();
-    const currentAddress = get(walletStore).accounts[0];
+    const currentAddress = accounts[0];
 
     store.set({
       totalBalance: undefined,
@@ -88,26 +85,28 @@ export default (() => {
 
     internal.set({
       currentCycleStart,
-      currentAddress: get(walletStore).accounts[0],
+      currentAddress,
       currentCollectable: {
         currency: Currency.DAI,
         wei: currentCollectable
       }
     });
 
-    setInterval(estimateBalance, 1000);
+    internal.update((i) => {
+      return {
+        ...i,
+        intervalId: setInterval(estimateBalance, 1000)
+      };
+    });
   }
 
-  /**
-   * Automatically initialize the store if the user connects a wallet (or
-   * changes the selected account).
-   */
-  walletStore.subscribe((v) => {
-    const internalState = get(internal);
-    if (v.accounts[0] !== internalState?.currentAddress) {
-      init();
-    }
-  });
+  function clear() {
+    const timer = get(internal).intervalId;
+    if (timer) clearInterval(timer);
+
+    store.set(undefined);
+    internal.set(undefined);
+  }
 
   /**
    * Subscribe to newly fetched workstreams and automatically begin
@@ -115,14 +114,18 @@ export default (() => {
    * to the currently logged-in user.
    */
   workstreamsStore.subscribe(async (wss) => {
-    const ownAddress = get(walletStore).accounts[0];
+    const internalState = get(internal);
+    if (!internalState) return;
+
+    const { currentAddress } = internalState;
 
     const streamIds = Object.keys(wss).filter((k) => {
       const ws = wss[k].data;
 
       return (
         ws.state === WorkstreamState.ACTIVE &&
-        (ws.acceptedApplication === ownAddress || ws.creator === ownAddress)
+        (ws.acceptedApplication === currentAddress ||
+          ws.creator === currentAddress)
       );
     });
 
@@ -164,7 +167,7 @@ export default (() => {
           [id]: {
             drippingEvents,
             fromBlock: block,
-            direction: ws.creator === ownAddress ? 'outgoing' : 'incoming'
+            direction: ws.creator === currentAddress ? 'outgoing' : 'incoming'
           }
         }
       };
@@ -267,6 +270,7 @@ export default (() => {
 
   return {
     init,
+    clear,
     subscribe: store.subscribe
   };
 })();

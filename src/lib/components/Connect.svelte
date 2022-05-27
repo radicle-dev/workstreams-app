@@ -6,6 +6,7 @@
   import { authStore } from '$lib/stores/auth/auth';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
+  import balanceEstimates from '$lib/stores/balanceEstimates';
 
   let locked: boolean;
 
@@ -19,10 +20,17 @@
     }
   }
 
+  $: {
+    if ($connectedAndLoggedIn) {
+      balanceEstimates.init($walletStore.accounts);
+    }
+  }
+
   async function logOut() {
     walletStore.disconnect();
     authStore.clear();
     workstreamsStore.clear();
+    balanceEstimates.clear();
   }
 
   let hover = false;
