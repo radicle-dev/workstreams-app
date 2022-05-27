@@ -84,6 +84,10 @@ export const workstreamsStore = (() => {
         })
       ).dripsAccount;
 
+      if (!dripsAccount) {
+        throw new Error(`No drips account for active workstream ${id}}`);
+      }
+
       const amtPerSec = {
         wei: BigInt(
           dripsAccount.dripsEntries.find(

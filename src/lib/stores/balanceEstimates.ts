@@ -150,6 +150,11 @@ export default (() => {
         );
 
       const drippingEvents = await Promise.all(drippingEventsPromises);
+
+      if (drippingEvents.length === 0) {
+        throw new Error(`No dripping events for active workstream ${id}`);
+      }
+
       const block = drippingEvents[0].fromBlock;
 
       result = {
