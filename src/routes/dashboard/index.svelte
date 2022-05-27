@@ -182,8 +182,6 @@
     sections,
     (s) => Object.keys(s.workstreams).length > 0
   );
-
-  $: console.log($workstreamsStore);
 </script>
 
 <svelte:head>
