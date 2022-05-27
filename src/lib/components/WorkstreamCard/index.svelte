@@ -6,7 +6,7 @@
   import TitleMeta from '$components/TitleMeta.svelte';
   import TimeRate from '$components/TimeRate.svelte';
   import Actions from './Actions.svelte';
-  import type { EnrichedWorkstream } from '$lib/stores/workstreams/workstreams';
+  import type { EnrichedWorkstream } from '$lib/stores/workstreams';
 
   export let enrichedWorkstream: EnrichedWorkstream;
 

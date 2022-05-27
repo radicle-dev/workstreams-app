@@ -5,8 +5,7 @@
   import User from '$components/User.svelte';
   import { authStore } from '$lib/stores/auth/auth';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
-  import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
-  import balanceEstimates from '$lib/stores/balanceEstimates';
+  import { workstreamsStore } from '$lib/stores/workstreams';
 
   let locked: boolean;
 
@@ -21,8 +20,12 @@
   }
 
   $: {
-    if ($connectedAndLoggedIn) {
-      balanceEstimates.init($walletStore.accounts);
+    if ($authStore.authenticated && $walletStore.connected) {
+      workstreamsStore.connect(
+        $walletStore.provider,
+        $walletStore.chainId,
+        $walletStore.accounts[0]
+      );
     }
   }
 
@@ -30,7 +33,6 @@
     walletStore.disconnect();
     authStore.clear();
     workstreamsStore.clear();
-    balanceEstimates.clear();
   }
 
   let hover = false;

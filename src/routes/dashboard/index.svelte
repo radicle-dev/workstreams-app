@@ -1,7 +1,6 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
   import { flip } from 'svelte/animate';
-  import Spinner from 'radicle-design-system/Spinner.svelte';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
 
   import { walletStore } from '$lib/stores/wallet/wallet';
@@ -16,17 +15,16 @@
   import { currencyFormat } from '$lib/utils/format';
   import {
     workstreamsStore,
-    type EnrichedWorkstream,
-    type WorkstreamsFilterConfig
-  } from '$lib/stores/workstreams/workstreams';
+    type EnrichedWorkstream
+  } from '$lib/stores/workstreams';
   import { goto } from '$app/navigation';
+  import Spinner from 'radicle-design-system/Spinner.svelte';
 
   let locked: boolean;
 
   enum SectionName {
     APPLIED_TO = 'appliedTo',
     PENDING_SETUP = 'pending_setup',
-    WAITING_SETUP = 'waiting_setup',
     APPLICATIONS_TO_REVIEW = 'toReview',
     ACTIVE = 'active',
     OUTBOUND_ACTIVE = 'outboundActive',
@@ -36,113 +34,118 @@
 
   interface SectionData {
     title: string;
-    fetched?: true;
-    display?: boolean;
-    workstreams?: EnrichedWorkstream[];
+    workstreams: { [wsId: string]: EnrichedWorkstream };
   }
+
+  let loading = true;
+
+  $: {
+    if ($connectedAndLoggedIn) {
+      loading = true;
+
+      const fetches = [
+        workstreamsStore.getWorkstreams({ applied: 'true' }),
+        workstreamsStore.getWorkstreams({
+          createdBy: $walletStore.accounts[0]
+        }),
+        workstreamsStore.getWorkstreams({
+          assignedTo: $walletStore.accounts[0]
+        })
+      ];
+
+      Promise.all(fetches).then(() => (loading = false));
+    }
+  }
+
+  $: workstreams = $workstreamsStore;
+
+  function filterObject<T>(
+    obj: { [key: string]: T },
+    callback: (val: T, key: string) => boolean
+  ) {
+    return Object.fromEntries(
+      Object.entries(obj).filter(([key, val]) => callback(val, key))
+    );
+  }
+
+  $: address = $walletStore.accounts[0];
+
+  type Sections = { [key in SectionName]: SectionData };
 
   /*
     The order of sections in this map determines their ordering
     on-screen — and with that their relative "importance".
   */
-  let sections: { [key in SectionName]: SectionData } = {
+  $: sections = {
     [SectionName.APPLICATIONS_TO_REVIEW]: {
-      title: 'Applications to review'
+      title: 'Applications to review',
+      workstreams: filterObject(workstreams, (ws) => {
+        return (
+          ws.data.applicationsToReview?.length > 0 &&
+          ws.data.creator === address
+        );
+      })
     },
     [SectionName.PENDING_SETUP]: {
-      title: 'Workstreams pending payment setup'
-    },
-    [SectionName.WAITING_SETUP]: {
-      title: 'Workstreams waiting for payment setup'
+      title: 'Workstreams pending payment setup',
+      workstreams: filterObject(workstreams, (ws) => {
+        return (
+          ws.data.state === WorkstreamState.PENDING &&
+          (ws.data.creator === address ||
+            ws.data.acceptedApplication === address)
+        );
+      })
     },
     [SectionName.APPLIED_TO]: {
-      title: 'Workstreams you applied to'
+      title: 'Workstreams you applied to',
+      workstreams: filterObject(workstreams, (ws) => {
+        return (
+          ws.data.state === WorkstreamState.RFA &&
+          ws.data.applicants?.includes(address)
+        );
+      })
     },
     [SectionName.CREATED]: {
-      title: 'Waiting for applications'
+      title: 'Waiting for applications',
+      workstreams: filterObject(workstreams, (ws) => {
+        return (
+          ws.data.state === WorkstreamState.RFA &&
+          ws.data.applicationsToReview?.length === 0 &&
+          ws.data.creator === address
+        );
+      })
     },
     [SectionName.ACTIVE]: {
-      title: 'Incoming funds'
+      title: 'Incoming funds',
+      workstreams: filterObject(workstreams, (ws) => {
+        return (
+          ws.data.state === WorkstreamState.ACTIVE &&
+          ws.onChainData &&
+          ws.data.acceptedApplication === address
+        );
+      })
     },
     [SectionName.ENDED]: {
-      title: 'Ended workstreams'
+      title: 'Ended workstreams',
+      workstreams: filterObject(workstreams, (ws) => {
+        return ws.data.state === WorkstreamState.CLOSED;
+      })
     },
     [SectionName.OUTBOUND_ACTIVE]: {
-      title: 'Outgoing funds'
+      title: 'Outgoing funds',
+      workstreams: filterObject(workstreams, (ws) => {
+        return (
+          ws.data.state === WorkstreamState.ACTIVE &&
+          ws.onChainData &&
+          ws.data.creator === address
+        );
+      })
     }
-  };
+  } as Sections;
 
   $: {
-    if ($connectedAndLoggedIn) {
-      fetchSectionData();
-    } else {
+    if (!$connectedAndLoggedIn) {
       clearSectionData();
-    }
-  }
-
-  let loading = true;
-
-  function fetchSectionData() {
-    if (!$walletStore.connected)
-      throw new Error("Can't fetch dashboard before connected to wallet");
-
-    const sectionFilters: {
-      [key in SectionName]?: Partial<WorkstreamsFilterConfig>;
-    } = {
-      [SectionName.APPLIED_TO]: {
-        applied: 'true',
-        state: WorkstreamState.RFA
-      },
-      [SectionName.CREATED]: {
-        state: WorkstreamState.RFA,
-        createdBy: $walletStore.accounts[0],
-        hasApplicationsToReview: 'false'
-      },
-      [SectionName.PENDING_SETUP]: {
-        state: WorkstreamState.PENDING,
-        createdBy: $walletStore.accounts[0]
-      },
-      [SectionName.WAITING_SETUP]: {
-        state: WorkstreamState.PENDING,
-        assignedTo: $walletStore.accounts[0]
-      },
-      [SectionName.APPLICATIONS_TO_REVIEW]: {
-        createdBy: $walletStore.accounts[0],
-        hasApplicationsToReview: 'true'
-      },
-      [SectionName.ACTIVE]: {
-        state: WorkstreamState.ACTIVE,
-        assignedTo: $walletStore.accounts[0]
-      },
-      [SectionName.ENDED]: {
-        state: WorkstreamState.CLOSED,
-        assignedTo: $walletStore.accounts[0]
-      },
-      [SectionName.OUTBOUND_ACTIVE]: {
-        state: WorkstreamState.ACTIVE,
-        createdBy: $walletStore.accounts[0]
-      }
-    };
-
-    for (const sectionName of Object.keys(sectionFilters)) {
-      workstreamsStore
-        .getWorkstreams(sectionFilters[sectionName])
-        .then(async (response) => {
-          sections[sectionName] = {
-            ...sections[sectionName],
-            fetched: true,
-            display: response.ok,
-            workstreams: response.ok && response.enriched
-          };
-
-          if (
-            Object.keys(sections).every(
-              (sectionName) => sections[sectionName].fetched
-            )
-          ) {
-            loading = false;
-          }
-        });
     }
   }
 
@@ -152,10 +155,12 @@
     });
   }
 
-  function calculateStreamTotal(enrichedWorkstreams: EnrichedWorkstream[]) {
+  function calculateStreamTotal(enrichedWorkstreams: {
+    [key: string]: EnrichedWorkstream;
+  }) {
     let totalWeiPerSec = BigInt(0);
-    enrichedWorkstreams.forEach(
-      (eWs) => (totalWeiPerSec += eWs.onChainData.amtPerSec.wei)
+    Object.values(enrichedWorkstreams).forEach(
+      (eWs) => (totalWeiPerSec += eWs.onChainData?.amtPerSec.wei)
     );
 
     const totalWeiPerDay = totalWeiPerSec * BigInt(86400);
@@ -173,9 +178,12 @@
     }
   }
 
-  $: sectionsToDisplay = Object.keys(sections).filter(
-    (sn) => !!sections[sn].display
+  $: sectionsToDisplay = filterObject(
+    sections,
+    (s) => Object.keys(s.workstreams).length > 0
   );
+
+  $: console.log($workstreamsStore);
 </script>
 
 <svelte:head>
@@ -185,37 +193,37 @@
 <div class="container">
   {#if $authStore.authenticated && $walletStore.connected}
     <div transition:fly|local={{ y: 10, duration: 300 }} class="sections">
-      {#each sectionsToDisplay as sectionName (sectionName)}
+      {#each Object.entries(sectionsToDisplay) as [key, section] (key)}
         <div
           class="section"
           animate:flip={{ duration: 300 }}
           transition:fly|local={{ y: 10, duration: 300 }}
         >
           <Section
-            title={sections[sectionName].title}
-            count={sections[sectionName].workstreams.length}
+            title={section.title}
+            count={Object.keys(section.workstreams).length}
           >
             <div slot="subtitle" class="earning-per-day">
-              {#if sectionName === SectionName.ACTIVE}
+              {#if key === SectionName.ACTIVE}
                 <TokenStreams />
                 <p>
                   You are earning <span class="typo-text-bold"
-                    >{calculateStreamTotal(sections[sectionName].workstreams)}
+                    >{calculateStreamTotal(section.workstreams)}
                     DAI</span
                   > per day
                 </p>
-              {:else if sectionName === SectionName.OUTBOUND_ACTIVE}
+              {:else if key === SectionName.OUTBOUND_ACTIVE}
                 <TokenStreams />
                 <p>
                   You are streaming <span class="typo-text-bold"
-                    >{calculateStreamTotal(sections[sectionName].workstreams)}
+                    >{calculateStreamTotal(section.workstreams)}
                     DAI</span
                   > per day
                 </p>
               {/if}
             </div>
             <div slot="content" class="workstreams">
-              {#each sections[sectionName].workstreams as workstream}
+              {#each Object.values(section.workstreams) as workstream}
                 <WorkstreamCard enrichedWorkstream={workstream} />
               {/each}
             </div>
@@ -241,7 +249,7 @@
       {/if}
     </div>
   {:else}
-    <div class="empty-wrapper">
+    <div transition:fly|local={{ y: 10, duration: 300 }} class="empty-wrapper">
       <EmptyState
         headerText="Sign in to view your Workstreams"
         text="This is where the Workstreams you created or are contributing to show up."
@@ -262,6 +270,11 @@
 
   .empty-wrapper {
     display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     min-height: 32rem;
     justify-content: center;
     align-items: center;

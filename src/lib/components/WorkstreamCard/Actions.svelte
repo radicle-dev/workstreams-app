@@ -7,18 +7,23 @@
   import ActionRow from './ActionRow.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
   import SetUpPaymentModal from '../SetUpPaymentModal/SetUpPaymentModal.svelte';
-  import type { EnrichedWorkstream } from '$lib/stores/workstreams/workstreams';
+  import {
+    workstreamsStore,
+    type EnrichedWorkstream
+  } from '$lib/stores/workstreams';
   import {
     WorkstreamState,
     type Application
   } from '$lib/stores/workstreams/types';
-  import balanceEstimates from '$lib/stores/balanceEstimates';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
+
+  const estimates = workstreamsStore.estimates;
 
   export let enrichedWorkstream: EnrichedWorkstream;
 
   let workstream = enrichedWorkstream.data;
   $: workstream = enrichedWorkstream.data;
+  $: estimate = $estimates.streams[workstream.id];
 
   let creator: boolean =
     $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
@@ -32,10 +37,6 @@
     $connectedAndLoggedIn &&
     workstream.rejectedApplications?.includes($walletStore.accounts[0]);
 
-  $: remainingBalance =
-    workstream.state === WorkstreamState.ACTIVE &&
-    $balanceEstimates.streams[workstream.id]?.remainingBalance;
-
   async function getApplication(id: string): Promise<Application | null> {
     const url = `${getConfig().API_URL_BASE}/workstreams/${
       workstream.id
@@ -47,10 +48,10 @@
 </script>
 
 {#if creator}
-  {#if workstream.state === WorkstreamState.ACTIVE && remainingBalance}
+  {#if workstream.state === WorkstreamState.ACTIVE && estimate}
     <ActionRow
       leftString={`${padFloatString(
-        currencyFormat(remainingBalance.wei)
+        currencyFormat(estimate.remainingBalance.wei)
       )} DAI left`}
     />
   {:else if workstream.applicationsToReview.length > 0}
@@ -79,10 +80,10 @@
     />
   {/if}
 {:else if applicant}
-  {#if workstream.state === WorkstreamState.ACTIVE && remainingBalance}
+  {#if workstream.state === WorkstreamState.ACTIVE && estimate}
     <ActionRow
       leftString={`${padFloatString(
-        currencyFormat(remainingBalance.wei)
+        currencyFormat(estimate.remainingBalance.wei)
       )} DAI left`}
     />
   {:else if rejectant}

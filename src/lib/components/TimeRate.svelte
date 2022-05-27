@@ -2,7 +2,7 @@
   import { timeframeFormat } from '$lib/utils/format';
   import { Currency, type Workstream } from '$lib/stores/workstreams/types';
   import Rate from '$components/Rate.svelte';
-  import type { OnChainData } from '$lib/stores/workstreams/workstreams';
+  import type { OnChainData } from '$lib/stores/workstreams';
 
   export let workstream: Workstream;
   export let onChainData: OnChainData | undefined = undefined;

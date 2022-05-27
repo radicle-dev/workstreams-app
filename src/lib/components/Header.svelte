@@ -14,8 +14,6 @@
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { browser } from '$app/env';
   import { headerContent } from '$lib/stores/headerContent';
-  import balanceEstimates from '$lib/stores/balanceEstimates';
-  import { currencyFormat } from '$lib/utils/format';
   import BalanceButton from './BalanceButton.svelte';
 
   let scrolledDown = false;
