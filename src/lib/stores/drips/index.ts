@@ -1,13 +1,12 @@
 import query from '$lib/api';
 import { GET_LAST_DRIP_ENTRY } from '$lib/api/queries';
-import type { DripsConfigs_dripsConfigs_receivers } from '$lib/api/__generated__/DripsConfigs';
 import type {
-  lastDripsEntry,
-  lastDripsEntryVariables
+  LastDripsEntry,
+  LastDripsEntryVariables
 } from '$lib/api/__generated__/lastDripsEntry';
 import { BigNumber, ethers, type ContractTransaction } from 'ethers';
 import { utils } from 'ethers';
-import { get, writable } from 'svelte/store';
+import { get } from 'svelte/store';
 import { walletStore } from '../wallet/wallet';
 import type { Money } from '../workstreams/types';
 import daiInfo from './contracts/Dai';
@@ -31,8 +30,6 @@ export const toDai = (wei: BigNumber, roundTo?: number): string => {
 };
 
 export default (() => {
-  const { subscribe, set, update } = writable();
-
   // TODO: Caching
 
   async function getCycleSecs(): Promise<BigNumber> {
@@ -135,7 +132,7 @@ export default (() => {
     );
 
     const lastDripsEntry = (
-      await query<lastDripsEntry, lastDripsEntryVariables>({
+      await query<LastDripsEntry, LastDripsEntryVariables>({
         query: GET_LAST_DRIP_ENTRY,
         variables: {
           user: ws.accounts[0]

@@ -5,6 +5,7 @@
   import User from '$components/User.svelte';
   import { authStore } from '$lib/stores/auth/auth';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
+  import { workstreamsStore } from '$lib/stores/workstreams';
 
   let locked: boolean;
 
@@ -18,9 +19,20 @@
     }
   }
 
+  $: {
+    if ($authStore.authenticated && $walletStore.connected) {
+      workstreamsStore.connect(
+        $walletStore.provider,
+        $walletStore.chainId,
+        $walletStore.accounts[0]
+      );
+    }
+  }
+
   async function logOut() {
     walletStore.disconnect();
     authStore.clear();
+    workstreamsStore.clear();
   }
 
   let hover = false;

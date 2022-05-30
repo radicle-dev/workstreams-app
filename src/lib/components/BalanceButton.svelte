@@ -3,14 +3,16 @@
   import Button from 'radicle-design-system/Button.svelte';
   import InfoCircle from 'radicle-design-system/icons/InfoCircle.svelte';
 
-  import balanceEstimates from '$lib/stores/balanceEstimates';
   import drips from '$lib/stores/drips';
-  import { currencyFormat } from '$lib/utils/format';
+  import { currencyFormat, padFloatString } from '$lib/utils/format';
   import { onMount } from 'svelte';
+  import { workstreamsStore } from '$lib/stores/workstreams';
+
+  const estimates = workstreamsStore.estimates;
 
   $: estimate =
-    $balanceEstimates.totalBalance !== undefined &&
-    currencyFormat($balanceEstimates.totalBalance);
+    $estimates.totalBalance !== undefined &&
+    currencyFormat($estimates.totalBalance);
 
   let withdrawable: string | undefined = undefined;
   let nextCycleStart: Date | undefined = undefined;
@@ -29,16 +31,6 @@
   });
 
   let hover = false;
-
-  function padFloatString(input: string): string {
-    const parts = input.split('.');
-
-    const decimalLength = parts[1]?.length || 0;
-
-    return decimalLength !== 0
-      ? input + '0'.repeat(2 - decimalLength)
-      : input + '.' + '0'.repeat(2 - decimalLength);
-  }
 </script>
 
 <div

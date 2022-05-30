@@ -2,7 +2,12 @@
   /* eslint-disable */
   /** @type {import('./[slug]').Load} */
   export async function load({ fetch }) {
-    const workstreams = await workstreamsStore.getWorkstreams(undefined, fetch);
+    const workstreams = await workstreamsStore.getWorkstreams(
+      {
+        state: WorkstreamState.RFA
+      },
+      fetch
+    );
 
     return {
       status: workstreams.ok ? 200 : 500,
@@ -18,7 +23,7 @@
   import ExploreCard from '$lib/components/ExploreCard.svelte';
   import type { Workstream } from '$lib/stores/workstreams/types';
   import { WorkstreamState } from '$lib/stores/workstreams/types';
-  import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
+  import { workstreamsStore } from '$lib/stores/workstreams';
 
   export let workstreams: Workstream[] = [];
 

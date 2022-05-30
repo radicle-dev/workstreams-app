@@ -4,10 +4,10 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: lastDripsEntry
+// GraphQL query operation: LastDripsEntry
 // ====================================================
 
-export interface lastDripsEntry_dripsEntries {
+export interface LastDripsEntry_dripsEntries {
   __typename: 'DripsEntry';
   account: any;
   user: any;
@@ -15,10 +15,10 @@ export interface lastDripsEntry_dripsEntries {
   receiver: any;
 }
 
-export interface lastDripsEntry {
-  dripsEntries: lastDripsEntry_dripsEntries[];
+export interface LastDripsEntry {
+  dripsEntries: LastDripsEntry_dripsEntries[];
 }
 
-export interface lastDripsEntryVariables {
+export interface LastDripsEntryVariables {
   user: any;
 }

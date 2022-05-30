@@ -28,7 +28,7 @@
   import { utils } from 'ethers';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-  import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
+  import { workstreamsStore } from '$lib/stores/workstreams';
   import type { Workstream } from '$lib/stores/workstreams/types';
 
   import UserBig from '$components/UserBig.svelte';

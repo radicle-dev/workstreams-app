@@ -1,6 +1,5 @@
 <script lang="ts">
   import { getConfig } from '$lib/config';
-  import type { Workstream, Application } from '$lib/stores/workstreams/types';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import * as modal from '$lib/utils/modal';
@@ -8,8 +7,23 @@
   import ActionRow from './ActionRow.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
   import SetUpPaymentModal from '../SetUpPaymentModal/SetUpPaymentModal.svelte';
+  import {
+    workstreamsStore,
+    type EnrichedWorkstream
+  } from '$lib/stores/workstreams';
+  import {
+    WorkstreamState,
+    type Application
+  } from '$lib/stores/workstreams/types';
+  import { currencyFormat, padFloatString } from '$lib/utils/format';
 
-  export let workstream: Workstream;
+  const estimates = workstreamsStore.estimates;
+
+  export let enrichedWorkstream: EnrichedWorkstream;
+
+  let workstream = enrichedWorkstream.data;
+  $: workstream = enrichedWorkstream.data;
+  $: estimate = $estimates.streams[workstream.id];
 
   let creator: boolean =
     $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
@@ -34,7 +48,13 @@
 </script>
 
 {#if creator}
-  {#if workstream.applicationsToReview.length > 0}
+  {#if workstream.state === WorkstreamState.ACTIVE && estimate}
+    <ActionRow
+      leftString={`${padFloatString(
+        currencyFormat(estimate.remainingBalance.wei)
+      )} DAI left`}
+    />
+  {:else if workstream.applicationsToReview.length > 0}
     <ActionRow
       facePile={workstream.applicationsToReview}
       leftString={`${workstream.applicationsToReview.length} application${
@@ -60,7 +80,13 @@
     />
   {/if}
 {:else if applicant}
-  {#if rejectant}
+  {#if workstream.state === WorkstreamState.ACTIVE && estimate}
+    <ActionRow
+      leftString={`${padFloatString(
+        currencyFormat(estimate.remainingBalance.wei)
+      )} DAI left`}
+    />
+  {:else if rejectant}
     <ActionRow
       leftString="Your application is rejected."
       outlineActionText="View"

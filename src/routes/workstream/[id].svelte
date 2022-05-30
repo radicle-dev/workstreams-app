@@ -33,7 +33,7 @@
   import { headerContent } from '$lib/stores/headerContent';
   import WorkstreamPageHeader from '$lib/components/WorkstreamPageHeader.svelte';
   import { browser } from '$app/env';
-  import { workstreamsStore } from '$lib/stores/workstreams/workstreams';
+  import { workstreamsStore } from '$lib/stores/workstreams';
 
   export let workstream: Workstream | undefined;
   export let applications: Application[] | undefined;
