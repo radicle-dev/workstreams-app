@@ -35,6 +35,7 @@
 
   async function logOut() {
     walletStore.disconnect();
+    drips.disconnect();
     authStore.clear();
     workstreamsStore.clear();
   }
