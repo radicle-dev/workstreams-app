@@ -56,7 +56,7 @@ export default (() => {
 
     internal.set({
       provider,
-      client: new DripsClient(provider)
+      client
     });
 
     await Promise.all([updateCycleSecs(), updateCollectable()]);
@@ -127,7 +127,6 @@ export default (() => {
 
   async function getAllowance(): Promise<BigNumber> {
     const { client } = get(internal);
-
     return client.getAllowance();
   }
 
