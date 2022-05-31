@@ -83,12 +83,13 @@ export default (() => {
       currentCycleStart.getTime() + Number(cycleSecs * BigInt(1000))
     );
 
-    state.set({
+    state.update((v) => ({
+      ...v,
       cycle: {
         start: currentCycleStart,
         end: nextCycleStart
       }
-    });
+    }));
   }
 
   async function updateCollectable(): Promise<void> {
