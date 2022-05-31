@@ -125,22 +125,9 @@ export default (() => {
   }
 
   async function getAllowance(): Promise<BigNumber> {
-    const { provider } = get(internal);
-    const daiDripsHubAddress = daiDripsHubInfo(
-      provider.network.chainId
-    ).address;
+    const { client } = get(internal);
 
-    const daiContract = DaiAbi__factory.connect(
-      daiInfo(provider.network.chainId).address,
-      provider.getSigner()
-    );
-
-    const rs = await daiContract.allowance(
-      await provider.getSigner().getAddress(),
-      daiDripsHubAddress
-    );
-
-    return rs;
+    return client.getAllowance();
   }
 
   async function approveDaiSpend(): Promise<ContractTransaction> {
