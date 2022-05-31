@@ -100,6 +100,8 @@ export const workstreamsStore = (() => {
     provider: ethers.providers.Web3Provider,
     cycle: Cycle
   ) {
+    if (get(internal)) return;
+
     const address = (await provider.getSigner().getAddress()).toLowerCase();
 
     internal.set({
