@@ -38,10 +38,6 @@
   export let workstream: Workstream | undefined;
   export let applications: Application[] | undefined;
 
-  if (browser) {
-    updateScrollPos();
-  }
-
   onMount(() => {
     $headerContent = {
       component: WorkstreamPageHeader,
@@ -49,9 +45,8 @@
       headerContentShown: false
     };
 
-    if (browser) {
-      window.addEventListener('scroll', updateScrollPos);
-    }
+    window.addEventListener('scroll', updateScrollPos);
+    updateScrollPos();
   });
 
   onDestroy(() => {
