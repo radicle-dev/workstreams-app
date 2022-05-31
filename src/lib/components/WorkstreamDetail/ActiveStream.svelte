@@ -39,7 +39,7 @@
           on:click={() =>
             modal.show(ApplicationModal, undefined, {
               workstream,
-              acceptedApplication
+              application: acceptedApplication
             })}>View application</Button
         >
       </div>
