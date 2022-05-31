@@ -64,6 +64,7 @@ export default (() => {
 
   function disconnect() {
     internal.set(undefined);
+    state.set({});
   }
 
   async function updateCycleSecs(): Promise<void> {
