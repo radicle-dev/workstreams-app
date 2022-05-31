@@ -43,6 +43,7 @@
   "dependencies": {
     "@fontsource/fira-mono": "^4.5.7",
     "@lukeed/uuid": "^2.0.0",
+    "drips-sdk": "https://github.com/radicle-dev/drips-js-sdk#v0.1.1",
     "ethers": "5.6.4",
     "graphql-tag": "^2.12.6",
     "radicle-design-system": "radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=c22af1d8b75704dfd84546a937281be6f3f76d35",

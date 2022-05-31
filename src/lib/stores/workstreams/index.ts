@@ -16,8 +16,8 @@ import type { ethers } from 'ethers';
 import getDripsAccount from './methods/getDripsAccount';
 import getDripsUpdatedEvents from './methods/getDripsUpdatedEvents';
 import bigIntMin from './methods/bigIntMin';
-import getCycleStart from './methods/getCycleStart';
 import fetchEstimationWs from './methods/fetchEstimationWs';
+import type { Cycle } from '../drips';
 
 export const reviver: (key: string, value: unknown) => unknown = (
   key,
@@ -98,15 +98,14 @@ export const workstreamsStore = (() => {
    */
   async function connect(
     provider: ethers.providers.Web3Provider,
-    chainId: number,
-    address: string
+    cycle: Cycle
   ) {
-    const currentCycleStart = await getCycleStart();
+    const address = (await provider.getSigner().getAddress()).toLowerCase();
 
     internal.set({
       provider,
-      chainId,
-      currentCycleStart,
+      chainId: provider.network.chainId,
+      currentCycleStart: cycle.start,
       currentAddress: address,
       intervalId: setInterval(estimateBalances, 1000)
     });
