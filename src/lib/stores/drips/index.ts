@@ -198,6 +198,20 @@ export default (() => {
     };
   }
 
+  async function collect() {
+    const { provider } = get(internal);
+
+    const daiDripsHubAddress = daiDripsHubInfo(
+      provider.network.chainId
+    ).address;
+    const contract = DaiDripsHubAbi__factory.connect(
+      daiDripsHubAddress,
+      provider.getSigner()
+    );
+
+    return contract.collect(await provider.getSigner().getAddress(), []);
+  }
+
   return {
     subscribe: state.subscribe,
     connect,
@@ -206,6 +220,7 @@ export default (() => {
     getDripsUpdatedEvents,
     getAllowance,
     getDaiBalance,
-    approveDaiSpend
+    approveDaiSpend,
+    collect
   };
 })();
