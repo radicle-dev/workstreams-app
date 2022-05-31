@@ -9,8 +9,24 @@
   import Pause from 'radicle-design-system/icons/Pause.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import type { Application, Workstream } from '$lib/stores/workstreams/types';
+  import { workstreamsStore } from '$lib/stores/workstreams';
+  import { currencyFormat, padFloatString } from '$lib/utils/format';
+  import { walletStore } from '$lib/stores/wallet/wallet';
+
   export let workstream: Workstream;
   export let acceptedApplication: Application | undefined = undefined;
+
+  const estimates = workstreamsStore.estimates;
+  $: estimate = $estimates.streams[workstream.id];
+
+  $: enrichedWorkstream = $workstreamsStore[workstream.id];
+  $: dripsUpdatedEvents = enrichedWorkstream?.onChainData?.dripsUpdatedEvents;
+  $: totalToppedUp =
+    dripsUpdatedEvents &&
+    dripsUpdatedEvents[dripsUpdatedEvents.length - 1].event.args.balance;
+
+  $: isOwner = workstream.creator === $walletStore.accounts[0];
+  $: isReceiver = workstream.acceptedApplication === $walletStore.accounts[0];
 </script>
 
 <Card hoverable={false}>
@@ -34,7 +50,11 @@
         <User address={acceptedApplication.creator} />
       </div>
       <div slot="right" class="row-actions">
-        <p class="proposal">4020 DAI left (8.04 days)</p>
+        {#if (isReceiver || isOwner) && estimate?.remainingBalance}
+          <p class="proposal">
+            {padFloatString(currencyFormat(estimate.remainingBalance.wei))} DAI left
+          </p>
+        {/if}
         <Button
           on:click={() =>
             modal.show(ApplicationModal, undefined, {
@@ -45,10 +65,18 @@
       </div>
     </Row>
     <div class="stream-actions">
-      <p>5000 of 8000 DAI topped up</p>
+      <p>
+        {#if dripsUpdatedEvents}
+          {currencyFormat(totalToppedUp.toBigInt())} of {currencyFormat(
+            workstream.total.wei
+          )} DAI topped up
+        {/if}
+      </p>
       <div style="display: flex; gap: .75rem;">
-        <Button variant="primary-outline" icon={Pause}>Pause</Button>
-        <Button>Top up</Button>
+        {#if isOwner}
+          <Button variant="primary-outline" icon={Pause}>Pause</Button>
+          <Button>Top up</Button>
+        {/if}
       </div>
     </div>
   </div>
