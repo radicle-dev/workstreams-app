@@ -2714,6 +2714,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"drips-sdk@https://github.com/radicle-dev/drips-js-sdk#v0.1.1":
+  version: 0.1.1
+  resolution: "drips-sdk@https://github.com/radicle-dev/drips-js-sdk.git#commit=234af1b9f633dd8decb8e7f502e9d34ef344a08e"
+  peerDependencies:
+    ethers: ^5.6.2
+  checksum: 6c364c11aa29a5cda79ab8a38e4e5847d3860cefd7c4d366a1aa90aa2d3c7ea4ac22e73609973216be82c92a8667cdf2d357d2ef97b4a4ce20364dd99a5a43cf
+  languageName: node
+  linkType: hard
+
 "eastasianwidth@npm:^0.2.0":
   version: 0.2.0
   resolution: "eastasianwidth@npm:0.2.0"
@@ -7353,6 +7362,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
     apollo: ^2.33.11
+    drips-sdk: "https://github.com/radicle-dev/drips-js-sdk#v0.1.1"
     eslint: ^8.13.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-svelte3: ^3.4.1

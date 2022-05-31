@@ -6,6 +6,7 @@
   import { authStore } from '$lib/stores/auth/auth';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { workstreamsStore } from '$lib/stores/workstreams';
+  import drips from '$lib/stores/drips';
 
   let locked: boolean;
 
@@ -21,16 +22,20 @@
 
   $: {
     if ($authStore.authenticated && $walletStore.connected) {
-      workstreamsStore.connect(
-        $walletStore.provider,
-        $walletStore.chainId,
-        $walletStore.accounts[0]
-      );
+      connectStores();
     }
+  }
+
+  async function connectStores() {
+    const { provider } = $walletStore;
+
+    await drips.connect(provider);
+    await workstreamsStore.connect(provider, $drips.cycle);
   }
 
   async function logOut() {
     walletStore.disconnect();
+    drips.disconnect();
     authStore.clear();
     workstreamsStore.clear();
   }

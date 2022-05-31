@@ -51,7 +51,7 @@ export function weiToDai(input: Money | bigint): number {
 
   if (typeof wei !== 'bigint') wei = BigInt(wei);
 
-  const dai = wei / BigInt(1000000000000000000);
+  const dai = wei / BigInt('1000000000000000000');
 
   return Number(dai);
 }

@@ -5,7 +5,6 @@
 
   import drips from '$lib/stores/drips';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
-  import { onMount } from 'svelte';
   import { workstreamsStore } from '$lib/stores/workstreams';
 
   const estimates = workstreamsStore.estimates;
@@ -14,22 +13,8 @@
     $estimates.totalBalance !== undefined &&
     currencyFormat($estimates.totalBalance);
 
-  let withdrawable: string | undefined = undefined;
-  let nextCycleStart: Date | undefined = undefined;
-
-  onMount(async () => {
-    withdrawable = currencyFormat(await drips.getCollectable());
-
-    const cycleSecs = await (await drips.getCycleSecs()).toBigInt();
-    const currentCycleSecs = BigInt(Math.floor(Date.now() / 1000)) % cycleSecs;
-    const currentCycleStart = new Date(
-      new Date().getTime() - Number(currentCycleSecs) * 1000
-    );
-    nextCycleStart = new Date(
-      currentCycleStart.getTime() + Number(cycleSecs * BigInt(1000))
-    );
-  });
-
+  $: withdrawable =
+    $drips.collectable && currencyFormat($drips.collectable.wei);
   let hover = false;
 </script>
 
@@ -77,15 +62,15 @@
         <p>
           While you’re earning in real-time, your withdrawable amount is updated
           once a week.
-          {#if nextCycleStart}
+          {#if $drips.cycle?.end}
             It will update next on {Intl.DateTimeFormat('en-US', {
               month: 'short',
               day: 'numeric'
-            }).format(nextCycleStart)}
+            }).format($drips.cycle.end)}
             at {Intl.DateTimeFormat('en-US', {
               hour: '2-digit',
               minute: '2-digit'
-            }).format(nextCycleStart)}.
+            }).format($drips.cycle.end)}.
           {/if}
         </p>
       </div>
