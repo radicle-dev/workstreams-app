@@ -170,7 +170,7 @@ export const workstreamsStore = (() => {
     };
   }
 
-  async function estimateBalances() {
+  function estimateBalances() {
     const ws = get(workstreams);
 
     const newEstimates: { [wsId: string]: Estimate } = {};
