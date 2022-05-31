@@ -5,7 +5,6 @@
 
   import drips from '$lib/stores/drips';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
-  import { onMount } from 'svelte';
   import { workstreamsStore } from '$lib/stores/workstreams';
 
   const estimates = workstreamsStore.estimates;
