@@ -157,6 +157,24 @@
     });
   }
 
+  $: incomingTotal = calculateStreamTotal(
+    filterObject($workstreamsStore, (ws) => {
+      return (
+        ws.data.acceptedApplication === $walletStore.accounts[0] &&
+        $estimates.streams[ws.data.id]?.currentlyStreaming
+      );
+    })
+  );
+
+  $: outgoingTotal = calculateStreamTotal(
+    filterObject($workstreamsStore, (ws) => {
+      return (
+        ws.data.creator === $walletStore.accounts[0] &&
+        $estimates.streams[ws.data.id]?.currentlyStreaming
+      );
+    })
+  );
+
   function calculateStreamTotal(enrichedWorkstreams: {
     [key: string]: EnrichedWorkstream;
   }) {
@@ -212,7 +230,7 @@
                 <TokenStreams />
                 <p>
                   You are earning <span class="typo-text-bold"
-                    >{calculateStreamTotal(section.workstreams)}
+                    >{incomingTotal}
                     DAI</span
                   > per day
                 </p>
@@ -220,7 +238,7 @@
                 <TokenStreams />
                 <p>
                   You are streaming <span class="typo-text-bold"
-                    >{calculateStreamTotal(section.workstreams)}
+                    >{outgoingTotal}
                     DAI</span
                   > per day
                 </p>
