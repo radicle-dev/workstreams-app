@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
   import Button from 'radicle-design-system/Button.svelte';
+  import TopUpIcon from 'radicle-design-system/icons/Topup.svelte';
   import InfoCircle from 'radicle-design-system/icons/InfoCircle.svelte';
 
   import drips from '$lib/stores/drips';
@@ -16,6 +17,21 @@
   $: withdrawable =
     $drips.collectable && currencyFormat($drips.collectable.wei);
   let hover = false;
+
+  let txInFlight = false;
+  $: collectBlocked =
+    $drips.collectable === undefined ||
+    $drips.collectable?.wei === BigInt(0) ||
+    txInFlight;
+
+  async function collect() {
+    txInFlight = true;
+    try {
+      await drips.collect();
+    } finally {
+      txInFlight = false;
+    }
+  }
 </script>
 
 <div
@@ -47,7 +63,7 @@
           </h2>
         </div>
         <div class="title-value balance">
-          <p class="typo-text title">Current balance</p>
+          <p class="typo-text title">Total earned</p>
           <h2 class="value">
             {#if estimate}
               {padFloatString(estimate)} DAI
@@ -74,6 +90,13 @@
           {/if}
         </p>
       </div>
+      {#if withdrawable}
+        <div class="actions">
+          <Button disabled={collectBlocked} icon={TopUpIcon} on:click={collect}
+            >Withdraw {withdrawable} DAI</Button
+          >
+        </div>
+      {/if}
     </div>
   {/if}
 </div>
@@ -85,6 +108,10 @@
     position: relative;
     position: flex;
     flex-direction: column;
+  }
+
+  .actions {
+    width: fit-content;
   }
 
   .hover-pad {
