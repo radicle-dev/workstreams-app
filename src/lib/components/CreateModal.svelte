@@ -5,7 +5,8 @@
   import Button from 'radicle-design-system/Button.svelte';
   import Dropdown from 'radicle-design-system/Dropdown.svelte';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
-  import TextInput from './TextInput.svelte';
+  import TextInput from 'radicle-design-system/TextInput.svelte';
+  import TextArea from 'radicle-design-system/TextArea.svelte';
   import { getConfig } from '$lib/config';
   import type { WorkstreamInput } from '$lib/stores/workstreams/types';
   import { goto } from '$app/navigation';
@@ -76,13 +77,22 @@
         <div class="inner">
           <div class="input-with-label payout">
             <h4>Total Payout</h4>
-            <TextInput bind:value={total} placeholder="0" suffix="DAI" />
+            <TextInput
+              variant={{ type: 'number', min: 0 }}
+              bind:value={total}
+              placeholder="0"
+              suffix="DAI"
+            />
           </div>
           <div class="input-with-label duration">
             <h4>Duration</h4>
             <div class="input-group">
               <div class="number">
-                <TextInput bind:value={duration} placeholder="0" />
+                <TextInput
+                  variant={{ type: 'number', min: 0 }}
+                  bind:value={duration}
+                  placeholder="0"
+                />
               </div>
               <div class="unit">
                 <Dropdown bind:value={durationUnit} options={durationOptions} />
@@ -103,10 +113,10 @@
       </div>
       <div class="input-with-label">
         <h4>Description</h4>
-        <TextInput
+        <TextArea
           bind:value={description}
-          textarea
-          placeholder="Markdown supported"
+          placeholder="Describe the tasks that have to be completed"
+          caption="Markdown supported"
         />
       </div>
     </form>
