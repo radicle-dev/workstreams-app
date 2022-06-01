@@ -63,7 +63,7 @@
 
     try {
       const tx = await drips.topUp(enrichedWorkstream, topUpAmountWei);
-      tx.wait(1);
+      await tx.wait(1);
     } finally {
       txInFlight = false;
     }
