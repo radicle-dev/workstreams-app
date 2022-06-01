@@ -14,7 +14,7 @@
 {#if showTotal}
   <Tooltip
     position="top"
-    value={currencyFormat(ratePerSecond) +
+    value={currencyFormat(ratePerSecond.wei * BigInt(86400)) +
       ` ${ratePerSecond.currency.toUpperCase()} / 24h`}
   >
     <p class="typo-text-bold rate">
