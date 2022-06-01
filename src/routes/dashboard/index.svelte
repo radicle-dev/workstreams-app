@@ -20,6 +20,8 @@
   import { goto } from '$app/navigation';
   import Spinner from 'radicle-design-system/Spinner.svelte';
 
+  const estimates = workstreamsStore.estimates;
+
   let locked: boolean;
 
   enum SectionName {
@@ -158,9 +160,13 @@
   function calculateStreamTotal(enrichedWorkstreams: {
     [key: string]: EnrichedWorkstream;
   }) {
-    let totalWeiPerSec = BigInt(0);
-    Object.values(enrichedWorkstreams).forEach(
-      (eWs) => (totalWeiPerSec += eWs.onChainData?.amtPerSec.wei)
+    const totalWeiPerSec = Object.entries(enrichedWorkstreams).reduce<bigint>(
+      (acc, [id, ws]) => {
+        return $estimates.streams[id]?.currentlyStreaming
+          ? acc + ws.onChainData.amtPerSec.wei
+          : acc;
+      },
+      BigInt(0)
     );
 
     const totalWeiPerDay = totalWeiPerSec * BigInt(86400);

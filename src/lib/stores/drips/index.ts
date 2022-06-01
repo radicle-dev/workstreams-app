@@ -7,7 +7,7 @@ import type {
 import type { BigNumber, ethers, ContractTransaction } from 'ethers';
 import { utils } from 'ethers';
 import { get, writable } from 'svelte/store';
-import { Currency, type Money, type Workstream } from '../workstreams/types';
+import { Currency, type Money } from '../workstreams/types';
 import daiInfo from './contracts/Dai';
 import daiDripsHubInfo from './contracts/DaiDripsHub';
 import {

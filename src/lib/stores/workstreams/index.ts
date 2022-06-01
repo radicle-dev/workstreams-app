@@ -74,6 +74,7 @@ interface Estimate {
   currentBalance: Money;
   remainingBalance: Money;
   streamingUntil: Date;
+  currentlyStreaming: boolean;
 }
 
 interface EstimatesState {
@@ -251,7 +252,8 @@ export const workstreamsStore = (() => {
           wei: remainingBalance,
           currency: Currency.DAI
         },
-        streamingUntil
+        streamingUntil,
+        currentlyStreaming: streamingUntil.getTime() > new Date().getTime()
       };
     }
 
