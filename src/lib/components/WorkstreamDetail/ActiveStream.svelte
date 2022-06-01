@@ -74,7 +74,6 @@
       </p>
       <div style="display: flex; gap: .75rem;">
         {#if isOwner}
-          <Button variant="primary-outline" icon={Pause}>Pause</Button>
           <Button>Top up</Button>
         {/if}
       </div>
