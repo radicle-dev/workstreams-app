@@ -7,8 +7,7 @@ import type {
 import type { BigNumber, ethers, ContractTransaction } from 'ethers';
 import { utils } from 'ethers';
 import { get, writable } from 'svelte/store';
-import { walletStore } from '../wallet/wallet';
-import { Currency, type Money } from '../workstreams/types';
+import { Currency, type Money, type Workstream } from '../workstreams/types';
 import daiInfo from './contracts/Dai';
 import daiDripsHubInfo from './contracts/DaiDripsHub';
 import {
@@ -17,6 +16,7 @@ import {
 } from './contracts/types/index';
 
 import { DripsClient } from 'drips-sdk';
+import type { EnrichedWorkstream } from '../workstreams';
 
 interface InternalState {
   provider: ethers.providers.Web3Provider;
@@ -152,24 +152,23 @@ export default (() => {
     ratePerSecond: Money,
     topUpDaiWei: bigint
   ) {
-    const ws = get(walletStore);
+    const { provider } = get(internal);
 
-    if (!ws.connected) throw new Error('Connect your wallet first.');
-    if (!ws.provider) throw new Error('No Provider available.');
-
-    const daiDripsHubAddress = daiDripsHubInfo(ws.chainId).address;
+    const daiDripsHubAddress = daiDripsHubInfo(
+      provider.network.chainId
+    ).address;
     const contract = DaiDripsHubAbi__factory.connect(
       daiDripsHubAddress,
-      ws.provider.getSigner()
+      provider.getSigner()
     );
 
     const lastDripsEntry = (
       await query<LastDripsEntry, LastDripsEntryVariables>({
         query: GET_LAST_DRIP_ENTRY,
         variables: {
-          user: ws.accounts[0]
+          user: await provider.getSigner().getAddress()
         },
-        chainId: ws.chainId
+        chainId: provider.network.chainId
       })
     ).dripsEntries[0];
 
@@ -198,6 +197,36 @@ export default (() => {
     };
   }
 
+  async function topUp(workstream: EnrichedWorkstream, topUpDaiWei: bigint) {
+    const { provider } = get(internal);
+
+    if (!workstream.data.dripsData) throw 'No drips data for workstream';
+    if (workstream.onChainData?.dripsUpdatedEvents?.length === 0)
+      throw 'No DripsUpdated events for workstream';
+
+    const daiDripsHubAddress = daiDripsHubInfo(
+      provider.network.chainId
+    ).address;
+    const contract = DaiDripsHubAbi__factory.connect(
+      daiDripsHubAddress,
+      provider.getSigner()
+    );
+
+    const { dripsUpdatedEvents } = workstream.onChainData;
+    const lastUpdate = dripsUpdatedEvents[dripsUpdatedEvents.length - 1];
+
+    return contract[
+      'setDrips(uint256,uint64,uint128,(address,uint128)[],int128,(address,uint128)[])'
+    ](
+      workstream.data.dripsData.accountId,
+      lastUpdate.fromBlock.timestamp,
+      lastUpdate.event.args.balance,
+      lastUpdate.event.args.receivers,
+      topUpDaiWei,
+      lastUpdate.event.args.receivers
+    );
+  }
+
   async function collect() {
     const { provider } = get(internal);
 
@@ -217,6 +246,7 @@ export default (() => {
     connect,
     disconnect,
     createDrip,
+    topUp,
     getDripsUpdatedEvents,
     getAllowance,
     getDaiBalance,

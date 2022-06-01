@@ -73,6 +73,7 @@ interface InternalState {
 interface Estimate {
   currentBalance: Money;
   remainingBalance: Money;
+  streamingUntil: Date;
 }
 
 interface EstimatesState {
@@ -212,14 +213,15 @@ export const workstreamsStore = (() => {
             1000
         );
 
+        const amtPerSec = dew.event.args.receivers[0].amtPerSec.toBigInt();
+
         /* 
           If the theoretically earned amount from this workstream exceeds
           the balance that the workstream was topped up for at the time
           of the update, we limit the amount earned to the topped-up amount.
         */
         const earnedDuringUpdate = bigIntMin(
-          BigInt(updateValidForSecs) *
-            dew.event.args.receivers[0].amtPerSec.toBigInt(),
+          BigInt(updateValidForSecs) * amtPerSec,
           toppedUpAmount
         );
 
@@ -230,6 +232,14 @@ export const workstreamsStore = (() => {
         }
       });
 
+      const lastUpdate = dripsUpdatedEvents[dripsUpdatedEvents.length - 1];
+      const currAmtPerSec =
+        lastUpdate.event.args.receivers[0].amtPerSec.toBigInt();
+      const lastUpdateTimestamp = lastUpdate.fromBlock.timestamp * 1000;
+      const streamingUntil = new Date(
+        lastUpdateTimestamp + Number(remainingBalance / currAmtPerSec) * 1000
+      );
+
       newEstimates[wsId] = {
         currentBalance: {
           wei: earned,
@@ -238,7 +248,8 @@ export const workstreamsStore = (() => {
         remainingBalance: {
           wei: remainingBalance,
           currency: Currency.DAI
-        }
+        },
+        streamingUntil
       };
     }
 

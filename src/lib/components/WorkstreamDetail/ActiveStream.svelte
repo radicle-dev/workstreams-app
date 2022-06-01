@@ -6,12 +6,12 @@
   import Rate from '$components/Rate.svelte';
   import Row from '$components/Row.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
-  import Pause from 'radicle-design-system/icons/Pause.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import type { Application, Workstream } from '$lib/stores/workstreams/types';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
   import { walletStore } from '$lib/stores/wallet/wallet';
+  import TopUpModal from '../TopUpModal.svelte';
 
   export let workstream: Workstream;
   export let acceptedApplication: Application | undefined = undefined;
@@ -20,11 +20,6 @@
   $: estimate = $estimates.streams[workstream.id];
 
   $: enrichedWorkstream = $workstreamsStore[workstream.id];
-  $: dripsUpdatedEvents = enrichedWorkstream?.onChainData?.dripsUpdatedEvents;
-  $: totalToppedUp =
-    dripsUpdatedEvents &&
-    dripsUpdatedEvents[dripsUpdatedEvents.length - 1].event.args.balance;
-
   $: isOwner = workstream.creator === $walletStore.accounts[0];
   $: isReceiver = workstream.acceptedApplication === $walletStore.accounts[0];
 </script>
@@ -65,16 +60,14 @@
       </div>
     </Row>
     <div class="stream-actions">
-      <p>
-        {#if dripsUpdatedEvents}
-          {currencyFormat(totalToppedUp.toBigInt())} of {currencyFormat(
-            workstream.total.wei
-          )} DAI topped up
-        {/if}
-      </p>
       <div style="display: flex; gap: .75rem;">
         {#if isOwner}
-          <Button>Top up</Button>
+          <Button
+            on:click={() =>
+              modal.show(TopUpModal, undefined, {
+                enrichedWorkstream
+              })}>Top up</Button
+          >
         {/if}
       </div>
     </div>
@@ -105,8 +98,8 @@
 
   .stream-actions {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    width: 100%;
+    justify-content: flex-end;
     margin-top: 1rem;
   }
 </style>
