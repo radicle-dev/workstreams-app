@@ -30,7 +30,7 @@
     {#if icon}
       <TokenStreams style="fill: var(--color-primary);" />
     {/if}
-    {currencyFormat(ratePerSecond)}
+    {currencyFormat(ratePerSecond.wei * BigInt(86400))}
     {ratePerSecond.currency.toUpperCase()} <span class="typo-text">/ 24h</span>
   </p>
 {/if}

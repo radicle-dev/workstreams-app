@@ -29,10 +29,12 @@
     <h3 style="margin-bottom: 1rem;">Active stream</h3>
     <div class="timerate">
       <div style="text-align: right;">
-        <Rate
-          ratePerSecond={workstream.ratePerSecond}
-          total={workstream.total}
-        />
+        {#if enrichedWorkstream.onChainData}
+          <Rate
+            ratePerSecond={enrichedWorkstream.onChainData.amtPerSec}
+            total={workstream.total}
+          />
+        {/if}
       </div>
       <div>
         <p class="timeframe">Active since Jan 5, 2022</p>
