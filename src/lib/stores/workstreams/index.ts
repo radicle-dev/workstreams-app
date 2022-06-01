@@ -237,7 +237,9 @@ export const workstreamsStore = (() => {
         lastUpdate.event.args.receivers[0].amtPerSec.toBigInt();
       const lastUpdateTimestamp = lastUpdate.fromBlock.timestamp * 1000;
       const streamingUntil = new Date(
-        lastUpdateTimestamp + Number(remainingBalance / currAmtPerSec) * 1000
+        lastUpdateTimestamp +
+          Number(lastUpdate.event.args.balance.toBigInt() / currAmtPerSec) *
+            1000
       );
 
       newEstimates[wsId] = {
