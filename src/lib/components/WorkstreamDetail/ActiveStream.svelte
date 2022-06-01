@@ -12,6 +12,7 @@
   import { currencyFormat, padFloatString } from '$lib/utils/format';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import TopUpModal from '../TopUpModal.svelte';
+  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
   export let workstream: Workstream;
   export let acceptedApplication: Application | undefined = undefined;
@@ -23,7 +24,7 @@
   $: isOwner = workstream.creator === $walletStore.accounts[0];
   $: isReceiver = workstream.acceptedApplication === $walletStore.accounts[0];
   $: activeSince =
-    enrichedWorkstream.onChainData &&
+    enrichedWorkstream?.onChainData &&
     new Date(
       enrichedWorkstream.onChainData?.dripsUpdatedEvents[0].fromBlock
         .timestamp * 1000
@@ -35,7 +36,7 @@
     <h3 style="margin-bottom: 1rem;">Active stream</h3>
     <div class="timerate">
       <div style="text-align: right;">
-        {#if enrichedWorkstream.onChainData}
+        {#if enrichedWorkstream?.onChainData}
           <Rate
             ratePerSecond={enrichedWorkstream.onChainData.amtPerSec}
             total={workstream.total}
@@ -79,9 +80,9 @@
     </Row>
     <div class="stream-actions">
       <div style="display: flex; gap: .75rem;">
-        {#if isOwner}
+        {#if isOwner && $connectedAndLoggedIn}
           <Button
-            disabled={!enrichedWorkstream.onChainData}
+            disabled={!enrichedWorkstream?.onChainData}
             on:click={() =>
               modal.show(TopUpModal, undefined, {
                 enrichedWorkstream

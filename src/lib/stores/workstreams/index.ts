@@ -91,6 +91,7 @@ export const workstreamsStore = (() => {
     clearInterval(get(internal).intervalId);
 
     workstreams.set({});
+    estimates.set({ streams: {} });
     internal.set(undefined);
   }
 
