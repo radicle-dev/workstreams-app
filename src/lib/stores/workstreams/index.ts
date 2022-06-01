@@ -349,8 +349,12 @@ export const workstreamsStore = (() => {
     }
   }
 
-  async function getWorkstream(id: string, fetcher?: typeof fetch) {
-    if (serveFromCache(id)) return serveFromCache(id);
+  async function getWorkstream(
+    id: string,
+    fetcher?: typeof fetch,
+    bypassCache?: true
+  ) {
+    if (!bypassCache && serveFromCache(id)) return serveFromCache(id);
 
     const url = `${getConfig().API_URL_BASE}/workstreams/${id}`;
     const response = await _fetch(url, undefined, fetcher);

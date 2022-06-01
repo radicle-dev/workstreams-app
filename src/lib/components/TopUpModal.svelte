@@ -2,6 +2,7 @@
   import Emoji from 'radicle-design-system/Emoji.svelte';
   import { toWei } from 'drips-sdk';
 
+  import * as modal from '$lib/utils/modal';
   import {
     workstreamsStore,
     type EnrichedWorkstream
@@ -11,6 +12,8 @@
   import { onMount } from 'svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import drips from '$lib/stores/drips';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
 
   const estimates = workstreamsStore.estimates;
 
@@ -64,6 +67,12 @@
     try {
       const tx = await drips.topUp(enrichedWorkstream, topUpAmountWei);
       await tx.wait(1);
+      await workstreamsStore.getWorkstream(
+        enrichedWorkstream.data.id,
+        undefined,
+        true
+      );
+      modal.hide();
     } finally {
       txInFlight = false;
     }
