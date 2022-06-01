@@ -81,6 +81,7 @@
       <div style="display: flex; gap: .75rem;">
         {#if isOwner}
           <Button
+            disabled={!enrichedWorkstream.onChainData}
             on:click={() =>
               modal.show(TopUpModal, undefined, {
                 enrichedWorkstream
