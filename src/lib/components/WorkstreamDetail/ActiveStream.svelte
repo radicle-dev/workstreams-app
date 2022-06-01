@@ -22,6 +22,12 @@
   $: enrichedWorkstream = $workstreamsStore[workstream.id];
   $: isOwner = workstream.creator === $walletStore.accounts[0];
   $: isReceiver = workstream.acceptedApplication === $walletStore.accounts[0];
+  $: activeSince =
+    enrichedWorkstream.onChainData &&
+    new Date(
+      enrichedWorkstream.onChainData?.dripsUpdatedEvents[0].fromBlock
+        .timestamp * 1000
+    );
 </script>
 
 <Card hoverable={false}>
@@ -37,7 +43,17 @@
         {/if}
       </div>
       <div>
-        <p class="timeframe">Active since Jan 5, 2022</p>
+        {#if activeSince}
+          <p class="timeframe">
+            Active since {Intl.DateTimeFormat('en-US', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: 'numeric'
+            }).format(activeSince)}
+          </p>
+        {/if}
       </div>
     </div>
   </div>
