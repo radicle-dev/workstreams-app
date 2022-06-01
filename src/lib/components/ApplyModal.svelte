@@ -14,7 +14,8 @@
   import TitleMeta from '$components/TitleMeta.svelte';
   import TimeRate from '$components/TimeRate.svelte';
   import Apply from 'radicle-design-system/icons/Ledger.svelte';
-  import TextInput from '$components/TextInput.svelte';
+  import TextArea from 'radicle-design-system/TextArea.svelte';
+  import TextInput from 'radicle-design-system/TextInput.svelte';
   import Dropdown from 'radicle-design-system/Dropdown.svelte';
   import { weiToDai } from '$lib/utils/format';
   import { getConfig } from '$lib/config';
@@ -90,23 +91,32 @@
     <form>
       <div class="input-with-label">
         <h4>Application text</h4>
-        <TextInput
+        <TextArea
           bind:value={applicationText}
-          textarea
-          placeholder="Markdown supported"
+          placeholder="Describe why you would like to apply"
+          caption="Markdown supported"
         />
       </div>
       <div class="payment">
         <div class="inner">
           <div class="input-with-label payout">
             <h4>Total Payout</h4>
-            <TextInput bind:value={total} number placeholder="0" suffix="DAI" />
+            <TextInput
+              bind:value={total}
+              variant={{ type: 'number', min: 0 }}
+              placeholder="0"
+              suffix="DAI"
+            />
           </div>
           <div class="input-with-label duration">
             <h4>Duration</h4>
             <div class="input-group">
               <div class="number">
-                <TextInput bind:value={duration} number placeholder="0" />
+                <TextInput
+                  bind:value={duration}
+                  variant={{ type: 'number', min: 0 }}
+                  placeholder="0"
+                />
               </div>
               <div class="unit">
                 <Dropdown bind:value={durationUnit} options={durationOptions} />

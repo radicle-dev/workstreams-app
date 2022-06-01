@@ -4,7 +4,7 @@
   import User from '$components/User.svelte';
   import Card from '$components/Card.svelte';
   import drips from '$lib/stores/drips';
-  import TextInput from '$components/TextInput.svelte';
+  import TextInput from 'radicle-design-system/TextInput.svelte';
   import {
     Currency,
     type Application,
@@ -101,10 +101,10 @@
         <h4>Total amount</h4>
         <!-- TODO: wired up to update the stream rate + that's what you're submitting -->
         <TextInput
+          variant={{ type: 'number', min: 0 }}
           bind:value={totalAmount}
           suffix="DAI"
           style="width: fit-content;"
-          number
         />
       </div>
       <div class="input-with-label rate">
@@ -118,9 +118,9 @@
       <div class="input-with-label">
         <h4>Top up amount</h4>
         <TextInput
+          variant={{ type: 'number', min: 0 }}
           bind:value={topUpAmount}
           suffix="DAI"
-          number
           style="width: fit-content;"
           validationState={topUpExceedsBalance
             ? {
