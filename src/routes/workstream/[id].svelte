@@ -48,14 +48,11 @@
 
     window.addEventListener('scroll', updateScrollPos);
     updateScrollPos();
-  });
 
-  onDestroy(() => {
-    $headerContent = {};
-
-    if (browser) {
+    return () => {
+      $headerContent = {};
       window.removeEventListener('scroll', updateScrollPos);
-    }
+    };
   });
 
   function updateScrollPos() {

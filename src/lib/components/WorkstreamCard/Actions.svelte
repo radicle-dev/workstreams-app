@@ -21,6 +21,7 @@
   import SetDaiAllowance from '../SetUpPaymentSteps/steps/SetDaiAllowance.svelte';
   import ConfirmValues from '../SetUpPaymentSteps/steps/ConfirmValues.svelte';
   import TopUpValues from '../TopUpSteps/TopUpValues.svelte';
+  import Pause from 'radicle-design-system/icons/Pause.svelte';
 
   const estimates = workstreamsStore.estimates;
 
@@ -55,9 +56,8 @@
 {#if creator}
   {#if workstream.state === WorkstreamState.ACTIVE && estimate}
     <ActionRow
-      leftString={`${
-        estimate && estimate.paused ? 'Paused with ' : ''
-      }${padFloatString(
+      icon={estimate?.paused && Pause}
+      leftString={`${estimate?.paused ? 'Paused with ' : ''}${padFloatString(
         currencyFormat(estimate.remainingBalance.wei)
       )} DAI left`}
       primaryActionText={estimate && !estimate.paused && 'Top up'}
