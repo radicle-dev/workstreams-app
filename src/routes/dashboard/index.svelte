@@ -20,6 +20,8 @@
   import { goto } from '$app/navigation';
   import Spinner from 'radicle-design-system/Spinner.svelte';
 
+  const estimates = workstreamsStore.estimates;
+
   let locked: boolean;
 
   enum SectionName {
@@ -155,12 +157,34 @@
     });
   }
 
+  $: incomingTotal = calculateStreamTotal(
+    filterObject($workstreamsStore, (ws) => {
+      return (
+        ws.data.acceptedApplication === $walletStore.accounts[0] &&
+        $estimates.streams[ws.data.id]?.currentlyStreaming
+      );
+    })
+  );
+
+  $: outgoingTotal = calculateStreamTotal(
+    filterObject($workstreamsStore, (ws) => {
+      return (
+        ws.data.creator === $walletStore.accounts[0] &&
+        $estimates.streams[ws.data.id]?.currentlyStreaming
+      );
+    })
+  );
+
   function calculateStreamTotal(enrichedWorkstreams: {
     [key: string]: EnrichedWorkstream;
   }) {
-    let totalWeiPerSec = BigInt(0);
-    Object.values(enrichedWorkstreams).forEach(
-      (eWs) => (totalWeiPerSec += eWs.onChainData?.amtPerSec.wei)
+    const totalWeiPerSec = Object.entries(enrichedWorkstreams).reduce<bigint>(
+      (acc, [id, ws]) => {
+        return $estimates.streams[id]?.currentlyStreaming
+          ? acc + ws.onChainData.amtPerSec.wei
+          : acc;
+      },
+      BigInt(0)
     );
 
     const totalWeiPerDay = totalWeiPerSec * BigInt(86400);
@@ -206,7 +230,7 @@
                 <TokenStreams />
                 <p>
                   You are earning <span class="typo-text-bold"
-                    >{calculateStreamTotal(section.workstreams)}
+                    >{incomingTotal}
                     DAI</span
                   > per day
                 </p>
@@ -214,7 +238,7 @@
                 <TokenStreams />
                 <p>
                   You are streaming <span class="typo-text-bold"
-                    >{calculateStreamTotal(section.workstreams)}
+                    >{outgoingTotal}
                     DAI</span
                   > per day
                 </p>

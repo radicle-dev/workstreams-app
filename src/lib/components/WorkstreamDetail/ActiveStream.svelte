@@ -1,16 +1,51 @@
 <script lang="ts">
   import * as modal from '$lib/utils/modal';
-
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
   import Rate from '$components/Rate.svelte';
   import Row from '$components/Row.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
-  import Pause from 'radicle-design-system/icons/Pause.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import type { Application, Workstream } from '$lib/stores/workstreams/types';
+  import { workstreamsStore } from '$lib/stores/workstreams';
+  import { currencyFormat, padFloatString } from '$lib/utils/format';
+  import { walletStore } from '$lib/stores/wallet/wallet';
+  import StepperModal from '../StepperModal/index.svelte';
+  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
+  import Pause from 'radicle-design-system/icons/Pause.svelte';
+  import drips from '$lib/stores/drips';
+  import TopUpValues from '../TopUpSteps/TopUpValues.svelte';
+
   export let workstream: Workstream;
   export let acceptedApplication: Application | undefined = undefined;
+
+  const estimates = workstreamsStore.estimates;
+  $: estimate = $estimates.streams[workstream.id];
+
+  $: enrichedWorkstream = $workstreamsStore[workstream.id];
+  $: isOwner = workstream.creator === $walletStore.accounts[0];
+  $: isReceiver = workstream.acceptedApplication === $walletStore.accounts[0];
+  $: activeSince =
+    enrichedWorkstream?.onChainData &&
+    new Date(
+      enrichedWorkstream.onChainData?.dripsUpdatedEvents[0].fromBlock
+        .timestamp * 1000
+    );
+
+  let pauseTxInFlight = false;
+
+  async function pauseUnpause(action: 'pause' | 'unpause') {
+    pauseTxInFlight = true;
+    try {
+      const tx = await drips.pauseUnpause(action, enrichedWorkstream);
+      await tx.wait(1);
+      await workstreamsStore.getWorkstream(workstream.id, undefined, true);
+    } finally {
+      pauseTxInFlight = false;
+    }
+  }
+
+  $: pauseUnpauseBtnDisabled = pauseTxInFlight;
 </script>
 
 <Card hoverable={false}>
@@ -18,13 +53,25 @@
     <h3 style="margin-bottom: 1rem;">Active stream</h3>
     <div class="timerate">
       <div style="text-align: right;">
-        <Rate
-          ratePerSecond={workstream.ratePerSecond}
-          total={workstream.total}
-        />
+        {#if enrichedWorkstream?.onChainData}
+          <Rate
+            ratePerSecond={enrichedWorkstream.onChainData.amtPerSec}
+            total={workstream.total}
+          />
+        {/if}
       </div>
       <div>
-        <p class="timeframe">Active since Jan 5, 2022</p>
+        {#if activeSince}
+          <p class="timeframe">
+            Active since {Intl.DateTimeFormat('en-US', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: 'numeric'
+            }).format(activeSince)}
+          </p>
+        {/if}
       </div>
     </div>
   </div>
@@ -34,21 +81,51 @@
         <User address={acceptedApplication.creator} />
       </div>
       <div slot="right" class="row-actions">
-        <p class="proposal">4020 DAI left (8.04 days)</p>
+        {#if (isReceiver || isOwner) && estimate?.remainingBalance}
+          <p class="proposal">
+            {padFloatString(currencyFormat(estimate.remainingBalance.wei))} DAI left
+          </p>
+        {/if}
         <Button
           on:click={() =>
             modal.show(ApplicationModal, undefined, {
               workstream,
-              acceptedApplication
+              application: acceptedApplication
             })}>View application</Button
         >
       </div>
     </Row>
     <div class="stream-actions">
-      <p>5000 of 8000 DAI topped up</p>
       <div style="display: flex; gap: .75rem;">
-        <Button variant="primary-outline" icon={Pause}>Pause</Button>
-        <Button>Top up</Button>
+        {#if isOwner && $connectedAndLoggedIn}
+          {#if estimate && estimate.paused === false && estimate.remainingBalance.wei > BigInt(0)}
+            <Button
+              disabled={pauseUnpauseBtnDisabled}
+              variant="primary-outline"
+              on:click={() => pauseUnpause('pause')}
+              icon={Pause}>Pause</Button
+            >
+          {:else if estimate && estimate.paused && estimate.remainingBalance.wei > BigInt(0)}
+            <Button
+              disabled={pauseUnpauseBtnDisabled}
+              variant="primary-outline"
+              on:click={() => pauseUnpause('unpause')}
+              icon={Pause}>Unpause</Button
+            >
+          {/if}
+          {#if estimate && estimate.paused === false}
+            <Button
+              disabled={!enrichedWorkstream?.onChainData}
+              on:click={() =>
+                modal.show(StepperModal, undefined, {
+                  stepProps: {
+                    enrichedWorkstream
+                  },
+                  steps: [TopUpValues]
+                })}>Top up</Button
+            >
+          {/if}
+        {/if}
       </div>
     </div>
   </div>
@@ -78,8 +155,8 @@
 
   .stream-actions {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    width: 100%;
+    justify-content: flex-end;
     margin-top: 1rem;
   }
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, SvelteComponent } from 'svelte';
   import Button from 'radicle-design-system/Button.svelte';
 
   import Row from '$components/Row.svelte';
@@ -8,7 +8,8 @@
 
   export let userAddress: string | undefined = undefined;
   export let facePile: string[] | undefined = undefined;
-  export let leftString: string = '';
+  export let leftString = '';
+  export let icon: typeof SvelteComponent | undefined = undefined;
   export let rightString: string | undefined = undefined;
   export let primaryActionText: string | undefined = undefined;
   export let outlineActionText: string | undefined = undefined;
@@ -18,6 +19,7 @@
 
 <Row>
   <div slot="left" class="left">
+    <svelte:component this={icon} style="fill: var(--color-primary)" />
     {#if userAddress}
       <User address={userAddress} showAddress={false} />
     {/if}
@@ -56,5 +58,10 @@
 
   .right {
     color: var(--color-primary);
+  }
+
+  .icon {
+    height: 1.5rem;
+    width: 1.5rem;
   }
 </style>

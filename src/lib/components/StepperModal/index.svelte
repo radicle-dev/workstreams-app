@@ -2,28 +2,18 @@
   import * as modal from '$lib/utils/modal';
   import { fly } from 'svelte/transition';
   import Modal from '../Modal.svelte';
-  import type { Application, Workstream } from '$lib/stores/workstreams/types';
-  import { onMount, SvelteComponent } from 'svelte';
+  import { onMount, type SvelteComponent } from 'svelte';
   import Spinner from 'radicle-design-system/Spinner.svelte';
 
-  import Intro from './steps/Intro.svelte';
-  import ConfirmValues from './steps/ConfirmValues.svelte';
-  import SetDaiAllowance from './steps/SetDaiAllowance.svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-  import WaitPromise from './steps/WaitPromise.svelte';
+  import WaitPromise from './WaitPromiseStep.svelte';
 
-  export let application: Application | Promise<Application>;
-  export let workstream: Workstream;
+  export let stepProps: { [propName: string]: any } = {};
+  export let steps: typeof SvelteComponent[];
+  export let loading = true;
 
-  let resolvedApplication: Application | undefined;
-
-  const steps: typeof SvelteComponent[] = [
-    Intro,
-    SetDaiAllowance,
-    ConfirmValues
-  ];
-
+  let resolvedStepProps: { [propName: string]: any } | undefined;
   let currentStepIndex = 0;
   let currentStep: typeof SvelteComponent = steps[0];
   let pending: () => Promise<void> | undefined;
@@ -57,20 +47,29 @@
     currentStep = WaitPromise;
   }
 
-  onMount(async () => {
-    resolvedApplication = await application;
-  });
+  async function resolveStepPropPromises() {
+    loading = true;
+
+    const resolved = await Promise.all(
+      Object.entries(stepProps).map(async ([key, value]) => [key, await value])
+    );
+
+    resolvedStepProps = Object.fromEntries(resolved);
+
+    loading = false;
+  }
+
+  onMount(resolveStepPropPromises);
 </script>
 
 <Modal>
   <div slot="body" class="body">
-    {#if resolvedApplication}
+    {#if !loading}
       {#key currentStep}
         <div in:fly={{ x: 50 }} out:fly={{ x: -50 }} class="content">
           <svelte:component
             this={currentStep}
-            {workstream}
-            application={resolvedApplication}
+            {...resolvedStepProps}
             {pending}
             on:continue={advance}
             on:goBack={goBack}
@@ -85,11 +84,7 @@
         be on the lookout for a better solution.
       -->
       <div class="placeholder">
-        <svelte:component
-          this={currentStep}
-          {workstream}
-          application={resolvedApplication}
-        />
+        <svelte:component this={currentStep} {...resolvedStepProps} />
       </div>
     {:else}
       <Spinner />

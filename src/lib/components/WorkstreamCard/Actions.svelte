@@ -6,8 +6,9 @@
 
   import ActionRow from './ActionRow.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
-  import SetUpPaymentModal from '../SetUpPaymentModal/SetUpPaymentModal.svelte';
+  import StepperModal from '../StepperModal/index.svelte';
   import {
+    reviver,
     workstreamsStore,
     type EnrichedWorkstream
   } from '$lib/stores/workstreams';
@@ -16,6 +17,11 @@
     type Application
   } from '$lib/stores/workstreams/types';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
+  import Intro from '../SetUpPaymentSteps/steps/Intro.svelte';
+  import SetDaiAllowance from '../SetUpPaymentSteps/steps/SetDaiAllowance.svelte';
+  import ConfirmValues from '../SetUpPaymentSteps/steps/ConfirmValues.svelte';
+  import TopUpValues from '../TopUpSteps/TopUpValues.svelte';
+  import Pause from 'radicle-design-system/icons/Pause.svelte';
 
   const estimates = workstreamsStore.estimates;
 
@@ -43,16 +49,25 @@
     }/applications/${id}`;
     const response = await fetch(url, { credentials: 'include' });
 
-    return response.ok && (await response.json());
+    return response.ok && JSON.parse(await response.text(), reviver);
   }
 </script>
 
 {#if creator}
   {#if workstream.state === WorkstreamState.ACTIVE && estimate}
     <ActionRow
-      leftString={`${padFloatString(
+      icon={estimate?.paused && Pause}
+      leftString={`${estimate?.paused ? 'Paused with ' : ''}${padFloatString(
         currencyFormat(estimate.remainingBalance.wei)
       )} DAI left`}
+      primaryActionText={estimate && !estimate.paused && 'Top up'}
+      on:primaryAction={() =>
+        modal.show(StepperModal, undefined, {
+          stepProps: {
+            enrichedWorkstream
+          },
+          steps: [TopUpValues]
+        })}
     />
   {:else if workstream.applicationsToReview.length > 0}
     <ActionRow
@@ -67,9 +82,12 @@
       leftString="You've accepted an application"
       outlineActionText="Set up stream"
       on:outlineAction={() =>
-        modal.show(SetUpPaymentModal, undefined, {
-          workstream,
-          application: getApplication(workstream.acceptedApplication)
+        modal.show(StepperModal, undefined, {
+          stepProps: {
+            workstream,
+            application: getApplication(workstream.acceptedApplication)
+          },
+          steps: [Intro, SetDaiAllowance, ConfirmValues]
         })}
     />
   {:else}
@@ -82,7 +100,9 @@
 {:else if applicant}
   {#if workstream.state === WorkstreamState.ACTIVE && estimate}
     <ActionRow
-      leftString={`${padFloatString(
+      leftString={`${
+        estimate && estimate.paused ? 'Paused with ' : ''
+      }${padFloatString(
         currencyFormat(estimate.remainingBalance.wei)
       )} DAI left`}
     />
@@ -108,7 +128,7 @@
     />
   {:else}
     <ActionRow
-      leftString="Your application is pending review."
+      leftString="Your application is pending review"
       outlineActionText="View"
       on:outlineAction={() =>
         modal.show(ApplicationModal, undefined, {

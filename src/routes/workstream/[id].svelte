@@ -20,7 +20,8 @@
       status: responses.every((r) => r.ok) ? 200 : responses[0].status,
       props: {
         workstream: responses[0].ok && responses[0].data,
-        applications: responses[1].ok && (await responses[1].json())
+        applications:
+          responses[1].ok && JSON.parse(await responses[1].text(), reviver)
       }
     };
   }
@@ -33,14 +34,10 @@
   import { headerContent } from '$lib/stores/headerContent';
   import WorkstreamPageHeader from '$lib/components/WorkstreamPageHeader.svelte';
   import { browser } from '$app/env';
-  import { workstreamsStore } from '$lib/stores/workstreams';
+  import { reviver, workstreamsStore } from '$lib/stores/workstreams';
 
   export let workstream: Workstream | undefined;
   export let applications: Application[] | undefined;
-
-  if (browser) {
-    updateScrollPos();
-  }
 
   onMount(() => {
     $headerContent = {
@@ -49,17 +46,13 @@
       headerContentShown: false
     };
 
-    if (browser) {
-      window.addEventListener('scroll', updateScrollPos);
-    }
-  });
+    window.addEventListener('scroll', updateScrollPos);
+    updateScrollPos();
 
-  onDestroy(() => {
-    $headerContent = {};
-
-    if (browser) {
+    return () => {
+      $headerContent = {};
       window.removeEventListener('scroll', updateScrollPos);
-    }
+    };
   });
 
   function updateScrollPos() {

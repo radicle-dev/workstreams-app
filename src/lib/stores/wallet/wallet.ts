@@ -143,6 +143,7 @@ export const walletStore = (() => {
   function disconnect() {
     update((wd) => ({
       ...wd,
+      accounts: [],
       initialized: true,
       walletPresent: true,
       connected: false

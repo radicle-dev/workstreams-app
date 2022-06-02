@@ -73,6 +73,9 @@ interface InternalState {
 interface Estimate {
   currentBalance: Money;
   remainingBalance: Money;
+  streamingUntil?: Date;
+  currentlyStreaming: boolean;
+  paused: boolean;
 }
 
 interface EstimatesState {
@@ -89,6 +92,7 @@ export const workstreamsStore = (() => {
     clearInterval(get(internal).intervalId);
 
     workstreams.set({});
+    estimates.set({ streams: {} });
     internal.set(undefined);
   }
 
@@ -150,12 +154,12 @@ export const workstreamsStore = (() => {
       throw new Error(`Unable to query on-chain state for workstream ${id}`);
     }
 
+    const receiverConfig = dripsUpdatedEvents[
+      dripsUpdatedEvents.length - 1
+    ].event.args.receivers.find((r) => r.receiver.toLowerCase() === assignee);
+
     const amtPerSec = {
-      wei: BigInt(
-        dripsAccount.dripsEntries.find(
-          (e) => (e.receiver as string).toLowerCase() === assignee
-        ).amtPerSec
-      ),
+      wei: receiverConfig?.amtPerSec.toBigInt() || BigInt(0),
       currency: Currency.DAI
     };
 
@@ -212,14 +216,16 @@ export const workstreamsStore = (() => {
             1000
         );
 
+        const amtPerSec =
+          dew.event.args.receivers[0]?.amtPerSec.toBigInt() || BigInt(0);
+
         /* 
           If the theoretically earned amount from this workstream exceeds
           the balance that the workstream was topped up for at the time
           of the update, we limit the amount earned to the topped-up amount.
         */
         const earnedDuringUpdate = bigIntMin(
-          BigInt(updateValidForSecs) *
-            dew.event.args.receivers[0].amtPerSec.toBigInt(),
+          BigInt(updateValidForSecs) * amtPerSec,
           toppedUpAmount
         );
 
@@ -230,6 +236,18 @@ export const workstreamsStore = (() => {
         }
       });
 
+      const lastUpdate = dripsUpdatedEvents[dripsUpdatedEvents.length - 1];
+      const currAmtPerSec =
+        lastUpdate.event.args.receivers[0]?.amtPerSec.toBigInt() || BigInt(0);
+      const lastUpdateTimestamp = lastUpdate.fromBlock.timestamp * 1000;
+      const streamingUntil = currAmtPerSec
+        ? new Date(
+            lastUpdateTimestamp +
+              Number(lastUpdate.event.args.balance.toBigInt() / currAmtPerSec) *
+                1000
+          )
+        : undefined;
+
       newEstimates[wsId] = {
         currentBalance: {
           wei: earned,
@@ -238,7 +256,12 @@ export const workstreamsStore = (() => {
         remainingBalance: {
           wei: remainingBalance,
           currency: Currency.DAI
-        }
+        },
+        streamingUntil,
+        currentlyStreaming: streamingUntil
+          ? streamingUntil.getTime() > new Date().getTime()
+          : false,
+        paused: currAmtPerSec === BigInt(0)
       };
     }
 
@@ -334,8 +357,12 @@ export const workstreamsStore = (() => {
     }
   }
 
-  async function getWorkstream(id: string, fetcher?: typeof fetch) {
-    if (serveFromCache(id)) return serveFromCache(id);
+  async function getWorkstream(
+    id: string,
+    fetcher?: typeof fetch,
+    bypassCache?: true
+  ) {
+    if (!bypassCache && serveFromCache(id)) return serveFromCache(id);
 
     const url = `${getConfig().API_URL_BASE}/workstreams/${id}`;
     const response = await _fetch(url, undefined, fetcher);
