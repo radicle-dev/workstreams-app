@@ -107,6 +107,13 @@
               on:click={() => pauseUnpause('pause')}
               icon={Pause}>Pause</Button
             >
+            <Button
+              disabled={!enrichedWorkstream?.onChainData}
+              on:click={() =>
+                modal.show(TopUpModal, undefined, {
+                  enrichedWorkstream
+                })}>Top up</Button
+            >
           {:else if estimate}
             <Button
               disabled={pauseUnpauseBtnDisabled}
@@ -115,13 +122,6 @@
               icon={Pause}>Unpause</Button
             >
           {/if}
-          <Button
-            disabled={!enrichedWorkstream?.onChainData}
-            on:click={() =>
-              modal.show(TopUpModal, undefined, {
-                enrichedWorkstream
-              })}>Top up</Button
-          >
         {/if}
       </div>
     </div>

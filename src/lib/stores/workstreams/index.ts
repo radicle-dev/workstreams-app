@@ -154,12 +154,12 @@ export const workstreamsStore = (() => {
       throw new Error(`Unable to query on-chain state for workstream ${id}`);
     }
 
+    const receiverConfig = dripsUpdatedEvents[
+      dripsUpdatedEvents.length - 1
+    ].event.args.receivers.find((r) => r.receiver.toLowerCase() === assignee);
+
     const amtPerSec = {
-      wei: BigInt(
-        dripsAccount.dripsEntries.find(
-          (e) => (e.receiver as string).toLowerCase() === assignee
-        )?.amtPerSec || 0
-      ),
+      wei: receiverConfig.amtPerSec.toBigInt(),
       currency: Currency.DAI
     };
 
