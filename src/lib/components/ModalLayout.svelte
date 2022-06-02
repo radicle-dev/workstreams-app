@@ -10,7 +10,7 @@
     modal.hide();
   };
 
-  const pressEscapeKey = (event) => {
+  const pressEscapeKey = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
       modal.hide();
     }
