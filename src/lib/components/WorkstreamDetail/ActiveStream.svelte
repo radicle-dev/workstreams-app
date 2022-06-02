@@ -45,8 +45,6 @@
     }
   }
 
-  $: console.log(estimate);
-
   $: pauseUnpauseBtnDisabled = pauseTxInFlight;
 </script>
 
