@@ -8,6 +8,7 @@
   import ApplicationModal from '$components/ApplicationModal.svelte';
   import SetUpPaymentModal from '../SetUpPaymentModal/SetUpPaymentModal.svelte';
   import {
+    reviver,
     workstreamsStore,
     type EnrichedWorkstream
   } from '$lib/stores/workstreams';
@@ -43,7 +44,7 @@
     }/applications/${id}`;
     const response = await fetch(url, { credentials: 'include' });
 
-    return response.ok && (await response.json());
+    return response.ok && JSON.parse(await response.text(), reviver);
   }
 </script>
 
