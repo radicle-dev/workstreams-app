@@ -7,6 +7,7 @@
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import drips from '$lib/stores/drips';
+  import LoadingDots from './LoadingDots.svelte';
 
   let locked: boolean;
 
@@ -60,7 +61,9 @@
       </Button>
     </div>
   {:else if locked}
-    <Button disabled variant="outline">. . .</Button>
+    <Button disabled variant="outline">
+      <LoadingDots />
+    </Button>
   {:else if !$walletStore.initialized}
     <Button disabled variant="outline">Initializing...</Button>
   {:else if $walletStore.walletPresent === false}
