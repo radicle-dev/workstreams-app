@@ -6,7 +6,7 @@
 
   import ActionRow from './ActionRow.svelte';
   import ApplicationModal from '$components/ApplicationModal.svelte';
-  import SetUpPaymentModal from '../SetUpPaymentModal/SetUpPaymentModal.svelte';
+  import StepperModal from '../StepperModal/index.svelte';
   import {
     reviver,
     workstreamsStore,
@@ -17,6 +17,9 @@
     type Application
   } from '$lib/stores/workstreams/types';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
+  import Intro from '../SetUpPaymentModal/steps/Intro.svelte';
+  import SetDaiAllowance from '../SetUpPaymentModal/steps/SetDaiAllowance.svelte';
+  import ConfirmValues from '../SetUpPaymentModal/steps/ConfirmValues.svelte';
 
   const estimates = workstreamsStore.estimates;
 
@@ -68,9 +71,12 @@
       leftString="You've accepted an application"
       outlineActionText="Set up stream"
       on:outlineAction={() =>
-        modal.show(SetUpPaymentModal, undefined, {
-          workstream,
-          application: getApplication(workstream.acceptedApplication)
+        modal.show(StepperModal, undefined, {
+          stepProps: {
+            workstream,
+            application: getApplication(workstream.acceptedApplication)
+          },
+          steps: [Intro, SetDaiAllowance, ConfirmValues]
         })}
     />
   {:else}

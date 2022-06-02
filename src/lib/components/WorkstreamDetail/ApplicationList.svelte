@@ -16,7 +16,10 @@
     type Application,
     type Workstream
   } from '$lib/stores/workstreams/types';
-  import SetUpPaymentModal from '../SetUpPaymentModal/SetUpPaymentModal.svelte';
+  import StepperModal from '../StepperModal/index.svelte';
+  import Intro from '../SetUpPaymentModal/steps/Intro.svelte';
+  import SetDaiAllowance from '../SetUpPaymentModal/steps/SetDaiAllowance.svelte';
+  import ConfirmValues from '../SetUpPaymentModal/steps/ConfirmValues.svelte';
 
   export let workstream: Workstream;
   export let applications: Application[];
@@ -80,9 +83,12 @@
             <Button
               disabled={actionsDisabled}
               on:click={() =>
-                modal.show(SetUpPaymentModal, undefined, {
-                  workstream,
-                  application
+                modal.show(StepperModal, undefined, {
+                  stepProps: {
+                    workstream,
+                    application
+                  },
+                  steps: [Intro, SetDaiAllowance, ConfirmValues]
                 })}
               variant="primary-outline"
               icon={TokenStreams}>Set up stream</Button
