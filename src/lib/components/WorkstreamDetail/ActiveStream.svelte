@@ -1,6 +1,5 @@
 <script lang="ts">
   import * as modal from '$lib/utils/modal';
-
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
   import Rate from '$components/Rate.svelte';
@@ -13,6 +12,9 @@
   import { walletStore } from '$lib/stores/wallet/wallet';
   import TopUpModal from '../TopUpModal.svelte';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
+  import Pause from 'radicle-design-system/icons/Pause.svelte';
+  import drips from '$lib/stores/drips';
+  import ActionRow from '../WorkstreamCard/ActionRow.svelte';
 
   export let workstream: Workstream;
   export let acceptedApplication: Application | undefined = undefined;
@@ -29,6 +31,23 @@
       enrichedWorkstream.onChainData?.dripsUpdatedEvents[0].fromBlock
         .timestamp * 1000
     );
+
+  let pauseTxInFlight = false;
+
+  async function pauseUnpause(action: 'pause' | 'unpause') {
+    pauseTxInFlight = true;
+    try {
+      const tx = await drips.pauseUnpause(action, enrichedWorkstream);
+      await tx.wait(1);
+      await workstreamsStore.getWorkstream(workstream.id, undefined, true);
+    } finally {
+      pauseTxInFlight = false;
+    }
+  }
+
+  $: console.log(estimate);
+
+  $: pauseUnpauseBtnDisabled = pauseTxInFlight;
 </script>
 
 <Card hoverable={false}>
@@ -81,6 +100,21 @@
     <div class="stream-actions">
       <div style="display: flex; gap: .75rem;">
         {#if isOwner && $connectedAndLoggedIn}
+          {#if estimate && estimate.paused === false}
+            <Button
+              disabled={pauseUnpauseBtnDisabled}
+              variant="primary-outline"
+              on:click={() => pauseUnpause('pause')}
+              icon={Pause}>Pause</Button
+            >
+          {:else if estimate}
+            <Button
+              disabled={pauseUnpauseBtnDisabled}
+              variant="primary-outline"
+              on:click={() => pauseUnpause('unpause')}
+              icon={Pause}>Unpause</Button
+            >
+          {/if}
           <Button
             disabled={!enrichedWorkstream?.onChainData}
             on:click={() =>

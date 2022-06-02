@@ -227,6 +227,48 @@ export default (() => {
     );
   }
 
+  async function pauseUnpause(
+    action: 'pause' | 'unpause',
+    workstream: EnrichedWorkstream
+  ) {
+    const { provider } = get(internal);
+
+    if (!workstream.data.dripsData) throw 'No drips data for workstream';
+    if (workstream.onChainData?.dripsUpdatedEvents?.length === 0)
+      throw 'No DripsUpdated events for workstream';
+
+    const daiDripsHubAddress = daiDripsHubInfo(
+      provider.network.chainId
+    ).address;
+    const contract = DaiDripsHubAbi__factory.connect(
+      daiDripsHubAddress,
+      provider.getSigner()
+    );
+
+    const { dripsUpdatedEvents } = workstream.onChainData;
+    const lastUpdate = dripsUpdatedEvents[dripsUpdatedEvents.length - 1];
+    const lastReceivers = dripsUpdatedEvents
+      .slice()
+      .reverse()
+      .find((dew) =>
+        dew.event.args.receivers.find(
+          (r) =>
+            r.receiver.toLowerCase() === workstream.data.acceptedApplication
+        )
+      )?.event.args.receivers;
+
+    return contract[
+      'setDrips(uint256,uint64,uint128,(address,uint128)[],int128,(address,uint128)[])'
+    ](
+      workstream.data.dripsData.accountId,
+      lastUpdate.fromBlock.timestamp,
+      lastUpdate.event.args.balance,
+      lastUpdate.event.args.receivers,
+      0,
+      action === 'pause' ? [] : lastReceivers
+    );
+  }
+
   async function collect() {
     const { provider } = get(internal);
 
@@ -245,6 +287,7 @@ export default (() => {
     subscribe: state.subscribe,
     connect,
     disconnect,
+    pauseUnpause,
     createDrip,
     topUp,
     getDripsUpdatedEvents,

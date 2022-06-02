@@ -73,8 +73,9 @@ interface InternalState {
 interface Estimate {
   currentBalance: Money;
   remainingBalance: Money;
-  streamingUntil: Date;
+  streamingUntil?: Date;
   currentlyStreaming: boolean;
+  paused: boolean;
 }
 
 interface EstimatesState {
@@ -157,7 +158,7 @@ export const workstreamsStore = (() => {
       wei: BigInt(
         dripsAccount.dripsEntries.find(
           (e) => (e.receiver as string).toLowerCase() === assignee
-        ).amtPerSec
+        )?.amtPerSec || 0
       ),
       currency: Currency.DAI
     };
@@ -215,7 +216,8 @@ export const workstreamsStore = (() => {
             1000
         );
 
-        const amtPerSec = dew.event.args.receivers[0].amtPerSec.toBigInt();
+        const amtPerSec =
+          dew.event.args.receivers[0]?.amtPerSec.toBigInt() || BigInt(0);
 
         /* 
           If the theoretically earned amount from this workstream exceeds
@@ -236,13 +238,15 @@ export const workstreamsStore = (() => {
 
       const lastUpdate = dripsUpdatedEvents[dripsUpdatedEvents.length - 1];
       const currAmtPerSec =
-        lastUpdate.event.args.receivers[0].amtPerSec.toBigInt();
+        lastUpdate.event.args.receivers[0]?.amtPerSec.toBigInt() || BigInt(0);
       const lastUpdateTimestamp = lastUpdate.fromBlock.timestamp * 1000;
-      const streamingUntil = new Date(
-        lastUpdateTimestamp +
-          Number(lastUpdate.event.args.balance.toBigInt() / currAmtPerSec) *
-            1000
-      );
+      const streamingUntil = currAmtPerSec
+        ? new Date(
+            lastUpdateTimestamp +
+              Number(lastUpdate.event.args.balance.toBigInt() / currAmtPerSec) *
+                1000
+          )
+        : undefined;
 
       newEstimates[wsId] = {
         currentBalance: {
@@ -254,7 +258,10 @@ export const workstreamsStore = (() => {
           currency: Currency.DAI
         },
         streamingUntil,
-        currentlyStreaming: streamingUntil.getTime() > new Date().getTime()
+        currentlyStreaming: streamingUntil
+          ? streamingUntil.getTime() > new Date().getTime()
+          : false,
+        paused: currAmtPerSec === BigInt(0)
       };
     }
 
