@@ -2,16 +2,16 @@
   import Emoji from 'radicle-design-system/Emoji.svelte';
   import { toWei } from 'drips-sdk';
 
-  import * as modal from '$lib/utils/modal';
   import {
     workstreamsStore,
     type EnrichedWorkstream
   } from '$lib/stores/workstreams';
-  import TextInput from './TextInput.svelte';
-  import Modal from './Modal.svelte';
-  import { onMount } from 'svelte';
+  import TextInput from '../TextInput.svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import drips from '$lib/stores/drips';
+
+  const dispatch = createEventDispatcher();
 
   const estimates = workstreamsStore.estimates;
 
@@ -64,42 +64,44 @@
 
     try {
       const tx = await drips.topUp(enrichedWorkstream, topUpAmountWei);
-      await tx.wait(1);
-      await workstreamsStore.getWorkstream(
-        enrichedWorkstream.data.id,
-        undefined,
-        true
-      );
-      modal.hide();
-    } finally {
+
+      const waitFor = async () => {
+        await tx.wait(1);
+        await workstreamsStore.getWorkstream(
+          enrichedWorkstream.data.id,
+          undefined,
+          true
+        );
+      };
+
+      dispatch('awaitPending', waitFor);
+    } catch {
       txInFlight = false;
     }
   }
 </script>
 
-<Modal>
-  <div slot="body">
-    <Emoji emoji="💰" size="large" />
-    <h1>Top up</h1>
-    <div class="content">
-      <p>Workstream is streaming until: {streamingUntil}</p>
-      {#if streamingUntil.getTime() < new Date().getTime()}
-        The workstream is currently out of funds and not streaming anymore!
-      {/if}
-      <div class="input-with-label">
-        <p>Top up amount:</p>
-        <TextInput number bind:value={topUpAmount} />
-      </div>
-      <p>
-        After topping up {topUpAmount || 0} DAI, the workstream will run until approximately:
-        {streamingUntilAfterTopup}
-      </p>
-      <Button disabled={buttonDisabled} on:click={topUp}
-        >Top up {topUpAmount} DAI</Button
-      >
+<div>
+  <Emoji emoji="💰" size="large" />
+  <h1>Top up</h1>
+  <div class="content">
+    <p>Workstream is streaming until: {streamingUntil}</p>
+    {#if streamingUntil.getTime() < new Date().getTime()}
+      The workstream is currently out of funds and not streaming anymore!
+    {/if}
+    <div class="input-with-label">
+      <p>Top up amount:</p>
+      <TextInput number bind:value={topUpAmount} />
     </div>
+    <p>
+      After topping up {topUpAmount || 0} DAI, the workstream will run until approximately:
+      {streamingUntilAfterTopup}
+    </p>
+    <Button disabled={buttonDisabled} on:click={topUp}
+      >Top up {topUpAmount} DAI</Button
+    >
   </div>
-</Modal>
+</div>
 
 <style>
   h1 {

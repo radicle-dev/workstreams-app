@@ -17,9 +17,9 @@
     type Workstream
   } from '$lib/stores/workstreams/types';
   import StepperModal from '../StepperModal/index.svelte';
-  import Intro from '../SetUpPaymentModal/steps/Intro.svelte';
-  import SetDaiAllowance from '../SetUpPaymentModal/steps/SetDaiAllowance.svelte';
-  import ConfirmValues from '../SetUpPaymentModal/steps/ConfirmValues.svelte';
+  import Intro from '../SetUpPaymentSteps/steps/Intro.svelte';
+  import SetDaiAllowance from '../SetUpPaymentSteps/steps/SetDaiAllowance.svelte';
+  import ConfirmValues from '../SetUpPaymentSteps/steps/ConfirmValues.svelte';
 
   export let workstream: Workstream;
   export let applications: Application[];

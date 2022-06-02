@@ -10,11 +10,11 @@
   import { workstreamsStore } from '$lib/stores/workstreams';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
   import { walletStore } from '$lib/stores/wallet/wallet';
-  import TopUpModal from '../TopUpModal.svelte';
+  import StepperModal from '../StepperModal/index.svelte';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import Pause from 'radicle-design-system/icons/Pause.svelte';
   import drips from '$lib/stores/drips';
-  import ActionRow from '../WorkstreamCard/ActionRow.svelte';
+  import TopUpValues from '../TopUpSteps/TopUpValues.svelte';
 
   export let workstream: Workstream;
   export let acceptedApplication: Application | undefined = undefined;
@@ -117,8 +117,11 @@
             <Button
               disabled={!enrichedWorkstream?.onChainData}
               on:click={() =>
-                modal.show(TopUpModal, undefined, {
-                  enrichedWorkstream
+                modal.show(StepperModal, undefined, {
+                  stepProps: {
+                    enrichedWorkstream
+                  },
+                  steps: [TopUpValues]
                 })}>Top up</Button
             >
           {/if}
