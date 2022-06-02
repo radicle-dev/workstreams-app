@@ -4976,12 +4976,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:^4.0.12":
-  version: 4.0.14
-  resolution: "marked@npm:4.0.14"
+"marked@npm:^4.0.16":
+  version: 4.0.16
+  resolution: "marked@npm:4.0.16"
   bin:
     marked: bin/marked.js
-  checksum: 778bc2fc94c51ae4fbafe5a08bc1f3917799c4dd39e9fccd972a97df4e5bc5aa78664b7143d12d4b4969608fb90c6a2de3f19811a2f9ccf6b7f207022f2842ba
+  checksum: c0ef780bf56c9bb49c15b66683e5648410c924c1d725f1489fc3c7dc3bd01194c50d720052bb0282ad7907f472dfdc8fa278acbc7903c5db3be4b83487e0d684
   languageName: node
   linkType: hard
 
@@ -5796,16 +5796,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"radicle-design-system@radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=c22af1d8b75704dfd84546a937281be6f3f76d35":
+"radicle-design-system@radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=4e56c166c67c06815dc34fb22e7daa424483aeb6":
   version: 0.1.0
-  resolution: "radicle-design-system@https://github.com/radicle-dev/radicle-upstream.git#workspace=radicle-design-system&commit=c22af1d8b75704dfd84546a937281be6f3f76d35"
+  resolution: "radicle-design-system@https://github.com/radicle-dev/radicle-upstream.git#workspace=radicle-design-system&commit=4e56c166c67c06815dc34fb22e7daa424483aeb6"
   dependencies:
-    marked: ^4.0.12
+    marked: ^4.0.16
     radicle-avatar: "github:radicle-dev/radicle-avatar"
     sanitize-html: ^2.7.0
-    svelte: ^3.46.6
+    svelte: ^3.48.0
     twemoji: 14.0.2
-  checksum: 9a54df9f9a5a6dc3a66143e9fd7d590655831e54e5a2e80a63f55e20fca6ac97e72629ee490bb210038873b9f85df6cfa862fe206e96ba41da1e0f226cba7da2
+  checksum: f84fab8e96bd33d607768afec613ba65dd4d75b2c5cc8f4d838166cf5c3fd71705c935544e9e6fb6dab24152afc62fd20dbc4a8f2f28022c5c63aa551e909409
   languageName: node
   linkType: hard
 
@@ -6757,10 +6757,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svelte@npm:^3.46.6, svelte@npm:^3.47.0":
-  version: 3.47.0
-  resolution: "svelte@npm:3.47.0"
-  checksum: 247892585543ab0fc4781e36d5469ad0ce8afd4c6c440639cb0c99564a0b435ee0838482443665a905e11b7f500a1cf68475bec6a938b668e1e73c2e0badfc4e
+"svelte@npm:^3.47.0, svelte@npm:^3.48.0":
+  version: 3.48.0
+  resolution: "svelte@npm:3.48.0"
+  checksum: d72587582b6967bf083ff7dc254f8067c22b57d4678182b48ca51010e0f3a1d98a33a00365046aee0c70ed3ffc716b73141207ec5ac6c44f1f5e34c5477e61ea
   languageName: node
   linkType: hard
 
@@ -7372,7 +7372,7 @@ __metadata:
     lint-staged: ^12.4.0
     prettier: ^2.6.2
     prettier-plugin-svelte: ^2.7.0
-    radicle-design-system: "radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=c22af1d8b75704dfd84546a937281be6f3f76d35"
+    radicle-design-system: "radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=4e56c166c67c06815dc34fb22e7daa424483aeb6"
     siwe: ^1.1.6
     svelte: ^3.47.0
     svelte-check: ^2.7.0
