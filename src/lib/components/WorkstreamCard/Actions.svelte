@@ -20,6 +20,7 @@
   import Intro from '../SetUpPaymentSteps/steps/Intro.svelte';
   import SetDaiAllowance from '../SetUpPaymentSteps/steps/SetDaiAllowance.svelte';
   import ConfirmValues from '../SetUpPaymentSteps/steps/ConfirmValues.svelte';
+  import TopUpValues from '../TopUpSteps/TopUpValues.svelte';
 
   const estimates = workstreamsStore.estimates;
 
@@ -54,9 +55,19 @@
 {#if creator}
   {#if workstream.state === WorkstreamState.ACTIVE && estimate}
     <ActionRow
-      leftString={`${padFloatString(
+      leftString={`${
+        estimate && estimate.paused ? 'Paused with ' : ''
+      }${padFloatString(
         currencyFormat(estimate.remainingBalance.wei)
       )} DAI left`}
+      primaryActionText={estimate && !estimate.paused && 'Top up'}
+      on:primaryAction={() =>
+        modal.show(StepperModal, undefined, {
+          stepProps: {
+            enrichedWorkstream
+          },
+          steps: [TopUpValues]
+        })}
     />
   {:else if workstream.applicationsToReview.length > 0}
     <ActionRow
@@ -89,7 +100,9 @@
 {:else if applicant}
   {#if workstream.state === WorkstreamState.ACTIVE && estimate}
     <ActionRow
-      leftString={`${padFloatString(
+      leftString={`${
+        estimate && estimate.paused ? 'Paused with ' : ''
+      }${padFloatString(
         currencyFormat(estimate.remainingBalance.wei)
       )} DAI left`}
     />
@@ -115,7 +128,7 @@
     />
   {:else}
     <ActionRow
-      leftString="Your application is pending review."
+      leftString="Your application is pending review"
       outlineActionText="View"
       on:outlineAction={() =>
         modal.show(ApplicationModal, undefined, {
