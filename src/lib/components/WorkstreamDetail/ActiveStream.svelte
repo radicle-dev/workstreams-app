@@ -98,26 +98,28 @@
     <div class="stream-actions">
       <div style="display: flex; gap: .75rem;">
         {#if isOwner && $connectedAndLoggedIn}
-          {#if estimate && estimate.paused === false}
+          {#if estimate && estimate.paused === false && estimate.remainingBalance.wei > BigInt(0)}
             <Button
               disabled={pauseUnpauseBtnDisabled}
               variant="primary-outline"
               on:click={() => pauseUnpause('pause')}
               icon={Pause}>Pause</Button
             >
+          {:else if estimate && estimate.paused && estimate.remainingBalance.wei > BigInt(0)}
+            <Button
+              disabled={pauseUnpauseBtnDisabled}
+              variant="primary-outline"
+              on:click={() => pauseUnpause('unpause')}
+              icon={Pause}>Unpause</Button
+            >
+          {/if}
+          {#if estimate && estimate.paused === false}
             <Button
               disabled={!enrichedWorkstream?.onChainData}
               on:click={() =>
                 modal.show(TopUpModal, undefined, {
                   enrichedWorkstream
                 })}>Top up</Button
-            >
-          {:else if estimate}
-            <Button
-              disabled={pauseUnpauseBtnDisabled}
-              variant="primary-outline"
-              on:click={() => pauseUnpause('unpause')}
-              icon={Pause}>Unpause</Button
             >
           {/if}
         {/if}

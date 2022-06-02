@@ -159,7 +159,7 @@ export const workstreamsStore = (() => {
     ].event.args.receivers.find((r) => r.receiver.toLowerCase() === assignee);
 
     const amtPerSec = {
-      wei: receiverConfig.amtPerSec.toBigInt(),
+      wei: receiverConfig?.amtPerSec.toBigInt() || BigInt(0),
       currency: Currency.DAI
     };
 
