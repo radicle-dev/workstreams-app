@@ -7,6 +7,7 @@
   import drips from '$lib/stores/drips';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
   import { workstreamsStore } from '$lib/stores/workstreams';
+  import LoadingDots from './LoadingDots.svelte';
 
   const estimates = workstreamsStore.estimates;
 
@@ -44,7 +45,7 @@
       {#if estimate}
         {padFloatString(estimate)} DAI
       {:else}
-        …
+        <LoadingDots />
       {/if}
     </span>
   </Button>
@@ -58,7 +59,7 @@
             {#if withdrawable}
               {padFloatString(withdrawable)} DAI
             {:else}
-              …
+              <LoadingDots />
             {/if}
           </h2>
         </div>
@@ -68,7 +69,7 @@
             {#if estimate}
               {padFloatString(estimate)} DAI
             {:else}
-              …
+              <LoadingDots />
             {/if}
           </h2>
         </div>
