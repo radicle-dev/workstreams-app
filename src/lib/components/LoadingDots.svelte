@@ -1,7 +1,7 @@
 <div class="loading-dots">
-  <div class="1" />
-  <div class="2" />
-  <div class="3" />
+  <div />
+  <div />
+  <div />
 </div>
 
 <style>
