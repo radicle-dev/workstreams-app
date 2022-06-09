@@ -92,6 +92,8 @@
       <div class="input-with-label">
         <h4>Application text</h4>
         <TextArea
+          textareaStyle="height: 80px;"
+          resizable
           bind:value={applicationText}
           placeholder="Describe why you would like to apply"
           caption="Markdown supported"
