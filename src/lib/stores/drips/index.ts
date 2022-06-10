@@ -15,8 +15,9 @@ import {
   DaiDripsHubAbi__factory
 } from './contracts/types/index';
 
-import { DripsClient } from 'drips-sdk';
+import { DripsClient, type CollectedEvent } from 'drips-sdk';
 import type { EnrichedWorkstream } from '../workstreams';
+import type { Block } from '@ethersproject/abstract-provider';
 
 interface InternalState {
   provider: ethers.providers.Web3Provider;
@@ -31,6 +32,12 @@ export interface Cycle {
 interface DripsState {
   cycle?: Cycle;
   collectable?: Money;
+  collectHistory?: CollectedEventWrapper[];
+}
+
+interface CollectedEventWrapper {
+  event: CollectedEvent;
+  fromBlock: Block;
 }
 
 export const round = (num: number, dec = 2) =>
@@ -59,7 +66,11 @@ export default (() => {
       client
     });
 
-    await Promise.all([updateCycleSecs(), updateCollectable()]);
+    await Promise.all([
+      updateCycleSecs(),
+      updateCollectable(),
+      updateCollectHistory()
+    ]);
   }
 
   function disconnect() {
@@ -90,6 +101,30 @@ export default (() => {
         start: currentCycleStart,
         end: nextCycleStart
       }
+    }));
+  }
+
+  async function updateCollectHistory(): Promise<void> {
+    const { provider } = get(internal);
+
+    const dripsHub = DaiDripsHubAbi__factory.connect(
+      daiDripsHubInfo(provider.network.chainId).address,
+      provider.getSigner()
+    );
+
+    const filter = dripsHub.filters['Collected(address,uint128,uint128)'](
+      await provider.getSigner().getAddress()
+    );
+    const events = await dripsHub.queryFilter(filter);
+    const wrappedEventPromises = events.map(async (e) => ({
+      event: e,
+      fromBlock: await e.getBlock()
+    }));
+    const wrappedEvents = await Promise.all(wrappedEventPromises);
+
+    state.update((v) => ({
+      ...v,
+      collectHistory: wrappedEvents
     }));
   }
 

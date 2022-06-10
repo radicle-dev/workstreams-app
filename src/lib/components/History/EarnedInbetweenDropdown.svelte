@@ -5,11 +5,16 @@
   import type { Money } from '$lib/stores/workstreams/types';
   import { currencyFormat } from '$lib/utils/format';
   import Plus from 'radicle-design-system/icons/Plus.svelte';
+  import Minus from 'radicle-design-system/icons/Minus.svelte';
+  import { onMount } from 'svelte';
 
   export let amountsEarned: { workstream: EnrichedWorkstream; amount: Money }[];
-  export let window: { from: Date; to: Date };
+  export let amountsSpent: { workstream: EnrichedWorkstream; amount: Money }[];
+  export let timeWindow: { from: Date; to: Date };
 
   let hover = false;
+  let drodpdownAlignemt: 'left' | 'right' = 'left';
+  let hoverElem: HTMLElement | undefined;
 
   function formatDate(date: Date) {
     return Intl.DateTimeFormat('en-US', {
@@ -20,6 +25,20 @@
       second: '2-digit'
     }).format(date);
   }
+
+  function convertRemToPixels(rem: number) {
+    return (
+      rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
+    );
+  }
+
+  onMount(() => {
+    const spaceOnRight =
+      window.innerWidth - hoverElem.getBoundingClientRect().right;
+    if (spaceOnRight < convertRemToPixels(33)) {
+      drodpdownAlignemt = 'right';
+    }
+  });
 </script>
 
 <template>
@@ -28,24 +47,31 @@
     on:mouseenter={() => (hover = true)}
     class="text"
   >
-    <slot />
+    <span bind:this={hoverElem}>
+      <slot />
+    </span>
     {#if hover}
       <div class="puffer" />
       <div
         class="earned-inbetween-dropdown"
+        class:drop-right={drodpdownAlignemt === 'right'}
         transition:fly|local={{ y: 10, duration: 300 }}
       >
         <div class="amounts">
-          <p class="typo-text-small">
-            Earned between <span class="typo-text-small-bold"
-              >{formatDate(window.from)}</span
-            >
-            and
-            <span class="typo-text-small-bold">{formatDate(window.to)}</span>
-          </p>
+          {#if amountsEarned.length > 0}
+            <p class="typo-text-small">
+              Earned between <span class="typo-text-small-bold"
+                >{formatDate(timeWindow.from)}</span
+              >
+              and
+              <span class="typo-text-small-bold"
+                >{formatDate(timeWindow.to)}</span
+              >
+            </p>
+          {/if}
           {#each amountsEarned as amountEarned}
-            <div class="amount-earned">
-              <div class="icon">
+            <div class="amount">
+              <div class="icon positive">
                 <Plus style="fill: var(--color-positive)" />
               </div>
               <p class="title typo-text-bold">
@@ -56,6 +82,30 @@
               </p>
             </div>
           {/each}
+          {#if amountsSpent.length > 0}
+            <p class="typo-text-small">
+              Streamed between <span class="typo-text-small-bold"
+                >{formatDate(timeWindow.from)}</span
+              >
+              and
+              <span class="typo-text-small-bold"
+                >{formatDate(timeWindow.to)}</span
+              >
+            </p>
+          {/if}
+          {#each amountsSpent as amountSpent}
+            <div class="amount">
+              <div class="icon negative">
+                <Minus style="fill: var(--color-negative)" />
+              </div>
+              <p class="title typo-text-bold">
+                {amountSpent.workstream.data.title}
+              </p>
+              <p class="amount typo-text-mono-bold">
+                -{currencyFormat(amountSpent.amount.wei)} DAI
+              </p>
+            </div>
+          {/each}
         </div>
       </div>
     {/if}
@@ -63,7 +113,7 @@
 </template>
 
 <style scoped>
-  .amount-earned {
+  .amount {
     display: flex;
     gap: 0.5rem;
     align-items: center;
@@ -83,10 +133,17 @@
     height: 2rem;
     width: 2rem;
     border-radius: 1rem;
-    background-color: var(--color-positive-level-1);
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .icon.positive {
+    background-color: var(--color-positive-level-1);
+  }
+
+  .icon.negative {
+    background-color: var(--color-negative-level-1);
   }
 
   .text {
@@ -111,6 +168,10 @@
     width: 32rem;
     z-index: 10;
     cursor: default;
+  }
+
+  .earned-inbetween-dropdown.drop-right {
+    left: calc(100% - 31.5rem);
   }
 
   .puffer {

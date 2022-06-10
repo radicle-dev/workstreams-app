@@ -1,302 +1,156 @@
 <script lang="ts">
-  import {
-    type StreamStart,
-    HistoryItemType,
-    type StreamOutOfFunds,
-    type StreamPaused,
-    type StreamToppedUp,
-    type History,
-    type StreamUnpaused
-  } from './types';
+  import { fly } from 'svelte/transition';
 
-  import { walletStore } from '$lib/stores/wallet/wallet';
-  import {
-    workstreamsStore,
-    type DrippingEventWrapper,
-    type EnrichedWorkstream
-  } from '$lib/stores/workstreams';
+  import { workstreamsStore } from '$lib/stores/workstreams';
   import HistoryItem from '$lib/components/History/HistoryItem.svelte';
-  import { Currency, type Money } from '$lib/stores/workstreams/types';
+  import { currencyFormat } from '$lib/utils/format';
+  import drips from '$lib/stores/drips';
+  import history from './history';
+  import * as aggregators from './historyItemAggregators';
+  import Spinner from 'radicle-design-system/Spinner.svelte';
+  import EmptyState from '$lib/components/EmptyState.svelte';
+  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
+  import { onDestroy } from 'svelte';
 
-  $: relevantStreams = Object.entries($workstreamsStore).filter(
-    ([_, ws]) => ws.onChainData
+  const { estimates } = workstreamsStore;
+
+  $: relevantStreams = Object.values($workstreamsStore).filter(
+    (ws) => ws.onChainData
   );
 
-  let history: History;
+  let loading = true;
+  let interval: ReturnType<typeof setInterval>;
 
   $: {
-    const streamStartItems: StreamStart[] = relevantStreams.map(([_, ws]) => {
-      const timestamp = new Date(
-        ws.onChainData.dripsUpdatedEvents[0].fromBlock.timestamp * 1000
-      );
+    if (
+      $connectedAndLoggedIn &&
+      relevantStreams.length > 0 &&
+      $estimates.totalBalance
+    ) {
+      updateHistory();
+      loading = false;
+      clearInterval(interval);
+      interval = setInterval(updateHistory, 1000);
+    } else {
+      clearInterval(interval);
+    }
+  }
 
-      return {
-        type: HistoryItemType.StreamStart,
-        timestamp,
-        meta: {
-          workstream: ws
-        }
-      };
-    });
+  onDestroy(() => clearInterval(interval));
 
-    type StreamStartStopAggregation = {
-      outOfFunds: StreamOutOfFunds[];
-      toppedUp: StreamToppedUp[];
-    };
-    const streamStartStopAggregationItems: StreamStartStopAggregation =
-      relevantStreams.reduce<StreamStartStopAggregation>(
-        (acc, [_, ws]) => {
-          const events = ws.onChainData.dripsUpdatedEvents;
-
-          let newOutOfFundsItems = [];
-          let newToppedUpItems = [];
-
-          events.forEach((wrapper, index) => {
-            const { event, fromBlock } = wrapper;
-            const { receivers, balance } = event.args;
-
-            const amtPerSec = receivers.reduce<bigint>(
-              (acc, r) => acc + r.amtPerSec.toBigInt(),
-              BigInt(0)
-            );
-
-            if (!amtPerSec) {
-              return acc;
-            }
-
-            const nextEvent = events[index + 1];
-            const streamingUntil =
-              fromBlock.timestamp + Number(balance.toBigInt() / amtPerSec);
-            const nextTimestamp =
-              nextEvent?.fromBlock.timestamp || new Date().getTime() / 1000;
-
-            if (streamingUntil > nextTimestamp) {
-              return acc;
-            }
-
-            newOutOfFundsItems = [
-              ...newOutOfFundsItems,
-              {
-                type: HistoryItemType.StreamOutOfFunds,
-                timestamp: new Date(streamingUntil * 1000),
-                meta: {
-                  workstream: ws
-                }
-              }
-            ];
-
-            const wasToppedUpAfter =
-              nextEvent &&
-              nextEvent.event.args.balance.toBigInt() !== BigInt(0);
-
-            newToppedUpItems = wasToppedUpAfter
-              ? [
-                  ...newToppedUpItems,
-                  {
-                    type: HistoryItemType.StreamToppedUp,
-                    timestamp: new Date(nextEvent.fromBlock.timestamp * 1000),
-                    meta: {
-                      workstream: ws
-                    }
-                  }
-                ]
-              : newToppedUpItems;
-          });
-
-          return {
-            outOfFunds: [...acc.outOfFunds, ...newOutOfFundsItems],
-            toppedUp: [...acc.toppedUp, ...newToppedUpItems]
-          };
-        },
-        { outOfFunds: [], toppedUp: [] }
-      );
-
-    const streamPausedItems: StreamPaused[] = relevantStreams.reduce<
-      StreamPaused[]
-    >((acc, [_, ws]) => {
-      const events = ws.onChainData.dripsUpdatedEvents;
-
-      // Get all updates that remove the drip to the recipient
-      const pauses = events.filter(
-        (dew) =>
-          !dew.event.args.receivers.find(
-            (r) => r.receiver.toLowerCase() === $walletStore.accounts[0]
-          )
-      );
-
-      return [
-        ...acc,
-        ...pauses.map(
-          (dew) =>
-            ({
-              type: HistoryItemType.StreamPaused,
-              timestamp: new Date(dew.fromBlock.timestamp * 1000),
-              meta: {
-                workstream: ws
-              }
-            } as StreamPaused)
-        )
-      ];
-    }, []);
-
-    const streamUnpausedEvents: StreamUnpaused[] = relevantStreams.reduce<
-      StreamUnpaused[]
-    >((acc, [wsId, ws]) => {
-      const events = ws.onChainData.dripsUpdatedEvents;
-
-      // Get all updates that remove the drip to the recipient
-      const unpauses = events.filter((dew, index) => {
-        const prevDew: DrippingEventWrapper = events[index - 1];
-
-        const prevDewPaused =
-          prevDew &&
-          !prevDew.event.args.receivers.find(
-            (r) => r.receiver.toLowerCase() === $walletStore.accounts[0]
-          );
-
-        return (
-          prevDewPaused &&
-          dew.event.args.receivers.find(
-            (r) => r.receiver.toLowerCase() === $walletStore.accounts[0]
-          )
-        );
-      });
-
-      return [
-        ...acc,
-        ...unpauses.map(
-          (dew) =>
-            ({
-              type: HistoryItemType.StreamUnpaused,
-              timestamp: new Date(dew.fromBlock.timestamp * 1000),
-              meta: {
-                workstream: ws
-              }
-            } as StreamUnpaused)
-        )
-      ];
-    }, []);
-
-    const allItems: History = [
-      ...streamStartItems,
-      ...streamStartStopAggregationItems.outOfFunds,
-      ...streamStartStopAggregationItems.toppedUp,
-      ...streamPausedItems,
-      ...streamUnpausedEvents
-      // Sort all aggregated history items by timestamp
-    ].sort((a, b) => {
-      if (a.timestamp < b.timestamp) {
-        return 1;
-      }
-      if (a.timestamp > b.timestamp) {
-        return -1;
-      }
-      return 0;
-    });
-
-    allItems.forEach((item, index) => {
-      const prevItem = allItems[index + 1];
-
-      const { timestamp } = item;
-      const prevTimestamp = prevItem?.timestamp || new Date();
-
-      const window = {
-        to: timestamp.getTime() / 1000,
-        from: prevTimestamp.getTime() / 1000
-      };
-
-      let amountsEarned: { workstream: EnrichedWorkstream; amount: Money }[] =
-        [];
-
-      for (const [_, stream] of relevantStreams) {
-        const events = stream.onChainData.dripsUpdatedEvents;
-
-        let amountEarned = BigInt(0);
-
-        events.forEach((dew, index) => {
-          const nextDew = events[index + 1];
-          const validSince = dew.fromBlock.timestamp;
-          const validUntil =
-            nextDew?.fromBlock.timestamp || new Date().getTime() / 1000;
-          const amtPerSec =
-            dew.event.args.receivers[0]?.amtPerSec.toBigInt() || BigInt(0);
-
-          if (amtPerSec === BigInt(0)) return;
-
-          const toppedUpUntil =
-            validSince + Number(dew.event.args.balance.toBigInt() / amtPerSec);
-
-          const relevantWindow = {
-            from: Math.max(validSince, window.from),
-            to: Math.min(window.to, validUntil, toppedUpUntil)
-          };
-
-          const secondsInWindow = Math.max(
-            relevantWindow.to - relevantWindow.from,
-            0
-          );
-          amountEarned = amountEarned + BigInt(secondsInWindow) * amtPerSec;
-        });
-
-        if (amountEarned) {
-          amountsEarned.push({
-            workstream: stream,
-            amount: {
-              currency: Currency.DAI,
-              wei: amountEarned
-            }
-          });
-        }
-      }
-
-      if (amountsEarned.length > 0) {
-        allItems.push({
-          type: HistoryItemType.EarnedInbetween,
-          timestamp: new Date(item.timestamp.getTime() - 1),
-          meta: {
-            earned: amountsEarned,
-            total: {
-              currency: Currency.DAI,
-              wei: amountsEarned.reduce<bigint>(
-                (acc, v) => acc + v.amount.wei,
-                BigInt(0)
-              )
-            },
-            secs: window.to - window.from,
-            window: {
-              from: new Date(window.from * 1000),
-              to: new Date(window.to * 1000)
-            }
-          }
-        });
-      }
-    });
-
-    history = allItems.sort((a, b) => {
-      if (a.timestamp < b.timestamp) {
-        return 1;
-      }
-      if (a.timestamp > b.timestamp) {
-        return -1;
-      }
-      return 0;
-    });
+  function updateHistory() {
+    history
+      .setStreams(relevantStreams)
+      .add(aggregators.withdrawal)
+      .add(aggregators.streamStart)
+      .add(aggregators.streamPaused)
+      .add(aggregators.streamUnpaused)
+      .add(aggregators.streamStartStop)
+      .add(aggregators.today)
+      .add(aggregators.monthStartInbetween)
+      .add(aggregators.streamedInbetween)
+      .flush();
   }
 </script>
 
 <template>
-  {#if history}
-    <div class="history">
-      {#each history as historyItem}
-        <HistoryItem {historyItem} />
-      {/each}
+  {#if $connectedAndLoggedIn}
+    <h1>Account history</h1>
+    {#if !loading}
+      <div in:fly|local={{ y: 10, duration: 300 }} class="stats">
+        <div class="key-value">
+          <h4>Total earned</h4>
+          <p class="amount typo-text-mono-bold">
+            +{($estimates.totalBalance &&
+              currencyFormat($estimates.totalBalance.wei)) ||
+              '…'} DAI
+          </p>
+        </div>
+        <div class="key-value">
+          <h4>Withdrawable now</h4>
+          <p class="typo-text-mono-bold">
+            {($drips.collectable && currencyFormat($drips.collectable.wei)) ||
+              '…'} DAI
+          </p>
+        </div>
+      </div>
+      {#if $history.length > 0}
+        <div in:fly={{ y: 10, duration: 300, delay: 100 }} class="history">
+          {#each $history as historyItem}
+            <HistoryItem {historyItem} />
+          {/each}
+        </div>
+      {:else}
+        <EmptyState
+          emoji="👀"
+          headerText="No activity yet"
+          text="Here's where you'll be able to see a history of all your incoming and outgoing workstreams."
+        />
+      {/if}
+    {:else}
+      <div in:fly|local={{ y: 10, duration: 300 }} class="loading">
+        <Spinner />
+      </div>
+    {/if}
+  {:else}
+    <div
+      class="empty-wrapper"
+      transition:fly|local={{ y: 10, duration: 300, delay: 100 }}
+    >
+      <EmptyState
+        headerText="Sign in to view your account history"
+        text="Here's where you'll be able to see a history of all your incoming and outgoing workstreams."
+      />
     </div>
   {/if}
 </template>
 
-<style>
+<style scoped>
+  h1 {
+    margin-bottom: 3rem;
+  }
+
+  .stats {
+    display: flex;
+    gap: 4rem;
+    margin-bottom: 3rem;
+  }
+
+  .key-value {
+    min-width: 9rem;
+  }
+
+  .key-value h4 {
+    color: var(--color-foreground-level-5);
+    margin-bottom: 0.5rem;
+  }
+
+  .key-value p {
+    color: var(--color-primary);
+    font-size: 1.5rem;
+  }
+
   .history {
+    margin-left: -1.5rem;
+    width: calc(100% + 2rem);
     flex-direction: column;
     display: flex;
+  }
+
+  .loading {
+    position: absolute;
+    top: 0;
+    height: 90vh;
+    left: 0;
+    right: 0;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+  }
+
+  .empty-wrapper {
+    position: absolute;
+    width: 100vw;
+    left: 0;
   }
 </style>

@@ -48,6 +48,7 @@ export interface EnrichedWorkstream {
   fetchedAt: Date;
   onChainData?: OnChainData;
   data: Workstream;
+  direction?: 'incoming' | 'outgoing';
 }
 
 export interface DrippingEventWrapper {
@@ -134,11 +135,15 @@ export const workstreamsStore = (() => {
       currentAddress === item.creator ||
       currentAddress === item.acceptedApplication;
 
+    const direction =
+      item.creator === internalState.currentAddress ? 'outgoing' : 'incoming';
+
     // Only enrich workstreams that the user is assigned to or is receiving funds from.
     if (!workstreamAssociatedWithUser || item.state !== WorkstreamState.ACTIVE)
       return {
         data: item,
-        fetchedAt: new Date()
+        fetchedAt: new Date(),
+        direction
       };
 
     const { id, creator, acceptedApplication: assignee, dripsData } = item;
@@ -171,7 +176,8 @@ export const workstreamsStore = (() => {
         dripsUpdatedEvents: dripsUpdatedEvents,
         dripsEntries: dripsAccount.dripsEntries,
         dripsAccount: dripsAccount
-      }
+      },
+      direction
     };
   }
 

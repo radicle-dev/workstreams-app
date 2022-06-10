@@ -3,11 +3,14 @@
   import Button from 'radicle-design-system/Button.svelte';
   import TopUpIcon from 'radicle-design-system/icons/Topup.svelte';
   import InfoCircle from 'radicle-design-system/icons/InfoCircle.svelte';
+  import RoadIcon from 'radicle-design-system/icons/Road.svelte';
 
   import drips from '$lib/stores/drips';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import LoadingDots from './LoadingDots.svelte';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
 
   const estimates = workstreamsStore.estimates;
 
@@ -33,6 +36,11 @@
       txInFlight = false;
     }
   }
+
+  function navigate(path: string) {
+    hover = false;
+    goto(path);
+  }
 </script>
 
 <div
@@ -40,7 +48,7 @@
   on:mouseleave={() => (hover = false)}
   on:mouseenter={() => (hover = true)}
 >
-  <Button variant="outline">
+  <Button on:click={() => navigate('/history')} variant="outline">
     <span class="typo-text-mono">
       {#if estimate}
         {padFloatString(estimate)} DAI
@@ -93,6 +101,12 @@
       </div>
       {#if withdrawable}
         <div class="actions">
+          <Button
+            disabled={$page.routeId === 'history'}
+            variant="outline"
+            icon={RoadIcon}
+            on:click={() => navigate('/history')}>View history</Button
+          >
           <Button disabled={collectBlocked} icon={TopUpIcon} on:click={collect}
             >Withdraw {withdrawable} DAI</Button
           >
@@ -112,7 +126,9 @@
   }
 
   .actions {
-    width: fit-content;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
   }
 
   .hover-pad {

@@ -4,7 +4,7 @@ import type { Money } from '$lib/stores/workstreams/types';
 export enum HistoryItemType {
   MonthStartInbetween,
   Withdrawal,
-  EarnedInbetween,
+  StreamedInbetween,
   StreamStart,
   StreamOutOfFunds,
   StreamPaused,
@@ -19,6 +19,21 @@ export interface HistoryItemBase {
 
 export interface MonthStartInbetween extends HistoryItemBase {
   type: HistoryItemType.MonthStartInbetween;
+  meta: {
+    earned: {
+      total: Money;
+      streams: { workstream: EnrichedWorkstream; amount: Money }[];
+    };
+    spent: {
+      total: Money;
+      streams: { workstream: EnrichedWorkstream; amount: Money }[];
+    };
+    secs: number;
+    window: {
+      from: Date;
+      to: Date;
+    };
+  };
 }
 
 export interface Withdrawal extends HistoryItemBase {
@@ -33,6 +48,7 @@ export interface StreamStart extends HistoryItemBase {
   type: HistoryItemType.StreamStart;
   meta: {
     workstream: EnrichedWorkstream;
+    byAddress: string;
   };
 }
 
@@ -47,6 +63,7 @@ export interface StreamPaused extends HistoryItemBase {
   type: HistoryItemType.StreamPaused;
   meta: {
     workstream: EnrichedWorkstream;
+    byAddress: string;
   };
 }
 
@@ -54,6 +71,8 @@ export interface StreamToppedUp extends HistoryItemBase {
   type: HistoryItemType.StreamToppedUp;
   meta: {
     workstream: EnrichedWorkstream;
+    amount: Money;
+    byAddress: string;
   };
 }
 
@@ -61,14 +80,21 @@ export interface StreamUnpaused extends HistoryItemBase {
   type: HistoryItemType.StreamUnpaused;
   meta: {
     workstream: EnrichedWorkstream;
+    byAddress: string;
   };
 }
 
-export interface EarnedInbetween extends HistoryItemBase {
-  type: HistoryItemType.EarnedInbetween;
+export interface StreamedInbetween extends HistoryItemBase {
+  type: HistoryItemType.StreamedInbetween;
   meta: {
-    earned: { workstream: EnrichedWorkstream; amount: Money }[];
-    total: Money;
+    earned: {
+      total: Money;
+      streams: { workstream: EnrichedWorkstream; amount: Money }[];
+    };
+    spent: {
+      total: Money;
+      streams: { workstream: EnrichedWorkstream; amount: Money }[];
+    };
     secs: number;
     window: {
       from: Date;
@@ -79,7 +105,7 @@ export interface EarnedInbetween extends HistoryItemBase {
 
 export type HistoryItem =
   | MonthStartInbetween
-  | EarnedInbetween
+  | StreamedInbetween
   | Withdrawal
   | StreamStart
   | StreamOutOfFunds
