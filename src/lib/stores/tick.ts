@@ -9,7 +9,7 @@ export interface TickRegistration {
 
 export default (() => {
   const interval = writable<ReturnType<typeof setInterval>>();
-  const listeners = writable<TickRegistration[]>([]);
+  const listeners = writable<(() => void)[]>([]);
 
   function start() {
     if (get(interval)) throw 'Tick already running';
@@ -27,34 +27,29 @@ export default (() => {
   }
 
   function register(listener: () => void): number {
-    const id = get(listeners).length;
+    const currentIndex = get(listeners).indexOf(listener);
 
-    const registration = {
-      listener,
-      id
-    };
+    if (currentIndex !== -1) return currentIndex;
 
-    listeners.update((v) => [...v, registration]);
+    listeners.update((v) => [...v, listener]);
 
-    return registration.id;
+    return get(listeners).indexOf(listener);
   }
 
   function deregister(registrationId: number): boolean {
     const currentRegistrations = get(listeners);
-    const registration = currentRegistrations.find(
-      (l) => l.id === registrationId
-    );
+    if (!currentRegistrations[registrationId]) return false;
 
-    if (!registration) return false;
+    currentRegistrations.splice(registrationId);
 
-    listeners.set(currentRegistrations.filter((l) => l.id === registrationId));
+    listeners.set(currentRegistrations);
 
     return true;
   }
 
   function tick() {
     for (const registration of get(listeners)) {
-      registration.listener();
+      registration();
     }
   }
 
