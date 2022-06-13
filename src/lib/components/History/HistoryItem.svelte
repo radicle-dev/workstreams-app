@@ -328,6 +328,7 @@
     position: relative;
     margin-top: -1rem;
     z-index: 100;
+    justify-content: center;
   }
 
   .month-start-inbetween .line {

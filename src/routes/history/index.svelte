@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
+  import { onDestroy } from 'svelte';
 
   import { workstreamsStore } from '$lib/stores/workstreams';
   import HistoryItem from '$lib/components/History/HistoryItem.svelte';
@@ -10,7 +11,6 @@
   import Spinner from 'radicle-design-system/Spinner.svelte';
   import EmptyState from '$lib/components/EmptyState.svelte';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
-  import { onDestroy } from 'svelte';
 
   const { estimates } = workstreamsStore;
 
