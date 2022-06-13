@@ -42,13 +42,19 @@
       '(prefers-color-scheme: dark)'
     ).matches;
 
+    const colorSchemeListener = (event: MediaQueryListEvent) => {
+      prefersDarkThemes = event.matches;
+    };
+
     window
       .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', (event) => {
-        prefersDarkThemes = event.matches;
-      });
+      .addEventListener('change', colorSchemeListener);
 
-    tick.start();
+    if (!tick.isRunning()) tick.start();
+
+    return () => {
+      window.removeEventListener('change', colorSchemeListener);
+    };
   });
 </script>
 

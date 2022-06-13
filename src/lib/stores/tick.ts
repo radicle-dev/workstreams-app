@@ -22,6 +22,10 @@ export default (() => {
     interval.set(undefined);
   }
 
+  function isRunning() {
+    return Boolean(get(interval));
+  }
+
   function register(listener: () => void): number {
     const id = get(listeners).length;
 
@@ -57,6 +61,7 @@ export default (() => {
   return {
     start,
     stop,
+    isRunning,
     register,
     deregister
   };
