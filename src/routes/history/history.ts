@@ -34,9 +34,9 @@ function setStreams(newStreams: EnrichedWorkstream[]): typeof history {
 }
 
 /**
- * Add items to a temporary history item queue. Returns self for
- * easy chaining. New items will not appear in the state until `flush`
- * is called.
+ * Add items to a temporary history item queue. Items are automatically
+ * sorted by timestamp. returns self for easy chaining. New items will not
+ * appear in the state until `flush` is called.
  */
 function add(aggregator: HistoryAggregator): typeof history {
   const newState = queue;
