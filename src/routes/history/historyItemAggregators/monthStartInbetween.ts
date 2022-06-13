@@ -13,7 +13,7 @@ export const monthStartInbetween: HistoryAggregator = (queue, streams) => {
 
     const { timestamp } = item;
 
-    if (nextItem && nextItem.timestamp.getMonth() < timestamp.getMonth()) {
+    if (nextItem && nextItem.timestamp.getMonth() !== timestamp.getMonth()) {
       const monthEnd = new Date(timestamp.getFullYear(), timestamp.getMonth());
       const monthStart = new Date(
         timestamp.getFullYear(),
