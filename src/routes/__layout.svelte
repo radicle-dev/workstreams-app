@@ -1,16 +1,18 @@
 <script lang="ts">
-  import { browser } from '$app/env';
-
-  import { navigating } from '$app/stores';
-  import Header from '$components/Header.svelte';
-  import ModalLayout from '$components/ModalLayout.svelte';
-  import { walletStore } from '$lib/stores/wallet/wallet';
   import { onMount } from 'svelte';
+
   import 'radicle-design-system/static/reset.css';
   import 'radicle-design-system/static/global.css';
   import 'radicle-design-system/static/colors.css';
   import 'radicle-design-system/static/elevation.css';
   import 'radicle-design-system/static/typography.css';
+
+  import { browser } from '$app/env';
+  import { navigating } from '$app/stores';
+  import Header from '$components/Header.svelte';
+  import ModalLayout from '$components/ModalLayout.svelte';
+  import { walletStore } from '$lib/stores/wallet/wallet';
+  import tick from '$lib/stores/tick';
 
   enum Theme {
     DARK = 'dark',
@@ -36,17 +38,17 @@
   $: initialized = $walletStore.initialized;
 
   onMount(() => {
-    if (browser) {
-      prefersDarkThemes = window.matchMedia(
-        '(prefers-color-scheme: dark)'
-      ).matches;
+    prefersDarkThemes = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    ).matches;
 
-      window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', (event) => {
-          prefersDarkThemes = event.matches;
-        });
-    }
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', (event) => {
+        prefersDarkThemes = event.matches;
+      });
+
+    tick.start();
   });
 </script>
 

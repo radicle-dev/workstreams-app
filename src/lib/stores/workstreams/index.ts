@@ -18,6 +18,7 @@ import getDripsUpdatedEvents from './methods/getDripsUpdatedEvents';
 import bigIntMin from './methods/bigIntMin';
 import fetchEstimationWs from './methods/fetchEstimationWs';
 import type { Cycle } from '../drips';
+import tick from '../tick';
 
 export const reviver: (key: string, value: unknown) => unknown = (
   key,
@@ -68,7 +69,7 @@ interface InternalState {
   chainId: number;
   currentCycleStart: Date;
   currentAddress: string;
-  intervalId: NodeJS.Timer;
+  intervalId: number;
 }
 
 interface Estimate {
@@ -90,7 +91,7 @@ export const workstreamsStore = (() => {
   const internal = writable<InternalState | undefined>();
 
   function clear() {
-    clearInterval(get(internal).intervalId);
+    tick.deregister(get(internal).intervalId);
 
     workstreams.set({});
     estimates.set({ streams: {} });
@@ -114,7 +115,7 @@ export const workstreamsStore = (() => {
       chainId: provider.network.chainId,
       currentCycleStart: cycle.start,
       currentAddress: address,
-      intervalId: setInterval(estimateBalances, 1000)
+      intervalId: tick.register(estimateBalances)
     });
 
     await fetchEstimationWs(address);

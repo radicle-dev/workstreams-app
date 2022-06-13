@@ -11,6 +11,7 @@
   import Spinner from 'radicle-design-system/Spinner.svelte';
   import EmptyState from '$lib/components/EmptyState.svelte';
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
+  import tick from '$lib/stores/tick';
 
   const { estimates } = workstreamsStore;
 
@@ -19,7 +20,7 @@
   );
 
   let loading = true;
-  let interval: ReturnType<typeof setInterval>;
+  let tickRegistrationId: number;
 
   $: {
     if (
@@ -29,14 +30,14 @@
     ) {
       updateHistory();
       loading = false;
-      clearInterval(interval);
-      interval = setInterval(updateHistory, 1000);
+      tick.deregister(tickRegistrationId);
+      tickRegistrationId = tick.register(updateHistory);
     } else {
-      clearInterval(interval);
+      tick.deregister(tickRegistrationId);
     }
   }
 
-  onDestroy(() => clearInterval(interval));
+  onDestroy(() => tick.deregister(tickRegistrationId));
 
   function updateHistory() {
     history
