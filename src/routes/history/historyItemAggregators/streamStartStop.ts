@@ -6,6 +6,11 @@ import {
   type StreamToppedUp
 } from '../types';
 
+/* 
+  Calculate all timestamps of when a particular stream ran out of funds
+  and insert a history item. Check if the workstream was topped up after,
+  and if yes, also add a top up history item.
+*/
 export const streamStartStop: HistoryAggregator = (_, streams) => {
   const aggregation = Object.values(streams).reduce<{
     outOfFunds: StreamOutOfFunds[];

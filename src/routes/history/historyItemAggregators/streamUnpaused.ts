@@ -1,6 +1,10 @@
 import type { HistoryAggregator } from '../history';
 import { HistoryItemType, type StreamUnpaused } from '../types';
 
+/* 
+  Aggregate all events that add a drip to the recipient after the
+  previous event removed it.
+*/
 export const streamUnpaused: HistoryAggregator = (_, streams) =>
   streams.reduce<StreamUnpaused[]>((acc, ws) => {
     const events = ws.onChainData.dripsUpdatedEvents;

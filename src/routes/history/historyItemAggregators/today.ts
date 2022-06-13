@@ -3,6 +3,10 @@ import { Currency } from '$lib/stores/workstreams/types';
 import type { HistoryAggregator } from '../history';
 import { HistoryItemType } from '../types';
 
+/*
+  Prepend the "Today" headline with a summary of all funds earned
+  and streamed so far in the current month at the top of the history.
+*/
 export const today: HistoryAggregator = (queue, streams) => {
   if (queue.length === 0) return [];
 

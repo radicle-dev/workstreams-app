@@ -1,6 +1,10 @@
 import type { EnrichedWorkstream } from '$lib/stores/workstreams';
 import { Currency, type Money } from '$lib/stores/workstreams/types';
 
+/**
+ * Calculates the exact amounts earned and spent within a given time window and
+ * list of workstreams to consider.
+ */
 export default function streamedBetween(
   timeWindow: { from: Date; to: Date },
   streams: EnrichedWorkstream[]

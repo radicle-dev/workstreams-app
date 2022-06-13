@@ -3,6 +3,10 @@ import { Currency } from '$lib/stores/workstreams/types';
 import type { HistoryAggregator } from '../history';
 import { HistoryItemType } from '../types';
 
+/*
+  Insert an "inbetween" item between subsequent history items, if any funds
+  have been streamed from or to the user within the passed time.
+*/
 export const streamedInbetween: HistoryAggregator = (queue, streams) => {
   const newItems = [];
 

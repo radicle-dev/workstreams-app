@@ -1,11 +1,14 @@
 import type { HistoryAggregator } from '../history';
 import { HistoryItemType, type StreamPaused } from '../types';
 
+/*
+  Get all drips updates that remove the drip to the recipient and create
+  a StreamPaused history item for each.
+*/
 export const streamPaused: HistoryAggregator = (_, streams) =>
   streams.reduce<StreamPaused[]>((acc, ws) => {
     const events = ws.onChainData.dripsUpdatedEvents;
 
-    // Get all updates that remove the drip to the recipient
     const pauses = events.filter(
       (dew) =>
         !dew.event.args.receivers.find(

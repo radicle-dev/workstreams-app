@@ -1,5 +1,6 @@
-import type { EnrichedWorkstream } from '$lib/stores/workstreams';
 import { writable } from 'svelte/store';
+
+import type { EnrichedWorkstream } from '$lib/stores/workstreams';
 import type { History, HistoryItem } from './types';
 
 export type HistoryAggregator = (
