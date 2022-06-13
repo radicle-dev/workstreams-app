@@ -113,7 +113,7 @@
     height: 4.5rem;
     box-sizing: border-box;
     background-color: var(--color-background);
-    z-index: 10;
+    z-index: 1000;
     position: fixed;
     transition: box-shadow 0.3s, transform 0.3s;
   }

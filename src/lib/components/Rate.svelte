@@ -17,7 +17,7 @@
     value={currencyFormat(ratePerSecond.wei * BigInt(86400)) +
       ` ${ratePerSecond.currency.toUpperCase()} / 24h`}
   >
-    <p class="typo-text-bold rate">
+    <p class="typo-text-mono-bold rate">
       {#if icon}
         <TokenStreams style="fill: var(--color-primary);" />
       {/if}
@@ -30,8 +30,10 @@
     {#if icon}
       <TokenStreams style="fill: var(--color-primary);" />
     {/if}
-    {currencyFormat(ratePerSecond.wei * BigInt(86400))}
-    {ratePerSecond.currency.toUpperCase()} <span class="typo-text">/ 24h</span>
+    <span class="typo-text-mono-bold">
+      {currencyFormat(ratePerSecond.wei * BigInt(86400))}
+      {ratePerSecond.currency.toUpperCase()}</span
+    > <span class="typo-text-mono">/ 24h</span>
   </p>
 {/if}
 
