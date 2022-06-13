@@ -14,6 +14,7 @@
   import TimeRate from '../TimeRate.svelte';
   import { currencyFormat } from '$lib/utils/format';
   import TextInput from 'radicle-design-system/TextInput.svelte';
+  import tick from '$lib/stores/tick';
 
   const dispatch = createEventDispatcher();
 
@@ -64,10 +65,10 @@
 
   // Also update `streamingUntilAfterTopup` each second
   onMount(() => {
-    const interval = setInterval(updateStreamingUntilAfterTopup, 1000);
+    const interval = tick.register(updateStreamingUntilAfterTopup);
 
     return () => {
-      clearInterval(interval);
+      tick.deregister(interval);
     };
   });
 
