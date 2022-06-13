@@ -53,6 +53,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Workstreams · Account History</title>
+</svelte:head>
+
 <template>
   {#if $connectedAndLoggedIn}
     <h1>Account history</h1>
