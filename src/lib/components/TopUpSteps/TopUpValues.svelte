@@ -22,7 +22,7 @@
 
   export let enrichedWorkstream: EnrichedWorkstream;
 
-  let topUpAmount = 0;
+  let topUpAmount = 1;
   $: topUpAmountWei = toWei(topUpAmount || 0).toBigInt();
 
   $: estimate = $estimates.streams[enrichedWorkstream.data.id];
@@ -137,7 +137,11 @@
       </div>
       <div class="input-with-label">
         <h4>After topup, runs until</h4>
-        <p class="value">{formatDate(streamingUntilAfterTopup)}</p>
+        {#if topUpAmount > 0}
+          <p class="value">{formatDate(streamingUntilAfterTopup)}</p>
+        {:else}
+          <p class="value">—</p>
+        {/if}
       </div>
     </div>
     <div class="actions">
