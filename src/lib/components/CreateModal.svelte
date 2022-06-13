@@ -114,6 +114,8 @@
       <div class="input-with-label">
         <h4>Description</h4>
         <TextArea
+          textareaStyle="height: 80px;"
+          resizable
           bind:value={description}
           placeholder="Describe the tasks that have to be completed"
           caption="Markdown supported"
