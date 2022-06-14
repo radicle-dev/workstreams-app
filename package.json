@@ -41,7 +41,6 @@
   },
   "type": "module",
   "dependencies": {
-    "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@fontsource/fira-mono": "^4.5.7",
     "@lukeed/uuid": "^2.0.0",
     "@walletconnect/client": "^1.7.8",

@@ -322,15 +322,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild-plugins/node-globals-polyfill@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@esbuild-plugins/node-globals-polyfill@npm:0.1.1"
-  peerDependencies:
-    esbuild: "*"
-  checksum: 68a41e2c377724e9cd46ca344ad219d289cc41a8b273d0d89bbc82bd90025b067b28234a865d8862a3f38c2a028ca4c93138dfca4e1e75e617efc314156c1ce0
-  languageName: node
-  linkType: hard
-
 "@eslint/eslintrc@npm:^1.2.1":
   version: 1.2.1
   resolution: "@eslint/eslintrc@npm:1.2.1"
@@ -11331,7 +11322,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "workstreams-app@workspace:."
   dependencies:
-    "@esbuild-plugins/node-globals-polyfill": ^0.1.1
     "@fontsource/fira-mono": ^4.5.7
     "@lukeed/uuid": ^2.0.0
     "@sveltejs/adapter-auto": next

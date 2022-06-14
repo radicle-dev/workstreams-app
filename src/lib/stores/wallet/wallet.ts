@@ -1,4 +1,5 @@
-import WalletConnectProvider from '@walletconnect/web3-provider';
+// https://github.com/vitejs/vite/issues/7257#issuecomment-1079579892
+import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js';
 
 import { browser } from '$app/env';
 import { ethers, providers } from 'ethers';
