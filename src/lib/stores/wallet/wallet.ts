@@ -1,12 +1,15 @@
 // https://github.com/vitejs/vite/issues/7257#issuecomment-1079579892
 import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js';
-// https://github.com/vitejs/vite/issues/7257#issuecomment-1102724531
-(window.global as unknown) = globalThis;
 
 import { browser } from '$app/env';
 import { ethers, providers } from 'ethers';
 import { get, writable } from 'svelte/store';
 import type { Provider } from '@ethersproject/abstract-provider';
+
+// https://github.com/vitejs/vite/issues/7257#issuecomment-1102724531
+if (browser) {
+  (window.global as unknown) = globalThis;
+}
 
 export type WalletData = {
   initialized: boolean;

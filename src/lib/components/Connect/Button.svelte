@@ -66,8 +66,6 @@
     </Button>
   {:else if !$walletStore.initialized}
     <Button disabled variant="outline">Initializing...</Button>
-  {:else if $walletStore.walletPresent === false}
-    <Button disabled variant="outline">Install MetaMask to log in</Button>
   {:else}
     <Button on:click={() => logIn()} variant="outline"
       >Sign in with Ethereum</Button
