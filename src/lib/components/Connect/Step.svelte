@@ -43,8 +43,9 @@
   }
 </script>
 
-<Button disabled={locked} on:click={() => connect('metamask')}
-  >Connect MetaMask</Button
+<Button
+  disabled={locked || $walletStore.walletPresent === false}
+  on:click={() => connect('metamask')}>Connect MetaMask</Button
 >
 <Button disabled={locked} on:click={() => connect('walletconnect')}
   >Connect WalletConnect</Button
