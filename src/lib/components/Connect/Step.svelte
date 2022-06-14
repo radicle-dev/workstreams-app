@@ -5,6 +5,7 @@
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import Button from 'radicle-design-system/Button.svelte';
+  import { get } from 'svelte/store';
 
   const dispatch = createEventDispatcher();
 
@@ -28,7 +29,7 @@
         waitFor = async () => {
           console.log('waitFor');
           await walletStore.connectWalletConnect();
-          await authStore.authenticate($walletStore);
+          await authStore.authenticate(get(walletStore));
         };
         break;
       }

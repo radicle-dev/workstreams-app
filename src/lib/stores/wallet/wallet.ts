@@ -44,8 +44,6 @@ export const walletStore = (() => {
       qrcode: false
     });
 
-    await wcProvider.enable();
-
     // If WalletConnect is already connected, use it
     if (wcProvider.connected) {
       const web3Provider = new providers.Web3Provider(wcProvider);

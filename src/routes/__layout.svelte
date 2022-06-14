@@ -36,6 +36,7 @@
     be sure that we know the right chain when mounting components.
   */
   $: initialized = $walletStore.initialized;
+  $: console.log($walletStore);
 
   onMount(() => {
     prefersDarkThemes = window.matchMedia(
