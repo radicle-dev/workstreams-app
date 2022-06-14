@@ -7,7 +7,7 @@
 
   import * as modal from '$lib/utils/modal';
 
-  import Connect from '$components/Connect.svelte';
+  import Connect from '$components/Connect/Button.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
   import CreateModal from './CreateModal.svelte';

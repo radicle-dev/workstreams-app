@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import Button from 'radicle-design-system/Button.svelte';
   import { fade } from 'svelte/transition';
@@ -7,18 +8,17 @@
   import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import drips from '$lib/stores/drips';
-  import LoadingDots from './LoadingDots.svelte';
+  import LoadingDots from '../LoadingDots.svelte';
+  import ConnectStep from './Step.svelte';
+  import StepperModal from '../StepperModal/index.svelte';
 
   let locked: boolean;
 
   async function logIn() {
     locked = true;
-    try {
-      if (!$walletStore.connected) await walletStore.connect();
-      if (!$connectedAndLoggedIn) await authStore.authenticate($walletStore);
-    } finally {
-      locked = false;
-    }
+    modal.show(StepperModal, () => (locked = false), {
+      steps: [ConnectStep]
+    });
   }
 
   $: {

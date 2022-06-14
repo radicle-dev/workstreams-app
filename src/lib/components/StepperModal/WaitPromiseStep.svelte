@@ -6,6 +6,7 @@
   const dispatch = createEventDispatcher();
 
   export let pending: () => Promise<void> | undefined;
+  export let pendingMessage: string | undefined;
 
   let error: Error | undefined;
 
@@ -45,7 +46,7 @@
         stroke-linejoin="round"
       />
     </svg>
-    <p>Waiting for your transaction to be confirmed…</p>
+    <p>{pendingMessage || 'Waiting for your transaction to be confirmed…'}</p>
   {/if}
 </div>
 

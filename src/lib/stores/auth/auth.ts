@@ -83,6 +83,8 @@ export const authStore = (() => {
         ' is not a transaction, there will be no transaction costs.'
     );
 
+    console.log(walletData.provider.getSigner());
+
     const signature = await walletData.provider
       .getSigner()
       .signMessage(message.prepareMessage());

@@ -22,8 +22,6 @@
 
   const estimates = workstreamsStore.estimates;
 
-  let locked: boolean;
-
   enum SectionName {
     APPLIED_TO = 'appliedTo',
     PENDING_SETUP = 'pending_setup',
@@ -192,16 +190,6 @@
     return currencyFormat(totalWeiPerDay);
   }
 
-  async function authenticate() {
-    locked = true;
-    try {
-      if (!$walletStore.connected) await walletStore.connect();
-      if (!$connectedAndLoggedIn) await authStore.authenticate($walletStore);
-    } finally {
-      locked = false;
-    }
-  }
-
   $: sectionsToDisplay = filterObject(
     sections,
     (s) => Object.keys(s.workstreams).length > 0
@@ -275,9 +263,6 @@
       <EmptyState
         headerText="Sign in to view your Workstreams"
         text="This is where the Workstreams you created or are contributing to show up."
-        primaryActionText="Sign in with Ethereum"
-        on:primaryAction={authenticate}
-        primaryActionDisabled={locked}
       />
     </div>
   {/if}

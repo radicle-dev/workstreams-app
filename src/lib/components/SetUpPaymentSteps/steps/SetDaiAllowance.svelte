@@ -5,8 +5,12 @@
   import Spinner from 'radicle-design-system/Spinner.svelte';
   import { onMount } from 'svelte';
   import ButtonRow from '../components/ButtonRow.svelte';
+  import type { AwaitPendingPayload } from '$lib/components/StepperModal/types';
 
-  const dispatch = createEventDispatcher();
+  const dispatcher = createEventDispatcher<{
+    awaitPending: AwaitPendingPayload;
+    continue: never;
+  }>();
 
   let approvalGranted: boolean | undefined = undefined;
   let actionInFlight = false;
@@ -15,7 +19,7 @@
     const allowance = await drips.getAllowance();
 
     if (!allowance.isZero()) {
-      dispatch('continue');
+      dispatcher('continue');
     } else {
       approvalGranted = false;
     }
@@ -35,7 +39,7 @@
         }
       };
 
-      dispatch('awaitPending', waitFor);
+      dispatcher('awaitPending', { promise: waitFor });
     } catch {
       actionInFlight = false;
     }

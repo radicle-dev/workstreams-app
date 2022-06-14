@@ -8,6 +8,7 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import WaitPromise from './WaitPromiseStep.svelte';
+  import type { AwaitPendingPayload } from './types';
 
   export let stepProps: { [propName: string]: any } = {};
   export let steps: typeof SvelteComponent[];
@@ -17,6 +18,7 @@
   let currentStepIndex = 0;
   let currentStep: typeof SvelteComponent = steps[0];
   let pending: () => Promise<void> | undefined;
+  let pendingMessage: string | undefined;
 
   function advance() {
     pending = undefined;
@@ -33,7 +35,9 @@
   function goBack() {
     pending = undefined;
 
-    if (steps[currentStepIndex - 1]) {
+    if (currentStep === WaitPromise) {
+      currentStep = steps[currentStepIndex];
+    } else if (steps[currentStepIndex - 1]) {
       currentStepIndex--;
       currentStep = steps[currentStepIndex];
     } else {
@@ -42,8 +46,10 @@
     }
   }
 
-  function awaitPending(event: CustomEvent) {
-    pending = event.detail;
+  function awaitPending(event: CustomEvent<AwaitPendingPayload>) {
+    pending = event.detail.promise;
+    pendingMessage = event.detail.message;
+
     currentStep = WaitPromise;
   }
 
@@ -71,6 +77,7 @@
             this={currentStep}
             {...resolvedStepProps}
             {pending}
+            {pendingMessage}
             on:continue={advance}
             on:goBack={goBack}
             on:awaitPending={awaitPending}
