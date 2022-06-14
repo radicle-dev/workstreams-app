@@ -29,7 +29,8 @@
         waitFor = async () => {
           console.log('waitFor');
           await walletStore.connectWalletConnect();
-          await authStore.authenticate(get(walletStore));
+          if (!$connectedAndLoggedIn)
+            await authStore.authenticate(get(walletStore));
         };
         break;
       }
