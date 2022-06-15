@@ -45,7 +45,6 @@
     "@lukeed/uuid": "^2.0.0",
     "@metamask/detect-provider": "^1.2.0",
     "@metamask/providers": "^9.0.0",
-    "@walletconnect/client": "^1.7.8",
     "@walletconnect/qrcode-modal": "^1.7.8",
     "@walletconnect/web3-provider": "^1.7.8",
     "drips-sdk": "https://github.com/radicle-dev/drips-js-sdk#973599caf3013a2ac56155f11b8cd2426ff263d1",
@@ -53,7 +52,6 @@
     "graphql-tag": "^2.12.6",
     "radicle-design-system": "radicle-dev/radicle-upstream#workspace=radicle-design-system&commit=b451660c33609180928b0776707553d4ea8f7156",
     "siwe": "^1.1.6",
-    "web3": "^1.7.3",
     "web3-utils": "^1.7.3"
   },
   "lint-staged": {
