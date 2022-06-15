@@ -28,7 +28,6 @@
       currentStepIndex++;
       currentStep = steps[currentStepIndex];
     } else {
-      console.log('advance close');
       modal.hide();
       goto($page.url.pathname);
     }

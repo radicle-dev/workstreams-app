@@ -19,26 +19,32 @@
 
 <svelte:window on:keydown={pressEscapeKey} />
 
-{#if store !== null}
-  <div class="modal-layout" data-cy="modal-layout">
-    <div
-      class="overlay"
-      transition:fade|local={{ duration: 200 }}
-      on:click={clickOutside}
-    />
-    <div class="content">
+<!--
+  Removing this wrapping div breaks everything.
+  See https://github.com/sveltejs/svelte/issues/6037
+-->
+<div>
+  {#if store !== null}
+    <div class="modal-layout" data-cy="modal-layout">
       <div
-        class="modal-wrapper"
-        transition:fly|local={{ y: 10, duration: 300 }}
-      >
-        <svelte:component
-          this={store.modalComponent}
-          {...store.modalComponentProps}
-        />
+        class="overlay"
+        transition:fade|local={{ duration: 200 }}
+        on:click={clickOutside}
+      />
+      <div class="content">
+        <div
+          class="modal-wrapper"
+          transition:fly|local={{ y: 10, duration: 300 }}
+        >
+          <svelte:component
+            this={store.modalComponent}
+            {...store.modalComponentProps}
+          />
+        </div>
       </div>
     </div>
-  </div>
-{/if}
+  {/if}
+</div>
 
 <style>
   .modal-layout {

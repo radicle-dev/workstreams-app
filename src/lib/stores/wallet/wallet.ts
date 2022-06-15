@@ -106,48 +106,20 @@ export const walletStore = (() => {
     if (get(state) !== undefined) return;
 
     const detectedWindowProvider = await getMetaMask();
-    const walletConnectProvider = new WalletConnectProvider({
-      infuraId: 'aadcb5b20a6e4cc09edfdd664ed6334c',
-      qrcode: false
-    });
-    const metaMaskConnected =
-      (
-        (await detectedWindowProvider?.request({
-          method: 'eth_accounts'
-        })) as string[]
-      ).length > 0;
-    const walletConnectConnected = walletConnectProvider.connected;
-
-    let provider: Web3Provider;
-    let walletData: Wallet;
-
-    if (metaMaskConnected) {
-      provider = new Web3Provider(window.ethereum);
-      walletData = {
-        type: 'metamask',
-        accounts: prepareAccounts(await provider.listAccounts())
-      };
-      _attachListeners(detectedWindowProvider);
-    } else if (walletConnectConnected) {
-      provider = new Web3Provider(walletConnectProvider);
-      walletData = {
-        type: 'walletconnect',
-        accounts: prepareAccounts(await provider.listAccounts())
-      };
-      _attachListeners(walletConnectProvider);
-    }
-
+    const provider =
+      detectedWindowProvider && new Web3Provider(window.ethereum);
+    const accounts = await provider?.listAccounts();
     const network = await provider?.getNetwork();
-    const login = walletData && _restoreAuth(walletData.accounts);
+    const login = accounts && _restoreAuth(accounts);
 
     state.set({
       metamaskInstalled: Boolean(detectedWindowProvider),
-      accounts: walletData?.accounts || [],
-      walletType: walletData?.type,
+      accounts: (accounts && prepareAccounts(accounts)) || [],
+      walletType: detectedWindowProvider ? 'metamask' : undefined,
       login,
       provider,
       network: network || DEFAULT_NETWORK,
-      ready: Boolean(login && walletData)
+      ready: Boolean(login && detectedWindowProvider)
     });
   }
 
@@ -199,6 +171,7 @@ export const walletStore = (() => {
           infuraId: 'aadcb5b20a6e4cc09edfdd664ed6334c'
         });
 
+        await walletConnectProvider.disconnect();
         await walletConnectProvider.enable();
 
         const provider = new Web3Provider(walletConnectProvider);
@@ -219,7 +192,7 @@ export const walletStore = (() => {
             walletType: to,
             provider,
             login,
-            chainId: provider.network.chainId,
+            network: provider.network,
             ready: true
           }));
 
@@ -311,6 +284,16 @@ export const walletStore = (() => {
   }
 
   function _restoreAuth(accounts: string[]): Login | null {
+    const login = _checkLoggedInAs(accounts[0]);
+    if (!login) {
+      _wipeStoredLogin();
+      return null;
+    }
+
+    return login;
+  }
+
+  function _checkLoggedInAs(account: string): Login | null {
     const storedData = localStorage.getItem('login');
     const savedState: Login | null =
       storedData &&
@@ -318,22 +301,12 @@ export const walletStore = (() => {
         key === 'expiresAt' ? new Date(value) : value
       );
 
-    if (!savedState) {
-      return null;
-    }
+    const loggedInWithRightAddress =
+      savedState?.address === account.toLowerCase();
+    const loginValid =
+      savedState && savedState.expiresAt.getTime() > new Date().getTime();
 
-    const savedAddress = savedState.address.toLowerCase();
-    const connectedAddress = accounts[0].toLowerCase();
-
-    const loggedInWithRightAddress = savedAddress === connectedAddress;
-    const loginExpired = savedState.expiresAt.getTime() < new Date().getTime();
-
-    if (!loggedInWithRightAddress || loginExpired) {
-      _wipeStoredLogin();
-      return null;
-    }
-
-    return savedState;
+    return loggedInWithRightAddress && loginValid ? savedState : null;
   }
 
   function _wipeStoredLogin() {
