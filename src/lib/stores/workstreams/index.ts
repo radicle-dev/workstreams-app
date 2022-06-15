@@ -83,18 +83,28 @@ interface Estimate {
 interface EstimatesState {
   streams: { [wsId: string]: Estimate };
   totalBalance?: Money;
+  /**
+   * Indicates whether all relevant streams for estimation
+   * have been sucessfully fetched, and the estimation
+   * is considered accurate. Before this is true, don't
+   * rely on the totalBalance value.
+   */
+  activeStreamsFetched: boolean;
 }
 
 export const workstreamsStore = (() => {
   const workstreams = writable<WorkstreamsState>({});
-  const estimates = writable<EstimatesState>({ streams: {} });
+  const estimates = writable<EstimatesState>({
+    streams: {},
+    activeStreamsFetched: false
+  });
   const internal = writable<InternalState | undefined>();
 
   function clear() {
     tick.deregister(get(internal).intervalId);
 
     workstreams.set({});
-    estimates.set({ streams: {} });
+    estimates.set({ streams: {}, activeStreamsFetched: false });
     internal.set(undefined);
   }
 
@@ -119,6 +129,11 @@ export const workstreamsStore = (() => {
     });
 
     await fetchEstimationWs(address);
+
+    estimates.update((v) => ({
+      ...v,
+      activeStreamsFetched: true
+    }));
   }
 
   async function enrich(item: Workstream): Promise<EnrichedWorkstream> {
@@ -291,6 +306,7 @@ export const workstreamsStore = (() => {
     );
 
     estimates.update((estimatesVal) => ({
+      ...estimatesVal,
       totalBalance: {
         wei: totalWeiEarned,
         currency: Currency.DAI
@@ -345,8 +361,17 @@ export const workstreamsStore = (() => {
 
     if (response.status === 200) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream[];
-      const enrichPromises = parsed.map((w) => enrich(w));
-
+      const internalState = get(internal);
+      /*
+        If we're connected to a particular chain, filter out active streams
+        set up on another chain.
+      */
+      const withoutOtherChainStreams = internalState
+        ? parsed.filter((ws) =>
+            ws.dripsData ? ws.dripsData.chainId === internalState.chainId : true
+          )
+        : parsed;
+      const enrichPromises = withoutOtherChainStreams.map((w) => enrich(w));
       const enriched = await Promise.all(enrichPromises);
 
       pushState(enriched);

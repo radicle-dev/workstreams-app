@@ -23,11 +23,7 @@
   let tickRegistrationId: number;
 
   $: {
-    if (
-      $connectedAndLoggedIn &&
-      relevantStreams.length > 0 &&
-      $estimates.totalBalance
-    ) {
+    if ($connectedAndLoggedIn && $estimates.activeStreamsFetched) {
       updateHistory();
       loading = false;
       tick.deregister(tickRegistrationId);

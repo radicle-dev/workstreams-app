@@ -53,12 +53,21 @@ export const toDai = (wei: BigNumber, roundTo?: number): string => {
   return round(dai, roundTo);
 };
 
+// https://github.com/radicle-dev/drips-js-sdk/issues/34
+const networkNameMap = {
+  1: 'mainnet',
+  4: 'rinkeby'
+};
+
 export default (() => {
   const internal = writable<InternalState | undefined>(undefined);
   const state = writable<DripsState>({});
 
   async function connect(provider: ethers.providers.Web3Provider) {
-    const client = new DripsClient(provider);
+    const client = new DripsClient(
+      provider,
+      networkNameMap[provider.network.chainId]
+    );
     await client.connect();
 
     internal.set({

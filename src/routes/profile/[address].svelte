@@ -16,8 +16,8 @@
 
     return {
       props: {
-        createdWorkstreams: responses[0].ok && responses[0].data,
-        assignedWorkstreams: responses[1].ok && responses[1].data
+        createdWorkstreams: responses[0].ok ? responses[0].data : [],
+        assignedWorkstreams: responses[1].ok ? responses[1].data : []
       }
     };
   }
@@ -35,9 +35,17 @@
   import Section from '$lib/components/Section.svelte';
   import ExploreCard from '$components/ExploreCard.svelte';
   import EmptyState from '$components/EmptyState.svelte';
+  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
+  import { walletStore } from '$lib/stores/wallet/wallet';
 
   export let createdWorkstreams: Workstream[] = [];
   export let assignedWorkstreams: Workstream[] = [];
+
+  $: assignedWorkstreamsOnCurrentChain = $connectedAndLoggedIn
+    ? assignedWorkstreams.filter(
+        (w) => w.dripsData.chainId === $walletStore.chainId
+      )
+    : assignedWorkstreams;
 
   const formatAddress = (addr?: string | undefined) => {
     if (addr) {
@@ -62,7 +70,7 @@
   {#if utils.isAddress($page.params.address)}
     <UserBig address={$page.params.address} />
     <div class="overview">
-      {#if !assignedWorkstreams && !createdWorkstreams}
+      {#if !assignedWorkstreamsOnCurrentChain && !createdWorkstreams}
         <EmptyState
           emoji="👀"
           headerText="Nothing to see here"
@@ -71,13 +79,13 @@
           on:primaryAction={() => goto(`/`)}
         />
       {:else}
-        {#if assignedWorkstreams?.length > 0}
+        {#if assignedWorkstreamsOnCurrentChain?.length > 0}
           <Section
             title="Assigned workstreams"
-            count={assignedWorkstreams.length}
+            count={assignedWorkstreamsOnCurrentChain.length}
           >
             <div slot="content" class="workstreams">
-              {#each assignedWorkstreams as workstream}
+              {#each assignedWorkstreamsOnCurrentChain as workstream}
                 <ExploreCard {workstream} />
               {/each}
             </div>
