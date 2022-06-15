@@ -41,7 +41,6 @@
   export let createdWorkstreams: Workstream[] = [];
   export let assignedWorkstreams: Workstream[] = [];
 
-  console.log(assignedWorkstreams);
   $: assignedWorkstreamsOnCurrentChain = $connectedAndLoggedIn
     ? assignedWorkstreams.filter(
         (w) => w.dripsData.chainId === $walletStore.chainId

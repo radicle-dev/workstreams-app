@@ -64,7 +64,6 @@ export default (() => {
   const state = writable<DripsState>({});
 
   async function connect(provider: ethers.providers.Web3Provider) {
-    console.log(provider.network.chainId);
     const client = new DripsClient(
       provider,
       networkNameMap[provider.network.chainId]
@@ -141,12 +140,10 @@ export default (() => {
   async function updateCollectable(): Promise<void> {
     const { client, provider } = get(internal);
 
-    console.log('get collectable');
     const collectable = await client.getAmountCollectableWithSplits(
       await provider.getSigner().getAddress(),
       []
     );
-    console.log('done');
 
     state.update((v) => ({
       ...v,
