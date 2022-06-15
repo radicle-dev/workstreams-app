@@ -35,15 +35,14 @@
   import Section from '$lib/components/Section.svelte';
   import ExploreCard from '$components/ExploreCard.svelte';
   import EmptyState from '$components/EmptyState.svelte';
-  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { walletStore } from '$lib/stores/wallet/wallet';
 
   export let createdWorkstreams: Workstream[] = [];
   export let assignedWorkstreams: Workstream[] = [];
 
-  $: assignedWorkstreamsOnCurrentChain = $connectedAndLoggedIn
+  $: assignedWorkstreamsOnCurrentChain = $walletStore.ready
     ? assignedWorkstreams.filter(
-        (w) => w.dripsData.chainId === $walletStore.chainId
+        (w) => w.dripsData.chainId === $walletStore.network.chainId
       )
     : assignedWorkstreams;
 

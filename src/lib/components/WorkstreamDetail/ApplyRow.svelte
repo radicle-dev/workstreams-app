@@ -1,6 +1,5 @@
 <script lang="ts">
   import * as modal from '$lib/utils/modal';
-  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
   import Card from '$components/Card.svelte';
   import TimeRate from '$components/TimeRate.svelte';
@@ -9,6 +8,7 @@
   import Button from 'radicle-design-system/Button.svelte';
   import Tooltip from 'radicle-design-system/Tooltip.svelte';
   import type { Workstream } from '$lib/stores/workstreams/types';
+  import { walletStore } from '$lib/stores/wallet/wallet';
 
   export let workstream: Workstream;
   export let creator = false;
@@ -25,7 +25,7 @@
           value={applied ? "You've already applied" : null}
         >
           <Button
-            disabled={applied || !$connectedAndLoggedIn}
+            disabled={applied || !$walletStore.ready}
             icon={Apply}
             on:click={() => modal.show(ApplyModal, undefined, { workstream })}
           >

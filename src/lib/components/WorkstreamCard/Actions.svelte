@@ -1,7 +1,6 @@
 <script lang="ts">
   import { getConfig } from '$lib/config';
   import { walletStore } from '$lib/stores/wallet/wallet';
-  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import * as modal from '$lib/utils/modal';
 
   import ActionRow from './ActionRow.svelte';
@@ -32,15 +31,15 @@
   $: estimate = $estimates.streams[workstream.id];
 
   let creator: boolean =
-    $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
+    $walletStore.ready && workstream.creator === $walletStore.accounts[0];
   let assignee: boolean =
-    $connectedAndLoggedIn &&
+    $walletStore.ready &&
     workstream.acceptedApplication === $walletStore.accounts[0];
   let applicant: boolean =
-    $connectedAndLoggedIn &&
+    $walletStore.ready &&
     workstream.applicants?.includes($walletStore.accounts[0]);
   let rejectant: boolean =
-    $connectedAndLoggedIn &&
+    $walletStore.ready &&
     workstream.rejectedApplications?.includes($walletStore.accounts[0]);
 
   async function getApplication(id: string): Promise<Application | null> {

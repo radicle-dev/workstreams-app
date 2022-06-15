@@ -24,9 +24,11 @@
     pending = undefined;
 
     if (steps[currentStepIndex + 1]) {
+      console.log('advance next');
       currentStepIndex++;
       currentStep = steps[currentStepIndex];
     } else {
+      console.log('advance close');
       modal.hide();
       goto($page.url.pathname);
     }

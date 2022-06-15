@@ -1,7 +1,6 @@
 <script lang="ts">
   import { dateFormat } from '$lib/utils/format';
   import { walletStore } from '$lib/stores/wallet/wallet';
-  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
   import ApplicationList from './ApplicationList.svelte';
   import ActiveStream from './ActiveStream.svelte';
@@ -24,11 +23,11 @@
 
   let applied = false;
   let creator: boolean =
-    $connectedAndLoggedIn && workstream.creator === $walletStore.accounts[0];
+    $walletStore.ready && workstream.creator === $walletStore.accounts[0];
 
   $: {
     applied =
-      $connectedAndLoggedIn &&
+      $walletStore.ready &&
       workstream.applicants?.includes($walletStore.accounts[0]);
     if (applications) {
       acceptedApplication = applications.find(

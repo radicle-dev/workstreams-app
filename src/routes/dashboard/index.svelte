@@ -4,8 +4,6 @@
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
 
   import { walletStore } from '$lib/stores/wallet/wallet';
-  import { authStore } from '$lib/stores/auth/auth';
-  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
   import { WorkstreamState } from '$lib/stores/workstreams/types';
 
@@ -40,7 +38,7 @@
   let loading = true;
 
   $: {
-    if ($connectedAndLoggedIn) {
+    if ($walletStore.ready) {
       loading = true;
 
       const fetches = [
@@ -143,18 +141,6 @@
     }
   } as Sections;
 
-  $: {
-    if (!$connectedAndLoggedIn) {
-      clearSectionData();
-    }
-  }
-
-  function clearSectionData() {
-    Object.keys(sections).forEach((sectionName) => {
-      sections[sectionName].data = undefined;
-    });
-  }
-
   $: incomingTotal = calculateStreamTotal(
     filterObject($workstreamsStore, (ws) => {
       return (
@@ -201,7 +187,7 @@
 </svelte:head>
 
 <div class="container">
-  {#if $authStore.authenticated && $walletStore.connected}
+  {#if $walletStore.ready}
     <div transition:fly|local={{ y: 10, duration: 300 }} class="sections">
       {#each Object.entries(sectionsToDisplay) as [key, section] (key)}
         <div
