@@ -361,8 +361,17 @@ export const workstreamsStore = (() => {
 
     if (response.status === 200) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream[];
-      const enrichPromises = parsed.map((w) => enrich(w));
-
+      const internalState = get(internal);
+      /*
+        If we're connected to a particular chain, filter out active streams
+        set up on another chain.
+      */
+      const withoutOtherChainStreams = internalState
+        ? parsed.filter((ws) =>
+            ws.dripsData ? ws.dripsData.chainId === internalState.chainId : true
+          )
+        : parsed;
+      const enrichPromises = withoutOtherChainStreams.map((w) => enrich(w));
       const enriched = await Promise.all(enrichPromises);
 
       pushState(enriched);
