@@ -430,6 +430,7 @@ export const workstreamsStore = (() => {
       {
         method: 'POST',
         body: JSON.stringify({
+          chainId: get(internal).chainId,
           accountId
         })
       },
