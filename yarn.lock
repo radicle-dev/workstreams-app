@@ -2714,12 +2714,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"drips-sdk@https://github.com/radicle-dev/drips-js-sdk#v0.1.1":
+"drips-sdk@https://github.com/radicle-dev/drips-js-sdk#973599caf3013a2ac56155f11b8cd2426ff263d1":
   version: 0.1.1
-  resolution: "drips-sdk@https://github.com/radicle-dev/drips-js-sdk.git#commit=234af1b9f633dd8decb8e7f502e9d34ef344a08e"
+  resolution: "drips-sdk@https://github.com/radicle-dev/drips-js-sdk.git#commit=973599caf3013a2ac56155f11b8cd2426ff263d1"
   peerDependencies:
     ethers: ^5.6.2
-  checksum: 6c364c11aa29a5cda79ab8a38e4e5847d3860cefd7c4d366a1aa90aa2d3c7ea4ac22e73609973216be82c92a8667cdf2d357d2ef97b4a4ce20364dd99a5a43cf
+  checksum: 179ab3633444f02d326b9cd1fea0b07ad1f8c3dd785207f2c7728ceaaf7016edf60f68fd579eb3c97c01328888e8bdf3eb54edd56ee0c03ce35064f7852793ff
   languageName: node
   linkType: hard
 
@@ -7362,7 +7362,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
     apollo: ^2.33.11
-    drips-sdk: "https://github.com/radicle-dev/drips-js-sdk#v0.1.1"
+    drips-sdk: "https://github.com/radicle-dev/drips-js-sdk#973599caf3013a2ac56155f11b8cd2426ff263d1"
     eslint: ^8.13.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-svelte3: ^3.4.1

@@ -53,12 +53,22 @@ export const toDai = (wei: BigNumber, roundTo?: number): string => {
   return round(dai, roundTo);
 };
 
+// https://github.com/radicle-dev/drips-js-sdk/issues/34
+const networkNameMap = {
+  1: 'mainnet',
+  4: 'rinkeby'
+};
+
 export default (() => {
   const internal = writable<InternalState | undefined>(undefined);
   const state = writable<DripsState>({});
 
   async function connect(provider: ethers.providers.Web3Provider) {
-    const client = new DripsClient(provider);
+    console.log(provider.network.chainId);
+    const client = new DripsClient(
+      provider,
+      networkNameMap[provider.network.chainId]
+    );
     await client.connect();
 
     internal.set({
@@ -131,10 +141,12 @@ export default (() => {
   async function updateCollectable(): Promise<void> {
     const { client, provider } = get(internal);
 
+    console.log('get collectable');
     const collectable = await client.getAmountCollectableWithSplits(
       await provider.getSigner().getAddress(),
       []
     );
+    console.log('done');
 
     state.update((v) => ({
       ...v,
