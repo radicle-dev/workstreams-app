@@ -31,23 +31,10 @@ interface Login {
   address: string;
 }
 
-interface WalletBase {
-  accounts: string[];
-}
-
-interface MetaMask extends WalletBase {
-  type: 'metamask';
-}
-
-interface WalletConnect extends WalletBase {
-  type: 'walletconnect';
-}
-
-type Wallet = MetaMask | WalletConnect;
-
 async function getMetaMask(): Promise<MetaMaskInpageProvider | null> {
   return (await detectEthereumProvider({
-    mustBeMetaMask: true
+    mustBeMetaMask: true,
+    timeout: 500
   })) as MetaMaskInpageProvider | null;
 }
 
@@ -110,7 +97,7 @@ export const walletStore = (() => {
       detectedWindowProvider && new Web3Provider(window.ethereum);
     const accounts = await provider?.listAccounts();
     const network = await provider?.getNetwork();
-    const login = accounts && _restoreAuth(accounts);
+    const login = accounts?.length > 0 && _restoreAuth(accounts);
 
     state.set({
       metamaskInstalled: Boolean(detectedWindowProvider),
