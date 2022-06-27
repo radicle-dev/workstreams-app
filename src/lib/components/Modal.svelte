@@ -12,10 +12,15 @@
     background: var(--color-background);
     border-radius: 1rem;
     box-shadow: var(--elevation-high);
-    min-width: 32rem;
     width: 70vw;
     max-width: 40rem;
     text-align: center;
     overflow: hidden;
+  }
+
+  @media only screen and (max-width: 54rem) {
+    .modal {
+      width: 95vw;
+    }
   }
 </style>
