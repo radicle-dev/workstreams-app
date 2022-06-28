@@ -175,7 +175,7 @@ export const walletStore = (() => {
 
           state.update((s) => ({
             ...s,
-            accounts: accounts,
+            accounts: prepareAccounts(accounts),
             walletType: to,
             provider,
             login,
