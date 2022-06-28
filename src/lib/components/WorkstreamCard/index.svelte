@@ -164,6 +164,7 @@
     display: flex;
     align-items: center;
     height: 1.5rem;
+    flex-shrink: 0;
     padding: 0.5rem;
     border-radius: 0.5rem;
   }
