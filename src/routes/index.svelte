@@ -20,7 +20,7 @@
 </script>
 
 <script lang="ts">
-  import ExploreCard from '$lib/components/ExploreCard.svelte';
+  import WorkstreamCard from '$lib/components/WorkstreamCard/index.svelte';
   import type { Workstream } from '$lib/stores/workstreams/types';
   import { WorkstreamState } from '$lib/stores/workstreams/types';
   import { workstreamsStore } from '$lib/stores/workstreams';
@@ -42,7 +42,7 @@
 
 <div class="overview">
   {#each openWorkstreams as workstream}
-    <ExploreCard {workstream} />
+    <WorkstreamCard {workstream} />
   {/each}
 </div>
 

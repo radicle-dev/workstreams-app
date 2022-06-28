@@ -33,7 +33,7 @@
 
   import UserBig from '$components/UserBig.svelte';
   import Section from '$lib/components/Section.svelte';
-  import ExploreCard from '$components/ExploreCard.svelte';
+  import WorkstreamCard from '$lib/components/WorkstreamCard/index.svelte';
   import EmptyState from '$components/EmptyState.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
 
@@ -42,7 +42,8 @@
 
   $: assignedWorkstreamsOnCurrentChain = $walletStore.ready
     ? assignedWorkstreams.filter(
-        (w) => w.dripsData.chainId === $walletStore.network.chainId
+        (w) =>
+          !w.dripsData || w.dripsData.chainId === $walletStore.network.chainId
       )
     : assignedWorkstreams;
 
@@ -85,7 +86,7 @@
           >
             <div slot="content" class="workstreams">
               {#each assignedWorkstreamsOnCurrentChain as workstream}
-                <ExploreCard {workstream} />
+                <WorkstreamCard {workstream} />
               {/each}
             </div>
           </Section>
@@ -97,7 +98,7 @@
           >
             <div slot="content" class="workstreams">
               {#each createdWorkstreams as workstream}
-                <ExploreCard {workstream} />
+                <WorkstreamCard {workstream} />
               {/each}
             </div>
           </Section>
