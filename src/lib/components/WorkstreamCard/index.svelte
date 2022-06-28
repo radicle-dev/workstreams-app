@@ -173,6 +173,7 @@
     color: var(--color-foreground-level-5);
     display: flex;
     gap: 0.25rem;
+    flex-wrap: wrap;
   }
 
   .amount {
