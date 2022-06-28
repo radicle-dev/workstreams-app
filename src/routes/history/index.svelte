@@ -10,8 +10,8 @@
   import * as aggregators from './historyItemAggregators';
   import Spinner from 'radicle-design-system/Spinner.svelte';
   import EmptyState from '$lib/components/EmptyState.svelte';
-  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import tick from '$lib/stores/tick';
+  import { walletStore } from '$lib/stores/wallet/wallet';
 
   const { estimates } = workstreamsStore;
 
@@ -23,7 +23,7 @@
   let tickRegistrationId: number;
 
   $: {
-    if ($connectedAndLoggedIn && $estimates.activeStreamsFetched) {
+    if ($walletStore.ready && $estimates.activeStreamsFetched) {
       updateHistory();
       loading = false;
       tick.deregister(tickRegistrationId);
@@ -55,7 +55,7 @@
 </svelte:head>
 
 <template>
-  {#if $connectedAndLoggedIn}
+  {#if $walletStore.ready}
     <h1>Account history</h1>
     {#if !loading}
       <div in:fly|local={{ y: 10, duration: 300 }} class="stats">

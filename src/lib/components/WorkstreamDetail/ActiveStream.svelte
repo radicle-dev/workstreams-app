@@ -11,7 +11,6 @@
   import { currencyFormat, padFloatString } from '$lib/utils/format';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import StepperModal from '../StepperModal/index.svelte';
-  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import Pause from 'radicle-design-system/icons/Pause.svelte';
   import drips from '$lib/stores/drips';
   import TopUpValues from '../TopUpSteps/TopUpValues.svelte';
@@ -97,7 +96,7 @@
     </Row>
     <div class="stream-actions">
       <div style="display: flex; gap: .75rem;">
-        {#if isOwner && $connectedAndLoggedIn}
+        {#if isOwner && $walletStore.ready}
           {#if estimate && estimate.paused === false && estimate.remainingBalance.wei > BigInt(0)}
             <Button
               disabled={pauseUnpauseBtnDisabled}

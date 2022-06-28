@@ -1,28 +1,27 @@
 <script lang="ts">
+  import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import Button from 'radicle-design-system/Button.svelte';
   import { fade } from 'svelte/transition';
   import User from '$components/User.svelte';
-  import { authStore } from '$lib/stores/auth/auth';
-  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import drips from '$lib/stores/drips';
-  import LoadingDots from './LoadingDots.svelte';
+  import LoadingDots from '../LoadingDots.svelte';
+  import ConnectStep from './Step.svelte';
+  import StepperModal from '../StepperModal/index.svelte';
+  import { get } from 'svelte/store';
 
   let locked: boolean;
 
   async function logIn() {
     locked = true;
-    try {
-      if (!$walletStore.connected) await walletStore.connect();
-      if (!$connectedAndLoggedIn) await authStore.authenticate($walletStore);
-    } finally {
-      locked = false;
-    }
+    modal.show(StepperModal, () => (locked = false), {
+      steps: [ConnectStep]
+    });
   }
 
   $: {
-    if ($authStore.authenticated && $walletStore.connected) {
+    if ($walletStore.ready) {
       connectStores();
     }
   }
@@ -31,21 +30,24 @@
     const { provider } = $walletStore;
 
     await drips.connect(provider);
-    await workstreamsStore.connect(provider, $drips.cycle);
+    await workstreamsStore.connect(provider, get(drips).cycle);
   }
 
   async function logOut() {
-    walletStore.disconnect();
+    await walletStore.disconnect();
     drips.disconnect();
-    authStore.clear();
     workstreamsStore.clear();
   }
 
   let hover = false;
 </script>
 
-<div class="connect-button-wrapper" on:mouseleave={() => (hover = false)}>
-  {#if $connectedAndLoggedIn}
+<div
+  class="connect-button-wrapper"
+  on:mouseenter={() => (hover = true)}
+  on:mouseleave={() => (hover = false)}
+>
+  {#if $walletStore.ready}
     {#if hover}
       <div
         on:click={logOut}
@@ -56,18 +58,14 @@
       </div>
     {/if}
     <div>
-      <Button variant="outline" on:mouseenter={() => (hover = true)}>
-        <User address={$authStore.address} />
+      <Button variant="outline">
+        <User address={$walletStore.accounts[0]} />
       </Button>
     </div>
   {:else if locked}
     <Button disabled variant="outline">
       <LoadingDots />
     </Button>
-  {:else if !$walletStore.initialized}
-    <Button disabled variant="outline">Initializing...</Button>
-  {:else if $walletStore.walletPresent === false}
-    <Button disabled variant="outline">Install MetaMask to log in</Button>
   {:else}
     <Button on:click={() => logIn()} variant="outline"
       >Sign in with Ethereum</Button

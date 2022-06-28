@@ -15,8 +15,11 @@
   import { currencyFormat } from '$lib/utils/format';
   import TextInput from 'radicle-design-system/TextInput.svelte';
   import tick from '$lib/stores/tick';
+  import type { AwaitPendingPayload } from '../StepperModal/types';
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{
+    awaitPending: AwaitPendingPayload;
+  }>();
 
   const estimates = workstreamsStore.estimates;
 
@@ -90,7 +93,7 @@
         );
       };
 
-      dispatch('awaitPending', waitFor);
+      dispatch('awaitPending', { promise: waitFor });
     } catch {
       txInFlight = false;
     }

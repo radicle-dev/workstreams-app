@@ -4,8 +4,6 @@
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
 
   import { walletStore } from '$lib/stores/wallet/wallet';
-  import { authStore } from '$lib/stores/auth/auth';
-  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
 
   import { WorkstreamState } from '$lib/stores/workstreams/types';
 
@@ -21,8 +19,6 @@
   import Spinner from 'radicle-design-system/Spinner.svelte';
 
   const estimates = workstreamsStore.estimates;
-
-  let locked: boolean;
 
   enum SectionName {
     APPLIED_TO = 'appliedTo',
@@ -42,7 +38,7 @@
   let loading = true;
 
   $: {
-    if ($connectedAndLoggedIn) {
+    if ($walletStore.ready) {
       loading = true;
 
       const fetches = [
@@ -145,18 +141,6 @@
     }
   } as Sections;
 
-  $: {
-    if (!$connectedAndLoggedIn) {
-      clearSectionData();
-    }
-  }
-
-  function clearSectionData() {
-    Object.keys(sections).forEach((sectionName) => {
-      sections[sectionName].data = undefined;
-    });
-  }
-
   $: incomingTotal = calculateStreamTotal(
     filterObject($workstreamsStore, (ws) => {
       return (
@@ -192,16 +176,6 @@
     return currencyFormat(totalWeiPerDay);
   }
 
-  async function authenticate() {
-    locked = true;
-    try {
-      if (!$walletStore.connected) await walletStore.connect();
-      if (!$connectedAndLoggedIn) await authStore.authenticate($walletStore);
-    } finally {
-      locked = false;
-    }
-  }
-
   $: sectionsToDisplay = filterObject(
     sections,
     (s) => Object.keys(s.workstreams).length > 0
@@ -213,7 +187,7 @@
 </svelte:head>
 
 <div class="container">
-  {#if $authStore.authenticated && $walletStore.connected}
+  {#if $walletStore.ready}
     <div transition:fly|local={{ y: 10, duration: 300 }} class="sections">
       {#each Object.entries(sectionsToDisplay) as [key, section] (key)}
         <div
@@ -275,9 +249,6 @@
       <EmptyState
         headerText="Sign in to view your Workstreams"
         text="This is where the Workstreams you created or are contributing to show up."
-        primaryActionText="Sign in with Ethereum"
-        on:primaryAction={authenticate}
-        primaryActionDisabled={locked}
       />
     </div>
   {/if}

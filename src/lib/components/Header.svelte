@@ -7,14 +7,14 @@
 
   import * as modal from '$lib/utils/modal';
 
-  import Connect from '$components/Connect.svelte';
+  import Connect from '$components/Connect/Button.svelte';
   import Button from 'radicle-design-system/Button.svelte';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
   import CreateModal from './CreateModal.svelte';
-  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { browser } from '$app/env';
   import { headerContent } from '$lib/stores/headerContent';
   import BalanceButton from './BalanceButton.svelte';
+  import { walletStore } from '$lib/stores/wallet/wallet';
 
   let scrolledDown = false;
   let scrollPos = 0;
@@ -80,7 +80,7 @@
           >
         </nav>
         <div class="buttons">
-          {#if $connectedAndLoggedIn && onDashboard}
+          {#if $walletStore.ready && onDashboard}
             <div
               in:fly={{ y: 10, duration: 300, delay: 300 }}
               out:fly={{ y: 10, duration: 300 }}
@@ -93,7 +93,7 @@
               >
             </div>
           {/if}
-          {#if $connectedAndLoggedIn}
+          {#if $walletStore.ready}
             <BalanceButton />
           {/if}
           <div class="user">

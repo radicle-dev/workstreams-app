@@ -6,7 +6,7 @@ type OnHide = () => void;
 type ModalLayout = {
   modalComponent: typeof SvelteComponent;
   onHide: OnHide;
-  modalComponentProps: unknown;
+  modalComponentProps: { [key: string]: unknown };
 };
 
 const overlayStore = writable<ModalLayout | null>(null);
@@ -28,7 +28,7 @@ export const hide = (): void => {
 export const show = (
   modalComponent: typeof SvelteComponent,
   onHide: OnHide = doNothing,
-  modalComponentProps: unknown = {}
+  modalComponentProps: { [key: string]: unknown } = {}
 ): void => {
   overlayStore.set({ modalComponent, onHide, modalComponentProps });
 };

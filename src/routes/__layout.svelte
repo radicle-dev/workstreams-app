@@ -20,6 +20,7 @@
   }
 
   let prefersDarkThemes = false;
+  let initialized = false;
 
   $: {
     if (browser) {
@@ -31,13 +32,10 @@
     }
   }
 
-  /*
-    We should wait for the wallet store to be initialized in order to
-    be sure that we know the right chain when mounting components.
-  */
-  $: initialized = $walletStore.initialized;
+  onMount(async () => {
+    await walletStore.initialize();
+    initialized = true;
 
-  onMount(() => {
     prefersDarkThemes = window.matchMedia(
       '(prefers-color-scheme: dark)'
     ).matches;
@@ -66,9 +64,9 @@
       <slot />
     </main>
   </div>
-  {#if $walletStore.chainId === 4}
+  {#if $walletStore.network.chainId === 4}
     <div class="network"><span />{$walletStore.provider.network.name}</div>
-  {:else if $walletStore.chainId !== 1}
+  {:else if $walletStore.network.chainId !== 1}
     <div class="network error"><span />Unsupported Network</div>
   {/if}
 {/if}

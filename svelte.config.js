@@ -15,6 +15,14 @@ const config = {
         alias: {
           $components: path.resolve('./src/lib/components')
         }
+      },
+      optimizeDeps: {
+        esbuildOptions: {
+          // Node.js global to browser globalThis
+          define: {
+            global: 'globalThis'
+          }
+        }
       }
     }
   }

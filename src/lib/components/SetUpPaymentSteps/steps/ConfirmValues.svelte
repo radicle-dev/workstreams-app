@@ -75,7 +75,7 @@
         }
       };
 
-      dispatch('awaitPending', waitFor);
+      dispatch('awaitPending', { promise: waitFor });
     } catch {
       actionInFlight = false;
       return;

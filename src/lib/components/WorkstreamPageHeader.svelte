@@ -1,5 +1,4 @@
 <script lang="ts">
-  import connectedAndLoggedIn from '$lib/stores/connectedAndLoggedIn';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import type { Workstream } from '$lib/stores/workstreams/types';
   import * as modal from '$lib/utils/modal';
@@ -14,7 +13,7 @@
 <div>
   <h4>{workstream.title}</h4>
   <Button
-    disabled={$connectedAndLoggedIn &&
+    disabled={$walletStore.ready &&
       workstream.applicants?.includes($walletStore.accounts[0])}
     icon={Apply}
     on:click={() => modal.show(ApplyModal, undefined, { workstream })}
