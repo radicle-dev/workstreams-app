@@ -47,10 +47,10 @@
 </script>
 
 {#if address}
-  <div
+  <a
     class="container"
     {style}
-    on:click|stopPropagation={() => goto(url)}
+    href={url}
     on:mouseenter={() => {
       prefetch(url);
       hover = true;
@@ -86,7 +86,7 @@
         {toDisplay}
       </p>
     {/if}
-  </div>
+  </a>
 {/if}
 
 <style>
@@ -118,6 +118,7 @@
   .address {
     position: absolute;
     left: 2rem;
+    color: var(--color-foreground-level-6);
     white-space: nowrap;
   }
 

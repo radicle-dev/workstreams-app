@@ -1,35 +1,183 @@
 <script lang="ts">
-  import { goto, prefetch } from '$app/navigation';
-  import { hyphenateString } from '$lib/utils/format';
+  import { fade } from 'svelte/transition';
 
-  import Card from '$components/Card.svelte';
-  import TitleMeta from '$components/TitleMeta.svelte';
-  import TimeRate from '$components/TimeRate.svelte';
-  import Actions from './Actions.svelte';
-  import type { EnrichedWorkstream } from '$lib/stores/workstreams';
+  import Card from '../Card.svelte';
+  import {
+    workstreamsStore,
+    type EnrichedWorkstream
+  } from '$lib/stores/workstreams';
+  import User from '../User.svelte';
+  import Rate from '../Rate.svelte';
+  import {
+    Currency,
+    WorkstreamState,
+    type Workstream
+  } from '$lib/stores/workstreams/types';
+  import { currencyFormat } from '$lib/utils/format';
+  import type { DripsReceiverStructOutput } from 'drips-sdk';
 
-  export let enrichedWorkstream: EnrichedWorkstream;
+  const estimates = workstreamsStore.estimates;
 
-  $: url = `/workstream/${hyphenateString(enrichedWorkstream.data.id)}`;
+  export let enrichedWorkstream: EnrichedWorkstream | undefined = undefined;
+  export let workstream: Workstream | undefined = undefined;
+
+  $: ws = enrichedWorkstream?.data || workstream;
+  $: onChainData = enrichedWorkstream?.onChainData;
+  $: estimate = $estimates.streams[ws.id];
+
+  $: onChainDataReady = Boolean(estimate);
+
+  /*
+    Find the last update to the drips configuration that had an amount per second.
+    This way, we can display the on-chain stream rate even if the stream is
+    currently paused. If there is no such event on-chain, we fall back to the
+    workstream's stored rate per second.
+  */
+  $: lastStreamRate =
+    onChainData?.dripsUpdatedEvents
+      .reduce<DripsReceiverStructOutput[]>(
+        (prev, dew) => [...prev, ...dew.event.args.receivers],
+        []
+      )
+      .filter((r) => r.receiver.toLowerCase() === ws.acceptedApplication)
+      .find((r) => !r.amtPerSec.isZero())
+      ?.amtPerSec?.toBigInt() || ws.ratePerSecond.wei;
+
+  enum VisualState {
+    ACTIVE,
+    OUT_OF_FUNDS,
+    PAUSED,
+    CLOSED
+  }
+
+  let visualState: VisualState;
+
+  $: visualStateText = {
+    [VisualState.ACTIVE]: 'Active',
+    [VisualState.OUT_OF_FUNDS]: 'Out of funds',
+    [VisualState.PAUSED]: 'Paused',
+    [VisualState.CLOSED]: 'Closed'
+  }[visualState];
+
+  $: visualStateColor = {
+    [VisualState.ACTIVE]: '--color-positive',
+    [VisualState.OUT_OF_FUNDS]: '--color-negative',
+    [VisualState.PAUSED]: '--color-caution',
+    [VisualState.CLOSED]: '--color-foreground'
+  }[visualState];
+
+  $: {
+    switch (ws.state) {
+      case WorkstreamState.ACTIVE: {
+        if (estimate && !estimate.currentlyStreaming) {
+          visualState = estimate.paused
+            ? VisualState.PAUSED
+            : VisualState.OUT_OF_FUNDS;
+        } else {
+          visualState = VisualState.ACTIVE;
+        }
+        break;
+      }
+      case WorkstreamState.CLOSED: {
+        visualState = VisualState.CLOSED;
+        break;
+      }
+    }
+  }
 </script>
 
-<Card on:click={() => goto(url)} on:hover={() => prefetch(url)}>
-  <div slot="top">
-    <TitleMeta workstream={enrichedWorkstream.data} />
-  </div>
-  <div slot="bottom" class="content">
-    <TimeRate
-      workstream={enrichedWorkstream.data}
-      onChainData={enrichedWorkstream.onChainData}
-    />
-    <Actions {enrichedWorkstream} />
-  </div>
-</Card>
+<a sveltekit:prefetch href={`/workstream/${ws.id}`}>
+  <Card>
+    <div slot="top">
+      <div class="name-and-users">
+        <div class="name-and-state">
+          <h3>{ws.title}</h3>
+          {#if onChainDataReady}
+            <div
+              transition:fade|local
+              class="state-badge"
+              style={`background-color: var(${visualStateColor}-level-1`}
+            >
+              <span
+                class="typo-text-bold"
+                style={`color: var(${visualStateColor}-level-6`}
+                >{visualStateText}</span
+              >
+            </div>
+          {/if}
+        </div>
+        <div class="user-row">
+          <User address={ws.creator} />
+          {#if ws.acceptedApplication}
+            → <User address={ws.acceptedApplication} />
+          {/if}
+        </div>
+      </div>
+      <div class="stream-details">
+        {#if ws.state === WorkstreamState.RFA}
+          <Rate
+            ratePerSecond={{ wei: lastStreamRate, currency: Currency.DAI }}
+            total={ws.total}
+            durationDays={ws.durationDays}
+            showTotal
+          />
+        {:else}
+          <Rate
+            ratePerSecond={{ wei: lastStreamRate, currency: Currency.DAI }}
+            total={ws.total}
+          />
+        {/if}
+        {#if ws.state === WorkstreamState.ACTIVE && onChainDataReady}
+          <div class="remaining" transition:fade|local>
+            • <span class="amount"
+              >{currencyFormat(estimate.remainingBalance)} DAI
+            </span><span>remaining</span>
+          </div>
+        {/if}
+      </div>
+    </div>
+  </Card>
+</a>
 
 <style>
-  .content {
+  .name-and-state {
+    margin-bottom: 0.75rem;
+  }
+
+  .user-row {
     display: flex;
-    flex-direction: column;
-    flex: 1;
+    gap: 0.5rem;
+    color: var(--color-foreground-level-6);
+    font-weight: 600;
+  }
+
+  .name-and-users {
+    margin-bottom: 2rem;
+  }
+
+  .name-and-state {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .state-badge {
+    display: flex;
+    align-items: center;
+    height: 1.5rem;
+    flex-shrink: 0;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+  }
+
+  .stream-details {
+    color: var(--color-foreground-level-5);
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .amount {
+    color: var(--color-primary);
+    font-weight: 600;
   }
 </style>
