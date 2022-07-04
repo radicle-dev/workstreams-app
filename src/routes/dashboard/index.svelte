@@ -44,10 +44,10 @@
       const fetches = [
         workstreamsStore.getWorkstreams({ applied: 'true' }),
         workstreamsStore.getWorkstreams({
-          createdBy: $walletStore.accounts[0]
+          createdBy: $walletStore.address
         }),
         workstreamsStore.getWorkstreams({
-          assignedTo: $walletStore.accounts[0]
+          assignedTo: $walletStore.address
         })
       ];
 
@@ -66,7 +66,7 @@
     );
   }
 
-  $: address = $walletStore.accounts[0];
+  $: address = $walletStore.address;
 
   type Sections = { [key in SectionName]: SectionData };
 
@@ -144,7 +144,7 @@
   $: incomingTotal = calculateStreamTotal(
     filterObject($workstreamsStore, (ws) => {
       return (
-        ws.data.acceptedApplication === $walletStore.accounts[0] &&
+        ws.data.acceptedApplication === $walletStore.address &&
         $estimates.streams[ws.data.id]?.currentlyStreaming
       );
     })
@@ -153,7 +153,7 @@
   $: outgoingTotal = calculateStreamTotal(
     filterObject($workstreamsStore, (ws) => {
       return (
-        ws.data.creator === $walletStore.accounts[0] &&
+        ws.data.creator === $walletStore.address &&
         $estimates.streams[ws.data.id]?.currentlyStreaming
       );
     })

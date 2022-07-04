@@ -1,12 +1,9 @@
-import query from '$lib/api';
-import { GET_LAST_DRIP_ENTRY } from '$lib/api/queries';
-import type {
-  LastDripsEntry,
-  LastDripsEntryVariables
-} from '$lib/api/__generated__/lastDripsEntry';
-import type { BigNumber, ethers, ContractTransaction } from 'ethers';
+import { BigNumber, type ethers, type ContractTransaction } from 'ethers';
 import { utils } from 'ethers';
+import type { Block } from '@ethersproject/abstract-provider';
+import { randomHex } from 'web3-utils';
 import { get, writable } from 'svelte/store';
+
 import { Currency, type Money } from '../workstreams/types';
 import daiInfo from './contracts/Dai';
 import daiDripsHubInfo from './contracts/DaiDripsHub';
@@ -17,7 +14,6 @@ import {
 
 import { DripsClient, type CollectedEvent } from 'drips-sdk';
 import type { EnrichedWorkstream } from '../workstreams';
-import type { Block } from '@ethersproject/abstract-provider';
 
 interface InternalState {
   provider: ethers.providers.Web3Provider;
@@ -154,7 +150,7 @@ export default (() => {
     }));
   }
 
-  async function getDripsUpdatedEvents(user?: string, account?: number) {
+  async function getDripsUpdatedEvents(user?: string, account?: bigint) {
     const { provider } = get(internal);
 
     const dripsHub = DaiDripsHubAbi__factory.connect(
@@ -191,9 +187,14 @@ export default (() => {
     return daiContract.balanceOf(await provider.getSigner().getAddress());
   }
 
+  function getRandomAccountId() {
+    return BigNumber.from(randomHex(32)).toBigInt();
+  }
+
   async function createDrip(
     receiver: string,
     ratePerSecond: Money,
+    accountId: bigint,
     topUpDaiWei: bigint
   ) {
     const { provider } = get(internal);
@@ -206,23 +207,11 @@ export default (() => {
       provider.getSigner()
     );
 
-    const lastDripsEntry = (
-      await query<LastDripsEntry, LastDripsEntryVariables>({
-        query: GET_LAST_DRIP_ENTRY,
-        variables: {
-          user: await provider.getSigner().getAddress()
-        },
-        chainId: provider.network.chainId
-      })
-    ).dripsEntries[0];
-
     const callConfig = {
       balance: 0,
       timestamp: 0,
       currentReceivers: []
     };
-
-    const accountId = lastDripsEntry ? parseInt(lastDripsEntry.account) + 1 : 0;
 
     const tx = await contract[
       'setDrips(uint256,uint64,uint128,(address,uint128)[],int128,(address,uint128)[])'
@@ -331,6 +320,7 @@ export default (() => {
     subscribe: state.subscribe,
     connect,
     disconnect,
+    getRandomAccountId,
     pauseUnpause,
     createDrip,
     topUp,

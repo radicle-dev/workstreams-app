@@ -14,6 +14,6 @@ export const withdrawal: HistoryAggregator = () =>
         wei: w.event.args.collected.toBigInt(),
         currency: Currency.DAI
       },
-      toAddress: get(walletStore).accounts[0]
+      toAddress: get(walletStore).address
     }
   })) || [];

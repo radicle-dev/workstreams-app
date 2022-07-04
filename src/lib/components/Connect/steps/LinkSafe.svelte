@@ -1,0 +1,108 @@
+<script lang="ts">
+  import { createEventDispatcher, onMount } from 'svelte';
+  import Button from 'radicle-design-system/Button.svelte';
+  import Spinner from 'radicle-design-system/Spinner.svelte';
+  import { get } from 'svelte/store';
+
+  import * as modal from '$lib/utils/modal';
+  import type { AwaitPendingPayload } from '$lib/components/StepperModal/types';
+  import User from '$lib/components/User.svelte';
+  import { walletStore } from '$lib/stores/wallet/wallet';
+  import { getSafesForAddress } from '$lib/api/gnosis';
+  import clearStores from '$lib/stores/utils/clearStores';
+  import connectStores from '$lib/stores/utils/connectStores';
+
+  const dispatch = createEventDispatcher<{
+    continue: never;
+    awaitPending: AwaitPendingPayload;
+  }>();
+
+  let safeAddress: string | undefined = undefined;
+
+  onMount(async () => {
+    const ownedSafes = await getSafesForAddress(
+      $walletStore.network.chainId,
+      $walletStore.address
+    );
+
+    if (!ownedSafes || ownedSafes.length === 0) {
+      modal.hide();
+    }
+
+    safeAddress = ownedSafes[0];
+  });
+
+  function linkSafe() {
+    const waitFor = async () => {
+      await walletStore.linkSafe(safeAddress);
+      clearStores();
+      await walletStore.connectSafe();
+
+      const ws = get(walletStore);
+
+      if (!ws.safe?.provider) {
+        throw 'Expected a safe provider after connecting safe';
+      }
+
+      await connectStores(ws.safe.provider);
+    };
+    dispatch('awaitPending', {
+      promise: waitFor,
+      message: 'Please connect via WalletConnect...'
+    });
+  }
+</script>
+
+{#if safeAddress}
+  <h1>Link your Gnosis Safe</h1>
+  <div class="safe"><User address={safeAddress} /></div>
+  <p>
+    We detected a Gnosis Safe associated with your account. If you link it,
+    you'll be interacting with Workstreams on behalf of your safe, and all
+    transactions will require a quorum.
+  </p>
+  <p>
+    To connect, open the <span class="typo-text-bold"
+      >WalletConnect Safe App</span
+    >
+    within your Gnosis Safe by navigating to
+    <span class="typo-text-bold">Apps</span>
+    →
+    <span class="typo-text-bold">WalletConnect</span>. Then, press
+    <span class="typo-text-bold">Connect safe</span>
+    below, copy the connection URL to your clipboard, and paste it into the connection
+    link field in the WalletConnect Safe App.
+  </p>
+  <p class="typo-text-small">
+    If you skip this, you'll be using Workstreams with your previously-connected
+    wallet.
+  </p>
+  <div class="actions">
+    <Button variant="outline" on:click={() => modal.hide()}>Don't link</Button>
+    <Button on:click={linkSafe}>Link safe</Button>
+  </div>
+{:else}
+  <Spinner />
+{/if}
+
+<style>
+  h1 {
+    margin-bottom: 2rem;
+  }
+
+  p {
+    margin-bottom: 2rem;
+  }
+
+  .safe {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+</style>

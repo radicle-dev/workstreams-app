@@ -1,42 +1,46 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import Button from 'radicle-design-system/Button.svelte';
   import { fade } from 'svelte/transition';
   import User from '$components/User.svelte';
-  import { workstreamsStore } from '$lib/stores/workstreams';
-  import drips from '$lib/stores/drips';
   import LoadingDots from '../LoadingDots.svelte';
-  import ConnectStep from './Step.svelte';
   import StepperModal from '../StepperModal/index.svelte';
-  import { get } from 'svelte/store';
+  import ChooseWallet from './steps/ChooseWallet.svelte';
+  import LinkSafe from './steps/LinkSafe.svelte';
+  import clearStores from '$lib/stores/utils/clearStores';
+  import connectStores from '$lib/stores/utils/connectStores';
 
   let locked: boolean;
 
   async function logIn() {
     locked = true;
-    modal.show(StepperModal, () => (locked = false), {
-      steps: [ConnectStep]
-    });
+    modal.show(
+      StepperModal,
+      () => {
+        locked = false;
+        hover = false;
+      },
+      {
+        steps: [ChooseWallet, LinkSafe]
+      }
+    );
   }
 
-  $: {
+  onMount(async () => {
     if ($walletStore.ready) {
-      connectStores();
+      const { provider: localProvider, safe } = $walletStore;
+      const provider = safe?.provider || localProvider;
+
+      await connectStores(provider);
     }
-  }
-
-  async function connectStores() {
-    const { provider } = $walletStore;
-
-    await drips.connect(provider);
-    await workstreamsStore.connect(provider, get(drips).cycle);
-  }
+  });
 
   async function logOut() {
     await walletStore.disconnect();
-    drips.disconnect();
-    workstreamsStore.clear();
+    clearStores();
   }
 
   let hover = false;
@@ -59,7 +63,7 @@
     {/if}
     <div>
       <Button variant="outline">
-        <User address={$walletStore.accounts[0]} />
+        <User address={$walletStore.address} />
       </Button>
     </div>
   {:else if locked}

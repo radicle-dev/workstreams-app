@@ -1,18 +1,20 @@
 <script lang="ts">
+  import { get } from 'svelte/store';
   import { createEventDispatcher } from 'svelte';
 
   import { walletStore } from '$lib/stores/wallet/wallet';
+  import connectStores from '$lib/stores/utils/connectStores';
 
   const dispatch = createEventDispatcher();
 
-  let locked: boolean;
   $: metaMaskInstalled = $walletStore.metamaskInstalled;
 
   async function connect(method: 'metamask' | 'walletconnect') {
-    locked = true;
-
     dispatch('awaitPending', {
-      promise: () => walletStore.connect(method),
+      promise: async () => {
+        await walletStore.connect(method);
+        await connectStores(get(walletStore).provider);
+      },
       message: 'Please connect your wallet and sign the login message…'
     });
   }
@@ -22,7 +24,7 @@
 <div class="options">
   <div class="option" on:click={() => connect('walletconnect')}>
     <img
-      src="assets/WalletConnect-icon.svg"
+      src="/assets/WalletConnect-icon.svg"
       class="icon"
       alt="WalletConnect logo"
     />
@@ -34,10 +36,15 @@
     class:disabled={metaMaskInstalled === false}
     on:click={metaMaskInstalled && (() => connect('metamask'))}
   >
-    <img src="assets/MetaMask-icon.svg" class="icon" alt="MetaMask logo" />
+    <img src="/assets/MetaMask-icon.svg" class="icon" alt="MetaMask logo" />
     <h3>MetaMask</h3>
   </div>
 </div>
+<p class="typo-text-small gnosis-notice">
+  <span class="typo-text-small-bold">Using a Gnosis Safe?</span>
+  Connect one of the safe's signer wallets, and you'll be able to connect your safe
+  in the following step.
+</p>
 
 <style>
   .options {
@@ -71,6 +78,11 @@
     width: 0.25rem;
     border-radius: 0.125rem;
     background-color: var(--color-foreground-level-2);
+  }
+
+  .gnosis-notice {
+    margin-top: 2rem;
+    color: var(--color-foreground-level-6);
   }
 
   @media only screen and (max-width: 54rem) {

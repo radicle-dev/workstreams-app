@@ -4,7 +4,7 @@
   import { createIcon } from 'radicle-design-system/lib/blockies.ts';
   import { fade } from 'svelte/transition';
 
-  import { goto, prefetch } from '$app/navigation';
+  import { prefetch } from '$app/navigation';
   import { onMount } from 'svelte';
   import { formatAddress } from '$lib/utils/format';
   import ensNames from '$lib/stores/ensNames';
@@ -22,10 +22,9 @@
   $: ensName = $ensNames[address]?.name;
   $: avatarUrl = $ensNames[address]?.pic;
   $: toDisplay = ensName ? ensName : formatAddress(address.toLowerCase());
+  $: uriData = blockyDataUri(address);
 
   onMount(() => {
-    uriData = blockyDataUri(address);
-
     lookup();
   });
 

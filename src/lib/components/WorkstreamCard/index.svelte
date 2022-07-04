@@ -44,9 +44,15 @@
       ?.amtPerSec?.toBigInt() || ws.ratePerSecond.wei;
 
   enum VisualState {
+    /** Stream is set up and actively dripping */
     ACTIVE,
+    /** Transaction to set up Drip is pending in Gnosis Safe */
+    PENDING_CONFIRMATION,
+    /** Stream is active, but no more balance is remaining in Drips account */
     OUT_OF_FUNDS,
+    /** Stream was set up, but then paused by removing drip receiver */
     PAUSED,
+    /** Stream marked as closed via API */
     CLOSED
   }
 
@@ -54,6 +60,7 @@
 
   $: visualStateText = {
     [VisualState.ACTIVE]: 'Active',
+    [VisualState.PENDING_CONFIRMATION]: 'Pending confirmation',
     [VisualState.OUT_OF_FUNDS]: 'Out of funds',
     [VisualState.PAUSED]: 'Paused',
     [VisualState.CLOSED]: 'Closed'
@@ -63,13 +70,19 @@
     [VisualState.ACTIVE]: '--color-positive',
     [VisualState.OUT_OF_FUNDS]: '--color-negative',
     [VisualState.PAUSED]: '--color-caution',
+    [VisualState.PENDING_CONFIRMATION]: '--color-caution',
     [VisualState.CLOSED]: '--color-foreground'
   }[visualState];
 
   $: {
     switch (ws.state) {
       case WorkstreamState.ACTIVE: {
-        if (estimate && !estimate.currentlyStreaming) {
+        if (
+          enrichedWorkstream?.onChainData &&
+          !enrichedWorkstream.onChainData.streamSetUp
+        ) {
+          visualState = VisualState.PENDING_CONFIRMATION;
+        } else if (estimate && !estimate.currentlyStreaming) {
           visualState = estimate.paused
             ? VisualState.PAUSED
             : VisualState.OUT_OF_FUNDS;

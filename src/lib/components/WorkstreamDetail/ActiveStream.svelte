@@ -22,10 +22,10 @@
   $: estimate = $estimates.streams[workstream.id];
 
   $: enrichedWorkstream = $workstreamsStore[workstream.id];
-  $: isOwner = workstream.creator === $walletStore.accounts[0];
-  $: isReceiver = workstream.acceptedApplication === $walletStore.accounts[0];
+  $: isOwner = workstream.creator === $walletStore.address;
+  $: isReceiver = workstream.acceptedApplication === $walletStore.address;
   $: activeSince =
-    enrichedWorkstream?.onChainData &&
+    enrichedWorkstream?.onChainData?.streamSetUp &&
     new Date(
       enrichedWorkstream.onChainData?.dripsUpdatedEvents[0].fromBlock
         .timestamp * 1000
@@ -112,7 +112,7 @@
               icon={Pause}>Unpause</Button
             >
           {/if}
-          {#if estimate && estimate.paused === false}
+          {#if enrichedWorkstream?.onChainData?.streamSetUp && estimate && estimate.paused === false}
             <Button
               disabled={!enrichedWorkstream?.onChainData}
               on:click={() =>

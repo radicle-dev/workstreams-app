@@ -14,7 +14,7 @@
   <h4>{workstream.title}</h4>
   <Button
     disabled={$walletStore.ready &&
-      workstream.applicants?.includes($walletStore.accounts[0])}
+      workstream.applicants?.includes($walletStore.address)}
     icon={Apply}
     on:click={() => modal.show(ApplyModal, undefined, { workstream })}
     >Apply</Button

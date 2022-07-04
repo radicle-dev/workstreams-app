@@ -31,7 +31,7 @@ export interface Workstream {
   title: string;
   desc: string;
   dripsData?: {
-    accountId: number;
+    accountId: bigint;
     chainId: number;
   };
   applicants?: string[];

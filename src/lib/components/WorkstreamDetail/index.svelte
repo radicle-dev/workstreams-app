@@ -23,12 +23,12 @@
 
   let applied = false;
   let creator: boolean =
-    $walletStore.ready && workstream.creator === $walletStore.accounts[0];
+    $walletStore.ready && workstream.creator === $walletStore.address;
 
   $: {
     applied =
       $walletStore.ready &&
-      workstream.applicants?.includes($walletStore.accounts[0]);
+      workstream.applicants?.includes($walletStore.address);
     if (applications) {
       acceptedApplication = applications.find(
         (application) => application.state === ApplicationState.ACCEPTED

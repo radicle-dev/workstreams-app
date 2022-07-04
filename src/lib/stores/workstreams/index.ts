@@ -10,9 +10,8 @@ import { getConfig } from '$lib/config';
 import type {
   DripsConfig_dripsConfig_dripsAccount,
   DripsConfig_dripsConfig_dripsEntries
-} from '$lib/api/__generated__/dripsConfig';
+} from '$lib/api/drips-subgraph/__generated__/dripsConfig';
 import type { DripsUpdated_address_uint256_uint128_tuple_array_Event } from '../drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
-import type { ethers } from 'ethers';
 import getDripsAccount from './methods/getDripsAccount';
 import getDripsUpdatedEvents from './methods/getDripsUpdatedEvents';
 import bigIntMin from './methods/bigIntMin';
@@ -26,7 +25,10 @@ export const reviver: (key: string, value: unknown) => unknown = (
 ) => {
   let output = value;
 
-  if (key === 'wei' && typeof value === 'string') {
+  if (
+    (key === 'wei' && typeof value === 'string') ||
+    (key === 'accountId' && typeof value === 'string')
+  ) {
     output = BigInt(value);
   }
 
@@ -61,11 +63,11 @@ export interface OnChainData {
   amtPerSec: Money;
   dripsEntries: DripsConfig_dripsConfig_dripsEntries[];
   dripsAccount: DripsConfig_dripsConfig_dripsAccount;
+  streamSetUp: boolean;
   dripsUpdatedEvents: DrippingEventWrapper[];
 }
 
 interface InternalState {
-  provider: ethers.providers.Web3Provider;
   chainId: number;
   currentCycleStart: Date;
   currentAddress: string;
@@ -112,17 +114,11 @@ export const workstreamsStore = (() => {
    * Connect the store to the chain in order to enable on-chain enrichment
    * and balance estimates for active workstreams.
    */
-  async function connect(
-    provider: ethers.providers.Web3Provider,
-    cycle: Cycle
-  ) {
+  async function connect(address: string, chainId: number, cycle: Cycle) {
     if (get(internal)) return;
 
-    const address = (await provider.getSigner().getAddress()).toLowerCase();
-
     internal.set({
-      provider,
-      chainId: provider.network.chainId,
+      chainId,
       currentCycleStart: cycle.start,
       currentAddress: address,
       intervalId: tick.register(estimateBalances)
@@ -177,7 +173,7 @@ export const workstreamsStore = (() => {
 
     const receiverConfig = dripsUpdatedEvents[
       dripsUpdatedEvents.length - 1
-    ].event.args.receivers.find((r) => r.receiver.toLowerCase() === assignee);
+    ]?.event.args.receivers.find((r) => r.receiver.toLowerCase() === assignee);
 
     const amtPerSec = {
       wei: receiverConfig?.amtPerSec.toBigInt() || BigInt(0),
@@ -190,7 +186,12 @@ export const workstreamsStore = (() => {
       onChainData: {
         amtPerSec,
         dripsUpdatedEvents: dripsUpdatedEvents,
-        dripsEntries: dripsAccount.dripsEntries,
+        dripsEntries: dripsAccount?.dripsEntries || [],
+        streamSetUp: Boolean(
+          dripsUpdatedEvents[0]?.event.args.receivers.find(
+            (r) => r.receiver.toLowerCase() === item.acceptedApplication
+          )
+        ),
         dripsAccount: dripsAccount
       },
       direction
@@ -208,7 +209,23 @@ export const workstreamsStore = (() => {
       const { dripsUpdatedEvents } = v.onChainData;
 
       if (dripsUpdatedEvents.length === 0) {
-        throw new Error(`Drips not set up for active workstream ${wsId}`);
+        // Drip hasn't yet been set up for this workstream.
+
+        newEstimates[wsId] = {
+          currentBalance: {
+            wei: BigInt(0),
+            currency: Currency.DAI
+          },
+          remainingBalance: {
+            wei: BigInt(0),
+            currency: Currency.DAI
+          },
+          streamingUntil: undefined,
+          currentlyStreaming: false,
+          paused: false
+        };
+
+        continue;
       }
 
       let earned = BigInt(0);
@@ -421,7 +438,7 @@ export const workstreamsStore = (() => {
 
   async function activateWorkstream(
     id: string,
-    accountId: number,
+    accountId: bigint,
     fetcher?: typeof fetch
   ) {
     const url = `${getConfig().API_URL_BASE}/workstreams/${id}/activate`;
@@ -431,7 +448,7 @@ export const workstreamsStore = (() => {
         method: 'POST',
         body: JSON.stringify({
           chainId: get(internal).chainId,
-          accountId
+          accountId: String(accountId)
         })
       },
       fetcher
