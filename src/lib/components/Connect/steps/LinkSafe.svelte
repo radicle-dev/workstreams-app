@@ -36,7 +36,6 @@
   function linkSafe() {
     const waitFor = async () => {
       await walletStore.linkSafe(safeAddress);
-      clearStores();
       await walletStore.connectSafe();
 
       const ws = get(walletStore);
@@ -45,6 +44,7 @@
         throw 'Expected a safe provider after connecting safe';
       }
 
+      clearStores();
       await connectStores(ws.safe.provider);
     };
     dispatch('awaitPending', {
