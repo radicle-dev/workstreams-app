@@ -32,7 +32,7 @@
         .timestamp * 1000
     );
 
-  async function pauseUnpause(action: 'pause' | 'unpause') {
+  function pauseUnpause(action: 'pause' | 'unpause') {
     modal.show(
       StepperModal,
       async () => {
@@ -49,6 +49,18 @@
         }
       }
     );
+  }
+
+  function topUp() {
+    modal.show(StepperModal, undefined, {
+      stepProps: {
+        enrichedWorkstream
+      },
+      steps: [
+        TopUpValues,
+        $walletStore.safe?.ready && AwaitingSafeTransactionStep
+      ]
+    });
   }
 </script>
 
@@ -118,13 +130,7 @@
           {#if enrichedWorkstream?.onChainData?.streamSetUp && estimate && estimate.paused === false}
             <Button
               disabled={!enrichedWorkstream?.onChainData}
-              on:click={() =>
-                modal.show(StepperModal, undefined, {
-                  stepProps: {
-                    enrichedWorkstream
-                  },
-                  steps: [TopUpValues]
-                })}>Top up</Button
+              on:click={() => topUp()}>Top up</Button
             >
           {/if}
         {/if}
