@@ -11,9 +11,10 @@
   import { currencyFormat, padFloatString } from '$lib/utils/format';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import StepperModal from '../StepperModal/index.svelte';
-  import Pause from 'radicle-design-system/icons/Pause.svelte';
-  import drips from '$lib/stores/drips';
+  import PauseIcon from 'radicle-design-system/icons/Pause.svelte';
   import TopUpValues from '../TopUpSteps/TopUpValues.svelte';
+  import PauseUnpauseStep from '../PauseStreamSteps/PauseUnpause.svelte';
+  import AwaitingSafeTransactionStep from '../AwaitingSafeTransactionStep.svelte';
 
   export let workstream: Workstream;
   export let acceptedApplication: Application | undefined = undefined;
@@ -31,20 +32,24 @@
         .timestamp * 1000
     );
 
-  let pauseTxInFlight = false;
-
   async function pauseUnpause(action: 'pause' | 'unpause') {
-    pauseTxInFlight = true;
-    try {
-      const tx = await drips.pauseUnpause(action, enrichedWorkstream);
-      await tx.wait(1);
-      await workstreamsStore.getWorkstream(workstream.id, undefined, true);
-    } finally {
-      pauseTxInFlight = false;
-    }
+    modal.show(
+      StepperModal,
+      async () => {
+        await workstreamsStore.getWorkstream(workstream.id, undefined, true);
+      },
+      {
+        steps: [
+          PauseUnpauseStep,
+          $walletStore.safe?.ready && AwaitingSafeTransactionStep
+        ],
+        stepProps: {
+          enrichedWorkstream,
+          action
+        }
+      }
+    );
   }
-
-  $: pauseUnpauseBtnDisabled = pauseTxInFlight;
 </script>
 
 <Card hoverable={false}>
@@ -99,17 +104,15 @@
         {#if isOwner && $walletStore.ready}
           {#if estimate && estimate.paused === false && estimate.remainingBalance.wei > BigInt(0)}
             <Button
-              disabled={pauseUnpauseBtnDisabled}
               variant="primary-outline"
               on:click={() => pauseUnpause('pause')}
-              icon={Pause}>Pause</Button
+              icon={PauseIcon}>Pause</Button
             >
           {:else if estimate && estimate.paused && estimate.remainingBalance.wei > BigInt(0)}
             <Button
-              disabled={pauseUnpauseBtnDisabled}
               variant="primary-outline"
               on:click={() => pauseUnpause('unpause')}
-              icon={Pause}>Unpause</Button
+              icon={PauseIcon}>Unpause</Button
             >
           {/if}
           {#if enrichedWorkstream?.onChainData?.streamSetUp && estimate && estimate.paused === false}

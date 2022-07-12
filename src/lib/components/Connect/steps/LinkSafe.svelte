@@ -11,6 +11,7 @@
   import { getSafesForAddress } from '$lib/api/gnosis';
   import clearStores from '$lib/stores/utils/clearStores';
   import connectStores from '$lib/stores/utils/connectStores';
+  import StepContent from '$lib/components/StepContent.svelte';
 
   const dispatch = createEventDispatcher<{
     continue: never;
@@ -54,55 +55,49 @@
 </script>
 
 {#if safeAddress}
-  <h1>Link your Gnosis Safe</h1>
-  <div class="safe"><User address={safeAddress} /></div>
-  <p>
-    We detected a Gnosis Safe associated with your account. If you link it,
-    you'll be interacting with Workstreams on behalf of your safe, and all
-    transactions will require a quorum.
-  </p>
-  <p>
-    To connect, open the <span class="typo-text-bold"
-      >WalletConnect Safe App</span
-    >
-    within your Gnosis Safe by navigating to
-    <span class="typo-text-bold">Apps</span>
-    →
-    <span class="typo-text-bold">WalletConnect</span>. Then, press
-    <span class="typo-text-bold">Connect safe</span>
-    below, copy the connection URL to your clipboard, and paste it into the connection
-    link field in the WalletConnect Safe App.
-  </p>
-  <p class="typo-text-small">
-    If you skip this, you'll be using Workstreams with your previously-connected
-    wallet.
-  </p>
-  <div class="actions">
-    <Button variant="outline" on:click={() => modal.hide()}>Don't link</Button>
-    <Button on:click={linkSafe}>Link safe</Button>
-  </div>
+  <StepContent>
+    <span slot="headline">Link your Gnosis Safe</span>
+    <div slot="content">
+      <div class="safe"><User address={safeAddress} /></div>
+      <p>
+        We detected a Gnosis Safe associated with your account. If you link it,
+        you'll be interacting with Workstreams on behalf of your safe, and all
+        transactions will require a quorum.
+      </p>
+      <p>
+        To connect, open the <span class="typo-text-bold"
+          >WalletConnect Safe App</span
+        >
+        within your Gnosis Safe by navigating to
+        <span class="typo-text-bold">Apps</span>
+        →
+        <span class="typo-text-bold">WalletConnect</span>. Then, press
+        <span class="typo-text-bold">Connect safe</span>
+        below, copy the connection URL to your clipboard, and paste it into the connection
+        link field in the WalletConnect Safe App.
+      </p>
+      <p class="typo-text-small">
+        If you skip this, you'll be using Workstreams with your
+        previously-connected wallet.
+      </p>
+    </div>
+    <div slot="step-actions">
+      <Button variant="outline" on:click={() => modal.hide()}>Don't link</Button
+      >
+      <Button on:click={linkSafe}>Link safe</Button>
+    </div>
+  </StepContent>
 {:else}
   <Spinner />
 {/if}
 
 <style>
-  h1 {
-    margin-bottom: 2rem;
-  }
-
   p {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
-
   .safe {
     margin-bottom: 1.5rem;
     display: flex;
     justify-content: center;
-  }
-
-  .actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
   }
 </style>
