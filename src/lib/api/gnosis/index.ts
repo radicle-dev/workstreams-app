@@ -1,4 +1,4 @@
-import { getAddress } from 'ethers/lib/utils';
+import { utils } from 'ethers';
 
 const GNOSIS_API_SAFES_BASE: { [chainId: number]: string } = {
   4: 'https://safe-transaction.rinkeby.gnosis.io',
@@ -7,7 +7,7 @@ const GNOSIS_API_SAFES_BASE: { [chainId: number]: string } = {
 
 export async function getSafesForAddress(chainId: number, address: string) {
   const ownedSafesReq = await fetch(
-    `${GNOSIS_API_SAFES_BASE[chainId]}/api/v1/owners/${getAddress(
+    `${GNOSIS_API_SAFES_BASE[chainId]}/api/v1/owners/${utils.getAddress(
       address
     )}/safes/`
   );
