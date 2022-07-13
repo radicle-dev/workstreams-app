@@ -148,8 +148,6 @@ export default (() => {
 
     const address = await provider.getSigner().getAddress();
 
-    console.log(address);
-
     const splitsConfig = (
       await query<SplitsConfig, SplitsConfigVariables>({
         query: GET_SPLITS_CONFIG,
@@ -158,14 +156,10 @@ export default (() => {
       })
     ).splitsConfig;
 
-    console.log(splitsConfig);
-
     const collectable = await client.getAmountCollectableWithSplits(
       address,
       splitsConfig?.splitsEntries?.map((sc) => [sc.receiver, sc.weight]) || []
     );
-
-    console.log(collectable);
 
     state.update((v) => ({
       ...v,
