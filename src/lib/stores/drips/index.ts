@@ -4,7 +4,6 @@ import {
   type ethers,
   type ContractTransaction
 } from 'ethers';
-import type { Block } from '@ethersproject/abstract-provider';
 import { randomHex } from 'web3-utils';
 import { get, writable } from 'svelte/store';
 
@@ -18,6 +17,13 @@ import {
 
 import { DripsClient, type CollectedEvent } from 'drips-sdk';
 import type { EnrichedWorkstream } from '../workstreams';
+import type { Block } from '@ethersproject/abstract-provider';
+import type {
+  SplitsConfigVariables,
+  SplitsConfig
+} from '$lib/api/__generated__/SplitsConfig';
+import query from '$lib/api/drips-subgraph';
+import { GET_SPLITS_CONFIG } from '$lib/api/drips-subgraph/queries';
 
 interface InternalState {
   provider: ethers.providers.Web3Provider;
@@ -140,10 +146,26 @@ export default (() => {
   async function updateCollectable(): Promise<void> {
     const { client, provider } = get(internal);
 
+    const address = await provider.getSigner().getAddress();
+
+    console.log(address);
+
+    const splitsConfig = (
+      await query<SplitsConfig, SplitsConfigVariables>({
+        query: GET_SPLITS_CONFIG,
+        variables: { id: address.toLowerCase() },
+        chainId: provider.network.chainId
+      })
+    ).splitsConfig;
+
+    console.log(splitsConfig);
+
     const collectable = await client.getAmountCollectableWithSplits(
-      await provider.getSigner().getAddress(),
-      []
+      address,
+      splitsConfig?.splitsEntries?.map((sc) => [sc.receiver, sc.weight]) || []
     );
+
+    console.log(collectable);
 
     state.update((v) => ({
       ...v,
