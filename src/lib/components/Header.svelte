@@ -44,9 +44,11 @@
   });
 
   function updateScrollPos() {
-    scrollingDown = window.scrollY > scrollPos;
-    scrolledDown = window.scrollY !== 0;
-    scrollPos = window.scrollY;
+    const scrollY = Math.max(window.scrollY, 0);
+    console.log(scrollY);
+    scrollingDown = scrollY > scrollPos;
+    scrolledDown = scrollY !== 0;
+    scrollPos = scrollY;
   }
 </script>
 
