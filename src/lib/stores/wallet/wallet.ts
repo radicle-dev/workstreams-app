@@ -123,7 +123,7 @@ export const walletStore = (() => {
     state.set({
       metamaskInstalled: Boolean(detectedWindowProvider),
       accounts: (accounts && prepareAccounts(accounts)) || [],
-      address: accounts[0]?.toLowerCase(),
+      address: accounts?.[0]?.toLowerCase(),
       walletType: detectedWindowProvider ? 'metamask' : undefined,
       login,
       provider,
