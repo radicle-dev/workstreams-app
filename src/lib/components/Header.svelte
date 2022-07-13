@@ -45,7 +45,6 @@
 
   function updateScrollPos() {
     const scrollY = Math.max(window.scrollY, 0);
-    console.log(scrollY);
     scrollingDown = scrollY > scrollPos;
     scrolledDown = scrollY !== 0;
     scrollPos = scrollY;
