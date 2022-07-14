@@ -314,6 +314,7 @@ export const walletStore = (() => {
 
     state.update((s) => ({
       ...s,
+      safe: undefined,
       accounts: [],
       walletType: undefined,
       login: undefined,
