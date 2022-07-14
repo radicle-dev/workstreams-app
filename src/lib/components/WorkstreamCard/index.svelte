@@ -101,10 +101,10 @@
 
 <a sveltekit:prefetch href={`/workstream/${ws.id}`}>
   <Card>
-    <div slot="top">
+    <div slot="top" class="content">
       <div class="name-and-users">
         <div class="name-and-state">
-          <h3>{ws.title}</h3>
+          <h3 class="name">{ws.title}</h3>
           {#if onChainDataReady}
             <div
               transition:fade|local
@@ -153,8 +153,23 @@
 </a>
 
 <style>
+  .content {
+    min-height: 8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+  }
   .name-and-state {
     margin-bottom: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .user-row {
@@ -162,15 +177,6 @@
     gap: 0.5rem;
     color: var(--color-foreground-level-6);
     font-weight: 600;
-  }
-
-  .name-and-users {
-    margin-bottom: 2rem;
-  }
-
-  .name-and-state {
-    display: flex;
-    justify-content: space-between;
   }
 
   .state-badge {
