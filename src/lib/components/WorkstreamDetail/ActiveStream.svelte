@@ -22,7 +22,7 @@
   const estimates = workstreamsStore.estimates;
   $: estimate = $estimates.streams[workstream.id];
 
-  $: enrichedWorkstream = $workstreamsStore[workstream.id];
+  $: enrichedWorkstream = $workstreamsStore.workstreams[workstream.id];
   $: isOwner = workstream.creator === $walletStore.address;
   $: isReceiver = workstream.acceptedApplication === $walletStore.address;
   $: activeSince =

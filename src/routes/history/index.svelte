@@ -15,7 +15,7 @@
 
   const { estimates } = workstreamsStore;
 
-  $: relevantStreams = Object.values($workstreamsStore).filter(
+  $: relevantStreams = Object.values($workstreamsStore.workstreams).filter(
     (ws) => ws.onChainData
   );
 

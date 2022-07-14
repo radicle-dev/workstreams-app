@@ -15,7 +15,7 @@ import type { DripsUpdated_address_uint256_uint128_tuple_array_Event } from '../
 import getDripsAccount from './methods/getDripsAccount';
 import getDripsUpdatedEvents from './methods/getDripsUpdatedEvents';
 import bigIntMin from './methods/bigIntMin';
-import fetchEstimationWs from './methods/fetchEstimationWs';
+import fetchRelevantWorkstreams from './methods/fetchRelevantWorkstreams';
 import type { Cycle } from '../drips';
 import tick from '../tick';
 
@@ -44,7 +44,11 @@ export interface WorkstreamsFilterConfig {
 }
 
 interface WorkstreamsState {
-  [workstreamId: string]: EnrichedWorkstream;
+  fetchStatus: {
+    relevantStreamsFetched: boolean | 'error';
+    relevantStreamsFetching: boolean;
+  };
+  workstreams: { [workstreamId: string]: EnrichedWorkstream };
 }
 
 export interface EnrichedWorkstream {
@@ -94,8 +98,16 @@ interface EstimatesState {
   activeStreamsFetched: boolean;
 }
 
+const INITIAL_STATE = {
+  fetchStatus: {
+    relevantStreamsFetched: false,
+    relevantStreamsFetching: true
+  },
+  workstreams: {}
+};
+
 export const workstreamsStore = (() => {
-  const workstreams = writable<WorkstreamsState>({});
+  const workstreams = writable<WorkstreamsState>(INITIAL_STATE);
   const estimates = writable<EstimatesState>({
     streams: {},
     activeStreamsFetched: false
@@ -105,7 +117,7 @@ export const workstreamsStore = (() => {
   function clear() {
     tick.deregister(get(internal).intervalId);
 
-    workstreams.set({});
+    workstreams.set(INITIAL_STATE);
     estimates.set({ streams: {}, activeStreamsFetched: false });
     internal.set(undefined);
   }
@@ -124,12 +136,42 @@ export const workstreamsStore = (() => {
       intervalId: tick.register(estimateBalances)
     });
 
-    await fetchEstimationWs(address);
+    await refreshRelevantStreams();
+  }
 
-    estimates.update((v) => ({
+  async function refreshRelevantStreams() {
+    workstreams.update((v) => ({
       ...v,
-      activeStreamsFetched: true
+      fetchStatus: {
+        relevantStreamsFetching: true,
+        relevantStreamsFetched: v.fetchStatus.relevantStreamsFetched
+      }
     }));
+
+    try {
+      await fetchRelevantWorkstreams(get(internal).currentAddress);
+
+      workstreams.update((v) => ({
+        ...v,
+        fetchStatus: {
+          relevantStreamsFetching: false,
+          relevantStreamsFetched: true
+        }
+      }));
+
+      estimates.update((v) => ({
+        ...v,
+        activeStreamsFetched: true
+      }));
+    } catch {
+      workstreams.update((v) => ({
+        ...v,
+        fetchStatus: {
+          relevantStreamsFetching: false,
+          relevantStreamsFetched: 'error'
+        }
+      }));
+    }
   }
 
   async function enrich(item: Workstream): Promise<EnrichedWorkstream> {
@@ -199,7 +241,7 @@ export const workstreamsStore = (() => {
   }
 
   function estimateBalances() {
-    const ws = get(workstreams);
+    const ws = get(workstreams).workstreams;
 
     const newEstimates: { [wsId: string]: Estimate } = {};
 
@@ -346,7 +388,7 @@ export const workstreamsStore = (() => {
         };
       }
 
-      return { ...v, ...toAppend };
+      return { ...v, workstreams: { ...v.workstreams, ...toAppend } };
     });
   }
 
@@ -499,6 +541,7 @@ export const workstreamsStore = (() => {
       subscribe: estimates.subscribe
     },
     connect,
+    refreshRelevantStreams,
     clear,
     getWorkstreams,
     getWorkstream,
