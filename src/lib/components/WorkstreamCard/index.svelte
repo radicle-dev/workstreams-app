@@ -23,7 +23,7 @@
 
   $: ws = enrichedWorkstream?.data || workstream;
   $: onChainData = enrichedWorkstream?.onChainData;
-  $: estimate = $estimates.streams[ws.id];
+  $: estimate = $estimates.workstreams[ws.id];
 
   $: onChainDataReady = Boolean(estimate);
 

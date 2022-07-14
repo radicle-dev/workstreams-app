@@ -23,7 +23,10 @@
   let tickRegistrationId: number;
 
   $: {
-    if ($walletStore.ready && $estimates.activeStreamsFetched) {
+    if (
+      $walletStore.ready &&
+      $workstreamsStore.fetchStatus.relevantStreamsFetched
+    ) {
       updateHistory();
       loading = false;
       tick.deregister(tickRegistrationId);

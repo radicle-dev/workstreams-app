@@ -128,7 +128,7 @@
     filterObject($workstreamsStore.workstreams, (ws) => {
       return (
         ws.data.acceptedApplication === $walletStore.address &&
-        $estimates.streams[ws.data.id]?.currentlyStreaming
+        $estimates.workstreams[ws.data.id]?.currentlyStreaming
       );
     })
   );
@@ -137,7 +137,7 @@
     filterObject($workstreamsStore.workstreams, (ws) => {
       return (
         ws.data.creator === $walletStore.address &&
-        $estimates.streams[ws.data.id]?.currentlyStreaming
+        $estimates.workstreams[ws.data.id]?.currentlyStreaming
       );
     })
   );
@@ -147,7 +147,7 @@
   }) {
     const totalWeiPerSec = Object.entries(enrichedWorkstreams).reduce<bigint>(
       (acc, [id, ws]) => {
-        return $estimates.streams[id]?.currentlyStreaming
+        return $estimates.workstreams[id]?.currentlyStreaming
           ? acc + ws.onChainData.amtPerSec.wei
           : acc;
       },

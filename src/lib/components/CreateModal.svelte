@@ -14,7 +14,6 @@
   } from '$lib/stores/workstreams/types';
   import { utils } from 'ethers';
   import { workstreamsStore } from '$lib/stores/workstreams';
-  import { walletStore } from '$lib/stores/wallet/wallet';
 
   const durationOptions = [
     { value: '1', title: 'Days' },

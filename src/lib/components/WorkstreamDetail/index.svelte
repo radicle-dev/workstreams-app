@@ -58,7 +58,6 @@
         applications={[acceptedApplication]}
         title="Accepted applications"
         {workstream}
-        {creator}
         accepted={creator}
       />
     {:else}
@@ -68,7 +67,6 @@
       <ApplicationList
         applications={openApplications}
         title="Open applications"
-        {creator}
         {workstream}
       />
     {/if}

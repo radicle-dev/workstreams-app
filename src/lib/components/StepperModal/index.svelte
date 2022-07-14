@@ -5,8 +5,6 @@
   import { onMount, type SvelteComponent } from 'svelte';
   import Spinner from 'radicle-design-system/Spinner.svelte';
 
-  import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
   import WaitPromise from './WaitPromiseStep.svelte';
   import type { AwaitPendingPayload } from './types';
 

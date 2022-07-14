@@ -87,18 +87,11 @@ interface Estimate {
 }
 
 interface EstimatesState {
-  streams: { [wsId: string]: Estimate };
+  workstreams: { [wsId: string]: Estimate };
   totalBalance?: Money;
-  /**
-   * Indicates whether all relevant streams for estimation
-   * have been sucessfully fetched, and the estimation
-   * is considered accurate. Before this is true, don't
-   * rely on the totalBalance value.
-   */
-  activeStreamsFetched: boolean;
 }
 
-const INITIAL_STATE = {
+const INITIAL_WORKSTREAMS_STATE = {
   fetchStatus: {
     relevantStreamsFetched: false,
     relevantStreamsFetching: true
@@ -107,18 +100,17 @@ const INITIAL_STATE = {
 };
 
 export const workstreamsStore = (() => {
-  const workstreams = writable<WorkstreamsState>(INITIAL_STATE);
+  const workstreams = writable<WorkstreamsState>(INITIAL_WORKSTREAMS_STATE);
   const estimates = writable<EstimatesState>({
-    streams: {},
-    activeStreamsFetched: false
+    workstreams: {}
   });
   const internal = writable<InternalState | undefined>();
 
   function clear() {
     tick.deregister(get(internal).intervalId);
 
-    workstreams.set(INITIAL_STATE);
-    estimates.set({ streams: {}, activeStreamsFetched: false });
+    workstreams.set(INITIAL_WORKSTREAMS_STATE);
+    estimates.set({ workstreams: {} });
     internal.set(undefined);
   }
 
@@ -157,11 +149,6 @@ export const workstreamsStore = (() => {
           relevantStreamsFetching: false,
           relevantStreamsFetched: true
         }
-      }));
-
-      estimates.update((v) => ({
-        ...v,
-        activeStreamsFetched: true
       }));
     } catch {
       workstreams.update((v) => ({
@@ -365,13 +352,12 @@ export const workstreamsStore = (() => {
     );
 
     estimates.update((estimatesVal) => ({
-      ...estimatesVal,
       totalBalance: {
         wei: totalWeiEarned,
         currency: Currency.DAI
       },
-      streams: {
-        ...estimatesVal.streams,
+      workstreams: {
+        ...estimatesVal.workstreams,
         ...newEstimates
       }
     }));
