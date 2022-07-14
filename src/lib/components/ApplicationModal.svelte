@@ -57,15 +57,6 @@
         `${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`
       );
 
-      if (decision === 'accept') {
-        // Refresh fetched workstream so it appears in its new state.
-        await invalidate(
-          `${getConfig().API_URL_BASE}/workstreams/${
-            workstream.id
-          }/applications`
-        );
-      }
-
       modal.hide();
     } catch (e) {
       console.error(e);
