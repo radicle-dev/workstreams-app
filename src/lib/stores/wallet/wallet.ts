@@ -16,13 +16,34 @@ if (browser) {
   (window.global as unknown) = globalThis;
 }
 
+interface SafeConnection {
+  address: string;
+  ready: boolean;
+  provider?: Web3Provider;
+  network?: Network;
+}
+
 export interface WalletState {
-  metamaskInstalled: boolean;
-  accounts: string[];
-  walletType: 'metamask' | 'walletconnect';
+  metamaskInstalled?: boolean;
+  /** Array of locally connected accounts */
+  accounts?: string[];
+  walletType?: 'metamask' | 'walletconnect';
+  /**
+   * Canonical address of the current user.
+   * Either the first of any locally connected accounts,
+   * or the address of a Gnosis Safe that has been linked
+   * to the current session via `linkSafe`.
+   */
+  address?: string;
+  /**
+   * Information about a Gnosis Safe that has been linked
+   * and / or connected via WalletConnect in addition to
+   * the locally connected account.
+   */
+  safe?: SafeConnection;
   login?: Login;
   provider?: Web3Provider;
-  network: Network;
+  network?: Network;
   ready: boolean;
 }
 
@@ -102,6 +123,7 @@ export const walletStore = (() => {
     state.set({
       metamaskInstalled: Boolean(detectedWindowProvider),
       accounts: (accounts && prepareAccounts(accounts)) || [],
+      address: accounts?.[0]?.toLowerCase(),
       walletType: detectedWindowProvider ? 'metamask' : undefined,
       login,
       provider,
@@ -137,15 +159,22 @@ export const walletStore = (() => {
           throw { message: 'User did not grant access to any accounts' };
         }
 
-        const login = await _logIn(provider);
+        const login = await _logIn(
+          provider,
+          'Please sign this message to log in to Radicle Workstreams. Since this' +
+            ' is not a transaction, there will be no transaction costs.'
+        );
+
+        const network = await provider.getNetwork();
 
         state.update((s) => ({
           ...s,
           accounts,
+          address: accounts[0],
           walletType: to,
           provider,
           login,
-          chainId: provider.network.chainId,
+          network,
           ready: true
         }));
 
@@ -171,11 +200,16 @@ export const walletStore = (() => {
         }
 
         try {
-          const login = await _logIn(provider);
+          const login = await _logIn(
+            provider,
+            'Please sign this message to log in to Radicle Workstreams. Since this' +
+              ' is not a transaction, there will be no transaction costs.'
+          );
 
           state.update((s) => ({
             ...s,
             accounts: prepareAccounts(accounts),
+            address: accounts[0],
             walletType: to,
             provider,
             login,
@@ -194,12 +228,93 @@ export const walletStore = (() => {
     }
   }
 
+  async function linkSafe(safeAddress: string) {
+    const currentState = get(state);
+
+    if (!currentState.ready) {
+      throw 'Connect to wallet first.';
+    }
+
+    const res = await fetch(`${BACKEND_URL_BASE}/connect-safe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ safeAddress })
+    });
+
+    if (res.ok) {
+      /*
+        If a safe has been connected, we don't want to restore the current
+        session from localStorage in order to avoid
+
+        1. People still being logged in to a safe that they got kicked from.
+        2. An incomplete session being restored, which is associated with
+           safe server-side, but not connected to the safe on the client.
+      */
+      _wipeStoredLogin();
+
+      state.update((s) => ({
+        ...s,
+        safe: {
+          address: safeAddress.toLowerCase(),
+          ready: false
+        }
+      }));
+    } else {
+      throw await res.text();
+    }
+  }
+
+  async function connectSafe() {
+    const currentState = get(state);
+
+    if (!currentState.safe?.address) {
+      throw 'Link a safe first via `linkSafe`.';
+    }
+
+    if (currentState.safe.ready) {
+      throw 'A safe is already connected.';
+    }
+
+    const walletConnectProvider = new WalletConnectProvider({
+      infuraId: 'aadcb5b20a6e4cc09edfdd664ed6334c'
+    });
+
+    await walletConnectProvider.disconnect();
+    await walletConnectProvider.enable();
+
+    const provider = new Web3Provider(walletConnectProvider);
+    await provider.ready;
+
+    const account = (await provider.listAccounts())[0];
+
+    if (currentState.safe.address.toLowerCase() !== account.toLowerCase()) {
+      throw 'You can only connect the safe that has previously been linked via `linkSafe`.';
+    }
+
+    const network = await provider.getNetwork();
+
+    state.update((s) => ({
+      ...s,
+      address: s.safe.address,
+      safe: {
+        ...s.safe,
+        ready: true,
+        provider,
+        network
+      }
+    }));
+  }
+
   async function disconnect() {
     await _logOut();
     _wipeStoredLogin();
 
     state.update((s) => ({
       ...s,
+      safe: undefined,
       accounts: [],
       walletType: undefined,
       login: undefined,
@@ -222,6 +337,7 @@ export const walletStore = (() => {
         state.update((s) => ({
           ...s,
           accounts,
+          address: accounts[0],
           login
         }));
       }
@@ -232,14 +348,13 @@ export const walletStore = (() => {
     });
   }
 
-  async function _logIn(provider: Web3Provider): Promise<Login> {
+  async function _logIn(
+    provider: Web3Provider,
+    signMessage: string
+  ): Promise<Login> {
     const addressToLogIn = (await provider.listAccounts())[0];
 
-    const message = await createSiweMessage(
-      addressToLogIn,
-      'Please sign this message to log in to Radicle Workstreams. Since this' +
-        ' is not a transaction, there will be no transaction costs.'
-    );
+    const message = await createSiweMessage(addressToLogIn, signMessage);
 
     const signature = await provider
       .getSigner()
@@ -256,12 +371,26 @@ export const walletStore = (() => {
         address: addressToLogIn.toLowerCase()
       };
 
-      localStorage.setItem('login', JSON.stringify(result));
+      _updateStoredLogin(result);
 
       return result;
     } else {
       throw await result.text();
     }
+  }
+
+  function _updateStoredLogin(login: Login) {
+    localStorage.setItem('login', JSON.stringify(login));
+  }
+
+  function _getStoredLogin(): Login | undefined {
+    return JSON.parse(localStorage.getItem('login'), (key, value) =>
+      key === 'expiresAt' ? new Date(value) : value
+    );
+  }
+
+  function _wipeStoredLogin() {
+    localStorage.removeItem('login');
   }
 
   async function _logOut() {
@@ -281,27 +410,20 @@ export const walletStore = (() => {
   }
 
   function _checkLoggedInAs(account: string): Login | null {
-    const storedData = localStorage.getItem('login');
-    const savedState: Login | null =
-      storedData &&
-      JSON.parse(storedData, (key, value) =>
-        key === 'expiresAt' ? new Date(value) : value
-      );
+    const storedData = _getStoredLogin();
 
     const loggedInWithRightAddress =
-      savedState?.address === account.toLowerCase();
+      storedData?.address === account.toLowerCase();
     const loginValid =
-      savedState && savedState.expiresAt.getTime() > new Date().getTime();
+      storedData && storedData.expiresAt.getTime() > new Date().getTime();
 
-    return loggedInWithRightAddress && loginValid ? savedState : null;
-  }
-
-  function _wipeStoredLogin() {
-    localStorage.removeItem('login');
+    return loggedInWithRightAddress && loginValid ? storedData : null;
   }
 
   return {
     subscribe: state.subscribe,
+    linkSafe,
+    connectSafe,
     initialize,
     connect,
     disconnect

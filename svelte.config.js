@@ -20,7 +20,8 @@ const config = {
         esbuildOptions: {
           // Node.js global to browser globalThis
           define: {
-            global: 'globalThis'
+            global: 'globalThis',
+            'process.env': '{ "READABLE_STREAM": "disable" }'
           }
         }
       }

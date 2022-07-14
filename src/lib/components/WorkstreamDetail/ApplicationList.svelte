@@ -16,10 +16,16 @@
     type Application,
     type Workstream
   } from '$lib/stores/workstreams/types';
+  import { walletStore } from '$lib/stores/wallet/wallet';
   import StepperModal from '../StepperModal/index.svelte';
-  import Intro from '../SetUpPaymentSteps/steps/Intro.svelte';
-  import SetDaiAllowance from '../SetUpPaymentSteps/steps/SetDaiAllowance.svelte';
-  import ConfirmValues from '../SetUpPaymentSteps/steps/ConfirmValues.svelte';
+
+  import IntroStep from '../SetUpPaymentSteps/steps/Intro.svelte';
+  import SetDaiAllowanceStep from '../SetUpPaymentSteps/steps/SetDaiAllowance.svelte';
+  import ConfirmValuesStep from '../SetUpPaymentSteps/steps/ConfirmValues.svelte';
+
+  import GnosisSafeSetDaiAllowance from '../SetUpPaymentSteps/steps/gnosis-safe/SetDaiAllowance.svelte';
+  import GnosisSafeConfirmValuesStep from '../SetUpPaymentSteps/steps/gnosis-safe/ConfirmValues.svelte';
+  import GnosisSafeWaitingForConfirmationStep from '../SetUpPaymentSteps/steps/gnosis-safe/WaitingForConfirmation.svelte';
 
   export let workstream: Workstream;
   export let applications: Application[];
@@ -29,6 +35,15 @@
   export let accepted: boolean | undefined = undefined;
 
   let actionsDisabled = false;
+
+  $: setUpPaymentSteps = $walletStore.safe?.address
+    ? [
+        IntroStep,
+        GnosisSafeSetDaiAllowance,
+        GnosisSafeConfirmValuesStep,
+        GnosisSafeWaitingForConfirmationStep
+      ]
+    : [IntroStep, SetDaiAllowanceStep, ConfirmValuesStep];
 
   async function rejectApplication(id: string) {
     actionsDisabled = true;
@@ -88,7 +103,7 @@
                     workstream,
                     application
                   },
-                  steps: [Intro, SetDaiAllowance, ConfirmValues]
+                  steps: setUpPaymentSteps
                 })}
               variant="primary-outline"
               icon={TokenStreams}>Set up stream</Button

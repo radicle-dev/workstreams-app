@@ -20,7 +20,6 @@
   }
 
   let prefersDarkThemes = false;
-  let initialized = false;
 
   $: {
     if (browser) {
@@ -34,7 +33,6 @@
 
   onMount(async () => {
     await walletStore.initialize();
-    initialized = true;
 
     prefersDarkThemes = window.matchMedia(
       '(prefers-color-scheme: dark)'
@@ -57,7 +55,7 @@
 </script>
 
 <ModalLayout />
-{#if initialized}
+{#if $walletStore}
   <div class="wrapper" class:loading={$navigating}>
     <Header />
     <main>
@@ -75,6 +73,10 @@
   :global(html, body) {
     /* All design system style overrides go here. */
     display: block;
+  }
+
+  :global(p) {
+    color: var(--color-foreground-level-6);
   }
 
   .wrapper {

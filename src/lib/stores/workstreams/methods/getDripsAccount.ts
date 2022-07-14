@@ -1,13 +1,13 @@
-import query from '$lib/api';
-import { GET_DRIPS_ACCOUNT } from '$lib/api/queries';
+import query from '$lib/api/drips-subgraph';
+import { GET_DRIPS_ACCOUNT } from '$lib/api/drips-subgraph/queries';
 import type {
   DripsAccount,
   DripsAccountVariables
-} from '$lib/api/__generated__/DripsAccount';
+} from '$lib/api/drips-subgraph/__generated__/DripsAccount';
 
 export default async function (
   creator: string,
-  accountId: number,
+  accountId: bigint,
   chainId: number
 ) {
   return (

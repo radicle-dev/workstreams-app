@@ -134,7 +134,7 @@
         </Card>
       </div>
 
-      {#if $walletStore.accounts[0] === workstream.creator && resolvedApplication.state === ApplicationState.WAITING}
+      {#if $walletStore.address === workstream.creator && resolvedApplication.state === ApplicationState.WAITING}
         <div class="actions">
           <Button
             disabled={actionsDisabled}

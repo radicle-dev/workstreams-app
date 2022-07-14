@@ -29,3 +29,18 @@ export const GET_DRIPS_ACCOUNT = gql`
     }
   }
 `;
+
+export const GET_SPLITS_CONFIG = gql`
+  query SplitsConfig($id: ID!) {
+    splitsConfig(id: $id) {
+      id
+      lastUpdatedBlockTimestamp
+      splitsEntries {
+        id
+        sender
+        receiver
+        weight
+      }
+    }
+  }
+`;

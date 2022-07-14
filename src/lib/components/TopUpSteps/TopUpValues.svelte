@@ -16,6 +16,7 @@
   import TextInput from 'radicle-design-system/TextInput.svelte';
   import tick from '$lib/stores/tick';
   import type { AwaitPendingPayload } from '../StepperModal/types';
+  import { walletStore } from '$lib/stores/wallet/wallet';
 
   const dispatch = createEventDispatcher<{
     awaitPending: AwaitPendingPayload;
@@ -82,15 +83,20 @@
     txInFlight = true;
 
     try {
-      const tx = await drips.topUp(enrichedWorkstream, topUpAmountWei);
+      const isSafe = $walletStore.safe?.ready;
 
       const waitFor = async () => {
-        await tx.wait(1);
-        await workstreamsStore.getWorkstream(
-          enrichedWorkstream.data.id,
-          undefined,
-          true
-        );
+        if (isSafe) {
+          drips.topUp(enrichedWorkstream, topUpAmountWei);
+        } else {
+          const tx = await drips.topUp(enrichedWorkstream, topUpAmountWei);
+          await tx.wait(1);
+          await workstreamsStore.getWorkstream(
+            enrichedWorkstream.data.id,
+            undefined,
+            true
+          );
+        }
       };
 
       dispatch('awaitPending', { promise: waitFor });
@@ -138,15 +144,23 @@
           suffix="DAI"
         />
       </div>
-      <div class="input-with-label">
-        <h4>After topup, runs until</h4>
-        {#if topUpAmount > 0}
-          <p class="value">{formatDate(streamingUntilAfterTopup)}</p>
-        {:else}
-          <p class="value">—</p>
-        {/if}
-      </div>
+      {#if !$walletStore.safe?.ready}
+        <div class="input-with-label">
+          <h4>After topup, runs until</h4>
+          {#if topUpAmount > 0}
+            <p class="value">{formatDate(streamingUntilAfterTopup)}</p>
+          {:else}
+            <p class="value">—</p>
+          {/if}
+        </div>
+      {/if}
     </div>
+    {#if $walletStore.safe?.ready}
+      <p class="typo-text-small">
+        Please note that funds will only start streaming once the top-up
+        transaction has been executed by your connected Gnosis Safe.
+      </p>
+    {/if}
     <div class="actions">
       <Button disabled={buttonDisabled} on:click={topUp}
         >Top up {topUpAmount} DAI</Button
@@ -171,9 +185,12 @@
     gap: 2rem;
   }
 
+  p {
+    text-align: left;
+  }
+
   .input-with-label {
     display: flex;
-    width: 100%;
     align-items: flex-start;
     flex-direction: column;
     gap: 0.75rem;

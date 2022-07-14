@@ -11,7 +11,7 @@
     type Workstream
   } from '$lib/stores/workstreams/types';
   import { currencyFormat, weiToDai } from '$lib/utils/format';
-  import ButtonRow from '../components/ButtonRow.svelte';
+  import ButtonRow from '../../components/ButtonRow.svelte';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import { utils } from 'ethers';
 
@@ -50,23 +50,16 @@
     try {
       const accountId = drips.getRandomAccountId();
 
-      const createDripCall = await drips.createDrip(
-        application.creator,
-        {
-          currency: Currency.DAI,
-          wei: weiPerDay / BigInt(86400)
-        },
-        accountId,
-        utils.parseUnits(topUpAmount.toString()).toBigInt()
-      );
-
       const waitFor = async () => {
-        const receipt = await createDripCall.tx.wait(1);
-
-        if (receipt.status === 0) {
-          console.error(receipt);
-          return;
-        }
+        drips.createDrip(
+          application.creator,
+          {
+            currency: Currency.DAI,
+            wei: weiPerDay / BigInt(86400)
+          },
+          accountId,
+          utils.parseUnits(topUpAmount.toString()).toBigInt()
+        );
 
         const activateCall = await workstreamsStore.activateWorkstream(
           workstream.id,
@@ -78,7 +71,10 @@
         }
       };
 
-      dispatch('awaitPending', { promise: waitFor });
+      dispatch('awaitPending', {
+        promise: waitFor,
+        message: 'Activating your workstream...'
+      });
     } catch {
       actionInFlight = false;
       return;
@@ -89,7 +85,11 @@
 <div>
   <Emoji emoji="💸" size="large" />
   <h1>Set up payment stream</h1>
-  <p>Here's the drips config we're gonna set up.</p>
+  <p>
+    Customize your stream below. When you confirm, the Workstream will be
+    activated, but it will only start streaming funds once the setup transaction
+    has been executed by your connected Gnosis Safe.
+  </p>
   <form>
     <div class="input-with-label">
       <h4>Streaming to</h4>
