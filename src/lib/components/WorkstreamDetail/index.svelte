@@ -64,7 +64,7 @@
         accepted={creator}
       />
     {:else}
-      <ApplyRow {workstream} {creator} {applied} />
+      <ApplyRow {workstream} />
     {/if}
     {#if workstream.state === WorkstreamState.RFA && openApplications?.length > 0}
       <ApplicationList
