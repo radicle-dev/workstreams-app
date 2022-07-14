@@ -308,8 +308,6 @@ export const walletStore = (() => {
     }));
   }
 
-  state.subscribe((s) => console.log(s));
-
   async function disconnect() {
     await _logOut();
     _wipeStoredLogin();
