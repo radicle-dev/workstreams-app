@@ -31,7 +31,6 @@
   export let applications: Application[];
   export let style = '';
   export let title = '';
-  export let creator: boolean | undefined = undefined;
   export let accepted: boolean | undefined = undefined;
 
   let actionsDisabled = false;
@@ -44,22 +43,6 @@
         GnosisSafeWaitingForConfirmationStep
       ]
     : [IntroStep, SetDaiAllowanceStep, ConfirmValuesStep];
-
-  async function rejectApplication(id: string) {
-    actionsDisabled = true;
-    try {
-      await fetch(
-        `${getConfig().API_URL_BASE}/workstreams/${
-          workstream.id
-        }/applications/${id}/reject`,
-        { method: 'POST', credentials: 'include' }
-      );
-    } catch (e) {
-      return;
-    } finally {
-      actionsDisabled = false;
-    }
-  }
 </script>
 
 <Card hoverable={false} {style}>
@@ -87,14 +70,7 @@
               </p>
             {/if}
           {/if}
-          {#if creator && !accepted}
-            <Button
-              disabled={actionsDisabled}
-              on:click={() => rejectApplication(application.id)}
-              variant="primary-outline"
-              icon={ThumbsDown}>Deny</Button
-            >
-          {:else if accepted}
+          {#if accepted}
             <Button
               disabled={actionsDisabled}
               on:click={() =>

@@ -31,6 +31,7 @@
 
   import Modal from '$components/Modal.svelte';
   import { getConfig } from '$lib/config';
+  import { invalidate } from '$app/navigation';
 
   onMount(async () => {
     resolvedApplication = await application;
@@ -41,38 +42,36 @@
       : null;
   });
 
-  async function rejectApplication() {
+  async function submitDecision(decision: 'accept' | 'reject') {
     actionsDisabled = true;
     try {
       await fetch(
         `${getConfig().API_URL_BASE}/workstreams/${
           workstream.id
-        }/applications/${resolvedApplication.id}/reject`,
+        }/applications/${resolvedApplication.id}/${decision}`,
         { method: 'POST', credentials: 'include' }
       );
-    } catch (e) {
-      return;
-    } finally {
-      actionsDisabled = false;
-    }
-    modal.hide();
-  }
 
-  async function acceptApplication() {
-    actionsDisabled = true;
-    try {
-      await fetch(
-        `${getConfig().API_URL_BASE}/workstreams/${
-          workstream.id
-        }/applications/${resolvedApplication.id}/accept`,
-        { method: 'POST', credentials: 'include' }
+      // Refresh fetched applications so the new application state shows up.
+      await invalidate(
+        `${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`
       );
+
+      if (decision === 'accept') {
+        // Refresh fetched workstream so it appears in its new state.
+        await invalidate(
+          `${getConfig().API_URL_BASE}/workstreams/${
+            workstream.id
+          }/applications`
+        );
+      }
+
+      modal.hide();
     } catch (e) {
-      return;
+      console.error(e);
     } finally {
       actionsDisabled = false;
     }
-    modal.hide();
   }
 </script>
 
@@ -138,13 +137,13 @@
         <div class="actions">
           <Button
             disabled={actionsDisabled}
-            on:click={rejectApplication}
+            on:click={() => submitDecision('reject')}
             variant="destructive"
             icon={ThumbsDown}>Deny</Button
           >
           <Button
             disabled={actionsDisabled}
-            on:click={acceptApplication}
+            on:click={() => submitDecision('accept')}
             variant="primary"
             icon={ThumbsUp}>Accept</Button
           >
