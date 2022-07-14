@@ -28,7 +28,6 @@
       currentStep = steps[currentStepIndex];
     } else {
       modal.hide();
-      goto($page.url.pathname);
     }
   }
 
@@ -42,7 +41,6 @@
       currentStep = steps[currentStepIndex];
     } else {
       modal.hide();
-      goto($page.url.pathname);
     }
   }
 

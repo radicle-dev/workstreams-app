@@ -32,11 +32,19 @@
         .timestamp * 1000
     );
 
+  function refreshStream() {
+    workstreamsStore.getWorkstream(enrichedWorkstream.data.id);
+  }
+
   function pauseUnpause(action: 'pause' | 'unpause') {
     modal.show(
       StepperModal,
       async () => {
-        await workstreamsStore.getWorkstream(workstream.id, undefined, true);
+        await workstreamsStore.getWorkstream(
+          workstream.id,
+          () => refreshStream(),
+          true
+        );
       },
       {
         steps: [
@@ -52,7 +60,7 @@
   }
 
   function topUp() {
-    modal.show(StepperModal, undefined, {
+    modal.show(StepperModal, () => refreshStream(), {
       stepProps: {
         enrichedWorkstream
       },
