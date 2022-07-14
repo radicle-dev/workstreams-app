@@ -30,7 +30,7 @@
     actionInFlight = true;
 
     try {
-      await drips.approveDaiSpend();
+      drips.approveDaiSpend();
       modal.hide();
     } catch {
       actionInFlight = false;
@@ -42,11 +42,16 @@
   <Emoji emoji="💸" size="large" />
   <h1>Grant permissions</h1>
   {#if approvalGranted === false}
-    You need to allow the Radicle Drips contract to access the DAI in your
-    Gnosis Safe before topping up. Please sign and confirm this transaction
-    within your safe. Once a quorom has been reached and the transaction is
-    executed by your safe, re-trigger the payment setup flow and you'll be able
-    to proceed.
+    <p>
+      You need to allow the Radicle Drips contract to access the DAI in your
+      Gnosis Safe before creating a stream. After clicking <span
+        class="typo-text-bold">Allow drips contract</span
+      >
+      below, you'll find a transaction prompt within the Gnosis Safe app. After you
+      sign the transaction and it reaches quorum and is executed by your safe, re-trigger
+      the payment setup flow and you'll be able to proceed.
+    </p>
+    <p class="typo-text-small">You only have to do this once.</p>
     <ButtonRow
       disabled={actionInFlight}
       buttonText="Allow drips contract"
@@ -61,5 +66,9 @@
   h1 {
     margin: 1rem 0 2rem;
     color: var(--color-foreground);
+  }
+
+  p {
+    margin-bottom: 1rem;
   }
 </style>
