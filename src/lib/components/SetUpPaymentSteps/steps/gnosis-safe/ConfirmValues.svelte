@@ -51,7 +51,7 @@
       const accountId = drips.getRandomAccountId();
 
       const waitFor = async () => {
-        await drips.createDrip(
+        drips.createDrip(
           application.creator,
           {
             currency: Currency.DAI,
@@ -73,7 +73,7 @@
 
       dispatch('awaitPending', {
         promise: waitFor,
-        message: 'Waiting for you to sign the transaction in your Gnosis Safe…'
+        message: 'Activating your workstream...'
       });
     } catch {
       actionInFlight = false;
