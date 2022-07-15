@@ -20,9 +20,9 @@
   export let acceptedApplication: Application | undefined = undefined;
 
   const estimates = workstreamsStore.estimates;
-  $: estimate = $estimates.streams[workstream.id];
+  $: estimate = $estimates.workstreams[workstream.id];
 
-  $: enrichedWorkstream = $workstreamsStore[workstream.id];
+  $: enrichedWorkstream = $workstreamsStore.workstreams[workstream.id];
   $: isOwner = workstream.creator === $walletStore.address;
   $: isReceiver = workstream.acceptedApplication === $walletStore.address;
   $: activeSince =
@@ -32,27 +32,25 @@
         .timestamp * 1000
     );
 
+  function refreshStream() {
+    workstreamsStore.getWorkstream(enrichedWorkstream.data.id);
+  }
+
   function pauseUnpause(action: 'pause' | 'unpause') {
-    modal.show(
-      StepperModal,
-      async () => {
-        await workstreamsStore.getWorkstream(workstream.id, undefined, true);
-      },
-      {
-        steps: [
-          PauseUnpauseStep,
-          $walletStore.safe?.ready && AwaitingSafeTransactionStep
-        ],
-        stepProps: {
-          enrichedWorkstream,
-          action
-        }
+    modal.show(StepperModal, () => refreshStream(), {
+      steps: [
+        PauseUnpauseStep,
+        $walletStore.safe?.ready && AwaitingSafeTransactionStep
+      ],
+      stepProps: {
+        enrichedWorkstream,
+        action
       }
-    );
+    });
   }
 
   function topUp() {
-    modal.show(StepperModal, undefined, {
+    modal.show(StepperModal, () => refreshStream(), {
       stepProps: {
         enrichedWorkstream
       },

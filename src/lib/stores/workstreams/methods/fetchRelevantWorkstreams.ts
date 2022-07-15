@@ -7,6 +7,7 @@ export default async function (address: string) {
     }),
     await workstreamsStore.getWorkstreams({
       createdBy: address
-    })
+    }),
+    await workstreamsStore.getWorkstreams({ applied: 'true' })
   ]);
 }

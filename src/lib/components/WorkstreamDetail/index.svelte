@@ -21,14 +21,12 @@
   let openApplications: Application[] | undefined = undefined;
   let rejectedApplications: Application[] | undefined = undefined;
 
-  let applied = false;
-  let creator: boolean =
+  $: applied =
+    $walletStore.ready && workstream.applicants?.includes($walletStore.address);
+  $: creator =
     $walletStore.ready && workstream.creator === $walletStore.address;
 
   $: {
-    applied =
-      $walletStore.ready &&
-      workstream.applicants?.includes($walletStore.address);
     if (applications) {
       acceptedApplication = applications.find(
         (application) => application.state === ApplicationState.ACCEPTED
@@ -60,7 +58,6 @@
         applications={[acceptedApplication]}
         title="Accepted applications"
         {workstream}
-        {creator}
         accepted={creator}
       />
     {:else}
@@ -70,7 +67,6 @@
       <ApplicationList
         applications={openApplications}
         title="Open applications"
-        {creator}
         {workstream}
       />
     {/if}

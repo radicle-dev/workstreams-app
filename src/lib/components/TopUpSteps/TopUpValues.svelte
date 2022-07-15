@@ -29,7 +29,7 @@
   let topUpAmount = 1;
   $: topUpAmountWei = toWei(topUpAmount || 0).toBigInt();
 
-  $: estimate = $estimates.streams[enrichedWorkstream.data.id];
+  $: estimate = $estimates.workstreams[enrichedWorkstream.data.id];
   $: streamingUntil = estimate?.streamingUntil;
   $: currAmtPerSec = enrichedWorkstream.onChainData.amtPerSec.wei;
   $: remainingBalance = estimate?.remainingBalance;

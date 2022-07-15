@@ -8,9 +8,12 @@
   import TextInput from 'radicle-design-system/TextInput.svelte';
   import TextArea from 'radicle-design-system/TextArea.svelte';
   import { getConfig } from '$lib/config';
-  import type { WorkstreamInput } from '$lib/stores/workstreams/types';
-  import { goto } from '$app/navigation';
+  import type {
+    Workstream,
+    WorkstreamInput
+  } from '$lib/stores/workstreams/types';
   import { utils } from 'ethers';
+  import { workstreamsStore } from '$lib/stores/workstreams';
 
   const durationOptions = [
     { value: '1', title: 'Days' },
@@ -43,7 +46,7 @@
     const weiPerSecond = weiPerDay.div(86400);
 
     try {
-      await fetch(`${getConfig().API_URL_BASE}/workstreams`, {
+      const res = await fetch(`${getConfig().API_URL_BASE}/workstreams`, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({
@@ -56,10 +59,15 @@
           durationDays: parseInt(duration) * parseInt(durationUnit)
         } as WorkstreamInput)
       });
+
+      const workstream: Workstream = await res.json();
+
+      // Push the new workstream into the state so it shows up on the dashboard.
+      await workstreamsStore.getWorkstream(workstream.id);
     } catch (e) {
       return;
     }
-    goto('/dashboard');
+
     modal.hide();
   }
 </script>

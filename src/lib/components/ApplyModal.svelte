@@ -19,6 +19,7 @@
   import Dropdown from 'radicle-design-system/Dropdown.svelte';
   import { weiToDai } from '$lib/utils/format';
   import { getConfig } from '$lib/config';
+  import { invalidate } from '$app/navigation';
 
   export let workstream: Workstream;
 
@@ -64,6 +65,11 @@
                 : undefined
           } as ApplicationInput)
         }
+      );
+
+      // Refresh fetched applications so the new application shows up.
+      await invalidate(
+        `${getConfig().API_URL_BASE}/workstreams/${workstream.id}/applications`
       );
     } catch (e) {
       return;

@@ -17,6 +17,7 @@
   } from '$lib/stores/workstreams';
   import { goto } from '$app/navigation';
   import Spinner from 'radicle-design-system/Spinner.svelte';
+  import { onMount } from 'svelte';
 
   const estimates = workstreamsStore.estimates;
 
@@ -35,27 +36,9 @@
     workstreams: { [wsId: string]: EnrichedWorkstream };
   }
 
-  let loading = true;
+  onMount(workstreamsStore.refreshRelevantStreams);
 
-  $: {
-    if ($walletStore.ready) {
-      loading = true;
-
-      const fetches = [
-        workstreamsStore.getWorkstreams({ applied: 'true' }),
-        workstreamsStore.getWorkstreams({
-          createdBy: $walletStore.address
-        }),
-        workstreamsStore.getWorkstreams({
-          assignedTo: $walletStore.address
-        })
-      ];
-
-      Promise.all(fetches).then(() => (loading = false));
-    }
-  }
-
-  $: workstreams = $workstreamsStore;
+  $: workstreams = $workstreamsStore.workstreams;
 
   function filterObject<T>(
     obj: { [key: string]: T },
@@ -142,19 +125,19 @@
   } as Sections;
 
   $: incomingTotal = calculateStreamTotal(
-    filterObject($workstreamsStore, (ws) => {
+    filterObject($workstreamsStore.workstreams, (ws) => {
       return (
         ws.data.acceptedApplication === $walletStore.address &&
-        $estimates.streams[ws.data.id]?.currentlyStreaming
+        $estimates.workstreams[ws.data.id]?.currentlyStreaming
       );
     })
   );
 
   $: outgoingTotal = calculateStreamTotal(
-    filterObject($workstreamsStore, (ws) => {
+    filterObject($workstreamsStore.workstreams, (ws) => {
       return (
         ws.data.creator === $walletStore.address &&
-        $estimates.streams[ws.data.id]?.currentlyStreaming
+        $estimates.workstreams[ws.data.id]?.currentlyStreaming
       );
     })
   );
@@ -164,7 +147,7 @@
   }) {
     const totalWeiPerSec = Object.entries(enrichedWorkstreams).reduce<bigint>(
       (acc, [id, ws]) => {
-        return $estimates.streams[id]?.currentlyStreaming
+        return $estimates.workstreams[id]?.currentlyStreaming
           ? acc + ws.onChainData.amtPerSec.wei
           : acc;
       },
@@ -226,7 +209,7 @@
           </Section>
         </div>
       {/each}
-      {#if loading}
+      {#if $workstreamsStore.fetchStatus.relevantStreamsFetching}
         <div transition:fly|local={{ y: 10, duration: 300 }} class="spinner">
           <Spinner />
         </div>
