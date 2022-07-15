@@ -158,7 +158,10 @@ export default (() => {
 
     const collectable = await client.getAmountCollectableWithSplits(
       address,
-      splitsConfig?.splitsEntries?.map((sc) => [sc.receiver, sc.weight]) || []
+      splitsConfig?.splitsEntries?.map((sc) => ({
+        receiver: sc.receiver,
+        weight: sc.weight
+      })) || []
     );
 
     state.update((v) => ({
@@ -333,7 +336,23 @@ export default (() => {
       provider.getSigner()
     );
 
-    return contract.collect(await provider.getSigner().getAddress(), []);
+    const address = await provider.getSigner().getAddress();
+
+    const splitsConfig = (
+      await query<SplitsConfig, SplitsConfigVariables>({
+        query: GET_SPLITS_CONFIG,
+        variables: { id: address.toLowerCase() },
+        chainId: provider.network.chainId
+      })
+    ).splitsConfig;
+
+    return contract.collect(
+      await provider.getSigner().getAddress(),
+      splitsConfig?.splitsEntries?.map((sc) => ({
+        receiver: sc.receiver,
+        weight: sc.weight
+      })) || []
+    );
   }
 
   return {
