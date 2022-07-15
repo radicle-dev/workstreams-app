@@ -21,8 +21,6 @@
   let openApplications: Application[] | undefined = undefined;
   let rejectedApplications: Application[] | undefined = undefined;
 
-  $: applied =
-    $walletStore.ready && workstream.applicants?.includes($walletStore.address);
   $: creator =
     $walletStore.ready && workstream.creator === $walletStore.address;
 
