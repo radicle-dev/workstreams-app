@@ -1,24 +1,13 @@
 <script lang="ts">
-  import { walletStore } from '$lib/stores/wallet/wallet';
   import type { Workstream } from '$lib/stores/workstreams/types';
-  import * as modal from '$lib/utils/modal';
-
-  import ApplyModal from '$components/ApplyModal.svelte';
-  import Button from 'radicle-design-system/Button.svelte';
-  import Apply from 'radicle-design-system/icons/Ledger.svelte';
+  import ApplyButton from './ApplyButton.svelte';
 
   export let workstream: Workstream;
 </script>
 
 <div>
   <h4>{workstream.title}</h4>
-  <Button
-    disabled={$walletStore.ready &&
-      workstream.applicants?.includes($walletStore.address)}
-    icon={Apply}
-    on:click={() => modal.show(ApplyModal, undefined, { workstream })}
-    >Apply</Button
-  >
+  <ApplyButton {workstream} tooltipPosition="left" />
 </div>
 
 <style>
