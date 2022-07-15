@@ -27,10 +27,10 @@
   let totalAmount: number = weiToDai(workstream.total);
 
   $: topUpExceedsBalance =
-    daiBalance < utils.parseUnits(topUpAmount.toString()).toBigInt();
+    daiBalance < utils.parseUnits((topUpAmount || 0).toString()).toBigInt();
 
   $: weiPerDay =
-    utils.parseUnits(totalAmount.toString()).toBigInt() /
+    utils.parseUnits((totalAmount || 0).toString()).toBigInt() /
     BigInt(workstream.durationDays);
   $: daiPerDay = currencyFormat(weiPerDay);
   $: totalWei = weiPerDay * BigInt(workstream.durationDays);
@@ -136,7 +136,7 @@
     </div>
   </form>
   <ButtonRow
-    disabled={actionInFlight || topUpExceedsBalance}
+    disabled={!topUpAmount || actionInFlight || topUpExceedsBalance}
     buttonText="Set up drip & top up"
     on:continue={setUpPayment}
   />
