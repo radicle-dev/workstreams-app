@@ -13,7 +13,7 @@
   import ModalLayout from '$components/ModalLayout.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import tick from '$lib/stores/tick';
-  import scrollPos from '$lib/stores/scrollPos';
+  import scroll from '$lib/stores/scroll';
 
   enum Theme {
     DARK = 'dark',
@@ -21,7 +21,6 @@
   }
 
   let prefersDarkThemes = false;
-  let wrapperElem: HTMLDivElement;
 
   $: {
     if (browser) {
@@ -50,18 +49,18 @@
 
     if (!tick.isRunning()) tick.start();
 
-    scrollPos.attach(wrapperElem);
+    scroll.attach();
 
     return () => {
       window.removeEventListener('change', colorSchemeListener);
-      scrollPos.detach(wrapperElem);
+      scroll.detach();
     };
   });
 </script>
 
 <ModalLayout />
 {#if $walletStore}
-  <div class="wrapper" bind:this={wrapperElem} class:loading={$navigating}>
+  <div class="wrapper" class:loading={$navigating}>
     <Header />
     <main>
       <slot />
@@ -78,7 +77,6 @@
   :global(html, body) {
     /* All design system style overrides go here. */
     display: block;
-    overflow-y: hidden;
   }
 
   :global(p) {
@@ -91,7 +89,6 @@
     padding: 6rem 1rem 3rem 1rem;
     transition: opacity 0.3s;
     height: 100vh;
-    overflow-y: scroll;
   }
 
   .network {

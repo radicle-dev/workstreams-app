@@ -14,6 +14,7 @@
   import clearStores from '$lib/stores/utils/clearStores';
   import connectStores from '$lib/stores/utils/connectStores';
   import isMobile from '$lib/stores/isMobile';
+  import scroll from '$lib/stores/scroll';
 
   export let onClick: () => void | undefined = undefined;
 
@@ -37,7 +38,16 @@
   onMount(async () => {
     pane = new CupertinoPane('.mobile-bottom-sheet', {
       parentElement: 'body',
-      backdrop: true
+      backdrop: true,
+      fastSwipeClose: true
+    });
+
+    pane.on('onWillPresent', () => {
+      scroll.lock();
+    });
+
+    pane.on('onDidDismiss', () => {
+      scroll.unlock();
     });
 
     if ($walletStore.ready) {

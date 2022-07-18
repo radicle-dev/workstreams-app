@@ -14,12 +14,12 @@
   import { headerContent } from '$lib/stores/headerContent';
   import BalanceButton from './BalanceButton.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
-  import scrollPos from '$lib/stores/scrollPos';
+  import scroll from '$lib/stores/scroll';
   import isMobile from '$lib/stores/isMobile';
 
-  $: scrolledDown = $scrollPos.scrollPos > 0;
+  $: scrolledDown = $scroll.pos > 0;
   $: hide =
-    $scrollPos.direction === 'down' &&
+    $scroll.direction === 'down' &&
     ($isMobile.isMobile || !$headerContent.component);
   $: showCustomHeaderContent =
     $headerContent.headerContentShown !== undefined
@@ -32,7 +32,7 @@
   const animate = (node: Element, args: { y: number; enable: boolean }) =>
     args.enable
       ? fly(node, {
-          y: $scrollPos.direction === 'up' ? -args.y : args.y,
+          y: $scroll.direction === 'up' ? -args.y : args.y,
           duration: 300
         })
       : undefined;

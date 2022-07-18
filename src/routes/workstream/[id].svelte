@@ -34,7 +34,7 @@
   import { headerContent } from '$lib/stores/headerContent';
   import WorkstreamPageHeader from '$lib/components/WorkstreamPageHeader.svelte';
   import { reviver, workstreamsStore } from '$lib/stores/workstreams';
-  import scrollPos from '$lib/stores/scrollPos';
+  import scroll from '$lib/stores/scroll';
 
   export let workstream: Workstream | undefined;
   export let applications: Application[] | undefined;
@@ -52,7 +52,7 @@
   });
 
   $: {
-    $headerContent.headerContentShown = $scrollPos.scrollPos > 100;
+    $headerContent.headerContentShown = $scroll.pos > 100;
   }
 </script>
 
