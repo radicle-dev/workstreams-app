@@ -124,4 +124,10 @@
     display: flex;
     flex-direction: column;
   }
+
+  @media only screen and (max-width: 54rem) {
+    .wrapper {
+      padding: 6rem 0.5rem 2rem 0.5rem;
+    }
+  }
 </style>
