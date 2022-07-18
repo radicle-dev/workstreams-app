@@ -11,6 +11,8 @@
   import { walletStore } from '$lib/stores/wallet/wallet';
 
   export let showAvatar = true;
+  export let largeAvatar = false;
+  export let noLink = false;
   export let showAddress = true;
   export let address: string;
   export let style: string = undefined;
@@ -48,8 +50,9 @@
 {#if address}
   <a
     class="container"
+    class:large={largeAvatar}
     {style}
-    href={url}
+    href={noLink ? undefined : url}
     on:mouseenter={() => {
       prefetch(url);
       hover = true;
@@ -61,11 +64,12 @@
         <img
           in:fade={{ duration: firstRender ? 0 : 200 }}
           class="avatar"
+          class:large={largeAvatar}
           src={avatarUrl || uriData}
           alt="user-avatar"
         />
       {/key}
-      <div class="avatar-placeholder" />
+      <div class="avatar-placeholder" class:large={largeAvatar} />
     {/if}
     {#if showAddress}
       {#key ensName}
@@ -97,6 +101,11 @@
     grid-template-columns: 1.5rem auto;
     cursor: pointer;
   }
+
+  .large.container {
+    height: 2rem;
+  }
+
   .avatar {
     width: 1.5rem;
     height: 1.5rem;
@@ -106,6 +115,13 @@
     left: 0;
     position: absolute;
     background-color: var(--color-foreground-level-5);
+  }
+
+  .large.avatar,
+  .large.avatar-placeholder {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 1rem;
   }
 
   .avatar-placeholder {

@@ -11,7 +11,6 @@
   import Button from 'radicle-design-system/Button.svelte';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
   import CreateModal from './CreateModal.svelte';
-  import { browser } from '$app/env';
   import { headerContent } from '$lib/stores/headerContent';
   import BalanceButton from './BalanceButton.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
@@ -33,14 +32,10 @@
       ? fly(node, { y: !scrollingDown ? -args.y : args.y, duration: 300 })
       : undefined;
 
-  if (browser) {
-    updateScrollPos();
-  }
-
   onMount(() => {
-    if (browser) {
-      window.addEventListener('scroll', updateScrollPos);
-    }
+    window.addEventListener('scroll', updateScrollPos);
+
+    updateScrollPos();
   });
 
   function updateScrollPos() {
@@ -51,10 +46,7 @@
   }
 </script>
 
-<header
-  class:hide
-  style:box-shadow={scrolledDown && !hide ? 'var(--elevation-low)' : ''}
->
+<header class:hide class:withShadow={scrolledDown && !hide}>
   <div class="inner">
     {#if showCustomHeaderContent && $headerContent.component}
       <div
@@ -95,7 +87,9 @@
             </div>
           {/if}
           {#if $walletStore.ready}
-            <BalanceButton />
+            <div class="balance-button">
+              <BalanceButton />
+            </div>
           {/if}
           <div class="user">
             <Connect />
@@ -130,6 +124,10 @@
 
   header.hide {
     transform: translateY(-4.5rem);
+  }
+
+  header.withShadow {
+    box-shadow: var(--elevation-low);
   }
 
   .content.default {
@@ -172,5 +170,26 @@
   .user {
     display: flex;
     gap: 0.75rem;
+  }
+
+  @media only screen and (max-width: 54rem) {
+    header {
+      top: initial;
+      bottom: 0;
+      box-shadow: var(--elevation-low);
+    }
+
+    header.hide {
+      transform: translateY(4rem);
+    }
+
+    .content {
+      padding: 1rem 0.75rem 1rem 0.5rem;
+    }
+
+    .balance-button,
+    .create-button {
+      display: none;
+    }
   }
 </style>

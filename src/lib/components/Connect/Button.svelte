@@ -12,6 +12,9 @@
   import LinkSafe from './steps/LinkSafe.svelte';
   import clearStores from '$lib/stores/utils/clearStores';
   import connectStores from '$lib/stores/utils/connectStores';
+  import isMobile from '$lib/stores/isMobile';
+
+  export let onClick: () => void | undefined = undefined;
 
   let locked: boolean;
 
@@ -52,9 +55,9 @@
   on:mouseleave={() => (hover = false)}
 >
   {#if $walletStore.ready}
-    {#if hover}
+    {#if hover && !$isMobile.isMobile}
       <div
-        on:click={logOut}
+        on:click={onClick || logOut}
         transition:fade={{ duration: 100 }}
         class="log-out-overlay"
       >
@@ -62,9 +65,20 @@
       </div>
     {/if}
     <div>
-      <Button variant="outline">
-        <User address={$walletStore.address} />
-      </Button>
+      {#if $isMobile.isMobile}
+        <div class="connect-button-mobile">
+          <User
+            noLink
+            address={$walletStore.address}
+            showAddress={false}
+            largeAvatar
+          />
+        </div>
+      {:else}
+        <Button variant="outline">
+          <User address={$walletStore.address} />
+        </Button>
+      {/if}
     </div>
   {:else if locked}
     <Button disabled variant="outline">
@@ -72,7 +86,7 @@
     </Button>
   {:else}
     <Button on:click={() => logIn()} variant="outline"
-      >Sign in with Ethereum</Button
+      >Sign in{$isMobile.isMobile ? '' : ' with Ethereum'}</Button
     >
   {/if}
 </div>
