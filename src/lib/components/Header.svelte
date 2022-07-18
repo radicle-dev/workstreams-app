@@ -14,11 +14,13 @@
   import { headerContent } from '$lib/stores/headerContent';
   import BalanceButton from './BalanceButton.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
+  import scrollPos from '$lib/stores/scrollPos';
+  import isMobile from '$lib/stores/isMobile';
 
-  let scrolledDown = false;
-  let scrollPos = 0;
-  let scrollingDown = false;
-  $: hide = scrollingDown && !$headerContent.component;
+  $: scrolledDown = $scrollPos.scrollPos > 0;
+  $: hide =
+    $scrollPos.direction === 'down' &&
+    ($isMobile.isMobile || !$headerContent.component);
   $: showCustomHeaderContent =
     $headerContent.headerContentShown !== undefined
       ? $headerContent.headerContentShown
@@ -29,26 +31,16 @@
 
   const animate = (node: Element, args: { y: number; enable: boolean }) =>
     args.enable
-      ? fly(node, { y: !scrollingDown ? -args.y : args.y, duration: 300 })
+      ? fly(node, {
+          y: $scrollPos.direction === 'up' ? -args.y : args.y,
+          duration: 300
+        })
       : undefined;
-
-  onMount(() => {
-    window.addEventListener('scroll', updateScrollPos);
-
-    updateScrollPos();
-  });
-
-  function updateScrollPos() {
-    const scrollY = Math.max(window.scrollY, 0);
-    scrollingDown = scrollY > scrollPos;
-    scrolledDown = scrollY !== 0;
-    scrollPos = scrollY;
-  }
 </script>
 
 <header class:hide class:withShadow={scrolledDown && !hide}>
   <div class="inner">
-    {#if showCustomHeaderContent && $headerContent.component}
+    {#if !$isMobile.isMobile && showCustomHeaderContent && $headerContent.component}
       <div
         transition:animate={{ enable: !!headerContent, y: 20 }}
         class="content page"
@@ -108,7 +100,7 @@
     height: 4.5rem;
     box-sizing: border-box;
     background-color: var(--color-background);
-    z-index: 1000;
+    z-index: 1;
     position: fixed;
     transition: box-shadow 0.3s, transform 0.3s;
   }

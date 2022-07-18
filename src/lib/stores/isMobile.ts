@@ -27,4 +27,6 @@ if (browser && get(store).isMobile === undefined) {
   updateIsMobile();
 }
 
-export default store;
+export default {
+  subscribe: store.subscribe
+};

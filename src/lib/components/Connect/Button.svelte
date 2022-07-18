@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { CupertinoPane } from 'cupertino-pane';
 
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
@@ -17,6 +18,7 @@
   export let onClick: () => void | undefined = undefined;
 
   let locked: boolean;
+  let pane: CupertinoPane;
 
   async function logIn() {
     locked = true;
@@ -33,6 +35,11 @@
   }
 
   onMount(async () => {
+    pane = new CupertinoPane('.mobile-bottom-sheet', {
+      parentElement: 'body',
+      backdrop: true
+    });
+
     if ($walletStore.ready) {
       const { provider: localProvider, safe } = $walletStore;
       const provider = safe?.provider || localProvider;
@@ -42,8 +49,13 @@
   });
 
   async function logOut() {
+    pane.hide();
     await walletStore.disconnect();
     clearStores();
+  }
+
+  function openBottomSheet() {
+    pane.present({ animate: true });
   }
 
   let hover = false;
@@ -66,7 +78,7 @@
     {/if}
     <div>
       {#if $isMobile.isMobile}
-        <div class="connect-button-mobile">
+        <div class="connect-button-mobile" on:click={openBottomSheet}>
           <User
             noLink
             address={$walletStore.address}
@@ -91,6 +103,10 @@
   {/if}
 </div>
 
+<div class="mobile-bottom-sheet">
+  <Button on:click={logOut}>Log out</Button>
+</div>
+
 <style>
   .connect-button-wrapper {
     position: relative;
@@ -110,5 +126,9 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+  }
+
+  .mobile-bottom-sheet {
+    display: none;
   }
 </style>
