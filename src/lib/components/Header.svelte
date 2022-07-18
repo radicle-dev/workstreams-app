@@ -176,6 +176,7 @@
     header {
       top: initial;
       bottom: 0;
+      border-radius: 0.5rem 0.5rem 0 0;
       box-shadow: var(--elevation-low);
     }
 
