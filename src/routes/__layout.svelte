@@ -88,7 +88,6 @@
     margin: 0 auto;
     padding: 6rem 1rem 3rem 1rem;
     transition: opacity 0.3s;
-    height: 100vh;
   }
 
   .network {
