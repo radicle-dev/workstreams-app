@@ -14,12 +14,18 @@ const store = writable<ScrollStore>({
   scrolling: false
 });
 
+let initialized = false;
+
 function attach() {
-  window.addEventListener('scroll', () => _update());
+  if (!initialized) {
+    window.addEventListener('scroll', () => _update());
+    initialized = true;
+  }
 }
 
 function detach() {
   window.removeEventListener('scroll', () => _update());
+  initialized = false;
 }
 
 function lock() {
@@ -31,6 +37,7 @@ function unlock() {
 }
 
 function _update() {
+  console.log('update');
   const pos = Math.max(window.scrollY, 0);
   const direction = pos > get(store).pos ? 'down' : 'up';
   const scrolling = pos !== get(store).pos;
