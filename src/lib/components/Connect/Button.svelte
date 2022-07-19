@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { CupertinoPane } from 'cupertino-pane';
 
   import * as modal from '$lib/utils/modal';
@@ -36,6 +36,8 @@
   }
 
   onMount(async () => {
+    await tick();
+
     pane = new CupertinoPane('.mobile-bottom-sheet', {
       parentElement: 'body',
       backdrop: true,
@@ -56,6 +58,10 @@
 
       await connectStores(provider);
     }
+
+    return () => {
+      pane.destroy();
+    };
   });
 
   async function logOut() {
@@ -136,9 +142,5 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-  }
-
-  .mobile-bottom-sheet {
-    display: none;
   }
 </style>
