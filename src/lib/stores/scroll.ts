@@ -37,7 +37,6 @@ function unlock() {
 }
 
 function _update() {
-  console.log('update');
   const pos = Math.max(window.scrollY, 0);
   const direction = pos > get(store).pos ? 'down' : 'up';
   const scrolling = pos !== get(store).pos;
