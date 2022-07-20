@@ -3375,6 +3375,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cupertino-pane@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "cupertino-pane@npm:1.3.0"
+  checksum: e6a1fbe3e9af147a80a007dcc87fcf1ab846e619e80a8ebf423c3e57d066552fd055ceeee69da3214044d5a90690ec7b12dd9d2539694a51d0f1b6a07836c2c2
+  languageName: node
+  linkType: hard
+
 "dashdash@npm:^1.12.0":
   version: 1.14.1
   resolution: "dashdash@npm:1.14.1"
@@ -9485,6 +9492,7 @@ __metadata:
     "@walletconnect/qrcode-modal": ^1.7.8
     "@walletconnect/web3-provider": ^1.7.8
     apollo: ^2.33.11
+    cupertino-pane: ^1.3.0
     drips-sdk: "https://github.com/radicle-dev/drips-js-sdk#973599caf3013a2ac56155f11b8cd2426ff263d1"
     eslint: ^8.13.0
     eslint-config-prettier: ^8.5.0

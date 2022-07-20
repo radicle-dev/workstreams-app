@@ -21,6 +21,7 @@
   @media only screen and (max-width: 54rem) {
     .modal {
       width: 95vw;
+      padding: 1rem;
     }
   }
 </style>

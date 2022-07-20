@@ -13,6 +13,7 @@
   import ModalLayout from '$components/ModalLayout.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import tick from '$lib/stores/tick';
+  import scroll from '$lib/stores/scroll';
 
   enum Theme {
     DARK = 'dark',
@@ -48,8 +49,11 @@
 
     if (!tick.isRunning()) tick.start();
 
+    scroll.attach();
+
     return () => {
       window.removeEventListener('change', colorSchemeListener);
+      scroll.detach();
     };
   });
 </script>
@@ -123,5 +127,15 @@
   main {
     display: flex;
     flex-direction: column;
+  }
+
+  @media only screen and (max-width: 54rem) {
+    .wrapper {
+      padding: 2rem 0.5rem 7rem 0.5rem;
+    }
+
+    .network {
+      display: none;
+    }
   }
 </style>

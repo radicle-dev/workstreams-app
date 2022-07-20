@@ -35,4 +35,10 @@
     cursor: pointer;
     border: 1px solid var(--color-foreground-level-3);
   }
+
+  @media only screen and (max-width: 54rem) {
+    .card {
+      padding: 1rem;
+    }
+  }
 </style>
