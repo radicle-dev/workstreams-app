@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import { CupertinoPane } from 'cupertino-pane';
 
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
@@ -14,12 +13,12 @@
   import clearStores from '$lib/stores/utils/clearStores';
   import connectStores from '$lib/stores/utils/connectStores';
   import isMobile from '$lib/stores/isMobile';
-  import scroll from '$lib/stores/scroll';
+  import cupertinoPane from '$lib/stores/cupertinoPane';
+  import MobileAccountSheet from '../MobileAccountSheet/MobileAccountSheet.svelte';
 
   export let onClick: () => void | undefined = undefined;
 
   let locked: boolean;
-  let pane: CupertinoPane;
 
   async function logIn() {
     locked = true;
@@ -38,40 +37,21 @@
   onMount(async () => {
     await tick();
 
-    pane = new CupertinoPane('.mobile-bottom-sheet', {
-      parentElement: 'body',
-      backdrop: true,
-      fastSwipeClose: true
-    });
-
-    pane.on('onWillPresent', () => {
-      scroll.lock();
-    });
-
-    pane.on('onDidDismiss', () => {
-      scroll.unlock();
-    });
-
     if ($walletStore.ready) {
       const { provider: localProvider, safe } = $walletStore;
       const provider = safe?.provider || localProvider;
 
       await connectStores(provider);
     }
-
-    return () => {
-      pane.destroy();
-    };
   });
 
   async function logOut() {
-    pane.hide();
     await walletStore.disconnect();
     clearStores();
   }
 
   function openBottomSheet() {
-    pane.present({ animate: true });
+    cupertinoPane.openSheet(MobileAccountSheet, {});
   }
 
   let hover = false;
@@ -99,7 +79,7 @@
             noLink
             address={$walletStore.address}
             showAddress={false}
-            largeAvatar
+            avatarRem={2}
           />
         </div>
       {:else}
@@ -117,10 +97,6 @@
       >Sign in{$isMobile.isMobile ? '' : ' with Ethereum'}</Button
     >
   {/if}
-</div>
-
-<div class="mobile-bottom-sheet">
-  <Button on:click={logOut}>Log out</Button>
 </div>
 
 <style>

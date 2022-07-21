@@ -7,6 +7,7 @@
   import Plus from 'radicle-design-system/icons/Plus.svelte';
   import Minus from 'radicle-design-system/icons/Minus.svelte';
   import { onMount } from 'svelte';
+  import convertRemToPixels from '$lib/utils/remToPx';
 
   export let amountsEarned: { workstream: EnrichedWorkstream; amount: Money }[];
   export let amountsSpent: { workstream: EnrichedWorkstream; amount: Money }[];
@@ -24,12 +25,6 @@
       minute: 'numeric',
       second: '2-digit'
     }).format(date);
-  }
-
-  function convertRemToPixels(rem: number) {
-    return (
-      rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
-    );
   }
 
   onMount(() => {

@@ -1,7 +1,4 @@
 <script lang="ts">
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  import { createIcon } from 'radicle-design-system/lib/blockies.ts';
   import { fade } from 'svelte/transition';
 
   import { prefetch } from '$app/navigation';
@@ -9,9 +6,11 @@
   import { formatAddress } from '$lib/utils/format';
   import ensNames from '$lib/stores/ensNames';
   import { walletStore } from '$lib/stores/wallet/wallet';
+  import Avatar from './Avatar.svelte';
+  import convertRemToPixels from '$lib/utils/remToPx';
 
   export let showAvatar = true;
-  export let largeAvatar = false;
+  export let avatarRem = 1.5;
   export let noLink = false;
   export let showAddress = true;
   export let address: string;
@@ -20,11 +19,9 @@
 
   let firstRender = true;
 
-  let uriData: string;
   $: ensName = $ensNames[address]?.name;
   $: avatarUrl = $ensNames[address]?.pic;
   $: toDisplay = ensName ? ensName : formatAddress(address.toLowerCase());
-  $: uriData = blockyDataUri(address);
 
   onMount(() => {
     lookup();
@@ -34,14 +31,6 @@
     ensNames.lookup(address, $walletStore.provider);
   }
 
-  const blockyDataUri = (urn: string) => {
-    return createIcon({
-      seed: urn.toLowerCase(),
-      size: 8,
-      scale: 16
-    }).toDataURL();
-  };
-
   onMount(() => (firstRender = false));
 
   $: url = `/profile/${address}`;
@@ -50,7 +39,7 @@
 {#if address}
   <a
     class="container"
-    class:large={largeAvatar}
+    style:height={`${convertRemToPixels(avatarRem)}px`}
     {style}
     href={noLink ? undefined : url}
     on:mouseenter={() => {
@@ -61,15 +50,16 @@
   >
     {#if showAvatar}
       {#key avatarUrl}
-        <img
+        <div
           in:fade={{ duration: firstRender ? 0 : 200 }}
-          class="avatar"
-          class:large={largeAvatar}
-          src={avatarUrl || uriData}
-          alt="user-avatar"
-        />
+          class="avatar-container"
+        >
+          <Avatar {address} rem={avatarRem} />
+        </div>
       {/key}
-      <div class="avatar-placeholder" class:large={largeAvatar} />
+      <div class="avatar-placeholder">
+        <Avatar {address} rem={avatarRem} />
+      </div>
     {/if}
     {#if showAddress}
       {#key ensName}
@@ -94,7 +84,6 @@
 
 <style>
   .container {
-    height: 1.5rem;
     display: flex;
     gap: 0.5rem;
     position: relative;
@@ -102,31 +91,11 @@
     cursor: pointer;
   }
 
-  .large.container {
-    height: 2rem;
-  }
-
-  .avatar {
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 0.75rem;
-    user-select: none;
-    top: 0;
-    left: 0;
+  .avatar-container {
     position: absolute;
-    background-color: var(--color-foreground-level-5);
-  }
-
-  .large.avatar,
-  .large.avatar-placeholder {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 1rem;
   }
 
   .avatar-placeholder {
-    width: 1.5rem;
-    height: 1.5rem;
     opacity: 0;
   }
 

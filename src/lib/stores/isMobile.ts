@@ -1,5 +1,6 @@
 import { get, writable } from 'svelte/store';
 import { browser } from '$app/env';
+import convertRemToPixels from '$lib/utils/remToPx';
 
 interface isMobileState {
   isMobile?: boolean;
@@ -16,10 +17,6 @@ function updateIsMobile() {
     isMobile,
     screenWidth
   });
-}
-
-function convertRemToPixels(rem: number) {
-  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
 if (browser && get(store).isMobile === undefined) {

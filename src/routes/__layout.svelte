@@ -14,6 +14,7 @@
   import { walletStore } from '$lib/stores/wallet/wallet';
   import tick from '$lib/stores/tick';
   import scroll from '$lib/stores/scroll';
+  import cupertinoPane from '$lib/stores/cupertinoPane';
 
   enum Theme {
     DARK = 'dark',
@@ -33,6 +34,8 @@
   }
 
   onMount(async () => {
+    cupertinoPane.attach();
+
     await walletStore.initialize();
 
     prefersDarkThemes = window.matchMedia(
@@ -54,11 +57,25 @@
     return () => {
       window.removeEventListener('change', colorSchemeListener);
       scroll.detach();
+      cupertinoPane.detach();
     };
   });
 </script>
 
 <ModalLayout />
+<div class="cupertino-pane">
+  <div class="inner">
+    <div class="dragger" />
+    {#if $cupertinoPane.component}
+      <div class="content">
+        <svelte:component
+          this={$cupertinoPane.component}
+          {...$cupertinoPane.props}
+        />
+      </div>
+    {/if}
+  </div>
+</div>
 {#if $walletStore}
   <div class="wrapper" class:loading={$navigating}>
     <Header />
@@ -127,6 +144,35 @@
   main {
     display: flex;
     flex-direction: column;
+  }
+
+  .cupertino-pane {
+    background-color: var(--color-background);
+    border-radius: 1rem 1rem 0 0;
+  }
+
+  .cupertino-pane > .inner {
+    display: flex;
+    padding-top: 0.5rem;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cupertino-pane > .inner > .content {
+    width: 100%;
+    padding: 0.5rem 1rem;
+  }
+
+  .cupertino-pane > .inner > .dragger {
+    height: 0.3rem;
+    width: 2rem;
+    background-color: var(--color-foreground-level-3);
+    border-radius: 0.25rem;
+  }
+
+  :global(.cupertino-pane-wrapper .pane) {
+    padding-top: 0;
   }
 
   @media only screen and (max-width: 54rem) {
