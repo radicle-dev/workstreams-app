@@ -11,6 +11,11 @@ const config = {
       stream: 'stream-browserify'
     }
   },
+  build: {
+    commonjsOptions: {
+      esmExternals: ['cupertino-pane']
+    }
+  },
   optimizeDeps: {
     esbuildOptions: {
       // Node.js global to browser globalThis
