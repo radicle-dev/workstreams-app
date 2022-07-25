@@ -63,6 +63,11 @@ export default (() => {
   function _setListeners() {
     const p = get(pane);
 
+    p.on('onDidDismiss', () => {
+      scroll.unlock();
+      store.set({});
+    });
+
     p.on('onBackdropTap', () => {
       closeSheet();
     });
