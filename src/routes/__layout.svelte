@@ -148,6 +148,7 @@
   }
 
   .cupertino-pane {
+    display: none;
     background-color: var(--color-background);
     border-radius: 1rem 1rem 0 0;
   }
