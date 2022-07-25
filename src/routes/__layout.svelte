@@ -55,7 +55,9 @@
     scroll.attach();
 
     return () => {
+      console.log('layout unmounting');
       window.removeEventListener('change', colorSchemeListener);
+      cupertinoPane.detach();
       scroll.detach();
       cupertinoPane.detach();
     };

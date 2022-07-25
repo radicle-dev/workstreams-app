@@ -327,7 +327,7 @@
   .month-start-inbetween {
     position: relative;
     margin-top: -1rem;
-    z-index: 100;
+    z-index: 10;
     justify-content: center;
   }
 

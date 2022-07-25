@@ -15,6 +15,7 @@ export default (() => {
   const pane = writable<CupertinoPane>();
 
   function attach() {
+    console.log('attach');
     pane.set(
       new CupertinoPane('.cupertino-pane', {
         backdrop: true,
@@ -30,6 +31,7 @@ export default (() => {
   }
 
   function detach() {
+    console.log('detach');
     get(pane).destroy();
   }
 
@@ -45,28 +47,24 @@ export default (() => {
 
     store.set({ component, props });
     p.present({ animate: true });
+
+    scroll.lock();
   }
 
   function closeSheet() {
     const p = get(pane);
 
     p.hide();
+
+    scroll.unlock();
+    store.set({});
   }
 
   function _setListeners() {
     const p = get(pane);
 
-    p.on('onWillPresent', () => {
-      scroll.lock();
-    });
-
-    p.on('onDidDismiss', () => {
-      scroll.unlock();
-      store.set({});
-    });
-
     p.on('onBackdropTap', () => {
-      p.hide();
+      closeSheet();
     });
   }
 
