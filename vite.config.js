@@ -11,17 +11,13 @@ const config = {
       stream: 'stream-browserify'
     }
   },
-  build: {
-    commonjsOptions: {
-      esmExternals: ['cupertino-pane']
-    }
-  },
   optimizeDeps: {
     esbuildOptions: {
       // Node.js global to browser globalThis
       define: {
         global: 'globalThis',
-        'process.env': '{ "READABLE_STREAM": "disable" }'
+        'process.env':
+          '{ "READABLE_STREAM": "disable", "NODE_DEBUG": "disable" }'
       }
     }
   }

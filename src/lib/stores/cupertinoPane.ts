@@ -1,4 +1,4 @@
-import { CupertinoPane } from 'cupertino-pane';
+import * as CupertinoPane from 'cupertino-pane';
 
 import type { SvelteComponent } from 'svelte';
 import { get, writable } from 'svelte/store';
@@ -12,12 +12,12 @@ interface CupertinoSheetStore {
 
 export default (() => {
   const store = writable<CupertinoSheetStore>({});
-  const pane = writable<CupertinoPane>();
+  const pane = writable<CupertinoPane.CupertinoPane>();
 
   function attach() {
     console.log('attach');
     pane.set(
-      new CupertinoPane('.cupertino-pane', {
+      new CupertinoPane.CupertinoPane('.cupertino-pane', {
         backdrop: true,
         fastSwipeClose: true,
         buttonDestroy: false,
