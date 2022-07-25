@@ -8,7 +8,7 @@
   import Cross from 'radicle-design-system/icons/Cross.svelte';
   import Plus from 'radicle-design-system/icons/Plus.svelte';
   import { currencyFormat } from '$lib/utils/format';
-  import EarnedInbetweenDropdown from './EarnedInbetweenDropdown.svelte';
+  import EarnedInbetweenDropdown from './EarnedInbetweenDropdown/index.svelte';
   import Rate from '../Rate.svelte';
 
   export let historyItem: HistoryItem;
@@ -34,202 +34,199 @@
   }
 </script>
 
-<template>
-  {#if historyItem.type === HistoryItemType.MonthStartInbetween}
-    <div class="month-start-inbetween">
-      <div class="content">
-        <h3 class="title">
-          {isToday(historyItem.timestamp)
-            ? 'Today'
-            : Intl.DateTimeFormat('en-US', {
-                month: 'long',
-                year: 'numeric'
-              }).format(
-                new Date(
-                  historyItem.timestamp.getFullYear(),
-                  historyItem.timestamp.getMonth() - 1
-                )
-              )}
-        </h3>
-        <p class="amounts typo-text-small">
-          {#if historyItem.meta.earned.streams.length > 0}
-            earned <span class="amount typo-text-mono-bold"
-              >{currencyFormat(historyItem.meta.earned.total.wei)} DAI</span
-            >
-            from <EarnedInbetweenDropdown
-              amountsEarned={historyItem.meta.earned.streams}
-              amountsSpent={[]}
-              timeWindow={historyItem.meta.window}
-              >{historyItem.meta.earned.streams.length} workstream{historyItem
-                .meta.earned.streams.length > 1
-                ? 's'
-                : ''}</EarnedInbetweenDropdown
-            >
-            {#if historyItem.meta.spent.streams.length > 0}and{/if}
-          {/if}
-          {#if historyItem.meta.spent.streams.length > 0}
-            streamed <span class="amount typo-text-mono-bold"
-              >{currencyFormat(historyItem.meta.spent.total.wei)} DAI</span
-            >
-            to <EarnedInbetweenDropdown
-              amountsEarned={[]}
-              amountsSpent={historyItem.meta.spent.streams}
-              timeWindow={historyItem.meta.window}
-              >{historyItem.meta.spent.streams.length} workstream{historyItem
-                .meta.spent.streams.length > 1
-                ? 's'
-                : ''}</EarnedInbetweenDropdown
-            > this month
-          {/if}
-        </p>
-      </div>
-      <div class="line" />
-    </div>
-  {/if}
-  {#if historyItem.type === HistoryItemType.StreamedInbetween}
-    <div class="streamed-inbetween">
-      <div class="line" />
-      <div class="content">
-        <div class="circle" />
-        <p class="amounts typo-text-small">
-          {#if historyItem.meta.earned.streams.length > 0}
-            earned <span class="amount typo-text-mono-bold"
-              >{currencyFormat(historyItem.meta.earned.total.wei)} DAI</span
-            >
-            from <EarnedInbetweenDropdown
-              amountsEarned={historyItem.meta.earned.streams}
-              amountsSpent={[]}
-              timeWindow={historyItem.meta.window}
-              >{historyItem.meta.earned.streams.length} workstream{historyItem
-                .meta.earned.streams.length > 1
-                ? 's'
-                : ''}</EarnedInbetweenDropdown
-            >
-            {#if historyItem.meta.spent.streams.length > 0}and{/if}
-          {/if}
-          {#if historyItem.meta.spent.streams.length > 0}
-            streamed <span class="amount typo-text-mono-bold"
-              >{currencyFormat(historyItem.meta.spent.total.wei)} DAI</span
-            >
-            to <EarnedInbetweenDropdown
-              amountsEarned={[]}
-              amountsSpent={historyItem.meta.spent.streams}
-              timeWindow={historyItem.meta.window}
-              >{historyItem.meta.spent.streams.length} workstream{historyItem
-                .meta.spent.streams.length > 1
-                ? 's'
-                : ''}</EarnedInbetweenDropdown
-            >
-          {/if}
-          in {historyItem.meta.secs} seconds
-        </p>
-      </div>
-    </div>
-  {/if}
-  {#if historyItem.type === HistoryItemType.StreamStart}
-    <div class="history-card">
-      <div class="icon primary">
-        <Plus style="fill: var(--color-primary)" />
-      </div>
-      <h4>
-        {historyItem.meta.workstream.direction === 'incoming'
-          ? 'Started earning for'
-          : 'Started outgoing stream'}
-        <a
-          class="highlight"
-          href={`/workstream/${historyItem.meta.workstream.data.id}`}
-          >{historyItem.meta.workstream.data.title}</a
-        >
-      </h4>
-      <p class="date">{formatDate(historyItem.timestamp)}</p>
-      <p class="potential amount typo-text-mono-bold">
-        <Rate
-          ratePerSecond={historyItem.meta.workstream.onChainData.amtPerSec}
-          total={historyItem.meta.workstream.data.total}
-        />
+{#if historyItem.type === HistoryItemType.MonthStartInbetween}
+  <div class="month-start-inbetween">
+    <div class="content">
+      <h3 class="title">
+        {isToday(historyItem.timestamp)
+          ? 'Today'
+          : Intl.DateTimeFormat('en-US', {
+              month: 'long',
+              year: 'numeric'
+            }).format(
+              new Date(
+                historyItem.timestamp.getFullYear(),
+                historyItem.timestamp.getMonth() - 1
+              )
+            )}
+      </h3>
+      <p class="amounts typo-text-small">
+        {#if historyItem.meta.earned.streams.length > 0}
+          earned <span class="amount typo-text-mono-bold"
+            >{currencyFormat(historyItem.meta.earned.total.wei)} DAI</span
+          >
+          from <EarnedInbetweenDropdown
+            amountsEarned={historyItem.meta.earned.streams}
+            amountsSpent={[]}
+            timeWindow={historyItem.meta.window}
+            >{historyItem.meta.earned.streams.length} workstream{historyItem
+              .meta.earned.streams.length > 1
+              ? 's'
+              : ''}</EarnedInbetweenDropdown
+          >
+          {#if historyItem.meta.spent.streams.length > 0}and{/if}
+        {/if}
+        {#if historyItem.meta.spent.streams.length > 0}
+          streamed <span class="amount typo-text-mono-bold"
+            >{currencyFormat(historyItem.meta.spent.total.wei)} DAI</span
+          >
+          to <EarnedInbetweenDropdown
+            amountsEarned={[]}
+            amountsSpent={historyItem.meta.spent.streams}
+            timeWindow={historyItem.meta.window}
+            >{historyItem.meta.spent.streams.length} workstream{historyItem.meta
+              .spent.streams.length > 1
+              ? 's'
+              : ''}</EarnedInbetweenDropdown
+          > this month
+        {/if}
       </p>
     </div>
-  {/if}
-  {#if historyItem.type === HistoryItemType.Withdrawal}
-    <div class="history-card">
-      <div class="icon primary">
-        <CollectIcon style="fill: var(--color-primary)" />
-      </div>
-      <h4><span class="highlight">Withdrawal</span></h4>
-      <p class="date">{formatDate(historyItem.timestamp)}</p>
-      <p class="amount typo-text-mono-bold">
-        -{currencyFormat(historyItem.meta.amount.wei)} DAI
+  </div>
+{/if}
+{#if historyItem.type === HistoryItemType.StreamedInbetween}
+  <div class="streamed-inbetween">
+    <div class="line" />
+    <div class="content">
+      <div class="circle" />
+      <p class="amounts typo-text-small">
+        {#if historyItem.meta.earned.streams.length > 0}
+          earned <span class="amount typo-text-mono-bold"
+            >{currencyFormat(historyItem.meta.earned.total.wei)} DAI</span
+          >
+          from <EarnedInbetweenDropdown
+            amountsEarned={historyItem.meta.earned.streams}
+            amountsSpent={[]}
+            timeWindow={historyItem.meta.window}
+            >{historyItem.meta.earned.streams.length} workstream{historyItem
+              .meta.earned.streams.length > 1
+              ? 's'
+              : ''}</EarnedInbetweenDropdown
+          >
+          {#if historyItem.meta.spent.streams.length > 0}and{/if}
+        {/if}
+        {#if historyItem.meta.spent.streams.length > 0}
+          streamed <span class="amount typo-text-mono-bold"
+            >{currencyFormat(historyItem.meta.spent.total.wei)} DAI</span
+          >
+          to <EarnedInbetweenDropdown
+            amountsEarned={[]}
+            amountsSpent={historyItem.meta.spent.streams}
+            timeWindow={historyItem.meta.window}
+            >{historyItem.meta.spent.streams.length} workstream{historyItem.meta
+              .spent.streams.length > 1
+              ? 's'
+              : ''}</EarnedInbetweenDropdown
+          >
+        {/if}
+        in {historyItem.meta.secs} seconds
       </p>
     </div>
-  {/if}
-  {#if historyItem.type === HistoryItemType.StreamOutOfFunds}
-    <div class="history-card">
-      <div class="icon">
-        <Cross style="fill: var(--color-foreground-level-5)" />
-      </div>
-      <h4>
-        {historyItem.meta.workstream.direction} stream
-        <a
-          class="highlight"
-          href={`/workstream/${historyItem.meta.workstream.data.id}`}
-          >{historyItem.meta.workstream.data.title}</a
-        > ran out of funds
-      </h4>
-      <p>{formatDate(historyItem.timestamp)}</p>
+  </div>
+{/if}
+{#if historyItem.type === HistoryItemType.StreamStart}
+  <div class="history-card">
+    <div class="icon primary">
+      <Plus style="fill: var(--color-primary)" />
     </div>
-  {/if}
-  {#if historyItem.type === HistoryItemType.StreamPaused}
-    <div class="history-card">
-      <div class="icon">
-        <Pause style="fill: var(--color-foreground-level-5)" />
-      </div>
-      <h4>
-        {historyItem.meta.workstream.direction} stream
-        <a
-          class="highlight"
-          href={`/workstream/${historyItem.meta.workstream.data.id}`}
-          >{historyItem.meta.workstream.data.title}</a
-        > paused
-      </h4>
-      <p>{formatDate(historyItem.timestamp)}</p>
+    <h4>
+      {historyItem.meta.workstream.direction === 'incoming'
+        ? 'Started earning for'
+        : 'Started outgoing stream'}
+      <a
+        class="highlight"
+        href={`/workstream/${historyItem.meta.workstream.data.id}`}
+        >{historyItem.meta.workstream.data.title}</a
+      >
+    </h4>
+    <p class="date">{formatDate(historyItem.timestamp)}</p>
+    <p class="potential amount typo-text-mono-bold">
+      <Rate
+        ratePerSecond={historyItem.meta.workstream.onChainData.amtPerSec}
+        total={historyItem.meta.workstream.data.total}
+      />
+    </p>
+  </div>
+{/if}
+{#if historyItem.type === HistoryItemType.Withdrawal}
+  <div class="history-card">
+    <div class="icon primary">
+      <CollectIcon style="fill: var(--color-primary)" />
     </div>
-  {/if}
-  {#if historyItem.type === HistoryItemType.StreamToppedUp}
-    <div class="history-card">
-      <div class="icon primary">
-        <Plus style="fill: var(--color-primary)" />
-      </div>
-      <h4>
-        {historyItem.meta.workstream.direction} stream
-        <a
-          class="highlight"
-          href={`/workstream/${historyItem.meta.workstream.data.id}`}
-          >{historyItem.meta.workstream.data.title}</a
-        >
-        topped up with
-        <span class="typo-text-mono-bold"
-          >{currencyFormat(historyItem.meta.amount.wei)} DAI</span
-        >
-      </h4>
-      <p>{formatDate(historyItem.timestamp)}</p>
+    <h4><span class="highlight">Withdrawal</span></h4>
+    <p class="date">{formatDate(historyItem.timestamp)}</p>
+    <p class="amount typo-text-mono-bold">
+      -{currencyFormat(historyItem.meta.amount.wei)} DAI
+    </p>
+  </div>
+{/if}
+{#if historyItem.type === HistoryItemType.StreamOutOfFunds}
+  <div class="history-card">
+    <div class="icon">
+      <Cross style="fill: var(--color-foreground-level-5)" />
     </div>
-  {/if}
-  {#if historyItem.type === HistoryItemType.StreamUnpaused}
-    <div class="history-card">
-      <div class="icon primary">
-        <Plus style="fill: var(--color-primary)" />
-      </div>
-      <h4>
-        Stream <a
-          class="highlight"
-          href={`/workstream/${historyItem.meta.workstream.data.id}`}
-          >{historyItem.meta.workstream.data.title}</a
-        > unpaused
-      </h4>
-      <p>{formatDate(historyItem.timestamp)}</p>
+    <h4>
+      {historyItem.meta.workstream.direction} stream
+      <a
+        class="highlight"
+        href={`/workstream/${historyItem.meta.workstream.data.id}`}
+        >{historyItem.meta.workstream.data.title}</a
+      > ran out of funds
+    </h4>
+    <p>{formatDate(historyItem.timestamp)}</p>
+  </div>
+{/if}
+{#if historyItem.type === HistoryItemType.StreamPaused}
+  <div class="history-card">
+    <div class="icon">
+      <Pause style="fill: var(--color-foreground-level-5)" />
     </div>
-  {/if}
-</template>
+    <h4>
+      {historyItem.meta.workstream.direction} stream
+      <a
+        class="highlight"
+        href={`/workstream/${historyItem.meta.workstream.data.id}`}
+        >{historyItem.meta.workstream.data.title}</a
+      > paused
+    </h4>
+    <p>{formatDate(historyItem.timestamp)}</p>
+  </div>
+{/if}
+{#if historyItem.type === HistoryItemType.StreamToppedUp}
+  <div class="history-card">
+    <div class="icon primary">
+      <Plus style="fill: var(--color-primary)" />
+    </div>
+    <h4>
+      {historyItem.meta.workstream.direction} stream
+      <a
+        class="highlight"
+        href={`/workstream/${historyItem.meta.workstream.data.id}`}
+        >{historyItem.meta.workstream.data.title}</a
+      >
+      topped up with
+      <span class="typo-text-mono-bold"
+        >{currencyFormat(historyItem.meta.amount.wei)} DAI</span
+      >
+    </h4>
+    <p>{formatDate(historyItem.timestamp)}</p>
+  </div>
+{/if}
+{#if historyItem.type === HistoryItemType.StreamUnpaused}
+  <div class="history-card">
+    <div class="icon primary">
+      <Plus style="fill: var(--color-primary)" />
+    </div>
+    <h4>
+      Stream <a
+        class="highlight"
+        href={`/workstream/${historyItem.meta.workstream.data.id}`}
+        >{historyItem.meta.workstream.data.title}</a
+      > unpaused
+    </h4>
+    <p>{formatDate(historyItem.timestamp)}</p>
+  </div>
+{/if}
 
 <style scoped>
   .history-card {
@@ -327,31 +324,6 @@
     position: relative;
     margin-top: -1rem;
     justify-content: center;
-  }
-
-  .month-start-inbetween > .line {
-    position: absolute;
-    top: 0;
-    left: 2.5rem;
-    height: 100%;
-    z-index: -1;
-    width: 0.125rem;
-    background: linear-gradient(
-      180deg,
-      var(--color-foreground-level-2),
-      var(--color-background) 2.5rem,
-      var(--color-background) calc(100% - 0.75rem),
-      var(--color-foreground-level-2)
-    );
-  }
-
-  .month-start-inbetween:first-child .line {
-    background: linear-gradient(
-      180deg,
-      var(--color-background),
-      var(--color-background) calc(100% - 0.75rem),
-      var(--color-foreground-level-2)
-    );
   }
 
   .month-start-inbetween > .content {
