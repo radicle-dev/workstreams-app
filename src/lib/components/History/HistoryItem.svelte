@@ -79,9 +79,8 @@
                 .meta.spent.streams.length > 1
                 ? 's'
                 : ''}</EarnedInbetweenDropdown
-            >
+            > this month
           {/if}
-          this month
         </p>
       </div>
       <div class="line" />
@@ -292,7 +291,7 @@
     margin-top: -1rem;
   }
 
-  .streamed-inbetween .content {
+  .streamed-inbetween > .content {
     margin: 2rem 0rem 2rem 4.5rem;
   }
 
@@ -316,7 +315,7 @@
     background-color: var(--color-background);
   }
 
-  .streamed-inbetween .line {
+  .streamed-inbetween > .line {
     position: absolute;
     left: 2.5rem;
     height: 100%;
@@ -327,11 +326,10 @@
   .month-start-inbetween {
     position: relative;
     margin-top: -1rem;
-    z-index: 10;
     justify-content: center;
   }
 
-  .month-start-inbetween .line {
+  .month-start-inbetween > .line {
     position: absolute;
     top: 0;
     left: 2.5rem;
@@ -356,9 +354,44 @@
     );
   }
 
-  .month-start-inbetween .content {
+  .month-start-inbetween > .content {
     margin: 3rem 1.5rem 2rem 1.5rem;
     display: flex;
     justify-content: space-between;
+  }
+
+  @media only screen and (max-width: 54rem) {
+    .history-card {
+      padding: 1rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .month-start-inbetween > .content {
+      margin: 3rem 1rem 2rem 1rem;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .icon {
+      flex-shrink: 0;
+    }
+
+    .streamed-inbetween > .content {
+      margin: 2rem 0rem 2rem 3.5rem;
+    }
+
+    .streamed-inbetween > .line {
+      left: 2rem;
+    }
+
+    .streamed-inbetween .circle {
+      left: 1.55rem;
+    }
+
+    .month-start-inbetween > .line {
+      left: 2rem;
+    }
   }
 </style>

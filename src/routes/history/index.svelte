@@ -57,61 +57,63 @@
   <title>Workstreams · Account History</title>
 </svelte:head>
 
-<template>
-  {#if $walletStore.ready}
-    <h1>Account history</h1>
-    {#if !loading}
-      <div in:fly|local={{ y: 10, duration: 300 }} class="stats">
-        <div class="key-value">
-          <h4>Total earned</h4>
-          <p class="amount typo-text-mono-bold">
-            +{($estimates.totalBalance &&
-              currencyFormat($estimates.totalBalance.wei)) ||
-              '…'} DAI
-          </p>
-        </div>
-        <div class="key-value">
-          <h4>Withdrawable now</h4>
-          <p class="typo-text-mono-bold">
-            {($drips.collectable && currencyFormat($drips.collectable.wei)) ||
-              '…'} DAI
-          </p>
-        </div>
+{#if $walletStore.ready}
+  <h1 class="inset">Account history</h1>
+  {#if !loading}
+    <div in:fly|local={{ y: 10, duration: 300 }} class="stats inset">
+      <div class="key-value">
+        <h4>Total earned</h4>
+        <p class="amount typo-text-mono-bold">
+          +{($estimates.totalBalance &&
+            currencyFormat($estimates.totalBalance.wei)) ||
+            '…'} DAI
+        </p>
       </div>
-      {#if $history.length > 0}
-        <div in:fly={{ y: 10, duration: 300, delay: 100 }} class="history">
-          {#each $history as historyItem}
-            <HistoryItem {historyItem} />
-          {/each}
-        </div>
-      {:else}
-        <EmptyState
-          emoji="👀"
-          headerText="No activity yet"
-          text="Here's where you'll be able to see a history of all your incoming and outgoing workstreams."
-        />
-      {/if}
+      <div class="key-value">
+        <h4>Withdrawable now</h4>
+        <p class="typo-text-mono-bold">
+          {($drips.collectable && currencyFormat($drips.collectable.wei)) ||
+            '…'} DAI
+        </p>
+      </div>
+    </div>
+    {#if $history.length > 0}
+      <div in:fly={{ y: 10, duration: 300, delay: 100 }} class="history">
+        {#each $history as historyItem}
+          <HistoryItem {historyItem} />
+        {/each}
+      </div>
     {:else}
-      <div in:fly|local={{ y: 10, duration: 300 }} class="loading">
-        <Spinner />
-      </div>
-    {/if}
-  {:else}
-    <div
-      class="empty-wrapper"
-      transition:fly|local={{ y: 10, duration: 300, delay: 100 }}
-    >
       <EmptyState
-        headerText="Sign in to view your account history"
+        emoji="👀"
+        headerText="No activity yet"
         text="Here's where you'll be able to see a history of all your incoming and outgoing workstreams."
       />
+    {/if}
+  {:else}
+    <div in:fly|local={{ y: 10, duration: 300 }} class="loading">
+      <Spinner />
     </div>
   {/if}
-</template>
+{:else}
+  <div
+    class="empty-wrapper"
+    transition:fly|local={{ y: 10, duration: 300, delay: 100 }}
+  >
+    <EmptyState
+      headerText="Sign in to view your account history"
+      text="Here's where you'll be able to see a history of all your incoming and outgoing workstreams."
+    />
+  </div>
+{/if}
 
 <style scoped>
   h1 {
     margin-bottom: 3rem;
+  }
+
+  .inset {
+    margin-left: 1rem;
   }
 
   .stats {
@@ -135,8 +137,6 @@
   }
 
   .history {
-    margin-left: -1.5rem;
-    width: calc(100% + 2rem);
     flex-direction: column;
     display: flex;
   }
@@ -156,5 +156,12 @@
     position: absolute;
     width: 100vw;
     left: 0;
+  }
+
+  @media only screen and (max-width: 54rem) {
+    .stats {
+      flex-direction: column;
+      gap: 2rem;
+    }
   }
 </style>
