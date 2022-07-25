@@ -15,7 +15,6 @@ export default (() => {
   const pane = writable<CupertinoPane.CupertinoPane>();
 
   function attach() {
-    console.log('attach');
     pane.set(
       new CupertinoPane.CupertinoPane('.cupertino-pane', {
         backdrop: true,
@@ -31,7 +30,6 @@ export default (() => {
   }
 
   function detach() {
-    console.log('detach');
     get(pane).destroy();
   }
 
