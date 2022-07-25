@@ -28,10 +28,10 @@
   .spread {
     display: flex;
     flex: 1;
-    align-items: center;
-    gap: 0.4rem;
+    flex-direction: column;
   }
   .timeframe {
     color: var(--color-foreground-level-6);
+    margin-left: 2rem;
   }
 </style>

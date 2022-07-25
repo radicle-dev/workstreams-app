@@ -45,9 +45,7 @@
     <div class="owner">
       <span class="label">created by</span>
       <User address={workstream.creator} />
-      <span class="label" style="margin-left: 0.5rem;"
-        >on {dateFormat(workstream.created_at)}</span
-      >
+      <span class="label">on {dateFormat(workstream.created_at)}</span>
     </div>
     {#if workstream.state === WorkstreamState.ACTIVE}
       <ActiveStream {workstream} {acceptedApplication} />
@@ -96,11 +94,9 @@
   .owner {
     display: flex;
     align-items: center;
-    user-select: none;
-  }
-
-  .owner > span {
-    margin-right: 0.5rem;
+    color: var(--color-foreground-level-6);
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   .desc {
