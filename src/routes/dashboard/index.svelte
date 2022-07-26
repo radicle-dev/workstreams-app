@@ -286,6 +286,7 @@
   @media only screen and (max-width: 54rem) {
     .workstreams {
       grid-template-columns: minmax(0, 1fr);
+      gap: 0.5rem;
     }
   }
 </style>

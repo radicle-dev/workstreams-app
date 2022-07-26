@@ -9,12 +9,14 @@
 
   export let enrichedWorkstream: EnrichedWorkstream;
 
-  $: ws = enrichedWorkstream.data;
-  $: estimate = $estimates.workstreams[ws.id];
+  $: ws = enrichedWorkstream?.data;
+  $: estimate = ws && $estimates.workstreams[ws.id];
 
   enum VisualState {
     /** Stream is set up and actively dripping */
     ACTIVE,
+    /** Stream needds to be created by the creator */
+    PENDING_SETUP,
     /** Transaction to set up Drip is pending in Gnosis Safe */
     PENDING_CONFIRMATION,
     /** Stream is active, but no more balance is remaining in Drips account */
@@ -29,6 +31,7 @@
 
   $: visualStateLabel = {
     [VisualState.ACTIVE]: 'Active',
+    [VisualState.PENDING_SETUP]: 'Pending setup',
     [VisualState.PENDING_CONFIRMATION]: 'Pending confirmation',
     [VisualState.OUT_OF_FUNDS]: 'Out of funds',
     [VisualState.PAUSED]: 'Paused',
@@ -37,6 +40,7 @@
 
   $: visualStateColor = {
     [VisualState.ACTIVE]: '--color-positive',
+    [VisualState.PENDING_SETUP]: '--color-caution',
     [VisualState.OUT_OF_FUNDS]: '--color-negative',
     [VisualState.PAUSED]: '--color-caution',
     [VisualState.PENDING_CONFIRMATION]: '--color-caution',
@@ -44,7 +48,7 @@
   }[visualState];
 
   $: {
-    switch (ws.state) {
+    switch (ws?.state) {
       case WorkstreamState.ACTIVE: {
         if (
           enrichedWorkstream?.onChainData &&
@@ -64,17 +68,27 @@
         visualState = VisualState.CLOSED;
         break;
       }
+      case WorkstreamState.PENDING: {
+        visualState = VisualState.PENDING_SETUP;
+        break;
+      }
     }
   }
 </script>
 
-<div
-  class="state-badge"
-  style={`background-color: var(${visualStateColor}-level-1`}
->
-  <span class="typo-text-bold" style={`color: var(${visualStateColor}-level-6`}
-    >{visualStateLabel}</span
-  >
+<div>
+  {#if ws}
+    <div
+      class="state-badge"
+      style={`background-color: var(${visualStateColor}-level-1`}
+    >
+      <span
+        class="typo-text-bold"
+        style={`color: var(${visualStateColor}-level-6`}
+        >{visualStateLabel}</span
+      >
+    </div>
+  {/if}
 </div>
 
 <style>

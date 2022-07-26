@@ -1,5 +1,7 @@
 <script lang="ts">
   import Plus from 'radicle-design-system/icons/Plus.svelte';
+  import type { DripsReceiverStructOutput } from 'drips-sdk';
+  import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
 
   import * as modal from '$lib/utils/modal';
   import Card from '$components/Card.svelte';
@@ -8,7 +10,7 @@
   import Button from 'radicle-design-system/Button.svelte';
   import {
     Currency,
-    type Application,
+    WorkstreamState,
     type Workstream
   } from '$lib/stores/workstreams/types';
   import { workstreamsStore } from '$lib/stores/workstreams';
@@ -20,7 +22,14 @@
   import PauseUnpauseStep from '../PauseStreamSteps/PauseUnpause.svelte';
   import AwaitingSafeTransactionStep from '../AwaitingSafeTransactionStep.svelte';
   import WorkstreamStateBadge from '../WorkstreamStateBadge.svelte';
-  import type { DripsReceiverStructOutput } from 'drips-sdk';
+
+  import IntroStep from '../SetUpPaymentSteps/steps/Intro.svelte';
+  import SetDaiAllowanceStep from '../SetUpPaymentSteps/steps/SetDaiAllowance.svelte';
+  import ConfirmValuesStep from '../SetUpPaymentSteps/steps/ConfirmValues.svelte';
+
+  import GnosisSafeSetDaiAllowance from '../SetUpPaymentSteps/steps/gnosis-safe/SetDaiAllowance.svelte';
+  import GnosisSafeConfirmValuesStep from '../SetUpPaymentSteps/steps/gnosis-safe/ConfirmValues.svelte';
+  import GnosisSafeWaitingForConfirmationStep from '../SetUpPaymentSteps/steps/gnosis-safe/WaitingForConfirmation.svelte';
 
   export let workstream: Workstream;
 
@@ -29,13 +38,6 @@
 
   $: enrichedWorkstream = $workstreamsStore.workstreams[workstream.id];
   $: isOwner = workstream.creator === $walletStore.address;
-  $: isReceiver = workstream.acceptedApplication === $walletStore.address;
-  $: activeSince =
-    enrichedWorkstream?.onChainData?.streamSetUp &&
-    new Date(
-      enrichedWorkstream.onChainData?.dripsUpdatedEvents[0].fromBlock
-        .timestamp * 1000
-    );
 
   function refreshStream() {
     workstreamsStore.getWorkstream(enrichedWorkstream.data.id);
@@ -67,7 +69,7 @@
   }
 
   $: lastStreamRate =
-    enrichedWorkstream.onChainData?.dripsUpdatedEvents
+    enrichedWorkstream?.onChainData?.dripsUpdatedEvents
       .reduce<DripsReceiverStructOutput[]>(
         (prev, dew) => [...prev, ...dew.event.args.receivers],
         []
@@ -77,6 +79,15 @@
       )
       .find((r) => !r.amtPerSec.isZero())
       ?.amtPerSec?.toBigInt() || workstream.ratePerSecond.wei;
+
+  $: setUpPaymentSteps = $walletStore.safe?.address
+    ? [
+        IntroStep,
+        GnosisSafeSetDaiAllowance,
+        GnosisSafeConfirmValuesStep,
+        GnosisSafeWaitingForConfirmationStep
+      ]
+    : [IntroStep, SetDaiAllowanceStep, ConfirmValuesStep];
 </script>
 
 <Card hoverable={false}>
@@ -84,22 +95,6 @@
     <div class="header">
       <h3 style="margin-bottom: 1rem;">Payment stream</h3>
       <WorkstreamStateBadge {enrichedWorkstream} />
-    </div>
-    <div class="timerate">
-      <div style="text-align: right;" />
-      <div>
-        <!-- {#if activeSince}
-          <p class="timeframe">
-            Active since {Intl.DateTimeFormat('en-US', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: 'numeric'
-            }).format(activeSince)}
-          </p>
-        {/if} -->
-      </div>
     </div>
   </div>
   <div slot="bottom" class="content">
@@ -121,7 +116,6 @@
         </span>
       {/if}
     </div>
-
     <div class="stream-actions">
       <div style="display: flex; gap: .75rem;">
         {#if isOwner && $walletStore.ready}
@@ -133,9 +127,22 @@
             >
           {:else if estimate && estimate.paused && estimate.remainingBalance.wei > BigInt(0)}
             <Button
-              variant="primary-outline"
+              variant="primary"
               on:click={() => pauseUnpause('unpause')}
               icon={PauseIcon}>Unpause</Button
+            >
+          {/if}
+          {#if workstream.state === WorkstreamState.PENDING}
+            <Button
+              on:click={() =>
+                modal.show(StepperModal, undefined, {
+                  stepProps: {
+                    workstream
+                  },
+                  steps: setUpPaymentSteps
+                })}
+              variant="primary"
+              icon={TokenStreams}>Set up stream</Button
             >
           {/if}
           {#if enrichedWorkstream?.onChainData?.streamSetUp && estimate && estimate.paused === false}
@@ -204,13 +211,6 @@
 
   .amount {
     color: var(--color-primary);
-  }
-
-  .timerate {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1.5rem;
   }
 
   .stream-actions {

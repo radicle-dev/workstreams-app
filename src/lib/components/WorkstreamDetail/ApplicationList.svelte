@@ -1,6 +1,5 @@
 <script lang="ts">
   import Button from 'radicle-design-system/Button.svelte';
-  import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
   import CheckCircle from 'radicle-design-system/icons/CheckCircle.svelte';
   import Cross from 'radicle-design-system/icons/Cross.svelte';
 
@@ -14,20 +13,9 @@
 
   import {
     ApplicationState,
-    WorkstreamState,
     type Application,
     type Workstream
   } from '$lib/stores/workstreams/types';
-  import { walletStore } from '$lib/stores/wallet/wallet';
-  import StepperModal from '../StepperModal/index.svelte';
-
-  import IntroStep from '../SetUpPaymentSteps/steps/Intro.svelte';
-  import SetDaiAllowanceStep from '../SetUpPaymentSteps/steps/SetDaiAllowance.svelte';
-  import ConfirmValuesStep from '../SetUpPaymentSteps/steps/ConfirmValues.svelte';
-
-  import GnosisSafeSetDaiAllowance from '../SetUpPaymentSteps/steps/gnosis-safe/SetDaiAllowance.svelte';
-  import GnosisSafeConfirmValuesStep from '../SetUpPaymentSteps/steps/gnosis-safe/ConfirmValues.svelte';
-  import GnosisSafeWaitingForConfirmationStep from '../SetUpPaymentSteps/steps/gnosis-safe/WaitingForConfirmation.svelte';
 
   export let workstream: Workstream;
   export let applications: Application[];
@@ -40,20 +28,9 @@
     } else if (a.state === ApplicationState.ACCEPTED) {
       return -1;
     } else {
-      return 0;
+      return -1;
     }
   });
-
-  let actionsDisabled = false;
-
-  $: setUpPaymentSteps = $walletStore.safe?.address
-    ? [
-        IntroStep,
-        GnosisSafeSetDaiAllowance,
-        GnosisSafeConfirmValuesStep,
-        GnosisSafeWaitingForConfirmationStep
-      ]
-    : [IntroStep, SetDaiAllowanceStep, ConfirmValuesStep];
 
   const applicationColorMap = {
     [ApplicationState.WAITING]: 'var(--color-primary-level-1)',
@@ -88,23 +65,6 @@
                   total={application.counterOffer.total}
                 />
               </p>
-            {/if}
-          {/if}
-          {#if application.state === ApplicationState.ACCEPTED}
-            {#if workstream.state === WorkstreamState.PENDING}
-              <Button
-                disabled={actionsDisabled}
-                on:click={() =>
-                  modal.show(StepperModal, undefined, {
-                    stepProps: {
-                      workstream,
-                      application
-                    },
-                    steps: setUpPaymentSteps
-                  })}
-                variant="primary-outline"
-                icon={TokenStreams}>Set up stream</Button
-              >
             {/if}
           {/if}
           <Button

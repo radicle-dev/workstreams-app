@@ -52,7 +52,7 @@
         <div class="name-and-state">
           <h3 class="name">{ws.title}</h3>
           {#if onChainDataReady && enrichedWorkstream}
-            <div transition:fade|local>
+            <div class="state-badge" transition:fade|local>
               <WorkstreamStateBadge {enrichedWorkstream} />
             </div>
           {/if}
@@ -98,10 +98,12 @@
     justify-content: space-between;
     gap: 1rem;
   }
+
   .name-and-state {
     margin-bottom: 0.75rem;
     display: flex;
     justify-content: space-between;
+    gap: 0.5rem;
   }
 
   .name {
@@ -127,5 +129,9 @@
   .amount {
     color: var(--color-primary);
     font-weight: 600;
+  }
+
+  .state-badge {
+    flex-shrink: 0;
   }
 </style>
