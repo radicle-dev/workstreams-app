@@ -15,6 +15,7 @@
   import { walletStore } from '$lib/stores/wallet/wallet';
   import scroll from '$lib/stores/scroll';
   import isMobile from '$lib/stores/isMobile';
+  import Plus from 'radicle-design-system/icons/Plus.svelte';
 
   $: scrolledDown = $scroll.pos > 0;
   $: hide =
@@ -87,6 +88,17 @@
           </div>
         </div>
       </div>
+      {#if onDashboard}
+        <div
+          transition:fly={{ y: 10, duration: 300 }}
+          class="mobile-create-workstream-button"
+          on:click={() => modal.show(CreateModal)}
+        >
+          <Plus
+            style="fill: var(--color-background); height: 2rem; width: 2rem;"
+          />
+        </div>
+      {/if}
     {/if}
   </div>
 </header>
@@ -163,6 +175,10 @@
     gap: 0.75rem;
   }
 
+  .mobile-create-workstream-button {
+    display: none;
+  }
+
   @media only screen and (max-width: 54rem) {
     header {
       top: initial;
@@ -182,6 +198,22 @@
     .balance-button,
     .create-button {
       display: none;
+    }
+
+    .mobile-create-workstream-button {
+      display: block;
+      position: fixed;
+      right: 0.5rem;
+      bottom: 5rem;
+      height: 4rem;
+      width: 4rem;
+      border-radius: 2rem;
+      background-color: var(--color-primary);
+      color: var(--color-background);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: var(--elevation-medium);
     }
   }
 </style>
