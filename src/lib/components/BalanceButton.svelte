@@ -5,12 +5,17 @@
   import InfoCircle from 'radicle-design-system/icons/InfoCircle.svelte';
   import RoadIcon from 'radicle-design-system/icons/Road.svelte';
 
+  import * as modal from '$lib/utils/modal';
   import drips from '$lib/stores/drips';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import LoadingDots from './LoadingDots.svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
+  import StepperModal from '$lib/components/StepperModal/index.svelte';
+  import Intro from '$lib/components/WithdrawSteps/Intro.svelte';
+  import { walletStore } from '$lib/stores/wallet/wallet';
+  import AwaitingSafeTransactionStep from './AwaitingSafeTransactionStep.svelte';
 
   const estimates = workstreamsStore.estimates;
 
@@ -22,19 +27,12 @@
     $drips.collectable && currencyFormat($drips.collectable.wei);
   let hover = false;
 
-  let txInFlight = false;
-  $: collectBlocked =
-    $drips.collectable === undefined ||
-    $drips.collectable?.wei === BigInt(0) ||
-    txInFlight;
+  $: collectBlocked = $drips.collectable?.wei === BigInt(0);
 
   async function collect() {
-    txInFlight = true;
-    try {
-      await drips.collect();
-    } finally {
-      txInFlight = false;
-    }
+    modal.show(StepperModal, undefined, {
+      steps: [Intro, $walletStore.safe?.ready && AwaitingSafeTransactionStep]
+    });
   }
 
   function navigate(path: string) {

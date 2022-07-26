@@ -1,20 +1,22 @@
 <script lang="ts">
+  import Button from 'radicle-design-system/Button.svelte';
+  import Road from 'radicle-design-system/icons/Road.svelte';
+  import Topup from 'radicle-design-system/icons/Topup.svelte';
+
+  import * as modal from '$lib/utils/modal';
   import { goto } from '$app/navigation';
   import cupertinoPane from '$lib/stores/cupertinoPane';
   import drips from '$lib/stores/drips';
-
   import ensNames from '$lib/stores/ensNames';
   import clearStores from '$lib/stores/utils/clearStores';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import { currencyFormat } from '$lib/utils/format';
-  import Button from 'radicle-design-system/Button.svelte';
-
-  import Road from 'radicle-design-system/icons/Road.svelte';
-  import Topup from 'radicle-design-system/icons/Topup.svelte';
-  import Avatar from '../Avatar.svelte';
-
+  import Avatar from '$lib/components/Avatar.svelte';
+  import StepperModal from '$lib/components/StepperModal/index.svelte';
+  import Intro from '$lib/components/WithdrawSteps/Intro.svelte';
   import AccountSheetItem from './components/AccountSheetItem.svelte';
+  import AwaitingSafeTransactionStep from '$lib/components/AwaitingSafeTransactionStep.svelte';
 
   const estimates = workstreamsStore.estimates;
 
@@ -32,6 +34,12 @@
     cupertinoPane.closeSheet();
     fn();
   }
+
+  function openWithdrawModal() {
+    modal.show(StepperModal, undefined, {
+      steps: [Intro, $walletStore.safe?.ready && AwaitingSafeTransactionStep]
+    });
+  }
 </script>
 
 <div class="items">
@@ -44,8 +52,10 @@
   <div class="divider" />
   <AccountSheetItem
     title="Withdraw funds"
+    disabled={!withdrawable || withdrawable === '0'}
     subtitle={withdrawable && `${withdrawable} DAI withdrawable now`}
     icon={Topup}
+    onClick={() => closeAnd(openWithdrawModal)}
   />
   <AccountSheetItem
     title="View account history"

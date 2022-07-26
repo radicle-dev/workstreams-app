@@ -3,12 +3,17 @@
   import type { SvelteComponent } from 'svelte';
 
   export let title: string;
+  export let disabled = false;
   export let subtitle: string | undefined = undefined;
   export let icon: typeof SvelteComponent | undefined = undefined;
-  export let onClick: () => void | undefined = undefined;
+  export let onClick: () => void = () => undefined;
 </script>
 
-<div class="account-sheet-item-wrapper" on:click={() => onClick()}>
+<div
+  class:disabled
+  class="account-sheet-item-wrapper"
+  on:click={!disabled && (() => onClick())}
+>
   <slot name="left">
     <div class="icon-wrapper">
       {#if icon}<svelte:component
@@ -32,6 +37,10 @@
     cursor: pointer;
     gap: 0.5rem;
     align-items: center;
+  }
+
+  .account-sheet-item-wrapper.disabled {
+    opacity: 0.5;
   }
 
   .icon-wrapper {
