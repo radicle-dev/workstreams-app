@@ -361,9 +361,5 @@
     .streamed-inbetween .circle {
       left: 1.55rem;
     }
-
-    .month-start-inbetween > .line {
-      left: 2rem;
-    }
   }
 </style>
