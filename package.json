@@ -1,6 +1,7 @@
 {
   "name": "workstreams-app",
   "version": "0.0.1",
+  "prepare": "svelte-kit sync",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
