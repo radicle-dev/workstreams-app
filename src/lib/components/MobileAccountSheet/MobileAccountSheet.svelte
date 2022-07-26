@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import cupertinoPane from '$lib/stores/cupertinoPane';
+  import drips from '$lib/stores/drips';
 
   import ensNames from '$lib/stores/ensNames';
   import clearStores from '$lib/stores/utils/clearStores';
@@ -18,8 +19,9 @@
   const estimates = workstreamsStore.estimates;
 
   $: estimate =
-    $estimates.totalBalance !== undefined &&
-    currencyFormat($estimates.totalBalance);
+    $estimates.totalBalance && currencyFormat($estimates.totalBalance);
+
+  $: withdrawable = $drips.collectable && currencyFormat($drips.collectable);
 
   async function logOut() {
     await walletStore.disconnect();
@@ -42,11 +44,12 @@
   <div class="divider" />
   <AccountSheetItem
     title="Withdraw funds"
-    subtitle={estimate && `Earned ${estimate} DAI in total`}
+    subtitle={withdrawable && `${withdrawable} DAI withdrawable now`}
     icon={Topup}
   />
   <AccountSheetItem
     title="View account history"
+    subtitle={estimate && `Earned ${estimate} DAI in total`}
     icon={Road}
     onClick={() => closeAnd(() => goto('/history'))}
   />
