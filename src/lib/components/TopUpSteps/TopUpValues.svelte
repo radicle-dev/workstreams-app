@@ -183,6 +183,7 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 2rem;
+    text-align: left;
   }
 
   p {
@@ -195,6 +196,7 @@
     flex-direction: column;
     gap: 0.75rem;
     flex: 1;
+    width: 100%;
   }
 
   .narrow {
@@ -203,7 +205,6 @@
 
   .value {
     font-size: 1.5rem;
-    height: 2.5rem;
     line-height: 2.5rem;
     text-align: left;
     color: var(--color-foreground-level-6);
@@ -219,5 +220,11 @@
     display: flex;
     gap: 2rem;
     width: 100%;
+  }
+
+  @media only screen and (max-width: 54rem) {
+    .row {
+      flex-direction: column;
+    }
   }
 </style>
