@@ -11,7 +11,7 @@
   import clearStores from '$lib/stores/utils/clearStores';
   import { walletStore } from '$lib/stores/wallet/wallet';
   import { workstreamsStore } from '$lib/stores/workstreams';
-  import { currencyFormat } from '$lib/utils/format';
+  import { currencyFormat, formatAddress } from '$lib/utils/format';
   import Avatar from '$lib/components/Avatar.svelte';
   import StepperModal from '$lib/components/StepperModal/index.svelte';
   import Intro from '$lib/components/WithdrawSteps/Intro.svelte';
@@ -43,7 +43,11 @@
 </script>
 
 <div class="items">
-  <AccountSheetItem title={$ensNames[$walletStore.address]?.name || '...'}>
+  <AccountSheetItem
+    title={$ensNames[$walletStore.address]?.name ||
+      formatAddress($walletStore.address) ||
+      '...'}
+  >
     <Avatar slot="left" address={$walletStore.address} rem={3} />
     <Button variant="outline" slot="right" on:click={() => closeAnd(logOut)}
       >Sign out</Button
