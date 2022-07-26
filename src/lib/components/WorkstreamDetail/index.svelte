@@ -41,8 +41,8 @@
 
 <div class="container">
   <div class="metadata">
-    <h1 style="margin-bottom: 0.75rem;">{workstream.title}</h1>
-    <div class="owner">
+    <h1 class="inset" style="margin-bottom: 0.75rem;">{workstream.title}</h1>
+    <div class="inset owner">
       <span class="label">created by</span>
       <User address={workstream.creator} />
       <span class="label">on {dateFormat(workstream.created_at)}</span>
@@ -88,6 +88,10 @@
     margin: 0 auto;
     width: 100%;
   }
+
+  .inset {
+    padding: 0 1rem 0 1rem;
+  }
   .metadata > * {
     margin-bottom: 2rem;
   }
@@ -96,12 +100,13 @@
     align-items: center;
     color: var(--color-foreground-level-6);
     flex-wrap: wrap;
-    gap: 0.5rem;
+    column-gap: 0.5rem;
   }
 
   .desc {
     margin-top: 2rem;
     color: var(--color-foreground);
     user-select: text;
+    padding: 1rem;
   }
 </style>
