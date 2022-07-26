@@ -1,6 +1,5 @@
 <script lang="ts">
   import { dateFormat } from '$lib/utils/format';
-  import { walletStore } from '$lib/stores/wallet/wallet';
 
   import ApplicationList from './ApplicationList.svelte';
   import ActiveStream from './ActiveStream.svelte';
@@ -9,34 +8,12 @@
   import Markdown from 'radicle-design-system/Markdown.svelte';
   import {
     WorkstreamState,
-    ApplicationState,
     type Application,
     type Workstream
   } from '$lib/stores/workstreams/types';
 
   export let workstream: Workstream;
   export let applications: Application[] | undefined = undefined;
-
-  let acceptedApplication: Application | undefined = undefined;
-  let openApplications: Application[] | undefined = undefined;
-  let rejectedApplications: Application[] | undefined = undefined;
-
-  $: creator =
-    $walletStore.ready && workstream.creator === $walletStore.address;
-
-  $: {
-    if (applications) {
-      acceptedApplication = applications.find(
-        (application) => application.state === ApplicationState.ACCEPTED
-      );
-      openApplications = applications.filter(
-        (application) => application.state === ApplicationState.WAITING
-      );
-      rejectedApplications = applications.filter(
-        (application) => application.state === ApplicationState.REJECTED
-      );
-    }
-  }
 </script>
 
 <div class="container">
@@ -47,37 +24,19 @@
       <User address={workstream.creator} />
       <span class="label">on {dateFormat(workstream.created_at)}</span>
     </div>
-    {#if workstream.state === WorkstreamState.ACTIVE}
-      <ActiveStream {workstream} {acceptedApplication} />
-    {:else if workstream.state === WorkstreamState.PENDING && acceptedApplication}
-      <ApplicationList
-        applications={[acceptedApplication]}
-        title="Accepted applications"
-        {workstream}
-        accepted={creator}
-      />
-    {:else}
-      <ApplyRow {workstream} />
-    {/if}
-    {#if workstream.state === WorkstreamState.RFA && openApplications?.length > 0}
-      <ApplicationList
-        applications={openApplications}
-        title="Open applications"
-        {workstream}
-      />
-    {/if}
-    {#if rejectedApplications?.length > 0}
-      <ApplicationList
-        style="margin-top: 1.5rem;"
-        applications={rejectedApplications}
-        title="Rejected applications"
-        {workstream}
-      />
-    {/if}
-    <div>
-      <div class="desc">
-        <Markdown content={workstream.desc} />
-      </div>
+    <div class="cards">
+      {#if workstream.state === WorkstreamState.ACTIVE}
+        <ActiveStream {workstream} />
+      {:else}
+        <ApplyRow {workstream} />
+      {/if}
+      {#if applications.length > 0}
+        <ApplicationList {applications} title="Applications" {workstream} />
+      {/if}
+      <div />
+    </div>
+    <div class="desc">
+      <Markdown content={workstream.desc} />
     </div>
   </div>
 </div>
@@ -101,6 +60,12 @@
     color: var(--color-foreground-level-6);
     flex-wrap: wrap;
     column-gap: 0.5rem;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   .desc {

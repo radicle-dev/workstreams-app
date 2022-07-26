@@ -1,4 +1,8 @@
-<div class="row">
+<script lang="ts">
+  export let color = 'var(--color-primary-level-1)';
+</script>
+
+<div class="row" style={`background-color: ${color}`}>
   <slot name="left" />
   <slot name="right" />
 </div>
@@ -7,7 +11,6 @@
   .row {
     display: flex;
     justify-content: space-between;
-    background-color: var(--color-primary-level-1);
     border-radius: 0.5rem;
     padding: 0.75rem 0.75rem 0.75rem 1.25rem;
     margin-top: 1rem;

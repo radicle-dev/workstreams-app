@@ -20,7 +20,7 @@
 </script>
 
 <script lang="ts">
-  import WorkstreamCard from '$lib/components/WorkstreamCard/index.svelte';
+  import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
   import type { Workstream } from '$lib/stores/workstreams/types';
   import { WorkstreamState } from '$lib/stores/workstreams/types';
   import { workstreamsStore } from '$lib/stores/workstreams';

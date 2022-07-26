@@ -7,7 +7,7 @@
   export let workstream: Workstream;
 </script>
 
-<Card hoverable={false} style="margin-bottom: 1.5rem;">
+<Card hoverable={false}>
   <div slot="top">
     <div class="timerate">
       <TimeRate {workstream} />

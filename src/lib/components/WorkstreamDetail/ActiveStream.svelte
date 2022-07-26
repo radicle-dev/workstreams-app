@@ -1,12 +1,16 @@
 <script lang="ts">
+  import Plus from 'radicle-design-system/icons/Plus.svelte';
+
   import * as modal from '$lib/utils/modal';
   import Card from '$components/Card.svelte';
   import User from '$components/User.svelte';
   import Rate from '$components/Rate.svelte';
-  import Row from '$components/Row.svelte';
-  import ApplicationModal from '$components/ApplicationModal.svelte';
   import Button from 'radicle-design-system/Button.svelte';
-  import type { Application, Workstream } from '$lib/stores/workstreams/types';
+  import {
+    Currency,
+    type Application,
+    type Workstream
+  } from '$lib/stores/workstreams/types';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
   import { walletStore } from '$lib/stores/wallet/wallet';
@@ -15,9 +19,10 @@
   import TopUpValues from '../TopUpSteps/TopUpValues.svelte';
   import PauseUnpauseStep from '../PauseStreamSteps/PauseUnpause.svelte';
   import AwaitingSafeTransactionStep from '../AwaitingSafeTransactionStep.svelte';
+  import WorkstreamStateBadge from '../WorkstreamStateBadge.svelte';
+  import type { DripsReceiverStructOutput } from 'drips-sdk';
 
   export let workstream: Workstream;
-  export let acceptedApplication: Application | undefined = undefined;
 
   const estimates = workstreamsStore.estimates;
   $: estimate = $estimates.workstreams[workstream.id];
@@ -60,22 +65,30 @@
       ]
     });
   }
+
+  $: lastStreamRate =
+    enrichedWorkstream.onChainData?.dripsUpdatedEvents
+      .reduce<DripsReceiverStructOutput[]>(
+        (prev, dew) => [...prev, ...dew.event.args.receivers],
+        []
+      )
+      .filter(
+        (r) => r.receiver.toLowerCase() === workstream.acceptedApplication
+      )
+      .find((r) => !r.amtPerSec.isZero())
+      ?.amtPerSec?.toBigInt() || workstream.ratePerSecond.wei;
 </script>
 
 <Card hoverable={false}>
   <div slot="top">
-    <h3 style="margin-bottom: 1rem;">Active stream</h3>
+    <div class="header">
+      <h3 style="margin-bottom: 1rem;">Payment stream</h3>
+      <WorkstreamStateBadge {enrichedWorkstream} />
+    </div>
     <div class="timerate">
-      <div style="text-align: right;">
-        {#if enrichedWorkstream?.onChainData}
-          <Rate
-            ratePerSecond={enrichedWorkstream.onChainData.amtPerSec}
-            total={workstream.total}
-          />
-        {/if}
-      </div>
+      <div style="text-align: right;" />
       <div>
-        {#if activeSince}
+        <!-- {#if activeSince}
           <p class="timeframe">
             Active since {Intl.DateTimeFormat('en-US', {
               day: 'numeric',
@@ -85,36 +98,36 @@
               minute: 'numeric'
             }).format(activeSince)}
           </p>
-        {/if}
+        {/if} -->
       </div>
     </div>
   </div>
-  <div slot="bottom">
-    <Row>
-      <div slot="left">
-        <User address={acceptedApplication.creator} />
-      </div>
-      <div slot="right" class="row-actions">
-        {#if (isReceiver || isOwner) && estimate?.remainingBalance}
-          <p class="proposal">
-            {padFloatString(currencyFormat(estimate.remainingBalance.wei))} DAI left
-          </p>
-        {/if}
-        <Button
-          on:click={() =>
-            modal.show(ApplicationModal, undefined, {
-              workstream,
-              application: acceptedApplication
-            })}>View application</Button
-        >
-      </div>
-    </Row>
+  <div slot="bottom" class="content">
+    <div class:active={estimate?.currentlyStreaming} class="cashflow">
+      <User address={workstream.creator} />
+      <div class="flowline" />
+      <User address={workstream.acceptedApplication} />
+    </div>
+    <div class="rate">
+      <Rate
+        ratePerSecond={{ wei: lastStreamRate, currency: Currency.DAI }}
+        total={workstream.total}
+      />
+      {#if estimate?.remainingBalance}
+        <span class="remaining">
+          • <span class="amount typo-text-bold"
+            >{padFloatString(currencyFormat(estimate.remainingBalance.wei))} DAI</span
+          > left
+        </span>
+      {/if}
+    </div>
+
     <div class="stream-actions">
       <div style="display: flex; gap: .75rem;">
         {#if isOwner && $walletStore.ready}
           {#if estimate && estimate.paused === false && estimate.remainingBalance.wei > BigInt(0)}
             <Button
-              variant="primary-outline"
+              variant="outline"
               on:click={() => pauseUnpause('pause')}
               icon={PauseIcon}>Pause</Button
             >
@@ -127,6 +140,7 @@
           {/if}
           {#if enrichedWorkstream?.onChainData?.streamSetUp && estimate && estimate.paused === false}
             <Button
+              icon={Plus}
               disabled={!enrichedWorkstream?.onChainData}
               on:click={() => topUp()}>Top up</Button
             >
@@ -138,15 +152,58 @@
 </Card>
 
 <style>
-  .proposal {
+  .header {
     display: flex;
-    color: var(--color-primary);
+    justify-content: space-between;
+  }
+
+  .cashflow {
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
   }
-  .row-actions {
+
+  .cashflow > .flowline {
+    flex-grow: 1;
+    height: 0.25rem;
+    border-radius: 0.25rem;
+    background: var(--color-foreground-level-3);
+    background-position: 0% 50%;
+  }
+
+  .active.cashflow > .flowline {
+    height: 0.5rem;
+    background: url('/assets/Flowline-dot.svg') repeat-x,
+      var(--color-primary-level-2);
+    animation: gradientAnimation 1s linear infinite;
+  }
+
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 10px 50%;
+    }
+  }
+
+  .content {
     display: flex;
+    flex-direction: column;
     gap: 1rem;
-    align-items: center;
+  }
+
+  .rate {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .remaining {
+    color: var(--color-foreground-level-5);
+  }
+
+  .amount {
+    color: var(--color-primary);
   }
 
   .timerate {
@@ -154,9 +211,6 @@
     justify-content: space-between;
     align-items: center;
     gap: 1.5rem;
-  }
-  .timeframe {
-    color: var(--color-foreground-level-6);
   }
 
   .stream-actions {

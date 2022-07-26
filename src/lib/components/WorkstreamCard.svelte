@@ -1,13 +1,13 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
 
-  import Card from '../Card.svelte';
+  import Card from '$lib/components/Card.svelte';
   import {
     workstreamsStore,
     type EnrichedWorkstream
   } from '$lib/stores/workstreams';
-  import User from '../User.svelte';
-  import Rate from '../Rate.svelte';
+  import User from '$lib/components/User.svelte';
+  import Rate from '$lib/components/Rate.svelte';
   import {
     Currency,
     WorkstreamState,
@@ -15,6 +15,7 @@
   } from '$lib/stores/workstreams/types';
   import { currencyFormat } from '$lib/utils/format';
   import type { DripsReceiverStructOutput } from 'drips-sdk';
+  import WorkstreamStateBadge from './WorkstreamStateBadge.svelte';
 
   const estimates = workstreamsStore.estimates;
 
@@ -42,61 +43,6 @@
       .filter((r) => r.receiver.toLowerCase() === ws.acceptedApplication)
       .find((r) => !r.amtPerSec.isZero())
       ?.amtPerSec?.toBigInt() || ws.ratePerSecond.wei;
-
-  enum VisualState {
-    /** Stream is set up and actively dripping */
-    ACTIVE,
-    /** Transaction to set up Drip is pending in Gnosis Safe */
-    PENDING_CONFIRMATION,
-    /** Stream is active, but no more balance is remaining in Drips account */
-    OUT_OF_FUNDS,
-    /** Stream was set up, but then paused by removing drip receiver */
-    PAUSED,
-    /** Stream marked as closed via API */
-    CLOSED
-  }
-
-  let visualState: VisualState;
-
-  $: visualStateText = {
-    [VisualState.ACTIVE]: 'Active',
-    [VisualState.PENDING_CONFIRMATION]: 'Pending confirmation',
-    [VisualState.OUT_OF_FUNDS]: 'Out of funds',
-    [VisualState.PAUSED]: 'Paused',
-    [VisualState.CLOSED]: 'Closed'
-  }[visualState];
-
-  $: visualStateColor = {
-    [VisualState.ACTIVE]: '--color-positive',
-    [VisualState.OUT_OF_FUNDS]: '--color-negative',
-    [VisualState.PAUSED]: '--color-caution',
-    [VisualState.PENDING_CONFIRMATION]: '--color-caution',
-    [VisualState.CLOSED]: '--color-foreground'
-  }[visualState];
-
-  $: {
-    switch (ws.state) {
-      case WorkstreamState.ACTIVE: {
-        if (
-          enrichedWorkstream?.onChainData &&
-          !enrichedWorkstream.onChainData.streamSetUp
-        ) {
-          visualState = VisualState.PENDING_CONFIRMATION;
-        } else if (estimate && !estimate.currentlyStreaming) {
-          visualState = estimate.paused
-            ? VisualState.PAUSED
-            : VisualState.OUT_OF_FUNDS;
-        } else {
-          visualState = VisualState.ACTIVE;
-        }
-        break;
-      }
-      case WorkstreamState.CLOSED: {
-        visualState = VisualState.CLOSED;
-        break;
-      }
-    }
-  }
 </script>
 
 <a sveltekit:prefetch href={`/workstream/${ws.id}`}>
@@ -105,17 +51,9 @@
       <div class="name-and-users">
         <div class="name-and-state">
           <h3 class="name">{ws.title}</h3>
-          {#if onChainDataReady}
-            <div
-              transition:fade|local
-              class="state-badge"
-              style={`background-color: var(${visualStateColor}-level-1`}
-            >
-              <span
-                class="typo-text-bold"
-                style={`color: var(${visualStateColor}-level-6`}
-                >{visualStateText}</span
-              >
+          {#if onChainDataReady && enrichedWorkstream}
+            <div transition:fade|local>
+              <WorkstreamStateBadge {enrichedWorkstream} />
             </div>
           {/if}
         </div>
@@ -177,15 +115,6 @@
     gap: 0.5rem;
     color: var(--color-foreground-level-6);
     font-weight: 600;
-  }
-
-  .state-badge {
-    display: flex;
-    align-items: center;
-    height: 1.5rem;
-    flex-shrink: 0;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
   }
 
   .stream-details {

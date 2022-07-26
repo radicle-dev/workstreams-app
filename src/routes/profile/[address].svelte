@@ -33,7 +33,7 @@
 
   import UserBig from '$components/UserBig.svelte';
   import Section from '$lib/components/Section.svelte';
-  import WorkstreamCard from '$lib/components/WorkstreamCard/index.svelte';
+  import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
   import EmptyState from '$components/EmptyState.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
 
