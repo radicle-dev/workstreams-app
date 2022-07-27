@@ -67,7 +67,7 @@
 </script>
 
 <Modal>
-  <div slot="body">
+  <div slot="body" class="content">
     <Emoji emoji="👔" size="large" />
     <h1>Workstream application</h1>
     {#if resolvedApplication}
@@ -147,12 +147,17 @@
 </Modal>
 
 <style>
+  .content {
+    text-align: left;
+  }
+
   h1::first-letter {
     text-transform: capitalize;
   }
 
   h1 {
     margin: 1rem 0;
+    text-align: center;
     color: var(--color-foreground);
   }
 
