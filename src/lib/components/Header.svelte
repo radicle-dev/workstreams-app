@@ -88,7 +88,7 @@
           </div>
         </div>
       </div>
-      {#if onDashboard}
+      {#if onDashboard && $walletStore.ready}
         <div
           transition:fly={{ y: 10, duration: 300 }}
           class="mobile-create-workstream-button"
