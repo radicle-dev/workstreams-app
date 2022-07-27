@@ -116,9 +116,9 @@
         </span>
       {/if}
     </div>
-    <div class="stream-actions">
-      <div style="display: flex; gap: .75rem;">
-        {#if isOwner && $walletStore.ready}
+    {#if isOwner && $walletStore.ready}
+      <div class="stream-actions">
+        <div style="display: flex; gap: .75rem;">
           {#if estimate && estimate.paused === false && estimate.remainingBalance.wei > BigInt(0)}
             <Button
               variant="outline"
@@ -152,9 +152,9 @@
               on:click={() => topUp()}>Top up</Button
             >
           {/if}
-        {/if}
+        </div>
       </div>
-    </div>
+    {/if}
   </div>
 </Card>
 
