@@ -46,6 +46,7 @@
     max-width: 54rem;
     margin: 0 auto;
     width: 100%;
+    padding: 1rem 0 0 0;
   }
 
   .inset {
