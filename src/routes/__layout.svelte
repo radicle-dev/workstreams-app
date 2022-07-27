@@ -179,7 +179,7 @@
 
   @media only screen and (max-width: 54rem) {
     .wrapper {
-      padding: 2rem 0.5rem 7rem 0.5rem;
+      padding: 0.5rem 0.5rem 5rem 0.5rem;
     }
 
     .network {

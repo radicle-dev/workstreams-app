@@ -242,6 +242,7 @@
     max-width: 75rem;
     margin: 0 auto;
     width: 100%;
+    padding: 1.5rem 0 4.5rem 0;
   }
 
   .empty-wrapper {

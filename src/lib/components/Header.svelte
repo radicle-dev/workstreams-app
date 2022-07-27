@@ -188,7 +188,7 @@
     }
 
     header.hide {
-      transform: translateY(4rem);
+      transform: translateY(0);
     }
 
     .content {
