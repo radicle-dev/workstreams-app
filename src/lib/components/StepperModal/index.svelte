@@ -25,6 +25,7 @@
       currentStepIndex++;
       currentStep = steps[currentStepIndex];
     } else {
+      modal.setHideable(true);
       modal.hide();
     }
   }
