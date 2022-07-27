@@ -20,7 +20,7 @@
   <div class="metadata">
     <h1 class="inset" style="margin-bottom: 0.75rem;">{workstream.title}</h1>
     <div class="inset owner">
-      <span class="label">created by</span>
+      <span class="label">Created by</span>
       <User address={workstream.creator} />
       <span class="label">on {dateFormat(workstream.created_at)}</span>
     </div>
