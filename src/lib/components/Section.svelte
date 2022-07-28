@@ -26,7 +26,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding-left: 1.5rem;
+    padding: 0 1.5rem 0 1.5rem;
   }
 
   .title {
@@ -44,5 +44,15 @@
     align-items: center;
     justify-content: center;
     padding: 0 0.5rem;
+  }
+
+  @media only screen and (max-width: 54rem) {
+    .headline {
+      padding-left: 1rem;
+    }
+
+    .title > .count {
+      display: none;
+    }
   }
 </style>

@@ -10,19 +10,35 @@ type ModalLayout = {
 };
 
 const overlayStore = writable<ModalLayout | null>(null);
-
-export const store = derived(overlayStore, ($store) => $store);
+const hideable = writable<boolean>(true);
+export const store = derived(
+  [overlayStore, hideable],
+  ([$overlayStore, $hideableStore]) => ({
+    overlay: $overlayStore,
+    hideable: $hideableStore
+  })
+);
 
 const doNothing = (): void => null;
 
 export const hide = (): void => {
+  const canHide = get(hideable);
+
+  if (!canHide) {
+    return;
+  }
+
   const stored = get(store);
   if (stored === null) {
     return;
   }
 
-  stored.onHide();
+  stored.overlay.onHide();
   overlayStore.set(null);
+};
+
+export const setHideable = (value: boolean): void => {
+  hideable.set(value);
 };
 
 export const show = (
@@ -40,7 +56,7 @@ export const toggle = (
 ): void => {
   const stored = get(store);
 
-  if (stored && stored.modalComponent === modalComponent) {
+  if (stored && stored.overlay.modalComponent === modalComponent) {
     hide();
     return;
   }

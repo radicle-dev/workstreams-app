@@ -20,7 +20,7 @@
 </script>
 
 <script lang="ts">
-  import WorkstreamCard from '$lib/components/WorkstreamCard/index.svelte';
+  import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
   import type { Workstream } from '$lib/stores/workstreams/types';
   import { WorkstreamState } from '$lib/stores/workstreams/types';
   import { workstreamsStore } from '$lib/stores/workstreams';
@@ -64,7 +64,7 @@
     .overview {
       display: grid;
       grid-template-columns: repeat(1, minmax(0, 1fr));
-      gap: 1.5rem;
+      gap: 0.5rem;
     }
   }
 </style>

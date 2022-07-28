@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
 
   import * as modal from '$lib/utils/modal';
   import { walletStore } from '$lib/stores/wallet/wallet';
@@ -12,6 +12,11 @@
   import LinkSafe from './steps/LinkSafe.svelte';
   import clearStores from '$lib/stores/utils/clearStores';
   import connectStores from '$lib/stores/utils/connectStores';
+  import isMobile from '$lib/stores/isMobile';
+  import cupertinoPane from '$lib/stores/cupertinoPane';
+  import MobileAccountSheet from '../MobileAccountSheet/MobileAccountSheet.svelte';
+
+  export let onClick: () => void | undefined = undefined;
 
   let locked: boolean;
 
@@ -30,6 +35,8 @@
   }
 
   onMount(async () => {
+    await tick();
+
     if ($walletStore.ready) {
       const { provider: localProvider, safe } = $walletStore;
       const provider = safe?.provider || localProvider;
@@ -43,6 +50,10 @@
     clearStores();
   }
 
+  function openBottomSheet() {
+    cupertinoPane.openSheet(MobileAccountSheet, {});
+  }
+
   let hover = false;
 </script>
 
@@ -52,9 +63,9 @@
   on:mouseleave={() => (hover = false)}
 >
   {#if $walletStore.ready}
-    {#if hover}
+    {#if hover && !$isMobile.isMobile}
       <div
-        on:click={logOut}
+        on:click={onClick || logOut}
         transition:fade={{ duration: 100 }}
         class="log-out-overlay"
       >
@@ -62,9 +73,20 @@
       </div>
     {/if}
     <div>
-      <Button variant="outline">
-        <User address={$walletStore.address} />
-      </Button>
+      {#if $isMobile.isMobile}
+        <div class="connect-button-mobile" on:click={openBottomSheet}>
+          <User
+            noLink
+            address={$walletStore.address}
+            showAddress={false}
+            avatarRem={2}
+          />
+        </div>
+      {:else}
+        <Button variant="outline">
+          <User address={$walletStore.address} />
+        </Button>
+      {/if}
     </div>
   {:else if locked}
     <Button disabled variant="outline">
@@ -72,7 +94,7 @@
     </Button>
   {:else}
     <Button on:click={() => logIn()} variant="outline"
-      >Sign in with Ethereum</Button
+      >Sign in{$isMobile.isMobile ? '' : ' with Ethereum'}</Button
     >
   {/if}
 </div>

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { fly } from 'svelte/transition';
 
   import { goto } from '$app/navigation';
@@ -11,15 +10,17 @@
   import Button from 'radicle-design-system/Button.svelte';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
   import CreateModal from './CreateModal.svelte';
-  import { browser } from '$app/env';
   import { headerContent } from '$lib/stores/headerContent';
   import BalanceButton from './BalanceButton.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
+  import scroll from '$lib/stores/scroll';
+  import isMobile from '$lib/stores/isMobile';
+  import Plus from 'radicle-design-system/icons/Plus.svelte';
 
-  let scrolledDown = false;
-  let scrollPos = 0;
-  let scrollingDown = false;
-  $: hide = scrollingDown && !$headerContent.component;
+  $: scrolledDown = $scroll.pos > 0;
+  $: hide =
+    $scroll.direction === 'down' &&
+    ($isMobile.isMobile || !$headerContent.component);
   $: showCustomHeaderContent =
     $headerContent.headerContentShown !== undefined
       ? $headerContent.headerContentShown
@@ -30,33 +31,16 @@
 
   const animate = (node: Element, args: { y: number; enable: boolean }) =>
     args.enable
-      ? fly(node, { y: !scrollingDown ? -args.y : args.y, duration: 300 })
+      ? fly(node, {
+          y: $scroll.direction === 'up' ? -args.y : args.y,
+          duration: 300
+        })
       : undefined;
-
-  if (browser) {
-    updateScrollPos();
-  }
-
-  onMount(() => {
-    if (browser) {
-      window.addEventListener('scroll', updateScrollPos);
-    }
-  });
-
-  function updateScrollPos() {
-    const scrollY = Math.max(window.scrollY, 0);
-    scrollingDown = scrollY > scrollPos;
-    scrolledDown = scrollY !== 0;
-    scrollPos = scrollY;
-  }
 </script>
 
-<header
-  class:hide
-  style:box-shadow={scrolledDown && !hide ? 'var(--elevation-low)' : ''}
->
+<header class:hide class:withShadow={scrolledDown && !hide}>
   <div class="inner">
-    {#if showCustomHeaderContent && $headerContent.component}
+    {#if !$isMobile.isMobile && showCustomHeaderContent && $headerContent.component}
       <div
         transition:animate={{ enable: !!headerContent, y: 20 }}
         class="content page"
@@ -95,13 +79,26 @@
             </div>
           {/if}
           {#if $walletStore.ready}
-            <BalanceButton />
+            <div class="balance-button">
+              <BalanceButton />
+            </div>
           {/if}
           <div class="user">
             <Connect />
           </div>
         </div>
       </div>
+      {#if onDashboard && $walletStore.ready}
+        <div
+          transition:fly={{ y: 10, duration: 300 }}
+          class="mobile-create-workstream-button"
+          on:click={() => modal.show(CreateModal)}
+        >
+          <Plus
+            style="fill: var(--color-background); height: 2rem; width: 2rem;"
+          />
+        </div>
+      {/if}
     {/if}
   </div>
 </header>
@@ -114,7 +111,7 @@
     height: 4.5rem;
     box-sizing: border-box;
     background-color: var(--color-background);
-    z-index: 1000;
+    z-index: 1;
     position: fixed;
     transition: box-shadow 0.3s, transform 0.3s;
   }
@@ -130,6 +127,10 @@
 
   header.hide {
     transform: translateY(-4.5rem);
+  }
+
+  header.withShadow {
+    box-shadow: var(--elevation-low);
   }
 
   .content.default {
@@ -172,5 +173,47 @@
   .user {
     display: flex;
     gap: 0.75rem;
+  }
+
+  .mobile-create-workstream-button {
+    display: none;
+  }
+
+  @media only screen and (max-width: 54rem) {
+    header {
+      top: initial;
+      bottom: 0;
+      border-radius: 0.5rem 0.5rem 0 0;
+      box-shadow: var(--elevation-low);
+    }
+
+    header.hide {
+      transform: translateY(0);
+    }
+
+    .content {
+      padding: 1rem 0.75rem 1rem 0.5rem;
+    }
+
+    .balance-button,
+    .create-button {
+      display: none;
+    }
+
+    .mobile-create-workstream-button {
+      display: block;
+      position: fixed;
+      right: 0.5rem;
+      bottom: 5rem;
+      height: 4rem;
+      width: 4rem;
+      border-radius: 2rem;
+      background-color: var(--color-primary);
+      color: var(--color-background);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: var(--elevation-medium);
+    }
   }
 </style>

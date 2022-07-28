@@ -3,6 +3,8 @@
   import { createEventDispatcher } from 'svelte';
   import { onMount } from 'svelte';
 
+  import * as modal from '$lib/utils/modal';
+
   const dispatch = createEventDispatcher();
 
   export let pending: () => Promise<void> | undefined;
@@ -12,12 +14,15 @@
 
   onMount(async () => {
     if (pending) {
+      modal.setHideable(false);
       try {
         await pending();
         dispatch('continue');
       } catch (e) {
         error = e;
         console.error(e);
+      } finally {
+        modal.setHideable(true);
       }
     }
   });

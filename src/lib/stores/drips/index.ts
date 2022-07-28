@@ -367,6 +367,8 @@ export default (() => {
     getAllowance,
     getDaiBalance,
     approveDaiSpend,
-    collect
+    collect,
+    updateCollectable,
+    updateCollectHistory
   };
 })();

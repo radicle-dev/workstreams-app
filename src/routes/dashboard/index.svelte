@@ -9,7 +9,7 @@
 
   import EmptyState from '$lib/components/EmptyState.svelte';
   import Section from '$lib/components/Section.svelte';
-  import WorkstreamCard from '$lib/components/WorkstreamCard/index.svelte';
+  import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
   import { currencyFormat } from '$lib/utils/format';
   import {
     workstreamsStore,
@@ -242,6 +242,7 @@
     max-width: 75rem;
     margin: 0 auto;
     width: 100%;
+    padding: 1.5rem 0 4.5rem 0;
   }
 
   .empty-wrapper {
@@ -281,5 +282,12 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.5rem;
+  }
+
+  @media only screen and (max-width: 54rem) {
+    .workstreams {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.5rem;
+    }
   }
 </style>

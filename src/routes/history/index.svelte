@@ -57,11 +57,11 @@
   <title>Workstreams · Account History</title>
 </svelte:head>
 
-<template>
-  {#if $walletStore.ready}
-    <h1>Account history</h1>
+{#if $walletStore.ready}
+  <div class="container">
+    <h1 class="inset">Account history</h1>
     {#if !loading}
-      <div in:fly|local={{ y: 10, duration: 300 }} class="stats">
+      <div in:fly|local={{ y: 10, duration: 300 }} class="stats inset">
         <div class="key-value">
           <h4>Total earned</h4>
           <p class="amount typo-text-mono-bold">
@@ -96,22 +96,30 @@
         <Spinner />
       </div>
     {/if}
-  {:else}
-    <div
-      class="empty-wrapper"
-      transition:fly|local={{ y: 10, duration: 300, delay: 100 }}
-    >
-      <EmptyState
-        headerText="Sign in to view your account history"
-        text="Here's where you'll be able to see a history of all your incoming and outgoing workstreams."
-      />
-    </div>
-  {/if}
-</template>
+  </div>
+{:else}
+  <div
+    class="empty-wrapper"
+    transition:fly|local={{ y: 10, duration: 300, delay: 100 }}
+  >
+    <EmptyState
+      headerText="Sign in to view your account history"
+      text="Here's where you'll be able to see a history of all your incoming and outgoing workstreams."
+    />
+  </div>
+{/if}
 
 <style scoped>
+  .container {
+    padding-top: 2rem;
+  }
+
   h1 {
     margin-bottom: 3rem;
+  }
+
+  .inset {
+    margin-left: 1rem;
   }
 
   .stats {
@@ -135,8 +143,6 @@
   }
 
   .history {
-    margin-left: -1.5rem;
-    width: calc(100% + 2rem);
     flex-direction: column;
     display: flex;
   }
@@ -156,5 +162,12 @@
     position: absolute;
     width: 100vw;
     left: 0;
+  }
+
+  @media only screen and (max-width: 54rem) {
+    .stats {
+      flex-direction: column;
+      gap: 2rem;
+    }
   }
 </style>

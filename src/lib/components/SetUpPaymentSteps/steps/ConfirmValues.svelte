@@ -5,19 +5,16 @@
   import Card from '$components/Card.svelte';
   import drips from '$lib/stores/drips';
   import TextInput from 'radicle-design-system/TextInput.svelte';
-  import {
-    Currency,
-    type Application,
-    type Workstream
-  } from '$lib/stores/workstreams/types';
+  import { Currency, type Workstream } from '$lib/stores/workstreams/types';
   import { currencyFormat, weiToDai } from '$lib/utils/format';
   import ButtonRow from '../components/ButtonRow.svelte';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import { utils } from 'ethers';
+  import { getConfig } from '$lib/config';
+  import { invalidate } from '$app/navigation';
 
   const dispatch = createEventDispatcher();
 
-  export let application: Application;
   export let workstream: Workstream;
 
   let actionInFlight = false;
@@ -51,7 +48,7 @@
       const accountId = drips.getRandomAccountId();
 
       const createDripCall = await drips.createDrip(
-        application.creator,
+        workstream.acceptedApplication,
         {
           currency: Currency.DAI,
           wei: weiPerDay / BigInt(86400)
@@ -76,6 +73,10 @@
         if (!activateCall.ok) {
           throw new Error(activateCall.error);
         }
+
+        await invalidate(
+          `${getConfig().API_URL_BASE}/workstreams/${workstream.id}`
+        );
       };
 
       dispatch('awaitPending', { promise: waitFor });
@@ -95,7 +96,7 @@
       <h4>Streaming to</h4>
       <Card hoverable={false} style="width: 100%">
         <div slot="top">
-          <User address={application.creator} />
+          <User address={workstream.acceptedApplication} />
         </div>
       </Card>
     </div>
