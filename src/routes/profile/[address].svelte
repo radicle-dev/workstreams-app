@@ -118,6 +118,7 @@
 
 <style>
   .container {
+    padding-top: 2rem;
     max-width: 75rem;
     margin: 0 auto;
     width: 100%;
