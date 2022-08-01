@@ -54,7 +54,7 @@
     "drips-sdk": "https://github.com/radicle-dev/drips-js-sdk#973599caf3013a2ac56155f11b8cd2426ff263d1",
     "ethers": "5.6.4",
     "graphql-tag": "^2.12.6",
-    "radicle-design-system": "https://github.com/radicle-dev/radicle-design-system#8ad933af982c293709a3b925d799e6fbe318f743",
+    "radicle-design-system": "https://github.com/radicle-dev/radicle-design-system#ecedcb410730a0a9c47b797b2018bcb52723b681",
     "siwe": "^1.1.6",
     "web3-utils": "^1.7.3"
   },

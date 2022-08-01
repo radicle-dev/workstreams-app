@@ -1438,6 +1438,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash-es@npm:^4.17.6":
+  version: 4.17.6
+  resolution: "@types/lodash-es@npm:4.17.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 9bd239dd525086e278821949ce12fbdd4f100a060fed9323fc7ad5661113e1641f28a7ebab617230ed3474680d8f4de705c1928b48252bb684be6ec9eed715db
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*":
+  version: 4.14.182
+  resolution: "@types/lodash@npm:4.14.182"
+  checksum: 7dd137aa9dbabd632408bd37009d984655164fa1ecc3f2b6eb94afe35bf0a5852cbab6183148d883e9c73a958b7fec9a9bcf7c8e45d41195add6a18c34958209
+  languageName: node
+  linkType: hard
+
 "@types/marked@npm:^4.0.3":
   version: 4.0.3
   resolution: "@types/marked@npm:4.0.3"
@@ -6493,6 +6509,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash-es@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash-es@npm:4.17.21"
+  checksum: 05cbffad6e2adbb331a4e16fbd826e7faee403a1a04873b82b42c0f22090f280839f85b95393f487c1303c8a3d2a010048bf06151a6cbe03eee4d388fb0a12d2
+  languageName: node
+  linkType: hard
+
 "lodash.camelcase@npm:^4.3.0":
   version: 4.3.0
   resolution: "lodash.camelcase@npm:4.3.0"
@@ -7772,16 +7795,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"radicle-design-system@https://github.com/radicle-dev/radicle-design-system#8ad933af982c293709a3b925d799e6fbe318f743":
+"radicle-design-system@https://github.com/radicle-dev/radicle-design-system#ecedcb410730a0a9c47b797b2018bcb52723b681":
   version: 0.1.0
-  resolution: "radicle-design-system@https://github.com/radicle-dev/radicle-design-system.git#commit=8ad933af982c293709a3b925d799e6fbe318f743"
+  resolution: "radicle-design-system@https://github.com/radicle-dev/radicle-design-system.git#commit=ecedcb410730a0a9c47b797b2018bcb52723b681"
   dependencies:
+    "@types/lodash-es": ^4.17.6
+    lodash-es: ^4.17.21
     marked: ^4.0.16
     radicle-avatar: "github:radicle-dev/radicle-avatar"
     sanitize-html: ^2.7.0
     svelte: ^3.48.0
     twemoji: 14.0.2
-  checksum: db19e5f16143b74b0f331055f27d23faea60a59988dfa54b6e0c92fc4c1c13a020d8c505b62c46c2a2118781cd7002e0b1fe46049dec374b5c437b9a4a1cf40d
+  checksum: 503b3fc697fdbb292fc79e224b8d900dc66efb3d60068bd5d3cb9715272a131d278ff417d7b65d683c7ccf6594036da56fd546b39c5d475bc8fc18f1a1d30a49
   languageName: node
   linkType: hard
 
@@ -9806,7 +9831,7 @@ __metadata:
     lint-staged: ^12.4.0
     prettier: ^2.6.2
     prettier-plugin-svelte: ^2.7.0
-    radicle-design-system: "https://github.com/radicle-dev/radicle-design-system#8ad933af982c293709a3b925d799e6fbe318f743"
+    radicle-design-system: "https://github.com/radicle-dev/radicle-design-system#ecedcb410730a0a9c47b797b2018bcb52723b681"
     siwe: ^1.1.6
     svelte: ^3.49.0
     svelte-check: ^2.8.0
