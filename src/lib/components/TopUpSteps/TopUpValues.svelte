@@ -1,6 +1,7 @@
 <script lang="ts">
   import Emoji from 'radicle-design-system/Emoji.svelte';
   import { toWei } from 'drips-sdk';
+  import { utils } from 'ethers';
 
   import {
     workstreamsStore,
@@ -76,8 +77,17 @@
     };
   });
 
+  let daiBalance: bigint;
+  onMount(async () => {
+    daiBalance = (await drips.getDaiBalance()).toBigInt();
+  });
+
+  $: topUpExceedsBalance =
+    daiBalance < utils.parseUnits((topUpAmount || 0).toString()).toBigInt();
+
+  $: buttonDisabled = txInFlight || !topUpAmount || topUpExceedsBalance;
+
   let txInFlight = false;
-  $: buttonDisabled = txInFlight || !topUpAmount;
 
   async function topUp() {
     txInFlight = true;
@@ -142,6 +152,12 @@
           variant={{ type: 'number', min: 0 }}
           bind:value={topUpAmount}
           suffix="DAI"
+          validationState={topUpExceedsBalance
+            ? {
+                type: 'invalid',
+                message: `You only have ${currencyFormat(daiBalance)} DAI`
+              }
+            : { type: 'valid' }}
         />
       </div>
       {#if !$walletStore.safe?.ready}
