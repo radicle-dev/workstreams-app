@@ -47,12 +47,21 @@ export interface MoneyInput {
   wei: BigNumberish;
 }
 
-export interface WorkstreamInput {
-  ratePerSecond: MoneyInput;
-  title: string;
-  desc: string;
-  durationDays: number;
-}
+export type WorkstreamInput =
+  | {
+      ratePerSecond: MoneyInput;
+      title: string;
+      desc: string;
+      durationDays: number;
+    }
+  | {
+      ratePerSecond: MoneyInput;
+      title: string;
+      desc: string;
+      durationDays: number;
+      state: WorkstreamState.PENDING;
+      assignTo: string;
+    };
 
 export enum ApplicationState {
   WAITING = 'waiting',

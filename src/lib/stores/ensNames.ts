@@ -41,10 +41,22 @@ export default (() => {
 
       store.update((v) => ({ ...v, [address]: { name, pic } }));
     }
+
+    return get(store)[address];
+  }
+
+  async function reverse(
+    name: string,
+    provider?: ethers.providers.BaseProvider
+  ): Promise<string | undefined> {
+    const address = await (provider || defaultProvider).resolveName(name);
+
+    return address;
   }
 
   return {
     subscribe: store.subscribe,
-    lookup
+    lookup,
+    reverse
   };
 })();
