@@ -6,6 +6,7 @@
   import TextInput from 'radicle-design-system/TextInput.svelte';
   import TextArea from 'radicle-design-system/TextArea.svelte';
   import InfoCircle from 'radicle-design-system/icons/InfoCircle.svelte';
+  import type { TextInputValidationState } from 'radicle-design-system/TextInput';
 
   import * as modal from '$lib/utils/modal';
   import Modal from '$components/Modal.svelte';
@@ -19,7 +20,6 @@
   import { utils } from 'ethers';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import TypeSwitcher from './TypeSwitcher.svelte';
-  import type { TextInputValidationState } from 'radicle-design-system/TextInput';
   import ensNames from '$lib/stores/ensNames';
   import { walletStore } from '$lib/stores/wallet/wallet';
 
