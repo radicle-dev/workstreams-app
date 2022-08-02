@@ -51,9 +51,9 @@ export function weiToDai(input: Money | bigint): number {
 
   if (typeof wei !== 'bigint') wei = BigInt(wei);
 
-  const dai = wei / BigInt('1000000000000000000');
+  const dai = Number(utils.formatEther(wei));
 
-  return Number(dai);
+  return Math.round(dai);
 }
 
 export function currencyFormat(input: Money | bigint): string {
