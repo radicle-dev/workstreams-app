@@ -37,14 +37,20 @@
   let description: string;
   let assignee: string;
   let assigneeAddress: string;
-  let selectedMode: 'first' | 'second' = 'first';
+  let typeSwitcherSelection: 'first' | 'second' = 'first';
+
+  let selectedMode: 'sourceApplications' | 'directAssignment';
+  $: selectedMode =
+    typeSwitcherSelection === 'first'
+      ? 'sourceApplications'
+      : 'directAssignment';
 
   $: streamRate =
     parseInt(total) / (parseInt(duration) * parseInt(durationUnit));
 
   $: canSubmit =
     [title, total, duration, durationUnit, description].every((v) => v) &&
-    (assigneeAddress || selectedMode !== 'second');
+    (assigneeAddress || selectedMode !== 'directAssignment');
 
   let assigneeValidationState: TextInputValidationState;
 
@@ -118,7 +124,7 @@
       durationDays: parseInt(duration) * parseInt(durationUnit)
     };
 
-    if (selectedMode === 'second' && assigneeAddress) {
+    if (selectedMode === 'directAssignment' && assigneeAddress) {
       input = {
         ...input,
         assignTo: assigneeAddress,
@@ -156,22 +162,25 @@
       </div>
       <div class="input-with-label">
         <h4>Mode</h4>
-        <TypeSwitcher bind:selected={selectedMode}>
+        <TypeSwitcher bind:selected={typeSwitcherSelection}>
           <span class="typo-text-bold" slot="first">Source applications</span>
           <span class="typo-text-bold" slot="second">Direct assignment</span>
         </TypeSwitcher>
       </div>
-      <div class="input-with-label" class:faded={selectedMode === 'first'}>
+      <div
+        class="input-with-label"
+        class:faded={selectedMode === 'sourceApplications'}
+      >
         <h4>Assignee</h4>
         <TextInput
           showSuccessCheck
           validationState={assigneeValidationState}
-          disabled={selectedMode === 'first'}
+          disabled={selectedMode === 'sourceApplications'}
           bind:value={assignee}
           on:input={validateAssignee}
           placeholder="Ethereum address or ENS name"
         />
-        {#if selectedMode === 'first'}
+        {#if selectedMode === 'sourceApplications'}
           <div class="hint">
             <InfoCircle />
             <p class="typo-text">
