@@ -10,9 +10,9 @@
     );
 
     return {
-      status: workstreams.ok ? 200 : 500,
+      status: 200,
       props: {
-        workstreams: workstreams.ok && workstreams.data
+        workstreams: (workstreams.ok && workstreams.data) || []
       }
     };
   }
