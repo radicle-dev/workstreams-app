@@ -84,7 +84,7 @@
         <InfoCircle />
         <p>
           While you’re earning in real-time, your withdrawable amount is updated
-          once a week.
+          once every thirty days.
           {#if $drips.cycle?.end}
             It will update next on {Intl.DateTimeFormat('en-US', {
               month: 'short',
