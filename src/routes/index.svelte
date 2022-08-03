@@ -24,6 +24,7 @@
   import type { Workstream } from '$lib/stores/workstreams/types';
   import { WorkstreamState } from '$lib/stores/workstreams/types';
   import { workstreamsStore } from '$lib/stores/workstreams';
+  import EmptyState from '$lib/components/EmptyState.svelte';
 
   export let workstreams: Workstream[] = [];
 
@@ -40,11 +41,19 @@
   <title>Workstreams · Explore</title>
 </svelte:head>
 
-<div class="overview">
-  {#each openWorkstreams as workstream}
-    <WorkstreamCard {workstream} />
-  {/each}
-</div>
+{#if workstreams.length > 0}
+  <div class="overview">
+    {#each openWorkstreams as workstream}
+      <WorkstreamCard {workstream} />
+    {/each}
+  </div>
+{:else}
+  <EmptyState
+    emoji="🐚"
+    headerText="No workstreams available"
+    text="It looks like there are currently no workstreams available. Check back later or create your own on the Dashboard."
+  />
+{/if}
 
 <style>
   .overview {
