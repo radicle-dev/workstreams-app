@@ -9,8 +9,6 @@
       fetch
     );
 
-    console.log(workstreams);
-
     return {
       status: 200,
       props: {
