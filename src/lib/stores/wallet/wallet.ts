@@ -138,7 +138,7 @@ export const walletStore = (() => {
         const metamask = await getMetaMask();
 
         if (!metamask) {
-          throw 'MetaMask not detected.';
+          throw new Error('MetaMask not detected.');
         }
 
         await metamask.request({
@@ -196,7 +196,7 @@ export const walletStore = (() => {
         const accounts = await provider.listAccounts();
 
         if (accounts.length === 0) {
-          throw 'User did not grant access to any accounts';
+          throw new Error('User did not grant access to any accounts');
         }
 
         try {
@@ -232,7 +232,7 @@ export const walletStore = (() => {
     const currentState = get(state);
 
     if (!currentState.ready) {
-      throw 'Connect to wallet first.';
+      throw new Error('Connect to wallet first.');
     }
 
     const res = await fetch(`${BACKEND_URL_BASE}/connect-safe`, {
@@ -271,11 +271,11 @@ export const walletStore = (() => {
     const currentState = get(state);
 
     if (!currentState.safe?.address) {
-      throw 'Link a safe first via `linkSafe`.';
+      throw new Error('Link a safe first via `linkSafe`.');
     }
 
     if (currentState.safe.ready) {
-      throw 'A safe is already connected.';
+      throw new Error('A safe is already connected.');
     }
 
     const walletConnectProvider = new WalletConnectProvider({
@@ -291,7 +291,7 @@ export const walletStore = (() => {
     const account = (await provider.listAccounts())[0];
 
     if (currentState.safe.address.toLowerCase() !== account.toLowerCase()) {
-      throw 'You can only connect the safe that has previously been linked via `linkSafe`.';
+      throw new Error('You can only connect the safe that you selected.');
     }
 
     const network = await provider.getNetwork();
