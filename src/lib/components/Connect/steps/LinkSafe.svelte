@@ -30,7 +30,7 @@
     );
 
     if (!ownedSafes || ownedSafes.length === 0) {
-      modal.hide();
+      return modal.hide();
     }
 
     safeAddresses = ownedSafes;
@@ -51,6 +51,7 @@
       clearStores();
       await connectStores(ws.safe.provider);
     };
+
     dispatch('awaitPending', {
       promise: waitFor,
       message: 'Please connect via WalletConnect...'
