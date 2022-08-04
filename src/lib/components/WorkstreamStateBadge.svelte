@@ -17,14 +17,14 @@
     ACTIVE,
     /** Stream needds to be created by the creator */
     PENDING_SETUP,
-    /** Transaction to set up Drip is pending in Gnosis Safe */
-    PENDING_CONFIRMATION,
     /** Stream is active, but no more balance is remaining in Drips account */
     OUT_OF_FUNDS,
     /** Stream was set up, but then paused by removing drip receiver */
     PAUSED,
     /** Stream marked as closed via API */
-    CLOSED
+    CLOSED,
+    /** Stream state cannot be determined because the user isn't logged in.*/
+    UNKNOWN
   }
 
   let visualState: VisualState;
@@ -32,10 +32,10 @@
   $: visualStateLabel = {
     [VisualState.ACTIVE]: 'Active',
     [VisualState.PENDING_SETUP]: 'Pending setup',
-    [VisualState.PENDING_CONFIRMATION]: 'Pending confirmation',
     [VisualState.OUT_OF_FUNDS]: 'Out of funds',
     [VisualState.PAUSED]: 'Paused',
-    [VisualState.CLOSED]: 'Closed'
+    [VisualState.CLOSED]: 'Closed',
+    [VisualState.UNKNOWN]: 'Log in to see status'
   }[visualState];
 
   $: visualStateColor = {
@@ -43,8 +43,8 @@
     [VisualState.PENDING_SETUP]: '--color-caution',
     [VisualState.OUT_OF_FUNDS]: '--color-negative',
     [VisualState.PAUSED]: '--color-caution',
-    [VisualState.PENDING_CONFIRMATION]: '--color-caution',
-    [VisualState.CLOSED]: '--color-foreground'
+    [VisualState.CLOSED]: '--color-foreground',
+    [VisualState.UNKNOWN]: '--color-foreground'
   }[visualState];
 
   $: {
@@ -54,22 +54,20 @@
           enrichedWorkstream?.onChainData &&
           !enrichedWorkstream.onChainData.streamSetUp
         ) {
-          visualState = VisualState.PENDING_CONFIRMATION;
+          visualState = VisualState.PENDING_SETUP;
         } else if (estimate && !estimate.currentlyStreaming) {
           visualState = estimate.paused
             ? VisualState.PAUSED
             : VisualState.OUT_OF_FUNDS;
-        } else {
+        } else if (enrichedWorkstream?.onChainData?.streamSetUp) {
           visualState = VisualState.ACTIVE;
+        } else if (enrichedWorkstream) {
+          visualState = VisualState.UNKNOWN;
         }
         break;
       }
       case WorkstreamState.CLOSED: {
         visualState = VisualState.CLOSED;
-        break;
-      }
-      case WorkstreamState.PENDING: {
-        visualState = VisualState.PENDING_SETUP;
         break;
       }
     }

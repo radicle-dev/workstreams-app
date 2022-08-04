@@ -8,9 +8,7 @@ export interface Timestamp {
 export enum WorkstreamState {
   RFA = 'rfa', // Request for Applications. Initial state of Workstream
   ACTIVE = 'active',
-  CLOSED = 'closed',
-  CANCELLED = 'cancelled',
-  PENDING = 'pending'
+  CLOSED = 'closed'
 }
 
 export enum Currency {
@@ -30,7 +28,7 @@ export interface Workstream {
   total: Money;
   title: string;
   desc: string;
-  dripsData?: {
+  dripsData: {
     accountId: bigint;
     chainId: number;
   };
@@ -53,14 +51,16 @@ export type WorkstreamInput =
       title: string;
       desc: string;
       durationDays: number;
+      chainId: number;
     }
   | {
       ratePerSecond: MoneyInput;
       title: string;
       desc: string;
       durationDays: number;
-      state: WorkstreamState.PENDING;
+      state: WorkstreamState.ACTIVE;
       assignTo: string;
+      chainId: number;
     };
 
 export enum ApplicationState {

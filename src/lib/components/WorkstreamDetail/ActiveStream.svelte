@@ -132,7 +132,7 @@
               icon={PauseIcon}>Unpause</Button
             >
           {/if}
-          {#if workstream.state === WorkstreamState.PENDING}
+          {#if workstream.state === WorkstreamState.ACTIVE && !enrichedWorkstream?.onChainData?.streamSetUp}
             <Button
               on:click={() =>
                 modal.show(StepperModal, undefined, {

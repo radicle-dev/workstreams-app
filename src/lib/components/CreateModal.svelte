@@ -121,6 +121,7 @@
       },
       title,
       desc: description,
+      chainId: $walletStore.network.chainId,
       durationDays: parseInt(duration) * parseInt(durationUnit)
     };
 
@@ -128,7 +129,7 @@
       input = {
         ...input,
         assignTo: assigneeAddress,
-        state: WorkstreamState.PENDING
+        state: WorkstreamState.ACTIVE
       };
     }
 

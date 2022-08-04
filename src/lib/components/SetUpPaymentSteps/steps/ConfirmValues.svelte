@@ -45,7 +45,11 @@
     actionInFlight = true;
 
     try {
-      const accountId = drips.getRandomAccountId();
+      const accountId = workstream.dripsData?.accountId;
+
+      if (!accountId) {
+        throw new Error('Unable to find Drips account ID for workstream.');
+      }
 
       const createDripCall = await drips.createDrip(
         workstream.acceptedApplication,
@@ -63,15 +67,6 @@
         if (receipt.status === 0) {
           console.error(receipt);
           return;
-        }
-
-        const activateCall = await workstreamsStore.activateWorkstream(
-          workstream.id,
-          accountId
-        );
-
-        if (!activateCall.ok) {
-          throw new Error(activateCall.error);
         }
 
         await invalidate(

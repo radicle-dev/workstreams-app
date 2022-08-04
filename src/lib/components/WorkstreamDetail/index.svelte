@@ -25,7 +25,7 @@
       <span class="label">on {dateFormat(workstream.created_at)}</span>
     </div>
     <div class="cards">
-      {#if workstream.state === WorkstreamState.ACTIVE || workstream.state === WorkstreamState.PENDING}
+      {#if workstream.state === WorkstreamState.ACTIVE}
         <ActiveStream {workstream} />
       {:else}
         <ApplyRow {workstream} />

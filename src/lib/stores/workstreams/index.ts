@@ -55,6 +55,7 @@ export interface EnrichedWorkstream {
   fetchedAt: Date;
   onChainData?: OnChainData;
   data: Workstream;
+  relevant: boolean;
   direction?: 'incoming' | 'outgoing';
 }
 
@@ -168,28 +169,31 @@ export const workstreamsStore = (() => {
     if (!internalState)
       return {
         data: item,
+        relevant: false,
         fetchedAt: new Date()
       };
 
-    const { currentAddress, chainId } = internalState;
-    const workstreamAssociatedWithUser =
-      currentAddress === item.creator ||
-      currentAddress === item.acceptedApplication;
-
+    const relevant =
+      item.creator === internalState.currentAddress ||
+      item.acceptedApplication === internalState.currentAddress;
     const direction =
-      item.creator === internalState.currentAddress ? 'outgoing' : 'incoming';
+      relevant && item.creator === internalState.currentAddress
+        ? 'outgoing'
+        : 'incoming';
 
-    // Only enrich workstreams that the user is assigned to or is receiving funds from.
-    if (!workstreamAssociatedWithUser || item.state !== WorkstreamState.ACTIVE)
+    if (item.state !== WorkstreamState.ACTIVE)
       return {
         data: item,
         fetchedAt: new Date(),
+        relevant,
         direction
       };
 
     const { id, creator, acceptedApplication: assignee, dripsData } = item;
 
     if (!dripsData) throw new Error(`No drips data for ws ${id}`);
+
+    const { chainId } = get(internal);
 
     const [dripsAccount, dripsUpdatedEvents] = await Promise.all([
       getDripsAccount(creator, dripsData.accountId, chainId),
@@ -223,6 +227,7 @@ export const workstreamsStore = (() => {
         ),
         dripsAccount: dripsAccount
       },
+      relevant,
       direction
     };
   }
@@ -407,6 +412,7 @@ export const workstreamsStore = (() => {
     if (response.status === 200) {
       const parsed = JSON.parse(await response.text(), reviver) as Workstream[];
       const internalState = get(internal);
+
       /*
         If we're connected to a particular chain, filter out active streams
         set up on another chain.
@@ -464,52 +470,6 @@ export const workstreamsStore = (() => {
     }
   }
 
-  async function activateWorkstream(
-    id: string,
-    accountId: bigint,
-    fetcher?: typeof fetch
-  ) {
-    const url = `${getConfig().API_URL_BASE}/workstreams/${id}/activate`;
-    const response = await _fetch(
-      url,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          chainId: get(internal).chainId,
-          accountId: String(accountId)
-        })
-      },
-      fetcher
-    );
-
-    if (response.ok) {
-      workstreams.update((v) => {
-        const workstreamInState = v[id];
-
-        if (workstreamInState) {
-          v[id] = {
-            ...v[id],
-            data: {
-              ...v[id].data,
-              state: WorkstreamState.ACTIVE
-            }
-          };
-        }
-
-        return v;
-      });
-
-      return {
-        ok: true
-      };
-    } else {
-      return {
-        ok: false,
-        error: await response.text()
-      };
-    }
-  }
-
   async function _fetch(
     url: string,
     config?: RequestInit,
@@ -530,7 +490,6 @@ export const workstreamsStore = (() => {
     refreshRelevantStreams,
     clear,
     getWorkstreams,
-    getWorkstream,
-    activateWorkstream
+    getWorkstream
   };
 })();
