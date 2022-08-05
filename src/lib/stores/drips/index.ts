@@ -110,13 +110,6 @@ export default (() => {
       currentCycleStart.getTime() + Number(cycleSecs * BigInt(1000))
     );
 
-    console.log({
-      cycleSecs,
-      currentCycleSecs,
-      currentCycleStart,
-      nextCycleStart
-    });
-
     state.update((v) => ({
       ...v,
       cycle: {
