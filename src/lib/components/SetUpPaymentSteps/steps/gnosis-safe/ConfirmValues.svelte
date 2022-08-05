@@ -8,10 +8,7 @@
   import { Currency, type Workstream } from '$lib/stores/workstreams/types';
   import { currencyFormat, weiToDai } from '$lib/utils/format';
   import ButtonRow from '../../components/ButtonRow.svelte';
-  import { workstreamsStore } from '$lib/stores/workstreams';
   import { utils } from 'ethers';
-  import { invalidate } from '$app/navigation';
-  import { getConfig } from '$lib/config';
 
   const dispatch = createEventDispatcher();
 
