@@ -20,5 +20,9 @@ module.exports = {
     browser: true,
     es2017: true,
     node: true
+  },
+  rules: {
+    'no-console': 'error',
+    '@typescript-eslint/no-unused-vars': 'error',
   }
 };
