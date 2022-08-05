@@ -330,7 +330,6 @@ export const walletStore = (() => {
   function _attachListeners(
     to: WalletConnectProvider | MetaMaskInpageProvider
   ) {
-    console.log('attaching listeners', to);
     to.on('accountsChanged', (newAccounts: string[]) => {
       const accounts = prepareAccounts(newAccounts);
 
@@ -348,7 +347,6 @@ export const walletStore = (() => {
     });
 
     to.on('chainChanged', () => {
-      console.log('chainChanged');
       location.reload();
     });
   }
