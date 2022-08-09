@@ -4,7 +4,6 @@ import {
   type ethers,
   type ContractTransaction
 } from 'ethers';
-import { randomHex } from 'web3-utils';
 import { get, writable } from 'svelte/store';
 
 import { Currency, type Money } from '../workstreams/types';
@@ -210,10 +209,6 @@ export default (() => {
     return daiContract.balanceOf(await provider.getSigner().getAddress());
   }
 
-  function getRandomAccountId() {
-    return BigNumber.from(randomHex(32)).toBigInt();
-  }
-
   async function createDrip(
     receiver: string,
     ratePerSecond: Money,
@@ -359,7 +354,6 @@ export default (() => {
     subscribe: state.subscribe,
     connect,
     disconnect,
-    getRandomAccountId,
     pauseUnpause,
     createDrip,
     topUp,

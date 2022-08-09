@@ -78,7 +78,7 @@
             total={ws.total}
           />
         {/if}
-        {#if ws.state === WorkstreamState.ACTIVE && onChainDataReady}
+        {#if ws.state === WorkstreamState.ACTIVE && enrichedWorkstream?.onChainData?.streamSetUp && onChainDataReady}
           <div class="remaining" transition:fade|local>
             • <span class="amount"
               >{currencyFormat(estimate.remainingBalance)} DAI

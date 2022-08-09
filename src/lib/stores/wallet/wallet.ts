@@ -120,6 +120,8 @@ export const walletStore = (() => {
     const network = await provider?.getNetwork();
     const login = accounts?.length > 0 && _restoreAuth(accounts);
 
+    if (detectedWindowProvider) _attachListeners(detectedWindowProvider);
+
     state.set({
       metamaskInstalled: Boolean(detectedWindowProvider),
       accounts: (accounts && prepareAccounts(accounts)) || [],

@@ -8,10 +8,7 @@
   import { Currency, type Workstream } from '$lib/stores/workstreams/types';
   import { currencyFormat, weiToDai } from '$lib/utils/format';
   import ButtonRow from '../../components/ButtonRow.svelte';
-  import { workstreamsStore } from '$lib/stores/workstreams';
   import { utils } from 'ethers';
-  import { invalidate } from '$app/navigation';
-  import { getConfig } from '$lib/config';
 
   const dispatch = createEventDispatcher();
 
@@ -45,7 +42,11 @@
     actionInFlight = true;
 
     try {
-      const accountId = drips.getRandomAccountId();
+      const accountId = workstream.dripsData?.accountId;
+
+      if (!accountId) {
+        throw new Error('Unable to find Drips account ID for workstream.');
+      }
 
       const waitFor = async () => {
         drips.createDrip(
@@ -56,19 +57,6 @@
           },
           accountId,
           utils.parseUnits(topUpAmount.toString()).toBigInt()
-        );
-
-        const activateCall = await workstreamsStore.activateWorkstream(
-          workstream.id,
-          accountId
-        );
-
-        if (!activateCall.ok) {
-          throw new Error(activateCall.error);
-        }
-
-        await invalidate(
-          `${getConfig().API_URL_BASE}/workstreams/${workstream.id}`
         );
       };
 

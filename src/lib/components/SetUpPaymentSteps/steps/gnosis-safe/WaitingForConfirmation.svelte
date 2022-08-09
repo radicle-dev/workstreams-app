@@ -12,10 +12,11 @@
   <span slot="headline">Continue in your Gnosis Safe</span>
   <div slot="content">
     <p>
-      Your workstream has been activated, but it won't start streaming funds
-      until the transaction reaches quorum and is executed by your Gnosis Safe.
-      Head over to your safe now, sign the transaction, and execute it after
-      it's reached quorum.
+      Your workstream won't start streaming funds until the proposed transaction
+      reaches quorum and is executed by your Gnosis Safe. Head over to your safe
+      now, sign the transaction, and execute it after it's reached quorum. <br
+      /> You can re-propose the transaction anytime by clicking on "Set up stream"
+      again.
     </p>
   </div>
   <div slot="step-actions">

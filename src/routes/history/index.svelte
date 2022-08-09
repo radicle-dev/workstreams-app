@@ -16,7 +16,7 @@
   const { estimates } = workstreamsStore;
 
   $: relevantStreams = Object.values($workstreamsStore.workstreams).filter(
-    (ws) => ws.onChainData
+    (ws) => ws.relevant
   );
 
   let loading = true;

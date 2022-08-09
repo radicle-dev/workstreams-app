@@ -71,7 +71,8 @@
       title: 'Workstreams pending payment setup',
       workstreams: filterObject(workstreams, (ws) => {
         return (
-          ws.data.state === WorkstreamState.PENDING &&
+          ws.data.state === WorkstreamState.ACTIVE &&
+          !ws.onChainData.streamSetUp &&
           (ws.data.creator === address ||
             ws.data.acceptedApplication === address)
         );
@@ -101,7 +102,7 @@
       workstreams: filterObject(workstreams, (ws) => {
         return (
           ws.data.state === WorkstreamState.ACTIVE &&
-          ws.onChainData &&
+          ws.onChainData?.streamSetUp &&
           ws.data.acceptedApplication === address
         );
       })
@@ -117,7 +118,7 @@
       workstreams: filterObject(workstreams, (ws) => {
         return (
           ws.data.state === WorkstreamState.ACTIVE &&
-          ws.onChainData &&
+          ws.onChainData?.streamSetUp &&
           ws.data.creator === address
         );
       })
