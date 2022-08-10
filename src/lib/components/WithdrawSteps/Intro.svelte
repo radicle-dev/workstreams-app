@@ -49,7 +49,7 @@
     </p>
     <p class="typo-text-small">
       Please note that while you're earning in real-time, your withdrawable
-      amount updates once a week.
+      amount updates once every thirty days.
       {#if $drips.cycle?.end}
         It will update next on {Intl.DateTimeFormat('en-US', {
           month: 'short',

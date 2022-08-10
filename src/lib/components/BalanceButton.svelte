@@ -19,13 +19,31 @@
 
   const estimates = workstreamsStore.estimates;
 
-  $: estimate =
-    $estimates.totalBalance !== undefined &&
-    currencyFormat($estimates.totalBalance);
+  $: currentCycleBalanceEstimate =
+    $estimates.earnedInCurrentCycle !== undefined &&
+    currencyFormat($estimates.earnedInCurrentCycle);
 
   $: withdrawable =
     $drips.collectable && currencyFormat($drips.collectable.wei);
   let hover = false;
+
+  $: currentBalance =
+    withdrawable &&
+    currentCycleBalanceEstimate &&
+    currencyFormat(
+      $drips.collectable.wei + $estimates.earnedInCurrentCycle.wei
+    );
+
+  $: formattedCycleEnd = $drips.cycle && {
+    date: Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric'
+    }).format($drips.cycle.end),
+    time: Intl.DateTimeFormat('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format($drips.cycle.end)
+  };
 
   $: collectBlocked = $drips.collectable?.wei === BigInt(0);
 
@@ -48,8 +66,8 @@
 >
   <Button on:click={() => navigate('/history')} variant="outline">
     <span class="typo-text-mono">
-      {#if estimate}
-        {padFloatString(estimate)} DAI
+      {#if currentBalance}
+        {padFloatString(currentBalance)} DAI
       {:else}
         <LoadingDots />
       {/if}
@@ -60,7 +78,7 @@
     <div in:fly={{ y: 10 }} out:fly={{ y: 10 }} class="dropdown">
       <div class="amounts">
         <div class="title-value withdrawable">
-          <p class="typo-text title">Withdrawable</p>
+          <p class="typo-text title">Withdrawable now</p>
           <h2 class="value">
             {#if withdrawable}
               {padFloatString(withdrawable)} DAI
@@ -70,10 +88,12 @@
           </h2>
         </div>
         <div class="title-value balance">
-          <p class="typo-text title">Total earned</p>
+          <p class="typo-text title">
+            Withdrawable {formattedCycleEnd?.date || '...'}
+          </p>
           <h2 class="value">
-            {#if estimate}
-              {padFloatString(estimate)} DAI
+            {#if currentCycleBalanceEstimate}
+              +{padFloatString(currentCycleBalanceEstimate)} DAI
             {:else}
               <LoadingDots />
             {/if}
@@ -85,15 +105,9 @@
         <p>
           While you’re earning in real-time, your withdrawable amount is updated
           once every thirty days.
-          {#if $drips.cycle?.end}
-            It will update next on {Intl.DateTimeFormat('en-US', {
-              month: 'short',
-              day: 'numeric'
-            }).format($drips.cycle.end)}
-            at {Intl.DateTimeFormat('en-US', {
-              hour: '2-digit',
-              minute: '2-digit'
-            }).format($drips.cycle.end)}.
+          {#if formattedCycleEnd}
+            It will update next on {formattedCycleEnd.date}
+            at {formattedCycleEnd.time}.
           {/if}
         </p>
       </div>
@@ -143,7 +157,7 @@
     position: absolute;
     top: 3rem;
     right: 0;
-    width: 26rem;
+    width: 28rem;
     border-radius: 0.5rem;
     display: flex;
     gap: 1rem;
@@ -154,7 +168,7 @@
 
   .amounts {
     display: flex;
-    gap: 2rem;
+    gap: 0.5rem;
   }
 
   .title {

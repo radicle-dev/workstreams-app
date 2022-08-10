@@ -1,4 +1,4 @@
-import streamedBetween from '$lib/stores/drips/utils/streamedBetween';
+import { amountsEarnedAndSpentBetween } from '$lib/stores/drips/utils/streamedBetween';
 import { Currency } from '$lib/stores/workstreams/types';
 import type { HistoryAggregator } from '../history';
 import { HistoryItemType } from '../types';
@@ -21,7 +21,7 @@ export const streamedInbetween: HistoryAggregator = (queue, streams) => {
       from: prevTimestamp
     };
 
-    const { earned, spent } = streamedBetween(window, streams);
+    const { earned, spent } = amountsEarnedAndSpentBetween(streams, window);
 
     if (earned.length > 0 || spent.length > 0) {
       newItems.push({
