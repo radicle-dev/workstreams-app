@@ -77,29 +77,27 @@
     <div class="hover-pad" />
     <div in:fly={{ y: 10 }} out:fly={{ y: 10 }} class="dropdown">
       <div class="amounts">
-        <div class="row">
-          <div class="title-value withdrawable">
-            <p class="typo-text title">Withdrawable now</p>
-            <h2 class="value">
-              {#if withdrawable}
-                {padFloatString(withdrawable)} DAI
-              {:else}
-                <LoadingDots />
-              {/if}
-            </h2>
-          </div>
-          <div class="title-value balance">
-            <p class="typo-text title">
-              Withdrawable from {formattedCycleEnd?.date || '...'}
-            </p>
-            <h2 class="value">
-              {#if currentCycleBalanceEstimate}
-                +{padFloatString(currentCycleBalanceEstimate)} DAI
-              {:else}
-                <LoadingDots />
-              {/if}
-            </h2>
-          </div>
+        <div class="title-value withdrawable">
+          <p class="typo-text title">Withdrawable now</p>
+          <h2 class="value">
+            {#if withdrawable}
+              {padFloatString(withdrawable)} DAI
+            {:else}
+              <LoadingDots />
+            {/if}
+          </h2>
+        </div>
+        <div class="title-value balance">
+          <p class="typo-text title">
+            Withdrawable {formattedCycleEnd?.date || '...'}
+          </p>
+          <h2 class="value">
+            {#if currentCycleBalanceEstimate}
+              +{padFloatString(currentCycleBalanceEstimate)} DAI
+            {:else}
+              <LoadingDots />
+            {/if}
+          </h2>
         </div>
       </div>
       <div class="info">
@@ -159,7 +157,7 @@
     position: absolute;
     top: 3rem;
     right: 0;
-    width: 26rem;
+    width: 28rem;
     border-radius: 0.5rem;
     display: flex;
     gap: 1rem;
@@ -169,14 +167,8 @@
   }
 
   .amounts {
-    flex-direction: column;
     display: flex;
-    gap: 1rem;
-  }
-
-  .amounts > .row {
-    display: flex;
-    gap: 2rem;
+    gap: 0.5rem;
   }
 
   .title {
