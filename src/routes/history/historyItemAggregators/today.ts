@@ -1,4 +1,4 @@
-import streamedBetween from '$lib/stores/drips/utils/streamedBetween';
+import { amountsEarnedAndSpentBetween } from '$lib/stores/drips/utils/streamedBetween';
 import { Currency } from '$lib/stores/workstreams/types';
 import type { HistoryAggregator } from '../history';
 import { HistoryItemType } from '../types';
@@ -18,7 +18,10 @@ export const today: HistoryAggregator = (queue, streams) => {
     )
   };
 
-  const { earned, spent } = streamedBetween(window, streams);
+  let { earned, spent } = amountsEarnedAndSpentBetween(streams, window);
+
+  earned = earned.filter((e) => e.amount.wei > 0);
+  spent = spent.filter((s) => s.amount.wei > 0);
 
   return [
     {

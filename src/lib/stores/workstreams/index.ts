@@ -14,10 +14,10 @@ import type {
 import type { DripsUpdated_address_uint256_uint128_tuple_array_Event } from '../drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
 import getDripsAccount from './methods/getDripsAccount';
 import getDripsUpdatedEvents from './methods/getDripsUpdatedEvents';
-import bigIntMin from './methods/bigIntMin';
 import fetchRelevantWorkstreams from './methods/fetchRelevantWorkstreams';
 import type { Cycle } from '../drips';
 import tick from '../tick';
+import { streamedBetween } from '../drips/utils/streamedBetween';
 
 export const reviver: (key: string, value: unknown) => unknown = (
   key,
@@ -91,6 +91,7 @@ interface Estimate {
 interface EstimatesState {
   workstreams: { [wsId: string]: Estimate };
   totalBalance?: Money;
+  earnedInCurrentCycle?: Money;
 }
 
 const INITIAL_WORKSTREAMS_STATE = {
@@ -264,52 +265,7 @@ export const workstreamsStore = (() => {
         continue;
       }
 
-      let earned = BigInt(0);
-      let remainingBalance = BigInt(0);
-
-      /*
-        Iterate over all `dripsUpdated` events associated with the
-        particular drips subaccount linked to the workstream.
-      */
-      dripsUpdatedEvents.forEach((dew, i) => {
-        const nextDew = dripsUpdatedEvents[i + 1];
-
-        const toppedUpAmount = dew.event.args.balance.toBigInt();
-
-        const nextUpdateTimestamp = nextDew
-          ? new Date(nextDew.fromBlock.timestamp * 1000).getTime()
-          : new Date().getTime();
-
-        /*
-          Count the amount of seconds the current `dripsUpdated` event
-          has been valid for so far — either until the next `dripsUpdated`
-          event, or until the current time if it is the latest one.
-        */
-        const updateValidForSecs = Math.floor(
-          (nextUpdateTimestamp -
-            new Date(dew.fromBlock.timestamp * 1000).getTime()) /
-            1000
-        );
-
-        const amtPerSec =
-          dew.event.args.receivers[0]?.amtPerSec.toBigInt() || BigInt(0);
-
-        /* 
-          If the theoretically earned amount from this workstream exceeds
-          the balance that the workstream was topped up for at the time
-          of the update, we limit the amount earned to the topped-up amount.
-        */
-        const earnedDuringUpdate = bigIntMin(
-          BigInt(updateValidForSecs) * amtPerSec,
-          toppedUpAmount
-        );
-
-        earned += earnedDuringUpdate;
-
-        if (!nextDew) {
-          remainingBalance = toppedUpAmount - earnedDuringUpdate;
-        }
-      });
+      const streamed = streamedBetween([v])[0];
 
       const lastUpdate = dripsUpdatedEvents[dripsUpdatedEvents.length - 1];
       const currAmtPerSec =
@@ -324,14 +280,8 @@ export const workstreamsStore = (() => {
         : undefined;
 
       newEstimates[wsId] = {
-        currentBalance: {
-          wei: earned,
-          currency: Currency.DAI
-        },
-        remainingBalance: {
-          wei: remainingBalance,
-          currency: Currency.DAI
-        },
+        currentBalance: streamed.amount,
+        remainingBalance: streamed.remaining,
         streamingUntil,
         currentlyStreaming: streamingUntil
           ? streamingUntil.getTime() > new Date().getTime()
@@ -344,24 +294,33 @@ export const workstreamsStore = (() => {
       Sum up the amount earned from all active streams in the store to
       calculcate the global earned amount.
     */
-    const totalWeiEarned = Object.entries(newEstimates).reduce<bigint>(
-      (acc, [wsId, val]) => {
-        if (!val) return acc;
+    const incomingWorkstreams = Object.values(ws).filter(
+      (ws) => ws.direction === 'incoming'
+    );
+    const amountsStreamedTotal = streamedBetween(incomingWorkstreams);
+    const amountsStreamedInCurrentCycle = streamedBetween(incomingWorkstreams, {
+      from: get(internal).currentCycleStart,
+      to: new Date()
+    });
 
-        const direction =
-          ws[wsId].data.creator === get(internal).currentAddress
-            ? 'outgoing'
-            : 'incoming';
-
-        return direction === 'incoming' ? acc + val.currentBalance.wei : acc;
-      },
+    const totalWeiEarned = amountsStreamedTotal.reduce<bigint>(
+      (acc, v) => acc + v.amount.wei,
       BigInt(0)
     );
+    const totalWeiEarnedInCurrentCycle =
+      amountsStreamedInCurrentCycle.reduce<bigint>(
+        (acc, v) => acc + v.amount.wei,
+        BigInt(0)
+      );
 
     estimates.update((estimatesVal) => ({
       totalBalance: {
-        wei: totalWeiEarned,
-        currency: Currency.DAI
+        currency: Currency.DAI,
+        wei: totalWeiEarned
+      },
+      earnedInCurrentCycle: {
+        currency: Currency.DAI,
+        wei: totalWeiEarnedInCurrentCycle
       },
       workstreams: {
         ...estimatesVal.workstreams,

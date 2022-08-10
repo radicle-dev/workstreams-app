@@ -5,7 +5,6 @@
   import { workstreamsStore } from '$lib/stores/workstreams';
   import HistoryItem from '$lib/components/History/HistoryItem.svelte';
   import { currencyFormat } from '$lib/utils/format';
-  import drips from '$lib/stores/drips';
   import history from './history';
   import * as aggregators from './historyItemAggregators';
   import Spinner from 'radicle-design-system/Spinner.svelte';
@@ -65,15 +64,8 @@
         <div class="key-value">
           <h4>Total earned</h4>
           <p class="amount typo-text-mono-bold">
-            +{($estimates.totalBalance &&
+            {($estimates.totalBalance &&
               currencyFormat($estimates.totalBalance.wei)) ||
-              '…'} DAI
-          </p>
-        </div>
-        <div class="key-value">
-          <h4>Withdrawable now</h4>
-          <p class="typo-text-mono-bold">
-            {($drips.collectable && currencyFormat($drips.collectable.wei)) ||
               '…'} DAI
           </p>
         </div>
