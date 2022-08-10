@@ -29,10 +29,7 @@ export const monthStartInbetween: HistoryAggregator = (queue, streams) => {
         to: monthEnd
       };
 
-      let { earned, spent } = amountsEarnedAndSpentBetween(streams, window);
-
-      earned = earned.filter((e) => e.amount.wei > 0);
-      spent = spent.filter((s) => s.amount.wei > 0);
+      const { earned, spent } = amountsEarnedAndSpentBetween(streams, window);
 
       newItems.push({
         type: HistoryItemType.MonthStartInbetween,

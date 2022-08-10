@@ -79,7 +79,11 @@ export function amountsEarnedAndSpentBetween(
   const amounts = streamedBetween(streams, timeWindow);
 
   return {
-    earned: amounts.filter((a) => a.workstream.direction === 'incoming'),
-    spent: amounts.filter((a) => a.workstream.direction === 'outgoing')
+    earned: amounts.filter(
+      (a) => a.workstream.direction === 'incoming' && a.amount.wei > 0
+    ),
+    spent: amounts.filter(
+      (a) => a.workstream.direction === 'outgoing' && a.amount.wei > 0
+    )
   };
 }

@@ -18,10 +18,7 @@ export const today: HistoryAggregator = (queue, streams) => {
     )
   };
 
-  let { earned, spent } = amountsEarnedAndSpentBetween(streams, window);
-
-  earned = earned.filter((e) => e.amount.wei > 0);
-  spent = spent.filter((s) => s.amount.wei > 0);
+  const { earned, spent } = amountsEarnedAndSpentBetween(streams, window);
 
   return [
     {

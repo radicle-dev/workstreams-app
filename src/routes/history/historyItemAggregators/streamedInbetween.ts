@@ -21,10 +21,7 @@ export const streamedInbetween: HistoryAggregator = (queue, streams) => {
       from: prevTimestamp
     };
 
-    let { earned, spent } = amountsEarnedAndSpentBetween(streams, window);
-
-    earned = earned.filter((e) => e.amount.wei > 0);
-    spent = spent.filter((s) => s.amount.wei > 0);
+    const { earned, spent } = amountsEarnedAndSpentBetween(streams, window);
 
     if (earned.length > 0 || spent.length > 0) {
       newItems.push({
