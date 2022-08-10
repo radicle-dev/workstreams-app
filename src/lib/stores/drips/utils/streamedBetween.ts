@@ -7,8 +7,8 @@ interface TimeWindow {
 }
 
 /**
- * Calculates the exact amounts earned and spent within a given time window and
- * list of workstreams to consider.
+ * Calculates the exact amounts streamed and remaining for streams related
+ * to a given array of EnrichedWorkstream objects.
  */
 export function streamedBetween(
   streams: EnrichedWorkstream[],
@@ -72,6 +72,10 @@ export function streamedBetween(
   return amountsStreamed;
 }
 
+/**
+ * Breaks down the amounts earned and spent by the currently logged-in
+ * user for a given array of EnrichedWorkstream objects.
+ */
 export function amountsEarnedAndSpentBetween(
   streams: EnrichedWorkstream[],
   timeWindow: TimeWindow = { from: new Date(0), to: new Date() }
