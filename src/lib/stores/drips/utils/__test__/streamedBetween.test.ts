@@ -193,8 +193,8 @@ describe('streamedBetween', () => {
 
   it('returns multiple objects if multiple workstreams are passed', () => {
     expect(
-      streamedBetween([workstreamPendingSetup, workstreamPendingSetup])
-    ).toEqual([workstreamPendingSetupOutput, workstreamPendingSetupOutput]);
+      streamedBetween([workstreamPendingSetup, workstreamPendingSetup]).length
+    ).toEqual(2);
   });
 
   it('correctly returns 1 eth as streamed amount for a stream that has streamed its entire balance of 1 eth', () => {
