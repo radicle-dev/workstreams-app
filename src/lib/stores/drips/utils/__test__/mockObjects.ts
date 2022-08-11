@@ -31,7 +31,7 @@ const mockWorkstreamData = (
   title: 'Test'
 });
 
-export const mockMoney = (wei: string | number | bigint) => ({
+const mockMoney = (wei: string | number | bigint) => ({
   currency: Currency.DAI,
   wei: BigInt(wei)
 });
