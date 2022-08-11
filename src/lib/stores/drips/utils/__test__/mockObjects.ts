@@ -58,7 +58,7 @@ export const workstreamPendingSetupOutput = {
   amount: mockMoney(0)
 };
 
-export const mockDrippingEventWrapper = (
+const mockDrippingEventWrapper = (
   balance = eth(1),
   amtPerSec = eth(0.1),
   timestamp = 1000000000
