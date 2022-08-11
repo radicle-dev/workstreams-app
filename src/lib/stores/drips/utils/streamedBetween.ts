@@ -35,6 +35,10 @@ export function streamedBetween(
         dew.event.args.receivers[0]?.amtPerSec.toBigInt() || BigInt(0);
       const balance = dew.event.args.balance.toBigInt();
 
+      if (index === events.length - 1 && amtPerSec === BigInt(0)) {
+        amountRemaining = balance;
+      }
+
       if (amtPerSec === BigInt(0)) return;
 
       const toppedUpUntil = validSince + Number(balance / amtPerSec);

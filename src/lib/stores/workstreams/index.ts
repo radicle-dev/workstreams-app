@@ -68,7 +68,7 @@ export interface DrippingEventWrapper {
 export interface OnChainData {
   amtPerSec: Money;
   dripsEntries: DripsConfig_dripsConfig_dripsEntries[];
-  dripsAccount: DripsConfig_dripsConfig_dripsAccount;
+  dripsAccount?: DripsConfig_dripsConfig_dripsAccount;
   streamSetUp: boolean;
   dripsUpdatedEvents: DrippingEventWrapper[];
 }
@@ -221,7 +221,7 @@ export const workstreamsStore = (() => {
       fetchedAt: new Date(),
       onChainData: {
         amtPerSec,
-        dripsUpdatedEvents: dripsUpdatedEvents,
+        dripsUpdatedEvents,
         dripsEntries: dripsAccount?.dripsEntries || [],
         streamSetUp: Boolean(
           dripsUpdatedEvents[0]?.event.args.receivers.find(
