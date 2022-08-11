@@ -12,7 +12,7 @@ import {
 import { BigNumber } from 'ethers';
 import { eth } from './utils';
 
-export const mockWorkstreamData = (
+const mockWorkstreamData = (
   state: WorkstreamState = WorkstreamState.ACTIVE,
   id = 'c2003033-5544-489a-bf56-b3e104677952'
 ): Workstream => ({
