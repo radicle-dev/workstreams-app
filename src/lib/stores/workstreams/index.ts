@@ -65,12 +65,18 @@ export interface DrippingEventWrapper {
   fromBlock: Block;
 }
 
+export interface DripHistoryEvent {
+  balance: Money;
+  amtPerSec: Money;
+  timestamp: Date;
+}
+
 export interface OnChainData {
   amtPerSec: Money;
   dripsEntries: DripsConfig_dripsConfig_dripsEntries[];
   dripsAccount?: DripsConfig_dripsConfig_dripsAccount;
   streamSetUp: boolean;
-  dripsUpdatedEvents: DrippingEventWrapper[];
+  dripHistory: DripHistoryEvent[];
 }
 
 interface InternalState {
@@ -216,12 +222,37 @@ export const workstreamsStore = (() => {
       currency: Currency.DAI
     };
 
+    const dripHistory = dripsUpdatedEvents.reduce<DripHistoryEvent[]>(
+      (acc, dew) => {
+        const { args } = dew.event;
+        const recipient = args.receivers.find(
+          (r) => r.receiver.toLowerCase() === assignee
+        );
+
+        return [
+          ...acc,
+          {
+            balance: {
+              currency: Currency.DAI,
+              wei: args.balance.toBigInt()
+            },
+            amtPerSec: {
+              currency: Currency.DAI,
+              wei: recipient?.amtPerSec.toBigInt() || BigInt(0)
+            },
+            timestamp: new Date(dew.fromBlock.timestamp * 1000)
+          }
+        ];
+      },
+      []
+    );
+
     return {
       data: item,
       fetchedAt: new Date(),
       onChainData: {
         amtPerSec,
-        dripsUpdatedEvents,
+        dripHistory,
         dripsEntries: dripsAccount?.dripsEntries || [],
         streamSetUp: Boolean(
           dripsUpdatedEvents[0]?.event.args.receivers.find(
@@ -243,9 +274,9 @@ export const workstreamsStore = (() => {
     for (const [wsId, v] of Object.entries(ws)) {
       if (!v.onChainData) continue;
 
-      const { dripsUpdatedEvents } = v.onChainData;
+      const { dripHistory } = v.onChainData;
 
-      if (dripsUpdatedEvents.length === 0) {
+      if (dripHistory.length === 0) {
         // Drip hasn't yet been set up for this workstream.
 
         newEstimates[wsId] = {
@@ -267,15 +298,13 @@ export const workstreamsStore = (() => {
 
       const streamed = streamedBetween([v])[0];
 
-      const lastUpdate = dripsUpdatedEvents[dripsUpdatedEvents.length - 1];
-      const currAmtPerSec =
-        lastUpdate.event.args.receivers[0]?.amtPerSec.toBigInt() || BigInt(0);
-      const lastUpdateTimestamp = lastUpdate.fromBlock.timestamp * 1000;
+      const lastUpdate = dripHistory[dripHistory.length - 1];
+      const currAmtPerSec = lastUpdate?.amtPerSec.wei || BigInt(0);
+      const lastUpdateTimestamp = lastUpdate?.timestamp.getTime();
       const streamingUntil = currAmtPerSec
         ? new Date(
             lastUpdateTimestamp +
-              Number(lastUpdate.event.args.balance.toBigInt() / currAmtPerSec) *
-                1000
+              Number(lastUpdate.balance.wei / currAmtPerSec) * 1000
           )
         : undefined;
 

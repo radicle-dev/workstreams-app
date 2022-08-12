@@ -7,9 +7,7 @@ import { HistoryItemType } from '../types';
 */
 export const streamStart: HistoryAggregator = (_, streams) =>
   Object.values(streams).map((ws) => {
-    const timestamp = new Date(
-      ws.onChainData.dripsUpdatedEvents[0].fromBlock.timestamp * 1000
-    );
+    const timestamp = ws.onChainData.dripHistory[0].timestamp;
 
     return {
       type: HistoryItemType.StreamStart,

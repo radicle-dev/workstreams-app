@@ -7,32 +7,23 @@ import { HistoryItemType, type StreamUnpaused } from '../types';
 */
 export const streamUnpaused: HistoryAggregator = (_, streams) =>
   streams.reduce<StreamUnpaused[]>((acc, ws) => {
-    const events = ws.onChainData.dripsUpdatedEvents;
+    const { dripHistory } = ws.onChainData;
 
-    const unpauses = events.filter((dew, index) => {
-      const prevDew = events[index - 1];
+    const unpauses = dripHistory.filter((e, index) => {
+      const prevDew = e[index - 1];
 
-      const prevDewPaused =
-        prevDew &&
-        !prevDew.event.args.receivers.find(
-          (r) => r.receiver.toLowerCase() === ws.data.acceptedApplication
-        );
+      const prevDewPaused = prevDew?.amtPerSec.wei === BigInt(0);
 
-      return (
-        prevDewPaused &&
-        dew.event.args.receivers.find(
-          (r) => r.receiver.toLowerCase() === ws.data.acceptedApplication
-        )
-      );
+      return prevDewPaused && e.amtPerSec.wei !== BigInt(0);
     });
 
     return [
       ...acc,
       ...unpauses.map(
-        (dew) =>
+        (e) =>
           ({
             type: HistoryItemType.StreamUnpaused,
-            timestamp: new Date(dew.fromBlock.timestamp * 1000),
+            timestamp: e.timestamp,
             meta: {
               workstream: ws
             }
