@@ -25,6 +25,9 @@ export const streamStartStop: HistoryAggregator = (_, streams) => {
         const { amtPerSec, timestamp, balance } = e;
 
         const nextEvent = dripHistory[index + 1];
+
+        if (amtPerSec.wei === BigInt(0)) return acc;
+
         const streamingUntil =
           timestamp.getTime() / 1000 + Number(balance.wei / amtPerSec.wei);
         const nextTimestamp = (timestamp || new Date()).getTime() / 1000;
