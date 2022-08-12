@@ -12,7 +12,7 @@ import {
 import { BigNumber } from 'ethers';
 import { eth } from './utils';
 
-export const mockWorkstreamData = (
+const mockWorkstreamData = (
   state: WorkstreamState = WorkstreamState.ACTIVE,
   id = 'c2003033-5544-489a-bf56-b3e104677952'
 ): Workstream => ({
@@ -31,7 +31,7 @@ export const mockWorkstreamData = (
   title: 'Test'
 });
 
-export const mockMoney = (wei: string | number | bigint) => ({
+const mockMoney = (wei: string | number | bigint) => ({
   currency: Currency.DAI,
   wei: BigInt(wei)
 });
@@ -58,7 +58,7 @@ export const workstreamPendingSetupOutput = {
   amount: mockMoney(0)
 };
 
-export const mockDrippingEventWrapper = (
+const mockDrippingEventWrapper = (
   balance = eth(1),
   amtPerSec = eth(0.1),
   timestamp = 1000000000
