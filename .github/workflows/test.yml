@@ -7,8 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
+      - name: Check node version
         run: node --version
+      - name: Install dependencies
         run: yarn install --immutable
       - name: Run tests
         run: yarn run test
