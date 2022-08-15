@@ -15,5 +15,7 @@ jobs:
         # they're built.
         # See: https://github.com/yarnpkg/berry/issues/2399 for more info.
         run: YARN_CHECKSUM_BEHAVIOR=update yarn install --immutable
+      - name: svelte-kit sync
+        run: svelte-kit sync
       - name: Run tests
         run: yarn run test
