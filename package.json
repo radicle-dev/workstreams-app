@@ -1,7 +1,6 @@
 {
   "name": "workstreams-app",
   "version": "0.0.1",
-  "prepare": "svelte-kit sync",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -12,7 +11,7 @@
     "lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
     "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
     "prepare": "husky install",
-    "postinstall": "scripts/install-twemoji-assets.sh && scripts/install-design-system-static-assets.sh",
+    "postinstall": "svelte-kit sync && scripts/install-twemoji-assets.sh && scripts/install-design-system-static-assets.sh",
     "apollo:update-schema": "npx apollo service:download --endpoint=https://api.thegraph.com/subgraphs/name/gh0stwheel/drips-on-ethereum graphql-schema.json",
     "typechain:generate-contract-types": "npx typechain --target ethers-v5 --out-dir './src/lib/stores/drips/contracts/types' './src/lib/stores/drips/contracts/**/*.json'",
     "apollo:generate-types": "npx apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --tagName=gql",

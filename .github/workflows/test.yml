@@ -1,21 +1,19 @@
 name: pull-request
 
-on:
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
       - uses: actions/checkout@v2
-
-      - name: Set up node 
-        uses: actions/setup-node@v1
-
+      - name: Check node version
+        run: node --version
       - name: Install dependencies
-        run: yarn install
-
-      - name: Run tests 
+        # There's a bug in yarn 2 where checksums for packages built from a
+        # github repo have differing checksums depending on which platform
+        # they're built.
+        # See: https://github.com/yarnpkg/berry/issues/2399 for more info.
+        run: YARN_CHECKSUM_BEHAVIOR=update yarn install --immutable
+      - name: Run tests
         run: yarn run test
