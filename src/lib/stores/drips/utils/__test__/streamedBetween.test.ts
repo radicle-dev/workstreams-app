@@ -14,6 +14,26 @@ describe('flattenDripHistory', () => {
     });
   });
 
+  it('calculates the streamed amount from the beginning of time until the current date by default', () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(1 * 1000)); // 1 second after stream was set up
+
+    expect(
+      flattenDripHistory([
+        mockDripHistoryEvent({
+          balance: mockMoney(eth(1)),
+          amtPerSec: mockMoney(eth(0.1)),
+          seconds: 0
+        })
+      ])
+    ).toEqual({
+      amountStreamed: eth(0.1),
+      amountRemaining: eth(0.9)
+    });
+
+    jest.useRealTimers();
+  });
+
   it('correctly returns 1 dai as streamed amount for a stream that has streamed its entire balance of 1 dai', () => {
     expect(
       flattenDripHistory([
@@ -86,26 +106,6 @@ describe('flattenDripHistory', () => {
       amountStreamed: eth(1),
       amountRemaining: eth(0)
     });
-  });
-
-  it('calculates the streamed amount from the beginning of time until the current date by default', () => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date(1 * 1000)); // 1 second after stream was set up
-
-    expect(
-      flattenDripHistory([
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(1)),
-          amtPerSec: mockMoney(eth(0.1)),
-          seconds: 0
-        })
-      ])
-    ).toEqual({
-      amountStreamed: eth(0.1),
-      amountRemaining: eth(0.9)
-    });
-
-    jest.useRealTimers();
   });
 
   it('correctly calculates the total and remaining amount of a paused workstream', () => {
