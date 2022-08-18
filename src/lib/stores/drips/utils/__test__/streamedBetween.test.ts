@@ -34,7 +34,7 @@ describe('flattenDripHistory', () => {
     jest.useRealTimers();
   });
 
-  it('correctly returns 1 dai as streamed amount for a stream that has streamed its entire balance of 1 dai', () => {
+  it('returns 1 dai for a stream that has streamed its entire balance of 1 dai', () => {
     expect(
       flattenDripHistory([
         createDripHistoryEvent({
