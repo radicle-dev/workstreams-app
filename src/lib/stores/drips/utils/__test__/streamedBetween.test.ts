@@ -1,6 +1,5 @@
 import { flattenDripHistory } from '../streamedBetween';
-import { createDripHistoryEvent, createMoney } from './mockObjects';
-import { eth } from './utils';
+import { dripHistoryEvent, money, eth } from './utils';
 
 afterEach(() => {
   jest.useRealTimers();
@@ -20,9 +19,9 @@ describe('flattenDripHistory', () => {
 
     expect(
       flattenDripHistory([
-        createDripHistoryEvent({
-          balance: createMoney(eth(1)),
-          amtPerSec: createMoney(eth(0.1)),
+        dripHistoryEvent({
+          balance: money(eth(1)),
+          amtPerSec: money(eth(0.1)),
           timestampSeconds: 0
         })
       ])
@@ -37,9 +36,9 @@ describe('flattenDripHistory', () => {
   it('returns 1 dai for a stream that has streamed its entire balance of 1 dai', () => {
     expect(
       flattenDripHistory([
-        createDripHistoryEvent({
-          balance: createMoney(eth(1)),
-          amtPerSec: createMoney(eth(0.1)),
+        dripHistoryEvent({
+          balance: money(eth(1)),
+          amtPerSec: money(eth(0.1)),
           timestampSeconds: 0
         })
       ])
@@ -53,9 +52,9 @@ describe('flattenDripHistory', () => {
     expect(
       flattenDripHistory(
         [
-          createDripHistoryEvent({
-            balance: createMoney(eth(1)),
-            amtPerSec: createMoney(eth(0.1)),
+          dripHistoryEvent({
+            balance: money(eth(1)),
+            amtPerSec: money(eth(0.1)),
             timestampSeconds: 0
           })
         ],
@@ -72,9 +71,9 @@ describe('flattenDripHistory', () => {
     expect(
       flattenDripHistory(
         [
-          createDripHistoryEvent({
-            balance: createMoney(eth(1)),
-            amtPerSec: createMoney(eth(0.1)),
+          dripHistoryEvent({
+            balance: money(eth(1)),
+            amtPerSec: money(eth(0.1)),
             timestampSeconds: 0
           })
         ],
@@ -91,9 +90,9 @@ describe('flattenDripHistory', () => {
     expect(
       flattenDripHistory(
         [
-          createDripHistoryEvent({
-            balance: createMoney(eth(1)),
-            amtPerSec: createMoney(eth(0.1)),
+          dripHistoryEvent({
+            balance: money(eth(1)),
+            amtPerSec: money(eth(0.1)),
             timestampSeconds: 0
           })
         ],
@@ -111,14 +110,14 @@ describe('flattenDripHistory', () => {
   it('correctly calculates the total and remaining amount of a paused workstream', () => {
     expect(
       flattenDripHistory([
-        createDripHistoryEvent({
-          balance: createMoney(eth(1)),
-          amtPerSec: createMoney(eth(0.1)),
+        dripHistoryEvent({
+          balance: money(eth(1)),
+          amtPerSec: money(eth(0.1)),
           timestampSeconds: 0
         }),
-        createDripHistoryEvent({
-          balance: createMoney(eth(0.5)),
-          amtPerSec: createMoney(eth(0)),
+        dripHistoryEvent({
+          balance: money(eth(0.5)),
+          amtPerSec: money(eth(0)),
           timestampSeconds: 5
         })
       ])
@@ -129,14 +128,14 @@ describe('flattenDripHistory', () => {
 
     expect(
       flattenDripHistory([
-        createDripHistoryEvent({
-          balance: createMoney(eth(1)),
-          amtPerSec: createMoney(eth(0.1)),
+        dripHistoryEvent({
+          balance: money(eth(1)),
+          amtPerSec: money(eth(0.1)),
           timestampSeconds: 0
         }),
-        createDripHistoryEvent({
-          balance: createMoney(eth(0.3)),
-          amtPerSec: createMoney(eth(0)),
+        dripHistoryEvent({
+          balance: money(eth(0.3)),
+          amtPerSec: money(eth(0)),
           timestampSeconds: 7
         })
       ])
@@ -147,14 +146,14 @@ describe('flattenDripHistory', () => {
 
     expect(
       flattenDripHistory([
-        createDripHistoryEvent({
-          balance: createMoney(eth(1)),
-          amtPerSec: createMoney(eth(0.1)),
+        dripHistoryEvent({
+          balance: money(eth(1)),
+          amtPerSec: money(eth(0.1)),
           timestampSeconds: 0
         }),
-        createDripHistoryEvent({
-          balance: createMoney(eth(0)),
-          amtPerSec: createMoney(eth(0)),
+        dripHistoryEvent({
+          balance: money(eth(0)),
+          amtPerSec: money(eth(0)),
           timestampSeconds: 10
         })
       ])
@@ -166,14 +165,14 @@ describe('flattenDripHistory', () => {
     expect(
       flattenDripHistory(
         [
-          createDripHistoryEvent({
-            balance: createMoney(eth(2)),
-            amtPerSec: createMoney(eth(0.1)),
+          dripHistoryEvent({
+            balance: money(eth(2)),
+            amtPerSec: money(eth(0.1)),
             timestampSeconds: 0
           }),
-          createDripHistoryEvent({
-            balance: createMoney(eth(0.5)),
-            amtPerSec: createMoney(eth(0)),
+          dripHistoryEvent({
+            balance: money(eth(0.5)),
+            amtPerSec: money(eth(0)),
             timestampSeconds: 15
           })
         ],
@@ -191,24 +190,24 @@ describe('flattenDripHistory', () => {
   it('handles unpauses and different amtPerSec', () => {
     expect(
       flattenDripHistory([
-        createDripHistoryEvent({
-          balance: createMoney(eth(5)),
-          amtPerSec: createMoney(eth(0.1)),
+        dripHistoryEvent({
+          balance: money(eth(5)),
+          amtPerSec: money(eth(0.1)),
           timestampSeconds: 0
         }),
-        createDripHistoryEvent({
-          balance: createMoney(eth(4.5)),
-          amtPerSec: createMoney(eth(0)),
+        dripHistoryEvent({
+          balance: money(eth(4.5)),
+          amtPerSec: money(eth(0)),
           timestampSeconds: 5
         }),
-        createDripHistoryEvent({
-          balance: createMoney(eth(4.5)),
-          amtPerSec: createMoney(eth(1)),
+        dripHistoryEvent({
+          balance: money(eth(4.5)),
+          amtPerSec: money(eth(1)),
           timestampSeconds: 10
         }),
-        createDripHistoryEvent({
-          balance: createMoney(eth(2.5)),
-          amtPerSec: createMoney(eth(0)),
+        dripHistoryEvent({
+          balance: money(eth(2.5)),
+          amtPerSec: money(eth(0)),
           timestampSeconds: 12
         })
       ])
