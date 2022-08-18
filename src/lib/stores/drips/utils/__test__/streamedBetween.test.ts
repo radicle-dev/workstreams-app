@@ -1,5 +1,5 @@
 import { flattenDripHistory } from '../streamedBetween';
-import { mockDripHistoryEvent, mockMoney } from './mockObjects';
+import { createDripHistoryEvent, createMoney } from './mockObjects';
 import { eth } from './utils';
 
 afterEach(() => {
@@ -20,10 +20,10 @@ describe('flattenDripHistory', () => {
 
     expect(
       flattenDripHistory([
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(1)),
-          amtPerSec: mockMoney(eth(0.1)),
-          seconds: 0
+        createDripHistoryEvent({
+          balance: createMoney(eth(1)),
+          amtPerSec: createMoney(eth(0.1)),
+          timestampSeconds: 0
         })
       ])
     ).toEqual({
@@ -37,10 +37,10 @@ describe('flattenDripHistory', () => {
   it('correctly returns 1 dai as streamed amount for a stream that has streamed its entire balance of 1 dai', () => {
     expect(
       flattenDripHistory([
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(1)),
-          amtPerSec: mockMoney(eth(0.1)),
-          seconds: 0
+        createDripHistoryEvent({
+          balance: createMoney(eth(1)),
+          amtPerSec: createMoney(eth(0.1)),
+          timestampSeconds: 0
         })
       ])
     ).toEqual({
@@ -53,10 +53,10 @@ describe('flattenDripHistory', () => {
     expect(
       flattenDripHistory(
         [
-          mockDripHistoryEvent({
-            balance: mockMoney(eth(1)),
-            amtPerSec: mockMoney(eth(0.1)),
-            seconds: 0
+          createDripHistoryEvent({
+            balance: createMoney(eth(1)),
+            amtPerSec: createMoney(eth(0.1)),
+            timestampSeconds: 0
           })
         ],
         {
@@ -72,10 +72,10 @@ describe('flattenDripHistory', () => {
     expect(
       flattenDripHistory(
         [
-          mockDripHistoryEvent({
-            balance: mockMoney(eth(1)),
-            amtPerSec: mockMoney(eth(0.1)),
-            seconds: 0
+          createDripHistoryEvent({
+            balance: createMoney(eth(1)),
+            amtPerSec: createMoney(eth(0.1)),
+            timestampSeconds: 0
           })
         ],
         {
@@ -91,10 +91,10 @@ describe('flattenDripHistory', () => {
     expect(
       flattenDripHistory(
         [
-          mockDripHistoryEvent({
-            balance: mockMoney(eth(1)),
-            amtPerSec: mockMoney(eth(0.1)),
-            seconds: 0
+          createDripHistoryEvent({
+            balance: createMoney(eth(1)),
+            amtPerSec: createMoney(eth(0.1)),
+            timestampSeconds: 0
           })
         ],
         {
@@ -111,15 +111,15 @@ describe('flattenDripHistory', () => {
   it('correctly calculates the total and remaining amount of a paused workstream', () => {
     expect(
       flattenDripHistory([
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(1)),
-          amtPerSec: mockMoney(eth(0.1)),
-          seconds: 0
+        createDripHistoryEvent({
+          balance: createMoney(eth(1)),
+          amtPerSec: createMoney(eth(0.1)),
+          timestampSeconds: 0
         }),
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(0.5)),
-          amtPerSec: mockMoney(eth(0)),
-          seconds: 5
+        createDripHistoryEvent({
+          balance: createMoney(eth(0.5)),
+          amtPerSec: createMoney(eth(0)),
+          timestampSeconds: 5
         })
       ])
     ).toEqual({
@@ -129,15 +129,15 @@ describe('flattenDripHistory', () => {
 
     expect(
       flattenDripHistory([
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(1)),
-          amtPerSec: mockMoney(eth(0.1)),
-          seconds: 0
+        createDripHistoryEvent({
+          balance: createMoney(eth(1)),
+          amtPerSec: createMoney(eth(0.1)),
+          timestampSeconds: 0
         }),
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(0.3)),
-          amtPerSec: mockMoney(eth(0)),
-          seconds: 7
+        createDripHistoryEvent({
+          balance: createMoney(eth(0.3)),
+          amtPerSec: createMoney(eth(0)),
+          timestampSeconds: 7
         })
       ])
     ).toEqual({
@@ -147,15 +147,15 @@ describe('flattenDripHistory', () => {
 
     expect(
       flattenDripHistory([
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(1)),
-          amtPerSec: mockMoney(eth(0.1)),
-          seconds: 0
+        createDripHistoryEvent({
+          balance: createMoney(eth(1)),
+          amtPerSec: createMoney(eth(0.1)),
+          timestampSeconds: 0
         }),
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(0)),
-          amtPerSec: mockMoney(eth(0)),
-          seconds: 10
+        createDripHistoryEvent({
+          balance: createMoney(eth(0)),
+          amtPerSec: createMoney(eth(0)),
+          timestampSeconds: 10
         })
       ])
     ).toEqual({
@@ -166,15 +166,15 @@ describe('flattenDripHistory', () => {
     expect(
       flattenDripHistory(
         [
-          mockDripHistoryEvent({
-            balance: mockMoney(eth(2)),
-            amtPerSec: mockMoney(eth(0.1)),
-            seconds: 0
+          createDripHistoryEvent({
+            balance: createMoney(eth(2)),
+            amtPerSec: createMoney(eth(0.1)),
+            timestampSeconds: 0
           }),
-          mockDripHistoryEvent({
-            balance: mockMoney(eth(0.5)),
-            amtPerSec: mockMoney(eth(0)),
-            seconds: 15
+          createDripHistoryEvent({
+            balance: createMoney(eth(0.5)),
+            amtPerSec: createMoney(eth(0)),
+            timestampSeconds: 15
           })
         ],
         {
@@ -191,25 +191,25 @@ describe('flattenDripHistory', () => {
   it('handles unpauses and different amtPerSec', () => {
     expect(
       flattenDripHistory([
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(5)),
-          amtPerSec: mockMoney(eth(0.1)),
-          seconds: 0
+        createDripHistoryEvent({
+          balance: createMoney(eth(5)),
+          amtPerSec: createMoney(eth(0.1)),
+          timestampSeconds: 0
         }),
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(4.5)),
-          amtPerSec: mockMoney(eth(0)),
-          seconds: 5
+        createDripHistoryEvent({
+          balance: createMoney(eth(4.5)),
+          amtPerSec: createMoney(eth(0)),
+          timestampSeconds: 5
         }),
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(4.5)),
-          amtPerSec: mockMoney(eth(1)),
-          seconds: 10
+        createDripHistoryEvent({
+          balance: createMoney(eth(4.5)),
+          amtPerSec: createMoney(eth(1)),
+          timestampSeconds: 10
         }),
-        mockDripHistoryEvent({
-          balance: mockMoney(eth(2.5)),
-          amtPerSec: mockMoney(eth(0)),
-          seconds: 12
+        createDripHistoryEvent({
+          balance: createMoney(eth(2.5)),
+          amtPerSec: createMoney(eth(0)),
+          timestampSeconds: 12
         })
       ])
     ).toEqual({

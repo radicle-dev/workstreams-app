@@ -1,21 +1,24 @@
 import type { DripHistoryEvent } from '$lib/stores/workstreams';
 import { Currency, type Money } from '$lib/stores/workstreams/types';
 
-export const mockMoney = (amount: bigint | number | string): Money => ({
+export const createMoney = (
+  amount: bigint | number | string,
+  currency = Currency.DAI
+): Money => ({
   wei: BigInt(amount),
-  currency: Currency.DAI
+  currency
 });
 
-export const mockDripHistoryEvent = ({
+export const createDripHistoryEvent = ({
   balance,
   amtPerSec,
-  seconds
+  timestampSeconds
 }: {
   balance: Money;
   amtPerSec: Money;
-  seconds: number;
+  timestampSeconds: number;
 }): DripHistoryEvent => ({
   balance,
-  timestamp: new Date(seconds * 1000),
+  timestamp: new Date(timestampSeconds * 1000),
   amtPerSec
 });
