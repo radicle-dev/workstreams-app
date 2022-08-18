@@ -1,6 +1,5 @@
 <script lang="ts">
   import Plus from 'radicle-design-system/icons/Plus.svelte';
-  import type { DripsReceiverStructOutput } from 'drips-sdk';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
 
   import * as modal from '$lib/utils/modal';
@@ -68,17 +67,9 @@
     });
   }
 
-  $: lastStreamRate =
-    enrichedWorkstream?.onChainData?.dripsUpdatedEvents
-      .reduce<DripsReceiverStructOutput[]>(
-        (prev, dew) => [...prev, ...dew.event.args.receivers],
-        []
-      )
-      .filter(
-        (r) => r.receiver.toLowerCase() === workstream.acceptedApplication
-      )
-      .find((r) => !r.amtPerSec.isZero())
-      ?.amtPerSec?.toBigInt() || workstream.ratePerSecond.wei;
+  $: lastStreamRate = enrichedWorkstream?.onChainData?.dripHistory.find(
+    (e) => e.amtPerSec.wei !== BigInt(0)
+  ).amtPerSec || { currency: Currency.DAI, wei: workstream.ratePerSecond.wei };
 
   $: setUpPaymentSteps = $walletStore.safe?.address
     ? [
@@ -104,10 +95,7 @@
       <User address={workstream.acceptedApplication} />
     </div>
     <div class="rate">
-      <Rate
-        ratePerSecond={{ wei: lastStreamRate, currency: Currency.DAI }}
-        total={workstream.total}
-      />
+      <Rate ratePerSecond={lastStreamRate} total={workstream.total} />
       {#if estimate?.remainingBalance}
         <span class="remaining">
           • <span class="amount typo-text-bold"
