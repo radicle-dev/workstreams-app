@@ -1,0 +1,22 @@
+name: pull-request
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        # There's a bug in yarn 2 where checksums for packages built from a
+        # github repo have differing checksums depending on which platform
+        # they're built. Setting YARN_CHECKSUM_BEHAVIOR to `update` works
+        # around that problem for now.
+        #
+        # See: https://github.com/yarnpkg/berry/issues/2399 for more info.
+        run: YARN_CHECKSUM_BEHAVIOR=update yarn install --immutable
+
+      - name: Run tests
+        run: yarn run test

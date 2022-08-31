@@ -23,6 +23,7 @@ import type {
 } from '$lib/api/__generated__/SplitsConfig';
 import query from '$lib/api/drips-subgraph';
 import { GET_SPLITS_CONFIG } from '$lib/api/drips-subgraph/queries';
+import { getUnixTime } from '$lib/utils/time';
 
 interface InternalState {
   provider: ethers.providers.Web3Provider;
@@ -101,7 +102,8 @@ export default (() => {
     );
 
     const cycleSecs = (await dripsHub.cycleSecs()).toBigInt();
-    const currentCycleSecs = BigInt(Math.floor(Date.now() / 1000)) % cycleSecs;
+    const currentCycleSecs =
+      BigInt(Math.floor(getUnixTime(new Date()))) % cycleSecs;
     const currentCycleStart = new Date(
       new Date().getTime() - Number(currentCycleSecs) * 1000
     );
@@ -252,7 +254,7 @@ export default (() => {
     const { provider } = get(internal);
 
     if (!workstream.data.dripsData) throw 'No drips data for workstream';
-    if (workstream.onChainData?.dripsUpdatedEvents?.length === 0)
+    if (workstream.onChainData?.dripHistory?.length === 0)
       throw 'No DripsUpdated events for workstream';
 
     const daiDripsHubAddress = daiDripsHubInfo(
@@ -263,18 +265,25 @@ export default (() => {
       provider.getSigner()
     );
 
-    const { dripsUpdatedEvents } = workstream.onChainData;
-    const lastUpdate = dripsUpdatedEvents[dripsUpdatedEvents.length - 1];
+    const { dripHistory } = workstream.onChainData;
+    const lastUpdate = dripHistory[dripHistory.length - 1];
+
+    const receivers = [
+      {
+        receiver: workstream.data.acceptedApplication,
+        amtPerSec: lastUpdate.amtPerSec.wei
+      }
+    ];
 
     return contract[
       'setDrips(uint256,uint64,uint128,(address,uint128)[],int128,(address,uint128)[])'
     ](
       workstream.data.dripsData.accountId,
-      lastUpdate.fromBlock.timestamp,
-      lastUpdate.event.args.balance,
-      lastUpdate.event.args.receivers,
+      getUnixTime(lastUpdate.timestamp),
+      lastUpdate.balance.wei,
+      receivers,
       topUpDaiWei,
-      lastUpdate.event.args.receivers
+      receivers
     );
   }
 
@@ -285,8 +294,8 @@ export default (() => {
     const { provider } = get(internal);
 
     if (!workstream.data.dripsData) throw 'No drips data for workstream';
-    if (workstream.onChainData?.dripsUpdatedEvents?.length === 0)
-      throw 'No DripsUpdated events for workstream';
+    if (workstream.onChainData?.dripHistory?.length === 0)
+      throw 'No DripHistory for workstream';
 
     const daiDripsHubAddress = daiDripsHubInfo(
       provider.network.chainId
@@ -296,27 +305,24 @@ export default (() => {
       provider.getSigner()
     );
 
-    const { dripsUpdatedEvents } = workstream.onChainData;
-    const lastUpdate = dripsUpdatedEvents[dripsUpdatedEvents.length - 1];
-    const lastReceivers = dripsUpdatedEvents
-      .slice()
-      .reverse()
-      .find((dew) =>
-        dew.event.args.receivers.find(
-          (r) =>
-            r.receiver.toLowerCase() === workstream.data.acceptedApplication
-        )
-      )?.event.args.receivers;
+    const { dripHistory } = workstream.onChainData;
+    const lastUpdate = dripHistory[dripHistory.length - 1];
+    const receivers = [
+      {
+        receiver: workstream.data.acceptedApplication,
+        amtPerSec: lastUpdate.amtPerSec.wei
+      }
+    ];
 
     return contract[
       'setDrips(uint256,uint64,uint128,(address,uint128)[],int128,(address,uint128)[])'
     ](
       workstream.data.dripsData.accountId,
-      lastUpdate.fromBlock.timestamp,
-      lastUpdate.event.args.balance,
-      lastUpdate.event.args.receivers,
+      getUnixTime(lastUpdate.timestamp),
+      lastUpdate.balance.wei,
+      action === 'pause' ? receivers : [],
       0,
-      action === 'pause' ? [] : lastReceivers
+      action === 'pause' ? [] : receivers
     );
   }
 
