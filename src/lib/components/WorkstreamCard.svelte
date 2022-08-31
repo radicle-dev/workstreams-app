@@ -14,35 +14,21 @@
     type Workstream
   } from '$lib/stores/workstreams/types';
   import { currencyFormat } from '$lib/utils/format';
-  import type { DripsReceiverStructOutput } from 'drips-sdk';
   import WorkstreamStateBadge from './WorkstreamStateBadge.svelte';
 
-  const estimates = workstreamsStore.estimates;
+  const { estimates } = workstreamsStore;
 
   export let enrichedWorkstream: EnrichedWorkstream | undefined = undefined;
   export let workstream: Workstream | undefined = undefined;
 
   $: ws = enrichedWorkstream?.data || workstream;
-  $: onChainData = enrichedWorkstream?.onChainData;
   $: estimate = $estimates.workstreams[ws.id];
 
   $: onChainDataReady = Boolean(estimate);
 
-  /*
-    Find the last update to the drips configuration that had an amount per second.
-    This way, we can display the on-chain stream rate even if the stream is
-    currently paused. If there is no such event on-chain, we fall back to the
-    workstream's stored rate per second.
-  */
-  $: lastStreamRate =
-    onChainData?.dripsUpdatedEvents
-      .reduce<DripsReceiverStructOutput[]>(
-        (prev, dew) => [...prev, ...dew.event.args.receivers],
-        []
-      )
-      .filter((r) => r.receiver.toLowerCase() === ws.acceptedApplication)
-      .find((r) => !r.amtPerSec.isZero())
-      ?.amtPerSec?.toBigInt() || ws.ratePerSecond.wei;
+  $: lastStreamRate = enrichedWorkstream?.onChainData?.dripHistory.find(
+    (e) => e.amtPerSec.wei !== BigInt(0)
+  )?.amtPerSec || { currency: Currency.DAI, wei: ws.ratePerSecond.wei };
 </script>
 
 <a sveltekit:prefetch href={`/workstream/${ws.id}`}>
@@ -67,16 +53,13 @@
       <div class="stream-details">
         {#if ws.state === WorkstreamState.RFA}
           <Rate
-            ratePerSecond={{ wei: lastStreamRate, currency: Currency.DAI }}
+            ratePerSecond={lastStreamRate}
             total={ws.total}
             durationDays={ws.durationDays}
             showTotal
           />
         {:else}
-          <Rate
-            ratePerSecond={{ wei: lastStreamRate, currency: Currency.DAI }}
-            total={ws.total}
-          />
+          <Rate ratePerSecond={lastStreamRate} total={ws.total} />
         {/if}
         {#if ws.state === WorkstreamState.ACTIVE && enrichedWorkstream?.onChainData?.streamSetUp && onChainDataReady}
           <div class="remaining" transition:fade|local>
