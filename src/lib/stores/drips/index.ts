@@ -307,10 +307,23 @@ export default (() => {
 
     const { dripHistory } = workstream.onChainData;
     const lastUpdate = dripHistory[dripHistory.length - 1];
-    const receivers = [
+    const currentReceivers =
+      lastUpdate.amtPerSec.wei === BigInt(0)
+        ? []
+        : [
+            {
+              receiver: workstream.data.acceptedApplication,
+              amtPerSec: lastUpdate.amtPerSec.wei
+            }
+          ];
+    const lastStreamingUpdate = dripHistory
+      .slice()
+      .reverse()
+      .find((e) => e.amtPerSec.wei !== BigInt(0));
+    const lastStreamingReceivers = [
       {
         receiver: workstream.data.acceptedApplication,
-        amtPerSec: lastUpdate.amtPerSec.wei
+        amtPerSec: lastStreamingUpdate.amtPerSec.wei
       }
     ];
 
@@ -320,9 +333,9 @@ export default (() => {
       workstream.data.dripsData.accountId,
       getUnixTime(lastUpdate.timestamp),
       lastUpdate.balance.wei,
-      action === 'pause' ? receivers : [],
+      action === 'pause' ? currentReceivers : [],
       0,
-      action === 'pause' ? [] : receivers
+      action === 'pause' ? [] : lastStreamingReceivers
     );
   }
 
