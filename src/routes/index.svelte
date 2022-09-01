@@ -23,10 +23,8 @@
   enum SectionName {
     APPLIED_TO = 'appliedTo',
     PENDING_SETUP = 'pending_setup',
-    APPLICATIONS_TO_REVIEW = 'toReview',
     ACTIVE = 'active',
     OUTBOUND_ACTIVE = 'outboundActive',
-    CREATED = 'created',
     ENDED = 'ended'
   }
 
@@ -57,15 +55,6 @@
     on-screen — and with that their relative "importance".
   */
   $: sections = {
-    [SectionName.APPLICATIONS_TO_REVIEW]: {
-      title: 'Applications to review',
-      workstreams: filterObject(workstreams, (ws) => {
-        return (
-          ws.data.applicationsToReview?.length > 0 &&
-          ws.data.creator === address
-        );
-      })
-    },
     [SectionName.PENDING_SETUP]: {
       title: 'Workstreams pending payment setup',
       workstreams: filterObject(workstreams, (ws) => {
@@ -83,16 +72,6 @@
         return (
           ws.data.state === WorkstreamState.RFA &&
           ws.data.applicants?.includes(address)
-        );
-      })
-    },
-    [SectionName.CREATED]: {
-      title: 'Waiting for applications',
-      workstreams: filterObject(workstreams, (ws) => {
-        return (
-          ws.data.state === WorkstreamState.RFA &&
-          ws.data.applicationsToReview?.length === 0 &&
-          ws.data.creator === address
         );
       })
     },

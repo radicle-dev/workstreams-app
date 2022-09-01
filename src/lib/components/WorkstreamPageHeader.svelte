@@ -1,13 +1,11 @@
 <script lang="ts">
   import type { Workstream } from '$lib/stores/workstreams/types';
-  import ApplyButton from './ApplyButton.svelte';
 
   export let workstream: Workstream;
 </script>
 
 <div>
   <h4>{workstream.title}</h4>
-  <ApplyButton {workstream} tooltipPosition="left" />
 </div>
 
 <style>

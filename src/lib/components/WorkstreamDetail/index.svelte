@@ -1,19 +1,15 @@
 <script lang="ts">
   import { dateFormat } from '$lib/utils/format';
 
-  import ApplicationList from './ApplicationList.svelte';
   import ActiveStream from './ActiveStream.svelte';
-  import ApplyRow from './ApplyRow.svelte';
   import User from '$components/User.svelte';
   import Markdown from 'radicle-design-system/Markdown.svelte';
   import {
     WorkstreamState,
-    type Application,
     type Workstream
   } from '$lib/stores/workstreams/types';
 
   export let workstream: Workstream;
-  export let applications: Application[] | undefined = undefined;
 </script>
 
 <div class="container">
@@ -27,11 +23,6 @@
     <div class="cards">
       {#if workstream.state === WorkstreamState.ACTIVE}
         <ActiveStream {workstream} />
-      {:else}
-        <ApplyRow {workstream} />
-      {/if}
-      {#if applications.length > 0}
-        <ApplicationList {applications} title="Applications" {workstream} />
       {/if}
       <div />
     </div>
