@@ -26,7 +26,6 @@
 
 <script lang="ts">
   import { utils } from 'ethers';
-  import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { workstreamsStore } from '$lib/stores/workstreams';
   import type { Workstream } from '$lib/stores/workstreams/types';
@@ -75,8 +74,6 @@
           emoji="👀"
           headerText="Nothing to see here"
           text="This address has no associated workstreams"
-          primaryActionText="Go explore"
-          on:primaryAction={() => goto(`/`)}
         />
       {:else}
         {#if assignedWorkstreamsOnCurrentChain?.length > 0}

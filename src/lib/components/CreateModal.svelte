@@ -5,7 +5,6 @@
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';
   import TextInput from 'radicle-design-system/TextInput.svelte';
   import TextArea from 'radicle-design-system/TextArea.svelte';
-  import InfoCircle from 'radicle-design-system/icons/InfoCircle.svelte';
   import type { TextInputValidationState } from 'radicle-design-system/TextInput';
 
   import * as modal from '$lib/utils/modal';
@@ -19,7 +18,6 @@
   } from '$lib/stores/workstreams/types';
   import { utils } from 'ethers';
   import { workstreamsStore } from '$lib/stores/workstreams';
-  import TypeSwitcher from './TypeSwitcher.svelte';
   import ensNames from '$lib/stores/ensNames';
   import { walletStore } from '$lib/stores/wallet/wallet';
 
@@ -37,20 +35,18 @@
   let description: string;
   let assignee: string;
   let assigneeAddress: string;
-  let typeSwitcherSelection: 'first' | 'second' = 'first';
-
-  let selectedMode: 'sourceApplications' | 'directAssignment';
-  $: selectedMode =
-    typeSwitcherSelection === 'first'
-      ? 'sourceApplications'
-      : 'directAssignment';
 
   $: streamRate =
     parseInt(total) / (parseInt(duration) * parseInt(durationUnit));
 
-  $: canSubmit =
-    [title, total, duration, durationUnit, description].every((v) => v) &&
-    (assigneeAddress || selectedMode !== 'directAssignment');
+  $: canSubmit = [
+    title,
+    total,
+    duration,
+    durationUnit,
+    description,
+    assigneeAddress
+  ].every((v) => v);
 
   let assigneeValidationState: TextInputValidationState;
 
@@ -122,16 +118,10 @@
       title,
       desc: description,
       chainId: $walletStore.network.chainId,
-      durationDays: parseInt(duration) * parseInt(durationUnit)
+      durationDays: parseInt(duration) * parseInt(durationUnit),
+      assignTo: assigneeAddress,
+      state: WorkstreamState.ACTIVE
     };
-
-    if (selectedMode === 'directAssignment' && assigneeAddress) {
-      input = {
-        ...input,
-        assignTo: assigneeAddress,
-        state: WorkstreamState.ACTIVE
-      };
-    }
 
     try {
       const res = await fetch(`${getConfig().API_URL_BASE}/workstreams`, {
@@ -162,34 +152,14 @@
         <TextInput bind:value={title} placeholder="Max 256 characters" />
       </div>
       <div class="input-with-label">
-        <h4>Mode</h4>
-        <TypeSwitcher bind:selected={typeSwitcherSelection}>
-          <span class="typo-text-bold" slot="first">Source applications</span>
-          <span class="typo-text-bold" slot="second">Direct assignment</span>
-        </TypeSwitcher>
-      </div>
-      <div
-        class="input-with-label"
-        class:faded={selectedMode === 'sourceApplications'}
-      >
         <h4>Assignee</h4>
         <TextInput
           showSuccessCheck
           validationState={assigneeValidationState}
-          disabled={selectedMode === 'sourceApplications'}
           bind:value={assignee}
           on:input={validateAssignee}
           placeholder="Ethereum address or ENS name"
         />
-        {#if selectedMode === 'sourceApplications'}
-          <div class="hint">
-            <InfoCircle />
-            <p class="typo-text">
-              In "source applications" mode, the Workstream assignee is
-              determined by which application you later accept.
-            </p>
-          </div>
-        {/if}
       </div>
       <div class="payment">
         <div class="inner">
@@ -275,22 +245,6 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
-  }
-
-  .faded.input-with-label {
-    opacity: 0.5;
-  }
-
-  .hint {
-    display: flex;
-    align-items: top;
-    gap: 0.5rem;
-    color: var(--color-foreground-level-3);
-  }
-
-  .hint > p {
-    color: var(--color-foreground-level-5);
-    text-align: left;
   }
 
   .payment > .inner {
