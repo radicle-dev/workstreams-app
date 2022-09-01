@@ -60,7 +60,7 @@
       workstreams: filterObject(workstreams, (ws) => {
         return (
           ws.data.state === WorkstreamState.ACTIVE &&
-          !ws.onChainData.streamSetUp &&
+          !ws.onChainData?.streamSetUp &&
           (ws.data.creator === address ||
             ws.data.acceptedApplication === address)
         );
