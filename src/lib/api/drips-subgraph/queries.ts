@@ -1,5 +1,18 @@
 import { gql } from 'graphql-tag';
 
+export const DRIPS_ENTRIES_FOR_CONFIG = gql`
+  query DripsEntriesForConfig($user: ID!) {
+    dripsConfig(id: $user) {
+      dripsEntries {
+        receiver
+        account
+        amtPerSec
+        isAccountDrip
+      }
+    }
+  }
+`;
+
 export const GET_LAST_DRIP_ENTRY = gql`
   query LastDripsEntry($user: Bytes!) {
     dripsEntries(
