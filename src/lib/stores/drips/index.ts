@@ -190,7 +190,7 @@ export default (() => {
     );
 
     const filter = dripsHub.filters[
-      'DripsUpdated(address,uint256,uint128,tuple[])'
+      'DripsUpdated(address,uint256,uint128,(address,uint128)[])'
     ](user, account);
 
     return dripsHub.queryFilter(filter);

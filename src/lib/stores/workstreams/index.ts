@@ -164,7 +164,7 @@ export const workstreamsStore = (() => {
           relevantStreamsFetched: true
         }
       }));
-    } catch {
+    } catch (e) {
       workstreams.update((v) => ({
         ...v,
         fetchStatus: {
