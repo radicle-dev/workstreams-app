@@ -7,7 +7,7 @@
     const res = await workstreamsStore.getWorkstream(params.id, fetch);
 
     return {
-      status: res.ok ? '200' : '500',
+      status: res.ok ? 200 : 500,
       props: {
         workstream: res.ok && res.data
       }
