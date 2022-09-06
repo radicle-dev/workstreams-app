@@ -80,17 +80,19 @@
     {/if}
   </div>
 </div>
-{#if $walletStore?.network && $walletStore?.provider}
+{#if $walletStore}
   <div class="wrapper" class:loading={$navigating}>
     <Header />
     <main>
       <slot />
     </main>
   </div>
-  {#if $walletStore.network.chainId === 4}
-    <div class="network"><span />{$walletStore.provider.network.name}</div>
-  {:else if $walletStore.network.chainId !== 1}
-    <div class="network error"><span />Unsupported Network</div>
+  {#if $walletStore.network}
+    {#if $walletStore.network.chainId === 4}
+      <div class="network"><span />{$walletStore.network.name}</div>
+    {:else if $walletStore.network.chainId !== 1}
+      <div class="network error"><span />Unsupported Network</div>
+    {/if}
   {/if}
 {/if}
 
