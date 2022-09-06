@@ -1,7 +1,6 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
 
-  import { goto } from '$app/navigation';
   import { page } from '$app/stores';
 
   import * as modal from '$lib/utils/modal';
@@ -25,9 +24,9 @@
     $headerContent.headerContentShown !== undefined
       ? $headerContent.headerContentShown
       : scrolledDown;
-  $: onExplore =
-    $page.url.pathname.includes('explore') || $page.url.pathname === '/';
-  $: onDashboard = $page.url.pathname.includes('dashboard');
+  $: onDashboard =
+    $page.url.pathname.includes('dashboard') || $page.url.pathname === '/';
+  $: onHistory = $page.url.pathname.includes('history');
 
   const animate = (node: Element, args: { y: number; enable: boolean }) =>
     args.enable
@@ -56,12 +55,10 @@
         class="content default"
       >
         <nav>
-          <a sveltekit:prefetch href="/" class:active={onExplore}>Explore</a>
-          <a
-            sveltekit:prefetch
-            href="/dashboard"
-            on:click={() => goto(`/dashboard`)}
-            class:active={onDashboard}>Dashboard</a
+          <a sveltekit:prefetch href="/" class:active={onDashboard}>Dashboard</a
+          >
+          <a sveltekit:prefetch href="/history" class:active={onHistory}
+            >History</a
           >
         </nav>
         <div class="buttons">

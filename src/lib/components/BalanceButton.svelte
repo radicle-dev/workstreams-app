@@ -3,7 +3,6 @@
   import Button from 'radicle-design-system/Button.svelte';
   import TopUpIcon from 'radicle-design-system/icons/Topup.svelte';
   import InfoCircle from 'radicle-design-system/icons/InfoCircle.svelte';
-  import RoadIcon from 'radicle-design-system/icons/Road.svelte';
 
   import * as modal from '$lib/utils/modal';
   import drips from '$lib/stores/drips';
@@ -11,7 +10,6 @@
   import { workstreamsStore } from '$lib/stores/workstreams';
   import LoadingDots from './LoadingDots.svelte';
   import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
   import StepperModal from '$lib/components/StepperModal/index.svelte';
   import Intro from '$lib/components/WithdrawSteps/Intro.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
@@ -113,12 +111,6 @@
       </div>
       {#if withdrawable}
         <div class="actions">
-          <Button
-            disabled={$page.routeId === 'history'}
-            variant="outline"
-            icon={RoadIcon}
-            on:click={() => navigate('/history')}>View history</Button
-          >
           <Button disabled={collectBlocked} icon={TopUpIcon} on:click={collect}
             >Withdraw {withdrawable} DAI</Button
           >

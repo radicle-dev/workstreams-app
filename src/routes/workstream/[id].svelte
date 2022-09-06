@@ -1,27 +1,15 @@
 <script context="module" lang="ts">
-  import type { Application, Workstream } from '$lib/stores/workstreams/types';
-  import { getConfig } from '$lib/config';
+  import type { Workstream } from '$lib/stores/workstreams/types';
 
   /* eslint-disable */
   /** @type {import('./[slug]').Load} */
   export async function load({ params, fetch }) {
-    const applicationsUrl = `${getConfig().API_URL_BASE}/workstreams/${
-      params.id
-    }/applications`;
-
-    const fetches = [
-      workstreamsStore.getWorkstream(params.id, fetch),
-      fetch(applicationsUrl, { credentials: 'include' })
-    ];
-
-    const responses = await Promise.all(fetches);
+    const res = await workstreamsStore.getWorkstream(params.id, fetch);
 
     return {
-      status: responses.every((r) => r.ok) ? 200 : responses[0].status,
+      status: res.ok ? 200 : 500,
       props: {
-        workstream: responses[0].ok && responses[0].data,
-        applications:
-          responses[1].ok && JSON.parse(await responses[1].text(), reviver)
+        workstream: res.ok && res.data
       }
     };
   }
@@ -33,11 +21,10 @@
   import { onMount } from 'svelte';
   import { headerContent } from '$lib/stores/headerContent';
   import WorkstreamPageHeader from '$lib/components/WorkstreamPageHeader.svelte';
-  import { reviver, workstreamsStore } from '$lib/stores/workstreams';
+  import { workstreamsStore } from '$lib/stores/workstreams';
   import scroll from '$lib/stores/scroll';
 
   export let workstream: Workstream | undefined;
-  export let applications: Application[] | undefined;
 
   onMount(() => {
     $headerContent = {
@@ -61,7 +48,7 @@
 </svelte:head>
 
 {#if workstream}
-  <WorkstreamDetail {workstream} {applications} />
+  <WorkstreamDetail {workstream} />
 {:else}
   <p>Sorry couldn't load the details of this Workstream.</p>
 {/if}
