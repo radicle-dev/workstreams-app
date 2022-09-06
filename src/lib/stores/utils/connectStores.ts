@@ -7,12 +7,11 @@ import { workstreamsStore } from '../workstreams';
 
 export default async function (provider: providers.Web3Provider) {
   await drips.connect(provider);
+  const { cycle } = get(drips);
+  if (!cycle) throw new Error('Unable to fetch drips cycle information');
 
-  const ws = get(walletStore);
+  const { address, network } = get(walletStore);
+  if (!address || !network) throw new Error('Connect a wallet first');
 
-  await workstreamsStore.connect(
-    ws.address,
-    ws.network.chainId,
-    get(drips).cycle
-  );
+  await workstreamsStore.connect(address, network.chainId, cycle);
 }

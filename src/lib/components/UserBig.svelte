@@ -10,7 +10,7 @@
   import { walletStore } from '$lib/stores/wallet/wallet';
 
   export let address: string;
-  export let style: string = undefined;
+  export let style: string | undefined = undefined;
 
   let uriData: string;
   $: ensName = $ensNames[address]?.name;

@@ -78,12 +78,13 @@ export function streamedBetween(
   }[] = [];
 
   for (const stream of streams) {
-    const { dripHistory } = stream.onChainData;
+    const { dripHistory } = stream.onChainData || {};
 
-    const { amountStreamed, amountRemaining } = flattenDripHistory(
-      dripHistory,
-      timeWindow
-    );
+    const { amountStreamed, amountRemaining } = (dripHistory &&
+      flattenDripHistory(dripHistory, timeWindow)) || {
+      amountStreamed: BigInt(0),
+      amountRemaining: BigInt(0)
+    };
 
     amountsStreamed.push({
       workstream: stream,

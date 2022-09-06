@@ -22,56 +22,54 @@
   export let workstream: Workstream | undefined = undefined;
 
   $: ws = enrichedWorkstream?.data || workstream;
-  $: estimate = $estimates.workstreams[ws.id];
+  $: estimate = ws && $estimates.workstreams[ws.id];
 
   $: onChainDataReady = Boolean(estimate);
 
-  $: lastStreamRate = enrichedWorkstream?.onChainData?.dripHistory.find(
-    (e) => e.amtPerSec.wei !== BigInt(0)
-  )?.amtPerSec || { currency: Currency.DAI, wei: ws.ratePerSecond.wei };
+  $: lastStreamRate =
+    ws &&
+    (enrichedWorkstream?.onChainData?.dripHistory.find(
+      (e) => e.amtPerSec.wei !== BigInt(0)
+    )?.amtPerSec || { currency: Currency.DAI, wei: ws.ratePerSecond.wei });
 </script>
 
-<a sveltekit:prefetch href={`/workstream/${ws.id}`}>
-  <Card>
-    <div slot="top" class="content">
-      <div class="name-and-users">
-        <div class="name-and-state">
-          <h3 class="name">{ws.title}</h3>
-          {#if onChainDataReady && enrichedWorkstream}
-            <div class="state-badge" transition:fade|local>
-              <WorkstreamStateBadge {enrichedWorkstream} />
+{#if ws}
+  <a sveltekit:prefetch href={`/workstream/${ws.id}`}>
+    <Card>
+      <div slot="top" class="content">
+        <div class="name-and-users">
+          <div class="name-and-state">
+            <h3 class="name">{ws.title}</h3>
+            {#if onChainDataReady && enrichedWorkstream}
+              <div class="state-badge" transition:fade|local>
+                <WorkstreamStateBadge {enrichedWorkstream} />
+              </div>
+            {/if}
+          </div>
+          <div class="user-row">
+            <User address={ws.creator} />
+            {#if ws.acceptedApplication}
+              → <User address={ws.acceptedApplication} />
+            {/if}
+          </div>
+        </div>
+        <div class="stream-details">
+          {#if lastStreamRate}<Rate
+              ratePerSecond={lastStreamRate}
+              total={ws.total}
+            />{/if}
+          {#if ws.state === WorkstreamState.ACTIVE && estimate}
+            <div class="remaining" transition:fade|local>
+              • <span class="amount"
+                >{currencyFormat(estimate.remainingBalance)} DAI
+              </span><span>remaining</span>
             </div>
           {/if}
         </div>
-        <div class="user-row">
-          <User address={ws.creator} />
-          {#if ws.acceptedApplication}
-            → <User address={ws.acceptedApplication} />
-          {/if}
-        </div>
       </div>
-      <div class="stream-details">
-        {#if ws.state === WorkstreamState.RFA}
-          <Rate
-            ratePerSecond={lastStreamRate}
-            total={ws.total}
-            durationDays={ws.durationDays}
-            showTotal
-          />
-        {:else}
-          <Rate ratePerSecond={lastStreamRate} total={ws.total} />
-        {/if}
-        {#if ws.state === WorkstreamState.ACTIVE && enrichedWorkstream?.onChainData?.streamSetUp && onChainDataReady}
-          <div class="remaining" transition:fade|local>
-            • <span class="amount"
-              >{currencyFormat(estimate.remainingBalance)} DAI
-            </span><span>remaining</span>
-          </div>
-        {/if}
-      </div>
-    </div>
-  </Card>
-</a>
+    </Card>
+  </a>
+{/if}
 
 <style>
   .content {

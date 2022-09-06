@@ -55,7 +55,10 @@
     scroll.attach();
 
     return () => {
-      window.removeEventListener('change', colorSchemeListener);
+      window.removeEventListener(
+        'change',
+        colorSchemeListener as (event: Event) => void
+      );
       cupertinoPane.detach();
       scroll.detach();
       cupertinoPane.detach();
@@ -77,7 +80,7 @@
     {/if}
   </div>
 </div>
-{#if $walletStore}
+{#if $walletStore?.network && $walletStore?.provider}
   <div class="wrapper" class:loading={$navigating}>
     <Header />
     <main>

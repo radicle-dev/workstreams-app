@@ -13,22 +13,23 @@
   export let avatarRem = 1.5;
   export let noLink = false;
   export let showAddress = true;
-  export let address: string;
-  export let style: string = undefined;
+  export let address: string | undefined;
+  export let style: string | undefined = undefined;
   let hover = false;
 
   let firstRender = true;
 
-  $: ensName = $ensNames[address]?.name;
-  $: avatarUrl = $ensNames[address]?.pic;
-  $: toDisplay = ensName ? ensName : formatAddress(address.toLowerCase());
+  $: ensName = address && $ensNames[address]?.name;
+  $: avatarUrl = address && $ensNames[address]?.pic;
+  $: toDisplay =
+    address && (ensName ? ensName : formatAddress(address.toLowerCase()));
 
-  onMount(() => {
-    lookup();
-  });
+  $: {
+    if (address) lookup(address);
+  }
 
-  function lookup() {
-    ensNames.lookup(address, $walletStore.provider);
+  function lookup(add: string) {
+    ensNames.lookup(add, $walletStore.provider);
   }
 
   onMount(() => (firstRender = false));

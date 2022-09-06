@@ -29,7 +29,8 @@
     withdrawable &&
     currentCycleBalanceEstimate &&
     currencyFormat(
-      $drips.collectable.wei + $estimates.earnedInCurrentCycle.wei
+      ($drips.collectable?.wei || BigInt(0)) +
+        ($estimates.earnedInCurrentCycle?.wei || BigInt(0))
     );
 
   $: formattedCycleEnd = $drips.cycle && {

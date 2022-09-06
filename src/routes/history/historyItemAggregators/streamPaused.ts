@@ -7,7 +7,8 @@ import { HistoryItemType, type StreamPaused } from '../types';
 */
 export const streamPaused: HistoryAggregator = (_, streams) =>
   streams.reduce<StreamPaused[]>((acc, ws) => {
-    const { dripHistory } = ws.onChainData;
+    const { dripHistory } = ws.onChainData || {};
+    if (!dripHistory) return [];
 
     const pauses = dripHistory.filter((e) => e.amtPerSec.wei === BigInt(0));
 

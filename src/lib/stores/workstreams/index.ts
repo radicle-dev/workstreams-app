@@ -116,7 +116,8 @@ export const workstreamsStore = (() => {
   const internal = writable<InternalState | undefined>();
 
   function clear() {
-    tick.deregister(get(internal).intervalId);
+    const { intervalId } = get(internal) || {};
+    intervalId && tick.deregister(intervalId);
 
     workstreams.set(INITIAL_WORKSTREAMS_STATE);
     estimates.set({ workstreams: {} });
@@ -150,7 +151,10 @@ export const workstreamsStore = (() => {
     }));
 
     try {
-      const { currentAddress, chainId } = get(internal);
+      const { currentAddress, chainId } = get(internal) || {};
+      if (!currentAddress || !chainId)
+        throw new Error('Connect the store first');
+
       await fetchRelevantWorkstreams(currentAddress, chainId);
 
       workstreams.update((v) => ({
@@ -202,7 +206,8 @@ export const workstreamsStore = (() => {
 
     if (!dripsData) throw new Error(`No drips data for ws ${id}`);
 
-    const { chainId } = get(internal);
+    const { chainId } = get(internal) || {};
+    if (!chainId) throw new Error('Connect the store first');
 
     const [dripsAccount, dripsUpdatedEvents] = await Promise.all([
       getDripsAccount(creator, dripsData.accountId, chainId),
@@ -259,7 +264,7 @@ export const workstreamsStore = (() => {
             (r) => r.receiver.toLowerCase() === item.acceptedApplication
           )
         ),
-        dripsAccount: dripsAccount
+        dripsAccount: dripsAccount || undefined
       },
       relevant,
       direction
@@ -268,6 +273,9 @@ export const workstreamsStore = (() => {
 
   function estimateBalances() {
     const ws = get(workstreams).workstreams;
+
+    const i = get(internal);
+    if (!i) throw new Error('Connect store first');
 
     const newEstimates: { [wsId: string]: Estimate } = {};
 
@@ -327,8 +335,9 @@ export const workstreamsStore = (() => {
       (ws) => ws.direction === 'incoming'
     );
     const amountsStreamedTotal = streamedBetween(incomingWorkstreams);
+    const { currentCycleStart } = i;
     const amountsStreamedInCurrentCycle = streamedBetween(incomingWorkstreams, {
-      from: get(internal).currentCycleStart,
+      from: currentCycleStart,
       to: new Date()
     });
 
@@ -376,7 +385,7 @@ export const workstreamsStore = (() => {
   function serveFromCache(
     id: string
   ): { ok: true; data: Workstream } | undefined {
-    const data = get(workstreams)[id]?.data;
+    const data = get(workstreams).workstreams[id]?.data;
 
     return data
       ? {

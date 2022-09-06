@@ -1,15 +1,15 @@
 <script context="module" lang="ts">
   /* eslint-disable */
   /** @type {import('./[slug]').Load} */
-  export async function load({ params, fetch }) {
+  export const load: Load = async ({ params, fetch: skFetch }) => {
     const fetches = [
       workstreamsStore.getWorkstreams(
         { createdBy: params.address.toLowerCase() },
-        fetch
+        skFetch as typeof fetch
       ),
       workstreamsStore.getWorkstreams(
         { assignedTo: params.address.toLowerCase() },
-        fetch
+        skFetch as typeof fetch
       )
     ];
     const responses = await Promise.all(fetches);
@@ -20,7 +20,7 @@
         assignedWorkstreams: responses[1].ok ? responses[1].data : []
       }
     };
-  }
+  };
   /* eslint-enable */
 </script>
 
@@ -35,14 +35,15 @@
   import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
   import EmptyState from '$components/EmptyState.svelte';
   import { walletStore } from '$lib/stores/wallet/wallet';
+  import type { Load } from '@sveltejs/kit';
 
   export let createdWorkstreams: Workstream[] = [];
   export let assignedWorkstreams: Workstream[] = [];
 
+  $: network = $walletStore.network;
   $: assignedWorkstreamsOnCurrentChain = $walletStore.ready
     ? assignedWorkstreams.filter(
-        (w) =>
-          !w.dripsData || w.dripsData.chainId === $walletStore.network.chainId
+        (w) => !w.dripsData || w.dripsData.chainId === network?.chainId
       )
     : assignedWorkstreams;
 

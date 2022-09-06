@@ -25,6 +25,8 @@
 
   $: withdrawable = $drips.collectable && currencyFormat($drips.collectable);
 
+  $: address = $walletStore.address;
+
   async function logOut() {
     await walletStore.disconnect();
     clearStores();
@@ -44,11 +46,11 @@
 
 <div class="items">
   <AccountSheetItem
-    title={$ensNames[$walletStore.address]?.name ||
-      formatAddress($walletStore.address) ||
+    title={(address && $ensNames[address]?.name) ||
+      (address && formatAddress(address)) ||
       '...'}
   >
-    <Avatar slot="left" address={$walletStore.address} rem={3} />
+    {#if address}<Avatar slot="left" {address} rem={3} />{/if}
     <Button variant="outline" slot="right" on:click={() => closeAnd(logOut)}
       >Sign out</Button
     >

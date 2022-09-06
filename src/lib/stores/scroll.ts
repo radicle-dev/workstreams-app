@@ -1,3 +1,4 @@
+import { browser } from '$app/env';
 import { get, writable } from 'svelte/store';
 
 interface ScrollStore {
@@ -14,6 +15,8 @@ const store = writable<ScrollStore>({
   scrolling: false
 });
 
+const html = browser && document.querySelector('html');
+
 let initialized = false;
 
 function attach() {
@@ -29,11 +32,13 @@ function detach() {
 }
 
 function lock() {
-  document.querySelector('html').style.overflow = 'hidden';
+  if (!html) throw new Error('Unable to select `html` element');
+  html.style.overflow = 'hidden';
 }
 
 function unlock() {
-  document.querySelector('html').style.overflow = 'scroll';
+  if (!html) throw new Error('Unable to select `html` element');
+  html.style.overflow = 'scroll';
 }
 
 function _update() {

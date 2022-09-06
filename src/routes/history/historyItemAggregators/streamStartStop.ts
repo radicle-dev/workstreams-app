@@ -16,7 +16,8 @@ export const streamStartStop: HistoryAggregator = (_, streams) => {
     toppedUp: StreamToppedUp[];
   }>(
     (acc, ws) => {
-      const { dripHistory } = ws.onChainData;
+      const { dripHistory } = ws.onChainData || {};
+      if (!dripHistory) return acc;
 
       let newOutOfFundsItems: StreamOutOfFunds[] = [];
       let newToppedUpItems: StreamToppedUp[] = [];

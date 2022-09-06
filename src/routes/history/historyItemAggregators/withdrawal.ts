@@ -5,15 +5,21 @@ import { get } from 'svelte/store';
 import type { HistoryAggregator } from '../history';
 import { HistoryItemType } from '../types';
 
-export const withdrawal: HistoryAggregator = () =>
-  get(drips).collectHistory?.map((w) => ({
-    type: HistoryItemType.Withdrawal,
-    timestamp: new Date(w.fromBlock.timestamp * 1000),
-    meta: {
-      amount: {
-        wei: w.event.args.collected.toBigInt(),
-        currency: Currency.DAI
-      },
-      toAddress: get(walletStore).address
-    }
-  })) || [];
+export const withdrawal: HistoryAggregator = () => {
+  const { address } = get(walletStore);
+  if (!address) return [];
+
+  return (
+    get(drips).collectHistory?.map((w) => ({
+      type: HistoryItemType.Withdrawal,
+      timestamp: new Date(w.fromBlock.timestamp * 1000),
+      meta: {
+        amount: {
+          wei: w.event.args.collected.toBigInt(),
+          currency: Currency.DAI
+        },
+        toAddress: address
+      }
+    })) || []
+  );
+};

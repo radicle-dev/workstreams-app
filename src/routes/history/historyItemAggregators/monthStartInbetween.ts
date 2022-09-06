@@ -1,14 +1,14 @@
 import { amountsEarnedAndSpentBetween } from '$lib/stores/drips/utils/streamedBetween';
 import { Currency } from '$lib/stores/workstreams/types';
 import type { HistoryAggregator } from '../history';
-import { HistoryItemType } from '../types';
+import { HistoryItemType, type HistoryItem } from '../types';
 
 /*
   If a new month started inbetween two history items, insert a "month start
   inbetween", which sums up the amounts earned and spent in the completed month.
 */
 export const monthStartInbetween: HistoryAggregator = (queue, streams) => {
-  const newItems = [];
+  const newItems: HistoryItem[] = [];
 
   queue.forEach((item, index) => {
     if (index === 0) return;

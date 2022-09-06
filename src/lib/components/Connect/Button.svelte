@@ -16,7 +16,7 @@
   import cupertinoPane from '$lib/stores/cupertinoPane';
   import MobileAccountSheet from '../MobileAccountSheet/MobileAccountSheet.svelte';
 
-  export let onClick: () => void | undefined = undefined;
+  export let onClick: (() => void) | undefined = undefined;
 
   let locked: boolean;
 
@@ -40,6 +40,8 @@
     if ($walletStore.ready) {
       const { provider: localProvider, safe } = $walletStore;
       const provider = safe?.provider || localProvider;
+
+      if (!provider) throw new Error('Unable to get provider');
 
       await connectStores(provider);
     }

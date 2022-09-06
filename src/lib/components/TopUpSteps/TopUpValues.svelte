@@ -32,7 +32,7 @@
 
   $: estimate = $estimates.workstreams[enrichedWorkstream.data.id];
   $: streamingUntil = estimate?.streamingUntil;
-  $: currAmtPerSec = enrichedWorkstream.onChainData.amtPerSec.wei;
+  $: currAmtPerSec = enrichedWorkstream.onChainData?.amtPerSec.wei;
   $: remainingBalance = estimate?.remainingBalance;
 
   let streamingUntilAfterTopup: Date | undefined = undefined;
@@ -48,6 +48,8 @@
     }).format(date);
 
   function updateStreamingUntilAfterTopup() {
+    if (!streamingUntil || !currAmtPerSec)
+      throw new Error('Unable to read on-chain data for stream');
     /*
       Top up starts streaming either now (if it's currently out of funds) or after
       the remaining balance runs out
@@ -142,7 +144,9 @@
         {:else}
           <h4>Ran out of funds on</h4>
         {/if}
-        <p class="value">{formatDate(streamingUntil)}</p>
+        <p class="value">
+          {(streamingUntil && formatDate(streamingUntil)) || '...'}
+        </p>
       </div>
     </div>
     <div class="row">
@@ -164,7 +168,11 @@
         <div class="input-with-label">
           <h4>After topup, runs until</h4>
           {#if topUpAmount > 0}
-            <p class="value">{formatDate(streamingUntilAfterTopup)}</p>
+            <p class="value">
+              {(streamingUntilAfterTopup &&
+                formatDate(streamingUntilAfterTopup)) ||
+                '...'}
+            </p>
           {:else}
             <p class="value">—</p>
           {/if}

@@ -141,10 +141,12 @@
     </h4>
     <p class="date">{formatDate(historyItem.timestamp)}</p>
     <p class="potential amount typo-text-mono-bold">
-      <Rate
-        ratePerSecond={historyItem.meta.workstream.onChainData.amtPerSec}
-        total={historyItem.meta.workstream.data.total}
-      />
+      {#if historyItem.meta.workstream.onChainData}
+        <Rate
+          ratePerSecond={historyItem.meta.workstream.onChainData.amtPerSec}
+          total={historyItem.meta.workstream.data.total}
+        />
+      {/if}
     </p>
   </div>
 {/if}

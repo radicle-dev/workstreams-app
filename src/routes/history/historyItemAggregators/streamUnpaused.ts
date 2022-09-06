@@ -7,10 +7,11 @@ import { HistoryItemType, type StreamUnpaused } from '../types';
 */
 export const streamUnpaused: HistoryAggregator = (_, streams) =>
   streams.reduce<StreamUnpaused[]>((acc, ws) => {
-    const { dripHistory } = ws.onChainData;
+    const { dripHistory } = ws.onChainData || {};
+    if (!dripHistory) return acc;
 
     const unpauses = dripHistory.filter((e, index) => {
-      const prevDew = e[index - 1];
+      const prevDew = dripHistory[index - 1];
 
       const prevDewPaused = prevDew?.amtPerSec.wei === BigInt(0);
 

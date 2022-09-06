@@ -8,7 +8,7 @@ export interface TickRegistration {
 }
 
 export default (() => {
-  const interval = writable<ReturnType<typeof setInterval>>();
+  const interval = writable<ReturnType<typeof setInterval> | undefined>();
   const listeners = writable<(() => void)[]>([]);
 
   function start() {
@@ -18,7 +18,9 @@ export default (() => {
   }
 
   function stop() {
-    clearInterval(get(interval));
+    const i = get(interval);
+    i && clearInterval(i);
+
     interval.set(undefined);
   }
 
