@@ -11,13 +11,13 @@ import type {
   DripsConfig_dripsConfig_dripsAccount,
   DripsConfig_dripsConfig_dripsEntries
 } from '$lib/api/drips-subgraph/__generated__/dripsConfig';
-import type { DripsUpdated_address_uint256_uint128_tuple_array_Event } from '../drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
 import getDripsAccount from './methods/getDripsAccount';
 import getDripsUpdatedEvents from './methods/getDripsUpdatedEvents';
 import fetchRelevantWorkstreams from './methods/fetchRelevantWorkstreams';
 import type { Cycle } from '../drips';
 import tick from '../tick';
 import { streamedBetween } from '../drips/utils/streamedBetween';
+import type { DripsUpdatedEvent } from '../drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
 
 export const reviver: (key: string, value: unknown) => unknown = (
   key,
@@ -61,7 +61,7 @@ export interface EnrichedWorkstream {
 }
 
 export interface DrippingEventWrapper {
-  event: DripsUpdated_address_uint256_uint128_tuple_array_Event;
+  event: DripsUpdatedEvent;
   fromBlock: Block;
 }
 
