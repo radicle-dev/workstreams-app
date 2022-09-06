@@ -11,9 +11,9 @@ export const streamUnpaused: HistoryAggregator = (_, streams) =>
     if (!dripHistory) return acc;
 
     const unpauses = dripHistory.filter((e, index) => {
-      const prevDew = dripHistory[index - 1];
+      const prevEvent = dripHistory[index - 1];
 
-      const prevDewPaused = prevDew?.amtPerSec.wei === BigInt(0);
+      const prevDewPaused = prevEvent?.amtPerSec.wei === BigInt(0);
 
       return prevDewPaused && e.amtPerSec.wei !== BigInt(0);
     });
