@@ -27,9 +27,9 @@
   function isToday(date: Date) {
     const today = new Date();
     return (
-      date.getDate() == today.getDate() &&
-      date.getMonth() == today.getMonth() &&
-      date.getFullYear() == today.getFullYear()
+      date.getUTCDate() == today.getUTCDate() &&
+      date.getUTCMonth() == today.getUTCMonth() &&
+      date.getUTCFullYear() == today.getUTCFullYear()
     );
   }
 </script>
@@ -45,8 +45,8 @@
               year: 'numeric'
             }).format(
               new Date(
-                historyItem.timestamp.getFullYear(),
-                historyItem.timestamp.getMonth() - 1
+                historyItem.timestamp.getUTCFullYear(),
+                historyItem.timestamp.getUTCMonth() - 1
               )
             )}
       </h3>

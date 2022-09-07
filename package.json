@@ -15,8 +15,8 @@
     "apollo:update-schema": "npx apollo service:download --endpoint=https://api.thegraph.com/subgraphs/name/gh0stwheel/drips-on-ethereum graphql-schema.json",
     "typechain:generate-contract-types": "npx typechain --target ethers-v5 --out-dir './src/lib/stores/drips/contracts/types' './src/lib/stores/drips/contracts/**/*.json'",
     "apollo:generate-types": "npx apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --tagName=gql",
-    "test": "jest",
-    "test:watch": "npm run test -- --watchAll",
+    "test": "TZ='UTC' jest",
+    "test:watch": "TZ='UTC' yarn run test -- --watchAll",
     "test:coverage": "jest --coverage"
   },
   "devDependencies": {
@@ -37,6 +37,7 @@
     "eslint-plugin-svelte3": "^4.0.0",
     "husky": "^7.0.4",
     "jest": "^28.1.3",
+    "jest-mock-extended": "^2.0.7",
     "lint-staged": "^12.4.0",
     "prettier": "^2.6.2",
     "prettier-plugin-svelte": "^2.7.0",
