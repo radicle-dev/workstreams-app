@@ -30,7 +30,8 @@ export const streamStartStop: HistoryAggregator = (_, streams) => {
 
         const streamingUntil =
           timestamp.getTime() / 1000 + Number(balance.wei / amtPerSec.wei);
-        const nextTimestamp = (timestamp || new Date()).getTime() / 1000;
+        const nextTimestamp =
+          (nextEvent?.timestamp || new Date()).getTime() / 1000;
 
         if (streamingUntil > nextTimestamp) {
           return acc;
