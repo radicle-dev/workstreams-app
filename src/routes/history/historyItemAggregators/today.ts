@@ -13,8 +13,8 @@ export const today: HistoryAggregator = (queue, streams) => {
   const window = {
     to: new Date(),
     from: new Date(
-      queue[0].timestamp.getFullYear(),
-      queue[0].timestamp.getMonth()
+      queue[0].timestamp.getUTCFullYear(),
+      queue[0].timestamp.getUTCMonth()
     )
   };
 
