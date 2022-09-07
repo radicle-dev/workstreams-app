@@ -11,14 +11,14 @@ export const streamedInbetween: HistoryAggregator = (queue, streams) => {
   const newItems = [];
 
   queue.forEach((item, index) => {
-    const prevItem = queue[index + 1];
+    const nextItem = queue[index + 1];
 
     const { timestamp } = item;
-    const prevTimestamp = prevItem?.timestamp || new Date();
+    const nextTimestamp = nextItem?.timestamp || new Date();
 
     const window = {
       to: timestamp,
-      from: prevTimestamp
+      from: nextTimestamp
     };
 
     const { earned, spent } = amountsEarnedAndSpentBetween(streams, window);

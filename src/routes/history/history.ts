@@ -61,11 +61,20 @@ function flush(): typeof history {
   return history;
 }
 
+function clear(): typeof history {
+  state.set([]);
+  queue = [];
+  streams = [];
+
+  return history;
+}
+
 const history = {
   subscribe: state.subscribe,
   add,
   setStreams,
-  flush
+  flush,
+  clear
 };
 
 export default history;

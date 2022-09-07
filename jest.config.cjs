@@ -1,4 +1,6 @@
 module.exports = {
+  // https://github.com/facebook/jest/issues/11617
+  maxWorkers: 1,
   transform: {
     "^.+\\.svelte$": [
       "svelte-jester",

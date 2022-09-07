@@ -2,14 +2,16 @@ import { get, writable } from 'svelte/store';
 
 const TICK_INTERVAL_MS = 1000;
 
-export interface TickRegistration {
-  id: number;
-  listener: () => void;
-}
-
 export default (() => {
-  const interval = writable<ReturnType<typeof setInterval>>();
-  const listeners = writable<(() => void)[]>([]);
+  const interval = writable<ReturnType<typeof setInterval> | undefined>();
+  const listeners = writable<{ [registrationId: number]: () => void }>({});
+
+  function reset() {
+    stop();
+
+    interval.set(undefined);
+    listeners.set({});
+  }
 
   function start() {
     if (get(interval)) throw 'Tick already running';
@@ -27,37 +29,45 @@ export default (() => {
   }
 
   function register(listener: () => void): number {
-    const currentIndex = get(listeners).indexOf(listener);
+    const currListeners = Object.keys(get(listeners));
 
-    if (currentIndex !== -1) return currentIndex;
+    let id = Object.keys(get(listeners)).length;
 
-    listeners.update((v) => [...v, listener]);
+    while (currListeners[id]) id++;
 
-    return get(listeners).indexOf(listener);
+    listeners.update((v) => ({ ...v, [id]: listener }));
+
+    return id;
   }
 
   function deregister(registrationId: number): boolean {
     const currentRegistrations = get(listeners);
     if (!currentRegistrations[registrationId]) return false;
 
-    currentRegistrations.splice(registrationId);
+    delete currentRegistrations[registrationId];
 
     listeners.set(currentRegistrations);
 
     return true;
   }
 
+  function getListeners() {
+    return get(listeners);
+  }
+
   function tick() {
-    for (const registration of get(listeners)) {
+    for (const registration of Object.values(get(listeners))) {
       registration();
     }
   }
 
   return {
+    reset,
     start,
     stop,
     isRunning,
     register,
-    deregister
+    deregister,
+    getListeners
   };
 })();
