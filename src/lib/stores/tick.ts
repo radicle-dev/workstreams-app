@@ -21,7 +21,9 @@ export default (() => {
 
   function stop() {
     const i = get(interval);
-    i && clearInterval(i);
+    if (i !== undefined) {
+      clearInterval(i);
+    }
 
     interval.set(undefined);
   }
