@@ -117,7 +117,9 @@ export const workstreamsStore = (() => {
 
   function clear() {
     const { intervalId } = get(internal) || {};
-    intervalId !== undefined && tick.deregister(intervalId);
+    if (intervalId !== undefined) {
+      tick.deregister(intervalId);
+    }
 
     workstreams.set(INITIAL_WORKSTREAMS_STATE);
     estimates.set({ workstreams: {} });
