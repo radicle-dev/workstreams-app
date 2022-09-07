@@ -128,7 +128,7 @@
     const totalWeiPerSec = Object.entries(enrichedWorkstreams).reduce<bigint>(
       (acc, [id, ws]) => {
         return $estimates.workstreams[id]?.currentlyStreaming
-          ? acc + (ws.onChainData?.amtPerSec.wei || BigInt(0))
+          ? acc + (ws.onChainData?.amtPerSec.wei ?? BigInt(0))
           : acc;
       },
       BigInt(0)

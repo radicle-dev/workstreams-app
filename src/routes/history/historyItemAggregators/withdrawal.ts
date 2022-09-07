@@ -20,6 +20,6 @@ export const withdrawal: HistoryAggregator = () => {
         },
         toAddress: address
       }
-    })) || []
+    })) ?? []
   );
 };

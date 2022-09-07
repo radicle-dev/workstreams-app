@@ -115,7 +115,7 @@ export const walletStore = (() => {
 
     const detectedWindowProvider = await getMetaMask();
     const provider =
-      (detectedWindowProvider && new Web3Provider(window.ethereum)) ||
+      (detectedWindowProvider && new Web3Provider(window.ethereum)) ??
       undefined;
     const accounts = await provider?.listAccounts();
     const network = await provider?.getNetwork();
@@ -126,12 +126,12 @@ export const walletStore = (() => {
 
     state.set({
       metamaskInstalled: Boolean(detectedWindowProvider),
-      accounts: (accounts && prepareAccounts(accounts)) || [],
+      accounts: (accounts && prepareAccounts(accounts)) ?? [],
       address: (login && accounts?.[0]?.toLowerCase()) || undefined,
       walletType: detectedWindowProvider ? 'metamask' : undefined,
       login,
       provider,
-      network: network || DEFAULT_NETWORK,
+      network: network ?? DEFAULT_NETWORK,
       ready: Boolean(login && detectedWindowProvider)
     });
   }
@@ -365,8 +365,9 @@ export const walletStore = (() => {
 
     const message = await createSiweMessage(addressToLogIn, signMessage);
 
-    if (!message.expirationTime)
+    if (!message.expirationTime) {
       throw new Error('Ensure an expiration time is set in SIWE message');
+    }
 
     const signature = await provider
       .getSigner()

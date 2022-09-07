@@ -22,7 +22,7 @@ export default (() => {
       store.update((v) => ({ ...v, [address]: {} }));
 
       const name =
-        (await (provider || defaultProvider).lookupAddress(address)) ||
+        (await (provider ?? defaultProvider).lookupAddress(address)) ??
         undefined;
 
       /*
@@ -36,7 +36,7 @@ export default (() => {
       if (name) {
         pic = (
           await (
-            await (provider || defaultProvider).getResolver(name)
+            await (provider ?? defaultProvider).getResolver(name)
           )?.getAvatar()
         )?.url;
       }
@@ -51,9 +51,9 @@ export default (() => {
     name: string,
     provider?: ethers.providers.BaseProvider
   ): Promise<string | undefined> {
-    const address = await (provider || defaultProvider).resolveName(name);
+    const address = await (provider ?? defaultProvider).resolveName(name);
 
-    return address || undefined;
+    return address ?? undefined;
   }
 
   return {

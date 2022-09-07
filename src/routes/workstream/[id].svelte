@@ -48,7 +48,7 @@
 </script>
 
 <svelte:head>
-  <title>{workstream?.title || 'Workstream'}</title>
+  <title>{workstream?.title ?? 'Workstream'}</title>
 </svelte:head>
 
 {#if workstream}

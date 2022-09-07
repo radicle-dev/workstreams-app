@@ -116,7 +116,7 @@ export const workstreamsStore = (() => {
   const internal = writable<InternalState | undefined>();
 
   function clear() {
-    const { intervalId } = get(internal) || {};
+    const { intervalId } = get(internal) ?? {};
     if (intervalId !== undefined) {
       tick.deregister(intervalId);
     }
@@ -153,9 +153,10 @@ export const workstreamsStore = (() => {
     }));
 
     try {
-      const { currentAddress, chainId } = get(internal) || {};
-      if (!currentAddress || !chainId)
+      const { currentAddress, chainId } = get(internal) ?? {};
+      if (!currentAddress || !chainId) {
         throw new Error('Connect the store first');
+      }
 
       await fetchRelevantWorkstreams(currentAddress, chainId);
 
@@ -181,12 +182,13 @@ export const workstreamsStore = (() => {
     const internalState = get(internal);
 
     // User isn't logged in, so no need to enrich with on-chain data.
-    if (!internalState)
+    if (!internalState) {
       return {
         data: item,
         relevant: false,
         fetchedAt: new Date()
       };
+    }
 
     const relevant =
       item.creator === internalState.currentAddress ||
@@ -196,19 +198,20 @@ export const workstreamsStore = (() => {
         ? 'outgoing'
         : 'incoming';
 
-    if (item.state !== WorkstreamState.ACTIVE)
+    if (item.state !== WorkstreamState.ACTIVE) {
       return {
         data: item,
         fetchedAt: new Date(),
         relevant,
         direction
       };
+    }
 
     const { id, creator, acceptedApplication: assignee, dripsData } = item;
 
     if (!dripsData) throw new Error(`No drips data for ws ${id}`);
 
-    const { chainId } = get(internal) || {};
+    const { chainId } = get(internal) ?? {};
     if (!chainId) throw new Error('Connect the store first');
 
     const [dripsAccount, dripsUpdatedEvents] = await Promise.all([
@@ -225,7 +228,7 @@ export const workstreamsStore = (() => {
     ]?.event.args.receivers.find((r) => r.receiver.toLowerCase() === assignee);
 
     const amtPerSec = {
-      wei: receiverConfig?.amtPerSec.toBigInt() || BigInt(0),
+      wei: receiverConfig?.amtPerSec.toBigInt() ?? BigInt(0),
       currency: Currency.DAI
     };
 
@@ -245,7 +248,7 @@ export const workstreamsStore = (() => {
             },
             amtPerSec: {
               currency: Currency.DAI,
-              wei: recipient?.amtPerSec.toBigInt() || BigInt(0)
+              wei: recipient?.amtPerSec.toBigInt() ?? BigInt(0)
             },
             timestamp: new Date(dew.fromBlock.timestamp * 1000)
           }
@@ -260,13 +263,13 @@ export const workstreamsStore = (() => {
       onChainData: {
         amtPerSec,
         dripHistory,
-        dripsEntries: dripsAccount?.dripsEntries || [],
+        dripsEntries: dripsAccount?.dripsEntries ?? [],
         streamSetUp: Boolean(
           dripsUpdatedEvents[0]?.event.args.receivers.find(
             (r) => r.receiver.toLowerCase() === item.acceptedApplication
           )
         ),
-        dripsAccount: dripsAccount || undefined
+        dripsAccount: dripsAccount ?? undefined
       },
       relevant,
       direction
@@ -309,7 +312,7 @@ export const workstreamsStore = (() => {
       const streamed = streamedBetween([v])[0];
 
       const lastUpdate = dripHistory[dripHistory.length - 1];
-      const currAmtPerSec = lastUpdate?.amtPerSec.wei || BigInt(0);
+      const currAmtPerSec = lastUpdate?.amtPerSec.wei ?? BigInt(0);
       const lastUpdateTimestamp = lastUpdate?.timestamp.getTime();
       const streamingUntil = currAmtPerSec
         ? new Date(
@@ -465,7 +468,7 @@ export const workstreamsStore = (() => {
     config?: RequestInit,
     fetcher?: typeof fetch
   ) {
-    return (fetcher || fetch)(url, {
+    return (fetcher ?? fetch)(url, {
       ...(config as object),
       credentials: 'include'
     });

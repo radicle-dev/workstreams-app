@@ -42,7 +42,7 @@
       <img
         transition:fade={{ duration: 200 }}
         class="avatar"
-        src={avatarUrl || uriData}
+        src={avatarUrl ?? uriData}
         alt="user-avatar"
       />
     {/key}

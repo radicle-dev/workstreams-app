@@ -18,7 +18,7 @@
       scale: 16
     }).toDataURL();
 
-  $: url = $ensNames[address]?.pic || blockyUrl;
+  $: url = $ensNames[address]?.pic ?? blockyUrl;
 </script>
 
 <img

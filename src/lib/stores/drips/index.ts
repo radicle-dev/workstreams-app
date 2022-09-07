@@ -70,8 +70,9 @@ export default (() => {
   const state = writable<DripsState>({});
 
   async function connect(provider: ethers.providers.Web3Provider) {
-    if (!networkNameMap[provider.network.chainId])
+    if (!networkNameMap[provider.network.chainId]) {
       throw new Error('Unknown chain ID');
+    }
 
     const client = new DripsClient(
       provider,
@@ -97,7 +98,7 @@ export default (() => {
   }
 
   async function updateCycleSecs(): Promise<void> {
-    const { provider } = get(internal) || {};
+    const { provider } = get(internal) ?? {};
     if (!provider) throw new Error('Connect the store first');
 
     const dripsHub = DaiDripsHubAbi__factory.connect(
@@ -125,7 +126,7 @@ export default (() => {
   }
 
   async function updateCollectHistory(): Promise<void> {
-    const { provider } = get(internal) || {};
+    const { provider } = get(internal) ?? {};
     if (!provider) throw new Error('Connect the store first');
 
     const dripsHub = DaiDripsHubAbi__factory.connect(
@@ -150,7 +151,7 @@ export default (() => {
   }
 
   async function updateCollectable(): Promise<void> {
-    const { client, provider } = get(internal) || {};
+    const { client, provider } = get(internal) ?? {};
     if (!provider || !client) throw new Error('Connect the store first');
 
     const address = await provider.getSigner().getAddress();
@@ -168,7 +169,7 @@ export default (() => {
       splitsConfig?.splitsEntries?.map((sc) => ({
         receiver: sc.receiver,
         weight: sc.weight
-      })) || []
+      })) ?? []
     );
 
     state.update((v) => ({
@@ -181,7 +182,7 @@ export default (() => {
   }
 
   async function getDripsUpdatedEvents(user?: string, account?: bigint) {
-    const { provider } = get(internal) || {};
+    const { provider } = get(internal) ?? {};
     if (!provider) throw new Error('Connect the store first');
 
     const dripsHub = DaiDripsHubAbi__factory.connect(
@@ -197,21 +198,21 @@ export default (() => {
   }
 
   async function getAllowance(): Promise<BigNumber> {
-    const { client } = get(internal) || {};
+    const { client } = get(internal) ?? {};
     if (!client) throw new Error('Connect the store first');
 
     return client.getAllowance();
   }
 
   async function approveDaiSpend(): Promise<ContractTransaction> {
-    const { client } = get(internal) || {};
+    const { client } = get(internal) ?? {};
     if (!client) throw new Error('Connect the store first');
 
     return client.approveDAIContract();
   }
 
   async function getDaiBalance(): Promise<BigNumber> {
-    const { provider } = get(internal) || {};
+    const { provider } = get(internal) ?? {};
     if (!provider) throw new Error('Connect the store first');
 
     const daiContract = DaiAbi__factory.connect(
@@ -228,7 +229,7 @@ export default (() => {
     accountId: bigint,
     topUpDaiWei: bigint
   ) {
-    const { provider } = get(internal) || {};
+    const { provider } = get(internal) ?? {};
     if (!provider) throw new Error('Connect the store first');
 
     const daiDripsHubAddress = daiDripsHubInfo(
@@ -263,12 +264,13 @@ export default (() => {
   }
 
   async function topUp(workstream: EnrichedWorkstream, topUpDaiWei: bigint) {
-    const { provider } = get(internal) || {};
+    const { provider } = get(internal) ?? {};
     if (!provider) throw new Error('Connect the store first');
 
     if (!workstream.data.dripsData) throw 'No drips data for workstream';
-    if (workstream.onChainData?.dripHistory?.length === 0)
+    if (workstream.onChainData?.dripHistory?.length === 0) {
       throw 'No DripsUpdated events for workstream';
+    }
 
     const daiDripsHubAddress = daiDripsHubInfo(
       provider.network.chainId
@@ -278,15 +280,17 @@ export default (() => {
       provider.getSigner()
     );
 
-    const { dripHistory } = workstream.onChainData || {};
-    if (!dripHistory)
+    const { dripHistory } = workstream.onChainData ?? {};
+    if (!dripHistory) {
       throw new Error('Unable to get current balance for stream');
+    }
 
     const lastUpdate = dripHistory[dripHistory.length - 1];
 
     const { acceptedApplication } = workstream.data;
-    if (!acceptedApplication)
+    if (!acceptedApplication) {
       throw new Error('An accepted application is required to top up');
+    }
 
     const receivers = [
       {
@@ -311,12 +315,13 @@ export default (() => {
     action: 'pause' | 'unpause',
     workstream: EnrichedWorkstream
   ) {
-    const { provider } = get(internal) || {};
+    const { provider } = get(internal) ?? {};
     if (!provider) throw new Error('Connect the store first');
 
     if (!workstream.data.dripsData) throw 'No drips data for workstream';
-    if (workstream.onChainData?.dripHistory?.length === 0)
+    if (workstream.onChainData?.dripHistory?.length === 0) {
       throw 'No DripHistory for workstream';
+    }
 
     const daiDripsHubAddress = daiDripsHubInfo(
       provider.network.chainId
@@ -326,12 +331,13 @@ export default (() => {
       provider.getSigner()
     );
 
-    const { dripHistory } = workstream.onChainData || {};
+    const { dripHistory } = workstream.onChainData ?? {};
     if (!dripHistory) throw new Error('Unable to get DripHistory for stream');
 
     const { acceptedApplication } = workstream.data;
-    if (!acceptedApplication)
+    if (!acceptedApplication) {
       throw new Error('An accepted application is required');
+    }
 
     const lastUpdate = dripHistory[dripHistory.length - 1];
     const currentReceivers =
@@ -389,7 +395,7 @@ export default (() => {
   }
 
   async function collect() {
-    const { provider } = get(internal) || {};
+    const { provider } = get(internal) ?? {};
     if (!provider) throw new Error('Connect the store first');
 
     const daiDripsHubAddress = daiDripsHubInfo(
@@ -415,7 +421,7 @@ export default (() => {
       splitsConfig?.splitsEntries?.map((sc) => ({
         receiver: sc.receiver,
         weight: sc.weight
-      })) || []
+      })) ?? []
     );
   }
 

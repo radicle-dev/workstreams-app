@@ -65,7 +65,7 @@
           <h4>Total earned</h4>
           <p class="amount typo-text-mono-bold">
             {($estimates.totalBalance &&
-              currencyFormat($estimates.totalBalance.wei)) ||
+              currencyFormat($estimates.totalBalance.wei)) ??
               '…'} DAI
           </p>
         </div>

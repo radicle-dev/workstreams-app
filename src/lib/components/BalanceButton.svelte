@@ -29,8 +29,8 @@
     withdrawable &&
     currentCycleBalanceEstimate &&
     currencyFormat(
-      ($drips.collectable?.wei || BigInt(0)) +
-        ($estimates.earnedInCurrentCycle?.wei || BigInt(0))
+      ($drips.collectable?.wei ?? BigInt(0)) +
+        ($estimates.earnedInCurrentCycle?.wei ?? BigInt(0))
     );
 
   $: formattedCycleEnd = $drips.cycle && {
@@ -88,7 +88,7 @@
         </div>
         <div class="title-value balance">
           <p class="typo-text title">
-            Withdrawable {formattedCycleEnd?.date || '...'}
+            Withdrawable {formattedCycleEnd?.date ?? '...'}
           </p>
           <h2 class="value">
             {#if currentCycleBalanceEstimate}

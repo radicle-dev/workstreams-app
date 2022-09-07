@@ -21,7 +21,7 @@
   export let enrichedWorkstream: EnrichedWorkstream | undefined = undefined;
   export let workstream: Workstream | undefined = undefined;
 
-  $: ws = enrichedWorkstream?.data || workstream;
+  $: ws = enrichedWorkstream?.data ?? workstream;
   $: estimate = ws && $estimates.workstreams[ws.id];
 
   $: onChainDataReady = Boolean(estimate);
@@ -30,7 +30,7 @@
     ws &&
     (enrichedWorkstream?.onChainData?.dripHistory.find(
       (e) => e.amtPerSec.wei !== BigInt(0)
-    )?.amtPerSec || { currency: Currency.DAI, wei: ws.ratePerSecond.wei });
+    )?.amtPerSec ?? { currency: Currency.DAI, wei: ws.ratePerSecond.wei });
 </script>
 
 {#if ws}

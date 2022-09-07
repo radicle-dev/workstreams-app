@@ -23,11 +23,11 @@
   let totalAmount: number = weiToDai(workstream.total);
 
   $: topUpExceedsBalance =
-    (daiBalance || BigInt(0)) <
-    utils.parseUnits((topUpAmount || 0).toString()).toBigInt();
+    (daiBalance ?? BigInt(0)) <
+    utils.parseUnits((topUpAmount ?? 0).toString()).toBigInt();
 
   $: weiPerDay =
-    utils.parseUnits((totalAmount || 0).toString()).toBigInt() /
+    utils.parseUnits((totalAmount ?? 0).toString()).toBigInt() /
     BigInt(workstream.durationDays);
   $: daiPerDay = currencyFormat(weiPerDay);
   $: totalWei = weiPerDay * BigInt(workstream.durationDays);
@@ -52,10 +52,11 @@
       }
 
       const { acceptedApplication } = workstream;
-      if (!acceptedApplication)
+      if (!acceptedApplication) {
         throw new Error(
           'An accepted application is required to set up payment'
         );
+      }
 
       const createDripCall = await drips.createDrip(
         acceptedApplication,
@@ -130,7 +131,7 @@
             ? {
                 type: 'invalid',
                 message: `You only have ${
-                  (daiBalance && currencyFormat(daiBalance)) || '...'
+                  (daiBalance && currencyFormat(daiBalance)) ?? '...'
                 } DAI`
               }
             : { type: 'valid' }}

@@ -14,7 +14,7 @@ export const streamedInbetween: HistoryAggregator = (queue, streams) => {
     const nextItem = queue[index + 1];
 
     const { timestamp } = item;
-    const nextTimestamp = nextItem?.timestamp || new Date();
+    const nextTimestamp = nextItem?.timestamp ?? new Date();
 
     const window = {
       to: timestamp,

@@ -46,8 +46,8 @@
 
 <div class="items">
   <AccountSheetItem
-    title={(address && $ensNames[address]?.name) ||
-      (address && formatAddress(address)) ||
+    title={(address && $ensNames[address]?.name) ??
+      (address && formatAddress(address)) ??
       '...'}
   >
     {#if address}<Avatar slot="left" {address} rem={3} />{/if}

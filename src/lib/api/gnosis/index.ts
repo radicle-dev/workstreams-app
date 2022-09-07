@@ -13,5 +13,5 @@ export async function getSafesForAddress(chainId: number, address: string) {
   );
   const ownedSafesRes = await ownedSafesReq.json();
 
-  return ownedSafesRes?.safes || [];
+  return ownedSafesRes?.safes ?? [];
 }

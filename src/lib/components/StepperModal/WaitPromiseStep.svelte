@@ -54,7 +54,7 @@
         stroke-linejoin="round"
       />
     </svg>
-    <p>{pendingMessage || 'Waiting for your transaction to be confirmed…'}</p>
+    <p>{pendingMessage ?? 'Waiting for your transaction to be confirmed…'}</p>
   {/if}
 </div>
 
