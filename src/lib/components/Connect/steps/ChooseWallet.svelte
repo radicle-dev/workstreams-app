@@ -15,8 +15,9 @@
         await walletStore.connect(method);
 
         const { provider } = get(walletStore);
-        if (!provider)
+        if (!provider) {
           throw new Error('No provider available after connection');
+        }
 
         await connectStores(provider);
       },

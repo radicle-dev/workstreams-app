@@ -24,6 +24,6 @@ module.exports = {
   rules: {
     'no-console': 'error',
     '@typescript-eslint/no-unused-vars': 'error',
-    'curly': ['error', 'multi-line', 'consistent']
+    curly: ['error', 'multi-line', 'consistent']
   }
 };
