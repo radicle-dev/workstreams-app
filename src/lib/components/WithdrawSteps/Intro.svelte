@@ -45,7 +45,10 @@
       >
       from Workstreams. After your withdrawal transaction is confirmed, your DAI
       will be sent to your address
-      <span class="typo-text-bold">{formatAddress($walletStore.address)}</span>.
+      <span class="typo-text-bold"
+        >{($walletStore.address && formatAddress($walletStore.address)) ??
+          '...'}</span
+      >.
     </p>
     <p class="typo-text-small">
       Please note that while you're earning in real-time, your withdrawable

@@ -161,43 +161,6 @@ const _abi = [
         type: 'address'
       },
       {
-        indexed: false,
-        internalType: 'uint128',
-        name: 'balance',
-        type: 'uint128'
-      },
-      {
-        components: [
-          {
-            internalType: 'address',
-            name: 'receiver',
-            type: 'address'
-          },
-          {
-            internalType: 'uint128',
-            name: 'amtPerSec',
-            type: 'uint128'
-          }
-        ],
-        indexed: false,
-        internalType: 'struct DripsReceiver[]',
-        name: 'receivers',
-        type: 'tuple[]'
-      }
-    ],
-    name: 'DripsUpdated',
-    type: 'event'
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'user',
-        type: 'address'
-      },
-      {
         indexed: true,
         internalType: 'uint256',
         name: 'account',
@@ -225,7 +188,7 @@ const _abi = [
         indexed: false,
         internalType: 'struct DripsReceiver[]',
         name: 'receivers',
-        type: 'tuple[]'
+        type: '(address,uint128)[]'
       }
     ],
     name: 'DripsUpdated',
@@ -284,7 +247,7 @@ const _abi = [
         type: 'uint128'
       }
     ],
-    name: 'Given',
+    name: 'Given1',
     type: 'event'
   },
   {

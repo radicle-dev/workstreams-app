@@ -34,7 +34,7 @@
           y: $scroll.direction === 'up' ? -args.y : args.y,
           duration: 300
         })
-      : undefined;
+      : {};
 </script>
 
 <header class:hide class:withShadow={scrolledDown && !hide}>

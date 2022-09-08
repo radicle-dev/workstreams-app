@@ -55,7 +55,10 @@
     scroll.attach();
 
     return () => {
-      window.removeEventListener('change', colorSchemeListener);
+      window.removeEventListener(
+        'change',
+        colorSchemeListener as (event: Event) => void
+      );
       cupertinoPane.detach();
       scroll.detach();
       cupertinoPane.detach();
@@ -84,10 +87,12 @@
       <slot />
     </main>
   </div>
-  {#if $walletStore.network.chainId === 4}
-    <div class="network"><span />{$walletStore.provider.network.name}</div>
-  {:else if $walletStore.network.chainId !== 1}
-    <div class="network error"><span />Unsupported Network</div>
+  {#if $walletStore.network}
+    {#if $walletStore.network.chainId === 4}
+      <div class="network"><span />{$walletStore.network.name}</div>
+    {:else if $walletStore.network.chainId !== 1}
+      <div class="network error"><span />Unsupported Network</div>
+    {/if}
   {/if}
 {/if}
 

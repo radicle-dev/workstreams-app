@@ -10,7 +10,7 @@
   export let pending: () => Promise<void> | undefined;
   export let pendingMessage: string | undefined;
 
-  let error: Error | undefined;
+  let error: unknown | undefined;
 
   onMount(async () => {
     if (pending) {
@@ -20,18 +20,21 @@
         dispatch('continue');
       } catch (e) {
         error = e;
-        console.error(e);
       } finally {
         modal.setHideable(true);
       }
     }
   });
+
+  function isError(e: unknown): e is Error {
+    return Object.prototype.toString.call(e) === '[object Error]';
+  }
 </script>
 
 <div class="wait-tx">
   {#if error}
     <p>An error occured:</p>
-    {error.message}
+    {isError(error) ? error.message : 'Unknown error'}
     <Button on:click={() => dispatch('goBack')}>Try again</Button>
   {:else}
     <svg
@@ -51,7 +54,7 @@
         stroke-linejoin="round"
       />
     </svg>
-    <p>{pendingMessage || 'Waiting for your transaction to be confirmed…'}</p>
+    <p>{pendingMessage ?? 'Waiting for your transaction to be confirmed…'}</p>
   {/if}
 </div>
 

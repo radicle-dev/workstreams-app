@@ -19,7 +19,9 @@ export const store = derived(
   })
 );
 
-const doNothing = (): void => null;
+const doNothing = (): void => {
+  null;
+};
 
 export const hide = (): void => {
   const canHide = get(hideable);
@@ -33,7 +35,7 @@ export const hide = (): void => {
     return;
   }
 
-  stored.overlay.onHide();
+  stored.overlay && stored.overlay.onHide();
   overlayStore.set(null);
 };
 
@@ -56,7 +58,7 @@ export const toggle = (
 ): void => {
   const stored = get(store);
 
-  if (stored && stored.overlay.modalComponent === modalComponent) {
+  if (stored && stored.overlay?.modalComponent === modalComponent) {
     hide();
     return;
   }

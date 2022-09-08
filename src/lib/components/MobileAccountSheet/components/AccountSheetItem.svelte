@@ -12,7 +12,7 @@
 <div
   class:disabled
   class="account-sheet-item-wrapper"
-  on:click={!disabled && (() => onClick())}
+  on:click={() => !disabled && onClick()}
 >
   <slot name="left">
     <div class="icon-wrapper">

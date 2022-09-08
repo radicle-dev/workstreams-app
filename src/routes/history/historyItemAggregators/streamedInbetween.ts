@@ -1,20 +1,20 @@
 import { amountsEarnedAndSpentBetween } from '$lib/stores/drips/utils/streamedBetween';
 import { Currency } from '$lib/stores/workstreams/types';
 import type { HistoryAggregator } from '../history';
-import { HistoryItemType } from '../types';
+import { HistoryItemType, type HistoryItem } from '../types';
 
 /*
   Insert an "inbetween" item between subsequent history items, if any funds
   have been streamed from or to the user within the passed time.
 */
 export const streamedInbetween: HistoryAggregator = (queue, streams) => {
-  const newItems = [];
+  const newItems: HistoryItem[] = [];
 
   queue.forEach((item, index) => {
     const nextItem = queue[index + 1];
 
     const { timestamp } = item;
-    const nextTimestamp = nextItem?.timestamp || new Date();
+    const nextTimestamp = nextItem?.timestamp ?? new Date();
 
     const window = {
       to: timestamp,

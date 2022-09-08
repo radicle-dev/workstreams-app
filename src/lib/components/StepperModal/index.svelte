@@ -8,14 +8,14 @@
   import WaitPromise from './WaitPromiseStep.svelte';
   import type { AwaitPendingPayload } from './types';
 
-  export let stepProps: { [propName: string]: any } = {};
+  export let stepProps: { [propName: string]: unknown } = {};
   export let steps: typeof SvelteComponent[];
   export let loading = true;
 
-  let resolvedStepProps: { [propName: string]: any } | undefined;
+  let resolvedStepProps: { [propName: string]: unknown } | undefined;
   let currentStepIndex = 0;
   let currentStep: typeof SvelteComponent = steps[0];
-  let pending: () => Promise<void> | undefined;
+  let pending: (() => Promise<void>) | undefined;
   let pendingMessage: string | undefined;
 
   function advance() {

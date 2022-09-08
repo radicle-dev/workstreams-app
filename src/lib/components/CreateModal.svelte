@@ -34,7 +34,7 @@
   let durationUnit: string = durationOptions[1].value;
   let description: string;
   let assignee: string;
-  let assigneeAddress: string;
+  let assigneeAddress: string | undefined;
 
   $: streamRate =
     parseInt(total) / (parseInt(duration) * parseInt(durationUnit));
@@ -65,6 +65,7 @@
           type: 'invalid',
           message: 'Unable to resolve ENS name.'
         };
+        return;
       }
 
       if (address.toLowerCase() === $walletStore.address) {
@@ -110,6 +111,10 @@
     const weiPerDay = utils.parseUnits(daiPerDay.toString());
     const weiPerSecond = weiPerDay.div(86400);
 
+    const chainId = $walletStore.network?.chainId;
+
+    if (!chainId) throw new Error('Unable to determine chain ID');
+
     let input: WorkstreamInput = {
       ratePerSecond: {
         currency: Currency.DAI,
@@ -117,7 +122,7 @@
       },
       title,
       desc: description,
-      chainId: $walletStore.network.chainId,
+      chainId,
       durationDays: parseInt(duration) * parseInt(durationUnit),
       assignTo: assigneeAddress,
       state: WorkstreamState.ACTIVE

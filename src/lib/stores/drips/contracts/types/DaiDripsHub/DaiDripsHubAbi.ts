@@ -27,13 +27,6 @@ import type {
   OnEvent
 } from '../common';
 
-export type DripsReceiverStruct = { receiver: string; amtPerSec: BigNumberish };
-
-export type DripsReceiverStructOutput = [string, BigNumber] & {
-  receiver: string;
-  amtPerSec: BigNumber;
-};
-
 export type SplitsReceiverStruct = { receiver: string; weight: BigNumberish };
 
 export type SplitsReceiverStructOutput = [string, number] & {
@@ -56,6 +49,13 @@ export type PermitArgsStructOutput = [
   string,
   string
 ] & { nonce: BigNumber; expiry: BigNumber; v: number; r: string; s: string };
+
+export type DripsReceiverStruct = { receiver: string; amtPerSec: BigNumberish };
+
+export type DripsReceiverStructOutput = [string, BigNumber] & {
+  receiver: string;
+  amtPerSec: BigNumber;
+};
 
 export interface DaiDripsHubAbiInterface extends utils.Interface {
   functions: {
@@ -350,10 +350,9 @@ export interface DaiDripsHubAbiInterface extends utils.Interface {
     'Collected(address,uint128,uint128)': EventFragment;
     'Dripping(address,address,uint128,uint64)': EventFragment;
     'Dripping(address,uint256,address,uint128,uint64)': EventFragment;
-    'DripsUpdated(address,uint128,tuple[])': EventFragment;
-    'DripsUpdated(address,uint256,uint128,tuple[])': EventFragment;
+    'DripsUpdated(address,uint256,uint128,(address,uint128)[])': EventFragment;
     'Given(address,address,uint128)': EventFragment;
-    'Given(address,uint256,address,uint128)': EventFragment;
+    'Given1(address,uint256,address,uint128)': EventFragment;
     'Paused(address)': EventFragment;
     'ReserveSet(address,address)': EventFragment;
     'Split(address,address,uint128)': EventFragment;
@@ -371,18 +370,9 @@ export interface DaiDripsHubAbiInterface extends utils.Interface {
   getEvent(
     nameOrSignatureOrTopic: 'Dripping(address,uint256,address,uint128,uint64)'
   ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: 'DripsUpdated(address,uint128,tuple[])'
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: 'DripsUpdated(address,uint256,uint128,tuple[])'
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: 'Given(address,address,uint128)'
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: 'Given(address,uint256,address,uint128)'
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'DripsUpdated'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Given'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Given1'): EventFragment;
   getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment;
   getEvent(nameOrSignatureOrTopic: 'ReserveSet'): EventFragment;
   getEvent(nameOrSignatureOrTopic: 'Split'): EventFragment;
@@ -453,59 +443,43 @@ export type Dripping_address_uint256_address_uint128_uint64_Event = TypedEvent<
 export type Dripping_address_uint256_address_uint128_uint64_EventFilter =
   TypedEventFilter<Dripping_address_uint256_address_uint128_uint64_Event>;
 
-export interface DripsUpdated_address_uint128_tuple_array_EventObject {
-  user: string;
-  balance: BigNumber;
-  receivers: DripsReceiverStructOutput[];
-}
-export type DripsUpdated_address_uint128_tuple_array_Event = TypedEvent<
-  [string, BigNumber, DripsReceiverStructOutput[]],
-  DripsUpdated_address_uint128_tuple_array_EventObject
->;
-
-export type DripsUpdated_address_uint128_tuple_array_EventFilter =
-  TypedEventFilter<DripsUpdated_address_uint128_tuple_array_Event>;
-
-export interface DripsUpdated_address_uint256_uint128_tuple_array_EventObject {
+export interface DripsUpdatedEventObject {
   user: string;
   account: BigNumber;
   balance: BigNumber;
-  receivers: DripsReceiverStructOutput[];
+  receivers: any[];
 }
-export type DripsUpdated_address_uint256_uint128_tuple_array_Event = TypedEvent<
-  [string, BigNumber, BigNumber, DripsReceiverStructOutput[]],
-  DripsUpdated_address_uint256_uint128_tuple_array_EventObject
+export type DripsUpdatedEvent = TypedEvent<
+  [string, BigNumber, BigNumber, any[]],
+  DripsUpdatedEventObject
 >;
 
-export type DripsUpdated_address_uint256_uint128_tuple_array_EventFilter =
-  TypedEventFilter<DripsUpdated_address_uint256_uint128_tuple_array_Event>;
+export type DripsUpdatedEventFilter = TypedEventFilter<DripsUpdatedEvent>;
 
-export interface Given_address_address_uint128_EventObject {
+export interface GivenEventObject {
   user: string;
   receiver: string;
   amt: BigNumber;
 }
-export type Given_address_address_uint128_Event = TypedEvent<
+export type GivenEvent = TypedEvent<
   [string, string, BigNumber],
-  Given_address_address_uint128_EventObject
+  GivenEventObject
 >;
 
-export type Given_address_address_uint128_EventFilter =
-  TypedEventFilter<Given_address_address_uint128_Event>;
+export type GivenEventFilter = TypedEventFilter<GivenEvent>;
 
-export interface Given_address_uint256_address_uint128_EventObject {
+export interface Given1EventObject {
   user: string;
   account: BigNumber;
   receiver: string;
   amt: BigNumber;
 }
-export type Given_address_uint256_address_uint128_Event = TypedEvent<
+export type Given1Event = TypedEvent<
   [string, BigNumber, string, BigNumber],
-  Given_address_uint256_address_uint128_EventObject
+  Given1EventObject
 >;
 
-export type Given_address_uint256_address_uint128_EventFilter =
-  TypedEventFilter<Given_address_uint256_address_uint128_Event>;
+export type Given1EventFilter = TypedEventFilter<Given1Event>;
 
 export interface PausedEventObject {
   account: string;
@@ -1160,28 +1134,43 @@ export interface DaiDripsHubAbi extends BaseContract {
       amtPerSec?: null,
       endTime?: null
     ): Dripping_address_uint256_address_uint128_uint64_EventFilter;
-    'DripsUpdated(address,uint128,tuple[])'(
-      user?: string | null,
-      balance?: null,
-      receivers?: null
-    ): DripsUpdated_address_uint128_tuple_array_EventFilter;
-    'DripsUpdated(address,uint256,uint128,tuple[])'(
+
+    'DripsUpdated(address,uint256,uint128,(address,uint128)[])'(
       user?: string | null,
       account?: BigNumberish | null,
       balance?: null,
       receivers?: null
-    ): DripsUpdated_address_uint256_uint128_tuple_array_EventFilter;
+    ): DripsUpdatedEventFilter;
+    DripsUpdated(
+      user?: string | null,
+      account?: BigNumberish | null,
+      balance?: null,
+      receivers?: null
+    ): DripsUpdatedEventFilter;
+
     'Given(address,address,uint128)'(
       user?: string | null,
       receiver?: string | null,
       amt?: null
-    ): Given_address_address_uint128_EventFilter;
-    'Given(address,uint256,address,uint128)'(
+    ): GivenEventFilter;
+    Given(
+      user?: string | null,
+      receiver?: string | null,
+      amt?: null
+    ): GivenEventFilter;
+
+    'Given1(address,uint256,address,uint128)'(
       user?: string | null,
       account?: BigNumberish | null,
       receiver?: string | null,
       amt?: null
-    ): Given_address_uint256_address_uint128_EventFilter;
+    ): Given1EventFilter;
+    Given1(
+      user?: string | null,
+      account?: BigNumberish | null,
+      receiver?: string | null,
+      amt?: null
+    ): Given1EventFilter;
 
     'Paused(address)'(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;

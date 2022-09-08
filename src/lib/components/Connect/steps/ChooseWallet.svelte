@@ -13,7 +13,13 @@
     dispatch('awaitPending', {
       promise: async () => {
         await walletStore.connect(method);
-        await connectStores(get(walletStore).provider);
+
+        const { provider } = get(walletStore);
+        if (!provider) {
+          throw new Error('No provider available after connection');
+        }
+
+        await connectStores(provider);
       },
       message: 'Please connect your wallet and sign the login message…'
     });
@@ -34,7 +40,7 @@
   <div
     class="option"
     class:disabled={metaMaskInstalled === false}
-    on:click={metaMaskInstalled && (() => connect('metamask'))}
+    on:click={() => connect('metamask')}
   >
     <img src="/assets/MetaMask-icon.svg" class="icon" alt="MetaMask logo" />
     <h3>MetaMask</h3>

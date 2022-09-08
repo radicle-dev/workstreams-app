@@ -21,6 +21,8 @@
   $: useModal = $isMobile.isMobile;
 
   onMount(() => {
+    if (!hoverElem) throw new Error('Hover Element not found');
+
     const spaceOnRight =
       window.innerWidth - hoverElem.getBoundingClientRect().right;
     if (spaceOnRight < convertRemToPixels(33)) {

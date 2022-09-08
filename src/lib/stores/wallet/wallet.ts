@@ -115,21 +115,23 @@ export const walletStore = (() => {
 
     const detectedWindowProvider = await getMetaMask();
     const provider =
-      detectedWindowProvider && new Web3Provider(window.ethereum);
+      (detectedWindowProvider && new Web3Provider(window.ethereum)) ??
+      undefined;
     const accounts = await provider?.listAccounts();
     const network = await provider?.getNetwork();
-    const login = accounts?.length > 0 && _restoreAuth(accounts);
+    const login =
+      (accounts && accounts?.length > 0 && _restoreAuth(accounts)) || undefined;
 
     if (detectedWindowProvider) _attachListeners(detectedWindowProvider);
 
     state.set({
       metamaskInstalled: Boolean(detectedWindowProvider),
-      accounts: (accounts && prepareAccounts(accounts)) || [],
-      address: login && accounts?.[0]?.toLowerCase(),
+      accounts: (accounts && prepareAccounts(accounts)) ?? [],
+      address: (login && accounts?.[0]?.toLowerCase()) || undefined,
       walletType: detectedWindowProvider ? 'metamask' : undefined,
       login,
       provider,
-      network: network || DEFAULT_NETWORK,
+      network: network ?? DEFAULT_NETWORK,
       ready: Boolean(login && detectedWindowProvider)
     });
   }
@@ -298,16 +300,20 @@ export const walletStore = (() => {
 
     const network = await provider.getNetwork();
 
-    state.update((s) => ({
-      ...s,
-      address: s.safe.address,
-      safe: {
-        ...s.safe,
-        ready: true,
-        provider,
-        network
-      }
-    }));
+    state.update((s) => {
+      if (!s.safe) throw new Error('Safe must be connected via `linkSafe`');
+
+      return {
+        ...s,
+        address: s.safe?.address,
+        safe: {
+          ...s.safe,
+          ready: true,
+          provider,
+          network
+        }
+      };
+    });
   }
 
   async function disconnect() {
@@ -359,6 +365,10 @@ export const walletStore = (() => {
 
     const message = await createSiweMessage(addressToLogIn, signMessage);
 
+    if (!message.expirationTime) {
+      throw new Error('Ensure an expiration time is set in SIWE message');
+    }
+
     const signature = await provider
       .getSigner()
       .signMessage(message.prepareMessage());
@@ -387,9 +397,13 @@ export const walletStore = (() => {
   }
 
   function _getStoredLogin(): Login | undefined {
-    return JSON.parse(localStorage.getItem('login'), (key, value) =>
-      key === 'expiresAt' ? new Date(value) : value
-    );
+    const stored = localStorage.getItem('login');
+
+    return stored
+      ? JSON.parse(stored, (key, value) =>
+          key === 'expiresAt' ? new Date(value) : value
+        )
+      : undefined;
   }
 
   function _wipeStoredLogin() {
@@ -402,11 +416,11 @@ export const walletStore = (() => {
     });
   }
 
-  function _restoreAuth(accounts: string[]): Login | null {
+  function _restoreAuth(accounts: string[]): Login | undefined {
     const login = _checkLoggedInAs(accounts[0]);
     if (!login) {
       _wipeStoredLogin();
-      return null;
+      return undefined;
     }
 
     return login;

@@ -69,19 +69,20 @@
     [SectionName.APPLIED_TO]: {
       title: 'Workstreams you applied to',
       workstreams: filterObject(workstreams, (ws) => {
-        return (
+        return Boolean(
           ws.data.state === WorkstreamState.RFA &&
-          ws.data.applicants?.includes(address)
+            address &&
+            ws.data.applicants?.includes(address)
         );
       })
     },
     [SectionName.ACTIVE]: {
       title: 'Incoming funds',
       workstreams: filterObject(workstreams, (ws) => {
-        return (
+        return Boolean(
           ws.data.state === WorkstreamState.ACTIVE &&
-          ws.onChainData?.streamSetUp &&
-          ws.data.acceptedApplication === address
+            ws.onChainData?.streamSetUp &&
+            ws.data.acceptedApplication === address
         );
       })
     },
@@ -94,10 +95,10 @@
     [SectionName.OUTBOUND_ACTIVE]: {
       title: 'Outgoing funds',
       workstreams: filterObject(workstreams, (ws) => {
-        return (
+        return Boolean(
           ws.data.state === WorkstreamState.ACTIVE &&
-          ws.onChainData?.streamSetUp &&
-          ws.data.creator === address
+            ws.onChainData?.streamSetUp &&
+            ws.data.creator === address
         );
       })
     }
@@ -127,7 +128,7 @@
     const totalWeiPerSec = Object.entries(enrichedWorkstreams).reduce<bigint>(
       (acc, [id, ws]) => {
         return $estimates.workstreams[id]?.currentlyStreaming
-          ? acc + ws.onChainData.amtPerSec.wei
+          ? acc + (ws.onChainData?.amtPerSec.wei ?? BigInt(0))
           : acc;
       },
       BigInt(0)

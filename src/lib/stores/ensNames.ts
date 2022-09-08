@@ -21,7 +21,9 @@ export default (() => {
       */
       store.update((v) => ({ ...v, [address]: {} }));
 
-      const name = await (provider || defaultProvider).lookupAddress(address);
+      const name =
+        (await (provider ?? defaultProvider).lookupAddress(address)) ??
+        undefined;
 
       /*
         Updating with only the name already since the avatar
@@ -29,13 +31,13 @@ export default (() => {
       */
       store.update((v) => ({ ...v, [address]: { name } }));
 
-      let pic: string;
+      let pic: string | undefined;
 
       if (name) {
         pic = (
           await (
-            await (provider || defaultProvider).getResolver(name)
-          ).getAvatar()
+            await (provider ?? defaultProvider).getResolver(name)
+          )?.getAvatar()
         )?.url;
       }
 
@@ -49,9 +51,9 @@ export default (() => {
     name: string,
     provider?: ethers.providers.BaseProvider
   ): Promise<string | undefined> {
-    const address = await (provider || defaultProvider).resolveName(name);
+    const address = await (provider ?? defaultProvider).resolveName(name);
 
-    return address;
+    return address ?? undefined;
   }
 
   return {

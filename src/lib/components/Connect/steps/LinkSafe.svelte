@@ -24,17 +24,18 @@
   let selectedSafeAddress: string;
 
   onMount(async () => {
-    const ownedSafes = await getSafesForAddress(
-      $walletStore.network.chainId,
-      $walletStore.address
-    );
+    const { network, address } = $walletStore;
+
+    if (!network || !address) throw new Error('Ensure a wallet is connected');
+
+    const ownedSafes = await getSafesForAddress(network.chainId, address);
 
     if (!ownedSafes || ownedSafes.length === 0) {
       return modal.hide();
     }
 
     safeAddresses = ownedSafes;
-    selectedSafeAddress = safeAddresses[0];
+    selectedSafeAddress = ownedSafes[0];
   });
 
   function linkSafe(address: string) {

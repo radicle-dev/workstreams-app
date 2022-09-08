@@ -11,13 +11,13 @@ import type {
   DripsConfig_dripsConfig_dripsAccount,
   DripsConfig_dripsConfig_dripsEntries
 } from '$lib/api/drips-subgraph/__generated__/dripsConfig';
-import type { DripsUpdated_address_uint256_uint128_tuple_array_Event } from '../drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
 import getDripsAccount from './methods/getDripsAccount';
 import getDripsUpdatedEvents from './methods/getDripsUpdatedEvents';
 import fetchRelevantWorkstreams from './methods/fetchRelevantWorkstreams';
 import type { Cycle } from '../drips';
 import tick from '../tick';
 import { streamedBetween } from '../drips/utils/streamedBetween';
+import type { DripsUpdatedEvent } from '../drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
 
 export const reviver: (key: string, value: unknown) => unknown = (
   key,
@@ -61,7 +61,7 @@ export interface EnrichedWorkstream {
 }
 
 export interface DrippingEventWrapper {
-  event: DripsUpdated_address_uint256_uint128_tuple_array_Event;
+  event: DripsUpdatedEvent;
   fromBlock: Block;
 }
 
@@ -116,7 +116,10 @@ export const workstreamsStore = (() => {
   const internal = writable<InternalState | undefined>();
 
   function clear() {
-    tick.deregister(get(internal).intervalId);
+    const { intervalId } = get(internal) ?? {};
+    if (intervalId !== undefined) {
+      tick.deregister(intervalId);
+    }
 
     workstreams.set(INITIAL_WORKSTREAMS_STATE);
     estimates.set({ workstreams: {} });
@@ -150,7 +153,11 @@ export const workstreamsStore = (() => {
     }));
 
     try {
-      const { currentAddress, chainId } = get(internal);
+      const { currentAddress, chainId } = get(internal) ?? {};
+      if (!currentAddress || !chainId) {
+        throw new Error('Connect the store first');
+      }
+
       await fetchRelevantWorkstreams(currentAddress, chainId);
 
       workstreams.update((v) => ({
@@ -160,7 +167,7 @@ export const workstreamsStore = (() => {
           relevantStreamsFetched: true
         }
       }));
-    } catch {
+    } catch (e) {
       workstreams.update((v) => ({
         ...v,
         fetchStatus: {
@@ -175,12 +182,13 @@ export const workstreamsStore = (() => {
     const internalState = get(internal);
 
     // User isn't logged in, so no need to enrich with on-chain data.
-    if (!internalState)
+    if (!internalState) {
       return {
         data: item,
         relevant: false,
         fetchedAt: new Date()
       };
+    }
 
     const relevant =
       item.creator === internalState.currentAddress ||
@@ -190,19 +198,21 @@ export const workstreamsStore = (() => {
         ? 'outgoing'
         : 'incoming';
 
-    if (item.state !== WorkstreamState.ACTIVE)
+    if (item.state !== WorkstreamState.ACTIVE) {
       return {
         data: item,
         fetchedAt: new Date(),
         relevant,
         direction
       };
+    }
 
     const { id, creator, acceptedApplication: assignee, dripsData } = item;
 
     if (!dripsData) throw new Error(`No drips data for ws ${id}`);
 
-    const { chainId } = get(internal);
+    const { chainId } = get(internal) ?? {};
+    if (!chainId) throw new Error('Connect the store first');
 
     const [dripsAccount, dripsUpdatedEvents] = await Promise.all([
       getDripsAccount(creator, dripsData.accountId, chainId),
@@ -218,7 +228,7 @@ export const workstreamsStore = (() => {
     ]?.event.args.receivers.find((r) => r.receiver.toLowerCase() === assignee);
 
     const amtPerSec = {
-      wei: receiverConfig?.amtPerSec.toBigInt() || BigInt(0),
+      wei: receiverConfig?.amtPerSec.toBigInt() ?? BigInt(0),
       currency: Currency.DAI
     };
 
@@ -238,7 +248,7 @@ export const workstreamsStore = (() => {
             },
             amtPerSec: {
               currency: Currency.DAI,
-              wei: recipient?.amtPerSec.toBigInt() || BigInt(0)
+              wei: recipient?.amtPerSec.toBigInt() ?? BigInt(0)
             },
             timestamp: new Date(dew.fromBlock.timestamp * 1000)
           }
@@ -253,13 +263,13 @@ export const workstreamsStore = (() => {
       onChainData: {
         amtPerSec,
         dripHistory,
-        dripsEntries: dripsAccount?.dripsEntries || [],
+        dripsEntries: dripsAccount?.dripsEntries ?? [],
         streamSetUp: Boolean(
           dripsUpdatedEvents[0]?.event.args.receivers.find(
             (r) => r.receiver.toLowerCase() === item.acceptedApplication
           )
         ),
-        dripsAccount: dripsAccount
+        dripsAccount: dripsAccount ?? undefined
       },
       relevant,
       direction
@@ -268,6 +278,9 @@ export const workstreamsStore = (() => {
 
   function estimateBalances() {
     const ws = get(workstreams).workstreams;
+
+    const i = get(internal);
+    if (!i) throw new Error('Connect store first');
 
     const newEstimates: { [wsId: string]: Estimate } = {};
 
@@ -299,7 +312,7 @@ export const workstreamsStore = (() => {
       const streamed = streamedBetween([v])[0];
 
       const lastUpdate = dripHistory[dripHistory.length - 1];
-      const currAmtPerSec = lastUpdate?.amtPerSec.wei || BigInt(0);
+      const currAmtPerSec = lastUpdate?.amtPerSec.wei ?? BigInt(0);
       const lastUpdateTimestamp = lastUpdate?.timestamp.getTime();
       const streamingUntil = currAmtPerSec
         ? new Date(
@@ -327,8 +340,9 @@ export const workstreamsStore = (() => {
       (ws) => ws.direction === 'incoming'
     );
     const amountsStreamedTotal = streamedBetween(incomingWorkstreams);
+    const { currentCycleStart } = i;
     const amountsStreamedInCurrentCycle = streamedBetween(incomingWorkstreams, {
-      from: get(internal).currentCycleStart,
+      from: currentCycleStart,
       to: new Date()
     });
 
@@ -376,7 +390,7 @@ export const workstreamsStore = (() => {
   function serveFromCache(
     id: string
   ): { ok: true; data: Workstream } | undefined {
-    const data = get(workstreams)[id]?.data;
+    const data = get(workstreams).workstreams[id]?.data;
 
     return data
       ? {
@@ -454,7 +468,7 @@ export const workstreamsStore = (() => {
     config?: RequestInit,
     fetcher?: typeof fetch
   ) {
-    return (fetcher || fetch)(url, {
+    return (fetcher ?? fetch)(url, {
       ...(config as object),
       credentials: 'include'
     });

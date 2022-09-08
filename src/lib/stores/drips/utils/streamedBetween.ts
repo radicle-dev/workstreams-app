@@ -25,7 +25,7 @@ export function flattenDripHistory(
 
   filteredHistory.forEach((e, index) => {
     const nextEvent = filteredHistory[index + 1];
-    const validUntil = nextEvent?.timestamp || new Date();
+    const validUntil = nextEvent?.timestamp ?? new Date();
     const { balance, amtPerSec, timestamp: validSince } = e;
     const validSinceSeconds = getUnixTime(validSince);
     const validUntilSeconds = getUnixTime(validUntil);
@@ -78,12 +78,13 @@ export function streamedBetween(
   }[] = [];
 
   for (const stream of streams) {
-    const { dripHistory } = stream.onChainData;
+    const { dripHistory } = stream.onChainData ?? {};
 
-    const { amountStreamed, amountRemaining } = flattenDripHistory(
-      dripHistory,
-      timeWindow
-    );
+    const { amountStreamed, amountRemaining } = (dripHistory &&
+      flattenDripHistory(dripHistory, timeWindow)) ?? {
+      amountStreamed: BigInt(0),
+      amountRemaining: BigInt(0)
+    };
 
     amountsStreamed.push({
       workstream: stream,

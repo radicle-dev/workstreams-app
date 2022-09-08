@@ -39,7 +39,7 @@ export function hyphenateString(str: string): string {
 export function padFloatString(input: string): string {
   const parts = input.split('.');
 
-  const decimalLength = parts[1]?.length || 0;
+  const decimalLength = parts[1]?.length ?? 0;
 
   return decimalLength !== 0
     ? input + '0'.repeat(2 - decimalLength)

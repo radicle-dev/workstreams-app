@@ -69,7 +69,7 @@
 
   $: lastStreamRate = enrichedWorkstream?.onChainData?.dripHistory.find(
     (e) => e.amtPerSec.wei !== BigInt(0)
-  )?.amtPerSec || { currency: Currency.DAI, wei: workstream.ratePerSecond.wei };
+  )?.amtPerSec ?? { currency: Currency.DAI, wei: workstream.ratePerSecond.wei };
 
   $: setUpPaymentSteps = $walletStore.safe?.address
     ? [

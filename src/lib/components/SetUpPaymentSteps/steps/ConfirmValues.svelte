@@ -23,10 +23,11 @@
   let totalAmount: number = weiToDai(workstream.total);
 
   $: topUpExceedsBalance =
-    daiBalance < utils.parseUnits((topUpAmount || 0).toString()).toBigInt();
+    (daiBalance ?? BigInt(0)) <
+    utils.parseUnits((topUpAmount ?? 0).toString()).toBigInt();
 
   $: weiPerDay =
-    utils.parseUnits((totalAmount || 0).toString()).toBigInt() /
+    utils.parseUnits((totalAmount ?? 0).toString()).toBigInt() /
     BigInt(workstream.durationDays);
   $: daiPerDay = currencyFormat(weiPerDay);
   $: totalWei = weiPerDay * BigInt(workstream.durationDays);
@@ -50,8 +51,15 @@
         throw new Error('Unable to find Drips account ID for workstream.');
       }
 
+      const { acceptedApplication } = workstream;
+      if (!acceptedApplication) {
+        throw new Error(
+          'An accepted application is required to set up payment'
+        );
+      }
+
       const createDripCall = await drips.createDrip(
-        workstream.acceptedApplication,
+        acceptedApplication,
         {
           currency: Currency.DAI,
           wei: weiPerDay / BigInt(86400)
@@ -64,8 +72,7 @@
         const receipt = await createDripCall.tx.wait(1);
 
         if (receipt.status === 0) {
-          console.error(receipt);
-          return;
+          throw new Error('Call failed');
         }
 
         await invalidate(
@@ -123,7 +130,9 @@
           validationState={topUpExceedsBalance
             ? {
                 type: 'invalid',
-                message: `You only have ${currencyFormat(daiBalance)} DAI`
+                message: `You only have ${
+                  (daiBalance && currencyFormat(daiBalance)) ?? '...'
+                } DAI`
               }
             : { type: 'valid' }}
         />

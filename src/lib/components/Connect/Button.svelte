@@ -16,7 +16,7 @@
   import cupertinoPane from '$lib/stores/cupertinoPane';
   import MobileAccountSheet from '../MobileAccountSheet/MobileAccountSheet.svelte';
 
-  export let onClick: () => void | undefined = undefined;
+  export let onClick: (() => void) | undefined = undefined;
 
   let locked: boolean;
 
@@ -39,7 +39,9 @@
 
     if ($walletStore.ready) {
       const { provider: localProvider, safe } = $walletStore;
-      const provider = safe?.provider || localProvider;
+      const provider = safe?.provider ?? localProvider;
+
+      if (!provider) throw new Error('Unable to get provider');
 
       await connectStores(provider);
     }
@@ -65,7 +67,7 @@
   {#if $walletStore.ready}
     {#if hover && !$isMobile.isMobile}
       <div
-        on:click={onClick || logOut}
+        on:click={onClick ?? logOut}
         transition:fade={{ duration: 100 }}
         class="log-out-overlay"
       >
