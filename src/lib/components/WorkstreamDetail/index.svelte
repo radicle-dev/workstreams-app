@@ -4,30 +4,29 @@
   import ActiveStream from './ActiveStream.svelte';
   import User from '$components/User.svelte';
   import Markdown from 'radicle-design-system/Markdown.svelte';
-  import {
-    WorkstreamState,
-    type Workstream
-  } from '$lib/stores/workstreams/types';
+  import type { EnrichedWorkstream } from '$lib/stores/workstreams';
 
-  export let workstream: Workstream;
+  export let enrichedWorkstream: EnrichedWorkstream;
 </script>
 
 <div class="container">
   <div class="metadata">
-    <h1 class="inset" style="margin-bottom: 0.75rem;">{workstream.title}</h1>
+    <h1 class="inset" style="margin-bottom: 0.75rem;">
+      {enrichedWorkstream.data.title}
+    </h1>
     <div class="inset owner">
       <span class="label">Created by</span>
-      <User address={workstream.creator} />
-      <span class="label">on {dateFormat(workstream.created_at)}</span>
+      <User address={enrichedWorkstream.data.creator} />
+      <span class="label"
+        >on {dateFormat(enrichedWorkstream.data.createdAt)}</span
+      >
     </div>
     <div class="cards">
-      {#if workstream.state === WorkstreamState.ACTIVE}
-        <ActiveStream {workstream} />
-      {/if}
+      <ActiveStream {enrichedWorkstream} />
       <div />
     </div>
     <div class="desc">
-      <Markdown content={workstream.desc} />
+      <Markdown content={enrichedWorkstream.data.description} />
     </div>
   </div>
 </div>

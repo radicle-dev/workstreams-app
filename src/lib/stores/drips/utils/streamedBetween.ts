@@ -2,7 +2,7 @@ import type {
   DripHistoryEvent,
   EnrichedWorkstream
 } from '$lib/stores/workstreams';
-import { Currency, type Money } from '$lib/stores/workstreams/types';
+import type { Money } from '$lib/stores/workstreams';
 import { getUnixTime } from '$lib/utils/time';
 
 interface TimeWindow {
@@ -89,11 +89,11 @@ export function streamedBetween(
     amountsStreamed.push({
       workstream: stream,
       amount: {
-        currency: Currency.DAI,
+        currency: 'dai',
         wei: amountStreamed
       },
       remaining: {
-        currency: Currency.DAI,
+        currency: 'dai',
         wei: amountRemaining
       }
     });

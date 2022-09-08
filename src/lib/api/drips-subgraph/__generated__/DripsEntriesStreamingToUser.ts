@@ -4,21 +4,21 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: lastDripEntry
+// GraphQL query operation: DripsEntriesStreamingToUser
 // ====================================================
 
-export interface lastDripEntry_dripsEntries {
+export interface DripsEntriesStreamingToUser_dripsEntries {
   __typename: 'DripsEntry';
-  account: any;
   user: any;
+  account: any;
+  amtPerSec: any;
   isAccountDrip: boolean;
-  receiver: any;
 }
 
-export interface lastDripEntry {
-  dripsEntries: lastDripEntry_dripsEntries[];
+export interface DripsEntriesStreamingToUser {
+  dripsEntries: DripsEntriesStreamingToUser_dripsEntries[];
 }
 
-export interface lastDripEntryVariables {
+export interface DripsEntriesStreamingToUserVariables {
   user: any;
 }

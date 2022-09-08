@@ -2,7 +2,7 @@
   import { fly } from 'svelte/transition';
 
   import type { EnrichedWorkstream } from '$lib/stores/workstreams';
-  import type { Money } from '$lib/stores/workstreams/types';
+  import type { Money } from '$lib/stores/workstreams';
   import { onMount } from 'svelte';
   import convertRemToPixels from '$lib/utils/remToPx';
   import isMobile from '$lib/stores/isMobile';

@@ -5,20 +5,14 @@
 
   import { walletStore } from '$lib/stores/wallet/wallet';
 
-  import { WorkstreamState } from '$lib/stores/workstreams/types';
-
   import EmptyState from '$lib/components/EmptyState.svelte';
   import Section from '$lib/components/Section.svelte';
   import WorkstreamCard from '$lib/components/WorkstreamCard.svelte';
   import { currencyFormat } from '$lib/utils/format';
-  import {
-    workstreamsStore,
+  import workstreamsStore, {
     type EnrichedWorkstream
   } from '$lib/stores/workstreams';
   import Spinner from 'radicle-design-system/Spinner.svelte';
-  import { onMount } from 'svelte';
-
-  const estimates = workstreamsStore.estimates;
 
   enum SectionName {
     APPLIED_TO = 'appliedTo',
@@ -32,8 +26,6 @@
     title: string;
     workstreams: { [wsId: string]: EnrichedWorkstream };
   }
-
-  onMount(workstreamsStore.refreshRelevantStreams);
 
   $: workstreams = $workstreamsStore.workstreams;
 
@@ -55,51 +47,16 @@
     on-screen — and with that their relative "importance".
   */
   $: sections = {
-    [SectionName.PENDING_SETUP]: {
-      title: 'Workstreams pending payment setup',
-      workstreams: filterObject(workstreams, (ws) => {
-        return (
-          ws.data.state === WorkstreamState.ACTIVE &&
-          !ws.onChainData?.streamSetUp &&
-          (ws.data.creator === address ||
-            ws.data.acceptedApplication === address)
-        );
-      })
-    },
-    [SectionName.APPLIED_TO]: {
-      title: 'Workstreams you applied to',
-      workstreams: filterObject(workstreams, (ws) => {
-        return Boolean(
-          ws.data.state === WorkstreamState.RFA &&
-            address &&
-            ws.data.applicants?.includes(address)
-        );
-      })
-    },
     [SectionName.ACTIVE]: {
       title: 'Incoming funds',
       workstreams: filterObject(workstreams, (ws) => {
-        return Boolean(
-          ws.data.state === WorkstreamState.ACTIVE &&
-            ws.onChainData?.streamSetUp &&
-            ws.data.acceptedApplication === address
-        );
-      })
-    },
-    [SectionName.ENDED]: {
-      title: 'Ended workstreams',
-      workstreams: filterObject(workstreams, (ws) => {
-        return ws.data.state === WorkstreamState.CLOSED;
+        return Boolean(ws.data.receiver === address);
       })
     },
     [SectionName.OUTBOUND_ACTIVE]: {
       title: 'Outgoing funds',
       workstreams: filterObject(workstreams, (ws) => {
-        return Boolean(
-          ws.data.state === WorkstreamState.ACTIVE &&
-            ws.onChainData?.streamSetUp &&
-            ws.data.creator === address
-        );
+        return Boolean(ws.data.creator === address);
       })
     }
   } as Sections;
@@ -107,8 +64,9 @@
   $: incomingTotal = calculateStreamTotal(
     filterObject($workstreamsStore.workstreams, (ws) => {
       return (
-        ws.data.acceptedApplication === $walletStore.address &&
-        $estimates.workstreams[ws.data.id]?.currentlyStreaming
+        (ws.data.receiver === $walletStore.address &&
+          ws.onChainData?.currentlyStreaming) ??
+        false
       );
     })
   );
@@ -116,8 +74,9 @@
   $: outgoingTotal = calculateStreamTotal(
     filterObject($workstreamsStore.workstreams, (ws) => {
       return (
-        ws.data.creator === $walletStore.address &&
-        $estimates.workstreams[ws.data.id]?.currentlyStreaming
+        (ws.data.creator === $walletStore.address &&
+          ws.onChainData?.currentlyStreaming) ??
+        false
       );
     })
   );
@@ -125,9 +84,9 @@
   function calculateStreamTotal(enrichedWorkstreams: {
     [key: string]: EnrichedWorkstream;
   }) {
-    const totalWeiPerSec = Object.entries(enrichedWorkstreams).reduce<bigint>(
-      (acc, [id, ws]) => {
-        return $estimates.workstreams[id]?.currentlyStreaming
+    const totalWeiPerSec = Object.values(enrichedWorkstreams).reduce<bigint>(
+      (acc, ws) => {
+        return ws.onChainData.currentlyStreaming
           ? acc + (ws.onChainData?.amtPerSec.wei ?? BigInt(0))
           : acc;
       },
@@ -189,7 +148,7 @@
           </Section>
         </div>
       {/each}
-      {#if $workstreamsStore.fetchStatus.relevantStreamsFetching}
+      {#if $workstreamsStore.fetched === false}
         <div transition:fly|local={{ y: 10, duration: 300 }} class="spinner">
           <Spinner />
         </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Money } from '$lib/stores/workstreams/types';
+  import type { Money } from '$lib/stores/workstreams';
 
   import { currencyFormat, timeframeFormat } from '$lib/utils/format';
   import TokenStreams from 'radicle-design-system/icons/TokenStreams.svelte';

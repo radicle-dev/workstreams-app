@@ -10,18 +10,16 @@
   import ensNames from '$lib/stores/ensNames';
   import clearStores from '$lib/stores/utils/clearStores';
   import { walletStore } from '$lib/stores/wallet/wallet';
-  import { workstreamsStore } from '$lib/stores/workstreams';
+  import workstreamsStore from '$lib/stores/workstreams';
   import { currencyFormat, formatAddress } from '$lib/utils/format';
   import Avatar from '$lib/components/Avatar.svelte';
   import StepperModal from '$lib/components/StepperModal/index.svelte';
   import Intro from '$lib/components/WithdrawSteps/Intro.svelte';
   import AccountSheetItem from './components/AccountSheetItem.svelte';
-  import AwaitingSafeTransactionStep from '$lib/components/AwaitingSafeTransactionStep.svelte';
-
-  const estimates = workstreamsStore.estimates;
 
   $: estimate =
-    $estimates.totalBalance && currencyFormat($estimates.totalBalance);
+    $workstreamsStore.totalEarned &&
+    currencyFormat($workstreamsStore.totalEarned);
 
   $: withdrawable = $drips.collectable && currencyFormat($drips.collectable);
 
@@ -39,7 +37,7 @@
 
   function openWithdrawModal() {
     modal.show(StepperModal, undefined, {
-      steps: [Intro, $walletStore.safe?.ready && AwaitingSafeTransactionStep]
+      steps: [Intro]
     });
   }
 </script>

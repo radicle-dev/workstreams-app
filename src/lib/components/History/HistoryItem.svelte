@@ -135,7 +135,7 @@
         : 'Started outgoing stream'}
       <a
         class="highlight"
-        href={`/workstream/${historyItem.meta.workstream.data.id}`}
+        href={`/workstream/${historyItem.meta.workstream.cid}`}
         >{historyItem.meta.workstream.data.title}</a
       >
     </h4>
@@ -144,7 +144,7 @@
       {#if historyItem.meta.workstream.onChainData}
         <Rate
           ratePerSecond={historyItem.meta.workstream.onChainData.amtPerSec}
-          total={historyItem.meta.workstream.data.total}
+          total={historyItem.meta.workstream.data.streamTarget}
         />
       {/if}
     </p>
@@ -171,7 +171,7 @@
       {historyItem.meta.workstream.direction} stream
       <a
         class="highlight"
-        href={`/workstream/${historyItem.meta.workstream.data.id}`}
+        href={`/workstream/${historyItem.meta.workstream.cid}`}
         >{historyItem.meta.workstream.data.title}</a
       > ran out of funds
     </h4>
@@ -187,7 +187,7 @@
       {historyItem.meta.workstream.direction} stream
       <a
         class="highlight"
-        href={`/workstream/${historyItem.meta.workstream.data.id}`}
+        href={`/workstream/${historyItem.meta.workstream.cid}`}
         >{historyItem.meta.workstream.data.title}</a
       > paused
     </h4>
@@ -203,7 +203,7 @@
       {historyItem.meta.workstream.direction} stream
       <a
         class="highlight"
-        href={`/workstream/${historyItem.meta.workstream.data.id}`}
+        href={`/workstream/${historyItem.meta.workstream.cid}`}
         >{historyItem.meta.workstream.data.title}</a
       >
       topped up with
@@ -222,7 +222,7 @@
     <h4>
       Stream <a
         class="highlight"
-        href={`/workstream/${historyItem.meta.workstream.data.id}`}
+        href={`/workstream/${historyItem.meta.workstream.cid}`}
         >{historyItem.meta.workstream.data.title}</a
       > unpaused
     </h4>

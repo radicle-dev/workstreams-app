@@ -1,36 +1,28 @@
 <script lang="ts">
-  import { timeframeFormat } from '$lib/utils/format';
-  import { Currency, type Workstream } from '$lib/stores/workstreams/types';
+  import type { EnrichedWorkstream, Money } from '$lib/stores/workstreams';
   import Rate from '$components/Rate.svelte';
-  import type { OnChainData } from '$lib/stores/workstreams';
 
-  export let workstream: Workstream;
-  export let onChainData: OnChainData | undefined = undefined;
+  export let enrichedWorkstream: EnrichedWorkstream;
 
-  $: totalWei = onChainData
-    ? onChainData.amtPerSec.wei *
-      BigInt(86400) *
-      BigInt(workstream.durationDays)
-    : workstream.total.wei;
+  $: totalWei = enrichedWorkstream.data.streamTarget.wei;
 
   $: total = {
-    currency: Currency.DAI,
+    currency: 'dai',
     wei: totalWei
-  };
+  } as Money;
 </script>
 
 <div class="spread">
-  <Rate ratePerSecond={workstream.ratePerSecond} {total} showTotal={true} />
-  <p class="timeframe">for {timeframeFormat(workstream.durationDays)}</p>
+  <Rate
+    ratePerSecond={enrichedWorkstream.onChainData.amtPerSec}
+    {total}
+    showTotal={true}
+  />
 </div>
 
 <style>
   .spread {
     display: flex;
     flex-direction: column;
-  }
-  .timeframe {
-    color: var(--color-foreground-level-6);
-    margin-left: 2rem;
   }
 </style>

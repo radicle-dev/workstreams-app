@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<!--<script context="module" lang="ts">
   /* eslint-disable */
   /** @type {import('./[slug]').Load} */
   export const load: Load = async ({ params, fetch: skFetch }) => {
@@ -149,3 +149,4 @@
     }
   }
 </style>
+-->

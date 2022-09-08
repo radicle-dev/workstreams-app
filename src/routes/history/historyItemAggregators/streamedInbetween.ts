@@ -1,5 +1,4 @@
 import { amountsEarnedAndSpentBetween } from '$lib/stores/drips/utils/streamedBetween';
-import { Currency } from '$lib/stores/workstreams/types';
 import type { HistoryAggregator } from '../history';
 import { HistoryItemType, type HistoryItem } from '../types';
 
@@ -30,7 +29,7 @@ export const streamedInbetween: HistoryAggregator = (queue, streams) => {
         meta: {
           earned: {
             total: {
-              currency: Currency.DAI,
+              currency: 'dai',
               wei: earned.reduce<bigint>(
                 (acc, v) => acc + v.amount.wei,
                 BigInt(0)
@@ -40,7 +39,7 @@ export const streamedInbetween: HistoryAggregator = (queue, streams) => {
           },
           spent: {
             total: {
-              currency: Currency.DAI,
+              currency: 'dai',
               wei: spent.reduce<bigint>(
                 (acc, v) => acc + v.amount.wei,
                 BigInt(0)

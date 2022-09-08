@@ -62,7 +62,7 @@
           >
         </nav>
         <div class="buttons">
-          {#if $walletStore.ready && onDashboard}
+          {#if $walletStore?.ready && onDashboard}
             <div
               in:fly={{ y: 10, duration: 300, delay: 300 }}
               out:fly={{ y: 10, duration: 300 }}
@@ -75,7 +75,7 @@
               >
             </div>
           {/if}
-          {#if $walletStore.ready}
+          {#if $walletStore?.ready}
             <div class="balance-button">
               <BalanceButton />
             </div>

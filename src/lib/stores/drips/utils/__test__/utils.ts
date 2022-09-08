@@ -1,15 +1,12 @@
 import { toWei } from 'web3-utils';
 import type { DripHistoryEvent } from '$lib/stores/workstreams';
-import { Currency, type Money } from '$lib/stores/workstreams/types';
+import type { Money } from '$lib/stores/workstreams';
 
 export const eth = (amount: number) => BigInt(toWei(String(amount), 'ether'));
 
-export const money = (
-  amount: bigint | number | string,
-  currency = Currency.DAI
-): Money => ({
+export const money = (amount: bigint | number | string): Money => ({
   wei: BigInt(amount),
-  currency
+  currency: 'dai'
 });
 
 export const dripHistoryEvent = ({

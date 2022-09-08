@@ -18,16 +18,12 @@
 
   async function withdraw() {
     const waitFor = async () => {
-      if ($walletStore.safe?.ready) {
-        drips.collect();
-      } else {
-        const tx = await drips.collect();
-        await tx.wait(1);
-        await Promise.all([
-          drips.updateCollectable(),
-          drips.updateCollectHistory()
-        ]);
-      }
+      const tx = await drips.collect();
+      await tx.wait(1);
+      await Promise.all([
+        drips.updateCollectable(),
+        drips.updateCollectHistory()
+      ]);
     };
 
     dispatch('awaitPending', {

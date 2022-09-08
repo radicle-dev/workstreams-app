@@ -6,7 +6,6 @@ import {
 } from 'ethers';
 import { get, writable } from 'svelte/store';
 
-import { Currency, type Money } from '../workstreams/types';
 import daiInfo from './contracts/Dai';
 import daiDripsHubInfo from './contracts/DaiDripsHub';
 import {
@@ -24,6 +23,9 @@ import type {
 import query from '$lib/api/drips-subgraph';
 import { GET_SPLITS_CONFIG } from '$lib/api/drips-subgraph/queries';
 import { getUnixTime } from '$lib/utils/time';
+import type { Money } from '../workstreams';
+import { cidToBase10 } from '$lib/utils/cid';
+import { CID } from 'multiformats/cid';
 
 interface InternalState {
   provider: ethers.providers.Web3Provider;
@@ -175,7 +177,7 @@ export default (() => {
     state.update((v) => ({
       ...v,
       collectable: {
-        currency: Currency.DAI,
+        currency: 'dai',
         wei: collectable[0].add(collectable[1]).toBigInt()
       }
     }));
@@ -267,7 +269,6 @@ export default (() => {
     const { provider } = get(internal) ?? {};
     if (!provider) throw new Error('Connect the store first');
 
-    if (!workstream.data.dripsData) throw 'No drips data for workstream';
     if (workstream.onChainData?.dripHistory?.length === 0) {
       throw 'No DripsUpdated events for workstream';
     }
@@ -287,14 +288,14 @@ export default (() => {
 
     const lastUpdate = dripHistory[dripHistory.length - 1];
 
-    const { acceptedApplication } = workstream.data;
-    if (!acceptedApplication) {
-      throw new Error('An accepted application is required to top up');
+    const { receiver } = workstream.data;
+    if (!receiver) {
+      throw new Error('A receiver is required to top up');
     }
 
     const receivers = [
       {
-        receiver: acceptedApplication,
+        receiver,
         amtPerSec: lastUpdate.amtPerSec.wei
       }
     ];
@@ -302,7 +303,7 @@ export default (() => {
     return contract[
       'setDrips(uint256,uint64,uint128,(address,uint128)[],int128,(address,uint128)[])'
     ](
-      workstream.data.dripsData.accountId,
+      cidToBase10(CID.parse(workstream.cid)),
       getUnixTime(lastUpdate.timestamp),
       lastUpdate.balance.wei,
       receivers,
@@ -318,11 +319,6 @@ export default (() => {
     const { provider } = get(internal) ?? {};
     if (!provider) throw new Error('Connect the store first');
 
-    if (!workstream.data.dripsData) throw 'No drips data for workstream';
-    if (workstream.onChainData?.dripHistory?.length === 0) {
-      throw 'No DripHistory for workstream';
-    }
-
     const daiDripsHubAddress = daiDripsHubInfo(
       provider.network.chainId
     ).address;
@@ -334,10 +330,7 @@ export default (() => {
     const { dripHistory } = workstream.onChainData ?? {};
     if (!dripHistory) throw new Error('Unable to get DripHistory for stream');
 
-    const { acceptedApplication } = workstream.data;
-    if (!acceptedApplication) {
-      throw new Error('An accepted application is required');
-    }
+    const { receiver } = workstream.data;
 
     const lastUpdate = dripHistory[dripHistory.length - 1];
     const currentReceivers =
@@ -345,7 +338,7 @@ export default (() => {
         ? []
         : [
             {
-              receiver: acceptedApplication,
+              receiver,
               amtPerSec: lastUpdate.amtPerSec.wei
             }
           ];
@@ -359,12 +352,17 @@ export default (() => {
 
     if (action === 'pause') {
       calldata = [
-        workstream.data.dripsData.accountId,
+        cidToBase10(CID.parse(workstream.cid)),
         getUnixTime(lastUpdate.timestamp),
         lastUpdate.balance.wei,
         currentReceivers,
         0,
-        []
+        [
+          {
+            receiver,
+            amtPerSec: 0
+          }
+        ]
       ];
     } else {
       const lastStreamingUpdate = dripHistory
@@ -376,13 +374,13 @@ export default (() => {
 
       const lastStreamingReceivers = [
         {
-          receiver: acceptedApplication,
+          receiver,
           amtPerSec: lastStreamingUpdate.amtPerSec.wei
         }
       ];
 
       calldata = [
-        workstream.data.dripsData.accountId,
+        cidToBase10(CID.parse(workstream.cid)),
         getUnixTime(lastUpdate.timestamp),
         lastUpdate.balance.wei,
         [],

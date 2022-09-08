@@ -3,8 +3,7 @@
   import { toWei } from 'drips-sdk';
   import { utils } from 'ethers';
 
-  import {
-    workstreamsStore,
+  import workstreamsStore, {
     type EnrichedWorkstream
   } from '$lib/stores/workstreams';
   import { createEventDispatcher, onMount } from 'svelte';
@@ -17,20 +16,17 @@
   import TextInput from 'radicle-design-system/TextInput.svelte';
   import tick from '$lib/stores/tick';
   import type { AwaitPendingPayload } from '../StepperModal/types';
-  import { walletStore } from '$lib/stores/wallet/wallet';
 
   const dispatch = createEventDispatcher<{
     awaitPending: AwaitPendingPayload;
   }>();
-
-  const estimates = workstreamsStore.estimates;
 
   export let enrichedWorkstream: EnrichedWorkstream;
 
   let topUpAmount = 1;
   $: topUpAmountWei = toWei(topUpAmount ?? 0).toBigInt();
 
-  $: estimate = $estimates.workstreams[enrichedWorkstream.data.id];
+  $: estimate = enrichedWorkstream.estimate;
   $: streamingUntil = estimate?.streamingUntil;
   $: currAmtPerSec = enrichedWorkstream.onChainData?.amtPerSec.wei;
   $: remainingBalance = estimate?.remainingBalance;
@@ -96,20 +92,10 @@
     txInFlight = true;
 
     try {
-      const isSafe = $walletStore.safe?.ready;
-
       const waitFor = async () => {
-        if (isSafe) {
-          drips.topUp(enrichedWorkstream, topUpAmountWei);
-        } else {
-          const tx = await drips.topUp(enrichedWorkstream, topUpAmountWei);
-          await tx.wait(1);
-          await workstreamsStore.getWorkstream(
-            enrichedWorkstream.data.id,
-            undefined,
-            true
-          );
-        }
+        const tx = await drips.topUp(enrichedWorkstream, topUpAmountWei);
+        await tx.wait(1);
+        await workstreamsStore.fetchWorkstream(enrichedWorkstream.cid);
       };
 
       dispatch('awaitPending', { promise: waitFor });
@@ -127,29 +113,31 @@
       <h4>Topping up</h4>
       <Card style="width: 100%">
         <div slot="top">
-          <TitleMeta workstream={enrichedWorkstream.data} />
+          <TitleMeta {enrichedWorkstream} />
         </div>
         <div slot="bottom">
-          <TimeRate workstream={enrichedWorkstream.data} />
+          <TimeRate {enrichedWorkstream} />
         </div>
       </Card>
     </div>
-    <div class="row">
-      <div class="input-with-label narrow">
-        <h4>Remaining balance</h4>
-        <p class="value">{currencyFormat(remainingBalance)} DAI</p>
+    {#if remainingBalance}
+      <div class="row">
+        <div class="input-with-label narrow">
+          <h4>Remaining balance</h4>
+          <p class="value">{currencyFormat(remainingBalance)} DAI</p>
+        </div>
+        <div class="input-with-label">
+          {#if remainingBalance.wei > BigInt(0)}
+            <h4>Streaming until</h4>
+          {:else}
+            <h4>Ran out of funds on</h4>
+          {/if}
+          <p class="value">
+            {(streamingUntil && formatDate(streamingUntil)) ?? '...'}
+          </p>
+        </div>
       </div>
-      <div class="input-with-label">
-        {#if remainingBalance.wei > BigInt(0)}
-          <h4>Streaming until</h4>
-        {:else}
-          <h4>Ran out of funds on</h4>
-        {/if}
-        <p class="value">
-          {(streamingUntil && formatDate(streamingUntil)) ?? '...'}
-        </p>
-      </div>
-    </div>
+    {/if}
     <div class="row">
       <div class="input-with-label amount-input narrow">
         <h4>Top up amount</h4>
@@ -165,27 +153,19 @@
             : { type: 'valid' }}
         />
       </div>
-      {#if !$walletStore.safe?.ready}
-        <div class="input-with-label">
-          <h4>After topup, runs until</h4>
-          {#if topUpAmount > 0}
-            <p class="value">
-              {(streamingUntilAfterTopup &&
-                formatDate(streamingUntilAfterTopup)) ??
-                '...'}
-            </p>
-          {:else}
-            <p class="value">—</p>
-          {/if}
-        </div>
-      {/if}
+      <div class="input-with-label">
+        <h4>After topup, runs until</h4>
+        {#if topUpAmount > 0}
+          <p class="value">
+            {(streamingUntilAfterTopup &&
+              formatDate(streamingUntilAfterTopup)) ??
+              '...'}
+          </p>
+        {:else}
+          <p class="value">—</p>
+        {/if}
+      </div>
     </div>
-    {#if $walletStore.safe?.ready}
-      <p class="typo-text-small">
-        Please note that funds will only start streaming once the top-up
-        transaction has been executed by your connected Gnosis Safe.
-      </p>
-    {/if}
     <div class="actions">
       <Button disabled={buttonDisabled} on:click={topUp}
         >Top up {topUpAmount} DAI</Button

@@ -1,31 +1,24 @@
 import { gql } from 'graphql-tag';
 
-export const GET_LAST_DRIP_ENTRY = gql`
-  query LastDripsEntry($user: Bytes!) {
-    dripsEntries(
-      where: { user: $user, isAccountDrip: true }
-      orderBy: account
-      orderDirection: desc
-      first: 1
-    ) {
-      account
-      user
-      isAccountDrip
-      receiver
+export const DRIPS_ACCOUNTS_FOR_USER = gql`
+  query DripsAccountsForUser($user: ID!) {
+    dripsConfig(id: $user) {
+      dripsAccount {
+        isAccountDrip
+        id
+        account
+      }
     }
   }
 `;
 
-export const GET_DRIPS_ACCOUNT = gql`
-  query DripsAccount($id: ID!) {
-    dripsAccount(id: $id) {
-      id
-      lastUpdatedBlockTimestamp
-      dripsEntries {
-        receiver
-        amtPerSec
-      }
-      balance
+export const DRIPS_ENTRIES_STREAMING_TO_USER = gql`
+  query DripsEntriesStreamingToUser($user: Bytes!) {
+    dripsEntries(where: { receiver: $user }) {
+      user
+      account
+      amtPerSec
+      isAccountDrip
     }
   }
 `;
