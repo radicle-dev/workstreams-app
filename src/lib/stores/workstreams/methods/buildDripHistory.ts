@@ -1,8 +1,8 @@
-import type { DrippingEventWrapper } from '..';
-import type { DripHistoryEvent } from '../ipfs';
+import type { DripHistoryEvent } from '..';
+import type { DripsUpdatedEventWrapper } from './getDripsUpdatedEvents';
 
 export default function buildDripHistory(
-  updateEvents: DrippingEventWrapper[],
+  updateEvents: DripsUpdatedEventWrapper[],
   receiver: string
 ) {
   return updateEvents.reduce<DripHistoryEvent[]>((acc, dew) => {

@@ -1,4 +1,4 @@
-import type { Money, Timestamp } from '$lib/stores/workstreams/types';
+import type { Money } from '$lib/stores/workstreams';
 import { utils } from 'ethers';
 
 export function formatAddress(input: string): string {
@@ -24,8 +24,8 @@ export function timeframeFormat(days: number): string {
   }
 }
 
-export function dateFormat(timestamp: Timestamp): string {
-  return new Date(timestamp._seconds * 1000).toLocaleDateString('en-US', {
+export function dateFormat(timestamp: Date): string {
+  return timestamp.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'

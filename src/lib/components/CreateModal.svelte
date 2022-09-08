@@ -9,17 +9,13 @@
 
   import * as modal from '$lib/utils/modal';
   import Modal from '$components/Modal.svelte';
-  import { getConfig } from '$lib/config';
-  import {
-    Currency,
-    WorkstreamState,
-    type Workstream,
-    type WorkstreamInput
-  } from '$lib/stores/workstreams/types';
   import { utils } from 'ethers';
-  import { workstreamsStore } from '$lib/stores/workstreams';
+  import workstreamsStore from '$lib/stores/workstreams';
   import ensNames from '$lib/stores/ensNames';
   import { walletStore } from '$lib/stores/wallet/wallet';
+  import drips from '$lib/stores/drips';
+  import { cidToBase10 } from '$lib/utils/cid';
+  import { toWei } from 'drips-sdk';
 
   const durationOptions = [
     { value: '1', title: 'Days' },
@@ -106,6 +102,9 @@
   async function createWorkstream() {
     creatingWorkstream = true;
 
+    const { address } = $walletStore;
+    if (!address) throw new Error('Connect wallet first');
+
     const daiPerDay =
       parseInt(total) / (parseInt(duration) * parseInt(durationUnit));
     const weiPerDay = utils.parseUnits(daiPerDay.toString());
@@ -114,31 +113,39 @@
     const chainId = $walletStore.network?.chainId;
 
     if (!chainId) throw new Error('Unable to determine chain ID');
-
-    let input: WorkstreamInput = {
-      ratePerSecond: {
-        currency: Currency.DAI,
-        wei: weiPerSecond.toString()
-      },
-      title,
-      desc: description,
-      chainId,
-      durationDays: parseInt(duration) * parseInt(durationUnit),
-      assignTo: assigneeAddress,
-      state: WorkstreamState.ACTIVE
-    };
+    if (!assigneeAddress) throw new Error('Assignee address is missing');
 
     try {
-      const res = await fetch(`${getConfig().API_URL_BASE}/workstreams`, {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify(input)
+      const cid = await workstreamsStore.createWorkstream({
+        creator: address,
+        amountPerSecond: {
+          currency: 'dai',
+          wei: weiPerSecond.toBigInt()
+        },
+        streamTarget: {
+          currency: 'dai',
+          wei: weiPerDay.toBigInt() * BigInt(parseInt(duration))
+        },
+        title,
+        description,
+        createdAt: new Date(),
+        receiver: assigneeAddress
       });
 
-      const workstream: Workstream = await res.json();
+      const call = await drips.createDrip(
+        assigneeAddress,
+        {
+          currency: 'dai',
+          wei: weiPerSecond.toBigInt()
+        },
+        BigInt(cidToBase10(cid)),
+        toWei('10').toBigInt()
+      );
+
+      await call.tx.wait(1);
 
       // Push the new workstream into the state so it shows up on the dashboard.
-      await workstreamsStore.getWorkstream(workstream.id);
+      await workstreamsStore.fetchWorkstream(cid.toString());
     } catch (e) {
       return;
     }

@@ -1,6 +1,5 @@
 import drips from '$lib/stores/drips';
 import { walletStore } from '$lib/stores/wallet/wallet';
-import { Currency } from '$lib/stores/workstreams/types';
 import { get } from 'svelte/store';
 import type { HistoryAggregator } from '../history';
 import { HistoryItemType } from '../types';
@@ -16,7 +15,7 @@ export const withdrawal: HistoryAggregator = () => {
       meta: {
         amount: {
           wei: w.event.args.collected.toBigInt(),
-          currency: Currency.DAI
+          currency: 'dai'
         },
         toAddress: address
       }

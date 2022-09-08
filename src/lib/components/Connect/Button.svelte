@@ -9,7 +9,6 @@
   import LoadingDots from '../LoadingDots.svelte';
   import StepperModal from '../StepperModal/index.svelte';
   import ChooseWallet from './steps/ChooseWallet.svelte';
-  import LinkSafe from './steps/LinkSafe.svelte';
   import clearStores from '$lib/stores/utils/clearStores';
   import connectStores from '$lib/stores/utils/connectStores';
   import isMobile from '$lib/stores/isMobile';
@@ -29,7 +28,7 @@
         hover = false;
       },
       {
-        steps: [ChooseWallet, LinkSafe]
+        steps: [ChooseWallet]
       }
     );
   }
@@ -38,8 +37,7 @@
     await tick();
 
     if ($walletStore.ready) {
-      const { provider: localProvider, safe } = $walletStore;
-      const provider = safe?.provider ?? localProvider;
+      const { provider } = $walletStore;
 
       if (!provider) throw new Error('Unable to get provider');
 

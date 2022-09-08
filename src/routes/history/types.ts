@@ -1,5 +1,5 @@
 import type { EnrichedWorkstream } from '$lib/stores/workstreams';
-import type { Money } from '$lib/stores/workstreams/types';
+import type { Money } from '$lib/stores/workstreams';
 
 export enum HistoryItemType {
   MonthStartInbetween,

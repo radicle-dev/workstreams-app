@@ -2,10 +2,11 @@ import 'dotenv/config';
 
 import type { RequestHandler } from '@sveltejs/kit';
 import pinataSdk from '@pinata/sdk';
+import getEnvVar from '$lib/utils/getEnvVar';
 
 const pinata = pinataSdk(
-  process.env.PINATA_SDK_KEY,
-  process.env.PINATA_SDK_SECRET
+  getEnvVar('PINATA_SDK_KEY'),
+  getEnvVar('PINATA_SDK_SECRET')
 );
 
 export const POST: RequestHandler<{ data: string }, string> = async ({

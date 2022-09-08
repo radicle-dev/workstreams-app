@@ -2,27 +2,16 @@
   import { fade } from 'svelte/transition';
 
   import Card from '$lib/components/Card.svelte';
-  import {
-    workstreamsStore,
-    type EnrichedWorkstream
-  } from '$lib/stores/workstreams';
+  import type { EnrichedWorkstream, Money } from '$lib/stores/workstreams';
   import User from '$lib/components/User.svelte';
   import Rate from '$lib/components/Rate.svelte';
-  import {
-    Currency,
-    WorkstreamState,
-    type Workstream
-  } from '$lib/stores/workstreams/types';
   import { currencyFormat } from '$lib/utils/format';
   import WorkstreamStateBadge from './WorkstreamStateBadge.svelte';
 
-  const { estimates } = workstreamsStore;
-
   export let enrichedWorkstream: EnrichedWorkstream | undefined = undefined;
-  export let workstream: Workstream | undefined = undefined;
 
-  $: ws = enrichedWorkstream?.data ?? workstream;
-  $: estimate = ws && $estimates.workstreams[ws.id];
+  $: ws = enrichedWorkstream?.data;
+  $: estimate = enrichedWorkstream?.estimate;
 
   $: onChainDataReady = Boolean(estimate);
 
@@ -30,11 +19,12 @@
     ws &&
     (enrichedWorkstream?.onChainData?.dripHistory.find(
       (e) => e.amtPerSec.wei !== BigInt(0)
-    )?.amtPerSec ?? { currency: Currency.DAI, wei: ws.ratePerSecond.wei });
+    )?.amtPerSec ??
+      ({ currency: 'dai', wei: ws.amountPerSecond.wei } as Money));
 </script>
 
 {#if ws}
-  <a sveltekit:prefetch href={`/workstream/${ws.id}`}>
+  <a sveltekit:prefetch href={`/workstream/${enrichedWorkstream?.cid}`}>
     <Card>
       <div slot="top" class="content">
         <div class="name-and-users">
@@ -48,20 +38,18 @@
           </div>
           <div class="user-row">
             <User address={ws.creator} />
-            {#if ws.acceptedApplication}
-              → <User address={ws.acceptedApplication} />
-            {/if}
+            → <User address={ws.receiver} />
           </div>
         </div>
         <div class="stream-details">
           {#if lastStreamRate}<Rate
               ratePerSecond={lastStreamRate}
-              total={ws.total}
+              total={ws.streamTarget}
             />{/if}
-          {#if ws.state === WorkstreamState.ACTIVE && estimate}
+          {#if enrichedWorkstream?.estimate}
             <div class="remaining" transition:fade|local>
               • <span class="amount"
-                >{currencyFormat(estimate.remainingBalance)} DAI
+                >{currencyFormat(enrichedWorkstream.estimate.remainingBalance)} DAI
               </span><span>remaining</span>
             </div>
           {/if}

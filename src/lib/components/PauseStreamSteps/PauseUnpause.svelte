@@ -4,11 +4,9 @@
 
   import * as modal from '$lib/utils/modal';
   import StepContent from '../StepContent.svelte';
-  import {
-    workstreamsStore,
+  import workstreamsStore, {
     type EnrichedWorkstream
   } from '$lib/stores/workstreams';
-  import { walletStore } from '$lib/stores/wallet/wallet';
   import drips from '$lib/stores/drips';
   import type { AwaitPendingPayload } from '../StepperModal/types';
 
@@ -23,20 +21,10 @@
   $: actionLabel = action.charAt(0).toUpperCase() + action.slice(1);
 
   function pauseUnpause() {
-    const isSafe = $walletStore.safe?.ready;
-
     const waitFor = async () => {
-      if (isSafe) {
-        drips.pauseUnpause(action, enrichedWorkstream);
-      } else {
-        const tx = await drips.pauseUnpause(action, enrichedWorkstream);
-        await tx.wait(1);
-        await workstreamsStore.getWorkstream(
-          enrichedWorkstream.data.id,
-          undefined,
-          true
-        );
-      }
+      const tx = await drips.pauseUnpause(action, enrichedWorkstream);
+      await tx.wait(1);
+      await workstreamsStore.fetchWorkstream(enrichedWorkstream.cid);
     };
 
     dispatch('awaitPending', {

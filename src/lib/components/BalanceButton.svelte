@@ -7,19 +7,15 @@
   import * as modal from '$lib/utils/modal';
   import drips from '$lib/stores/drips';
   import { currencyFormat, padFloatString } from '$lib/utils/format';
-  import { workstreamsStore } from '$lib/stores/workstreams';
+  import workstreamsStore from '$lib/stores/workstreams';
   import LoadingDots from './LoadingDots.svelte';
   import { goto } from '$app/navigation';
   import StepperModal from '$lib/components/StepperModal/index.svelte';
   import Intro from '$lib/components/WithdrawSteps/Intro.svelte';
-  import { walletStore } from '$lib/stores/wallet/wallet';
-  import AwaitingSafeTransactionStep from './AwaitingSafeTransactionStep.svelte';
-
-  const estimates = workstreamsStore.estimates;
 
   $: currentCycleBalanceEstimate =
-    $estimates.earnedInCurrentCycle !== undefined &&
-    currencyFormat($estimates.earnedInCurrentCycle);
+    $workstreamsStore.earnedInCurrentCycle !== undefined &&
+    currencyFormat($workstreamsStore.earnedInCurrentCycle);
 
   $: withdrawable =
     $drips.collectable && currencyFormat($drips.collectable.wei);
@@ -30,7 +26,7 @@
     currentCycleBalanceEstimate &&
     currencyFormat(
       ($drips.collectable?.wei ?? BigInt(0)) +
-        ($estimates.earnedInCurrentCycle?.wei ?? BigInt(0))
+        ($workstreamsStore.earnedInCurrentCycle?.wei ?? BigInt(0))
     );
 
   $: formattedCycleEnd = $drips.cycle && {
@@ -48,7 +44,7 @@
 
   async function collect() {
     modal.show(StepperModal, undefined, {
-      steps: [Intro, $walletStore.safe?.ready && AwaitingSafeTransactionStep]
+      steps: [Intro]
     });
   }
 

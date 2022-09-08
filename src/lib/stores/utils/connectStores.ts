@@ -3,7 +3,7 @@ import { get } from 'svelte/store';
 
 import drips from '../drips';
 import { walletStore } from '../wallet/wallet';
-import { workstreamsStore } from '../workstreams';
+import ipfs from '../workstreams';
 
 export default async function (provider: providers.Web3Provider) {
   await drips.connect(provider);
@@ -13,5 +13,5 @@ export default async function (provider: providers.Web3Provider) {
   const { address, network } = get(walletStore);
   if (!address || !network) throw new Error('Connect a wallet first');
 
-  await workstreamsStore.connect(address, network.chainId, cycle);
+  await ipfs.connect(address, network.chainId, cycle);
 }

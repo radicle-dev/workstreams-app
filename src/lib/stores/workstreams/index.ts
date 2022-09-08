@@ -1,69 +1,56 @@
 import { get, writable } from 'svelte/store';
-import type { Block } from '@ethersproject/abstract-provider';
+import { CID } from 'multiformats/cid';
+import { z } from 'zod';
+
+import query from '$lib/api/drips-subgraph';
 import {
-  Currency,
-  WorkstreamState,
-  type Money,
-  type Workstream
-} from '$lib/stores/workstreams/types';
-import { getConfig } from '$lib/config';
-import type {
-  DripsConfig_dripsConfig_dripsAccount,
-  DripsConfig_dripsConfig_dripsEntries
-} from '$lib/api/drips-subgraph/__generated__/dripsConfig';
-import getDripsAccount from './methods/getDripsAccount';
-import getDripsUpdatedEvents from './methods/getDripsUpdatedEvents';
-import fetchRelevantWorkstreams from './methods/fetchRelevantWorkstreams';
+  DRIPS_ACCOUNTS_FOR_USER,
+  DRIPS_ENTRIES_STREAMING_TO_USER
+} from '$lib/api/drips-subgraph/queries';
+import { base10toCid, cidToBase10 } from '$lib/utils/cid';
 import type { Cycle } from '../drips';
 import tick from '../tick';
+import getDripsUpdatedEvents from './methods/getDripsUpdatedEvents';
+import buildDripHistory from './methods/buildDripHistory';
 import { streamedBetween } from '../drips/utils/streamedBetween';
-import type { DripsUpdatedEvent } from '../drips/contracts/types/DaiDripsHub/DaiDripsHubAbi';
+import type {
+  DripsEntriesStreamingToUser,
+  DripsEntriesStreamingToUserVariables
+} from '$lib/api/drips-subgraph/__generated__/DripsEntriesStreamingToUser';
+import type {
+  DripsAccountsForUser,
+  DripsAccountsForUserVariables
+} from '$lib/api/drips-subgraph/__generated__/DripsAccountsForUser';
 
-export const reviver: (key: string, value: unknown) => unknown = (
-  key,
-  value
-) => {
-  let output = value;
+const IPFS_GATEWAY_DOMAIN = 'drips.mypinata.cloud';
 
-  if (
-    (key === 'wei' && typeof value === 'string') ||
-    (key === 'accountId' && typeof value === 'string')
-  ) {
-    output = BigInt(value);
-  }
+const dateSchema = z.preprocess((arg) => {
+  if (typeof arg == 'string' || arg instanceof Date) return new Date(arg);
+}, z.date());
 
-  return output;
-};
+const bigintSchema = z.preprocess((arg) => {
+  if (typeof arg == 'string' || typeof arg == 'number') return BigInt(arg);
+}, z.bigint());
 
-export interface WorkstreamsFilterConfig {
-  applied: 'true' | 'false';
-  state: WorkstreamState;
-  createdBy: string;
-  hasApplicationsToReview: 'true' | 'false';
-  assignedTo: string;
-  chainId: string;
-}
+const currencySchema = z.enum(['dai']);
+export type Currency = z.infer<typeof currencySchema>;
 
-interface WorkstreamsState {
-  fetchStatus: {
-    relevantStreamsFetched: boolean | 'error';
-    relevantStreamsFetching: boolean;
-  };
-  workstreams: { [workstreamId: string]: EnrichedWorkstream };
-}
+const Money = z.object({
+  currency: currencySchema,
+  wei: bigintSchema
+});
+export type Money = z.infer<typeof Money>;
 
-export interface EnrichedWorkstream {
-  fetchedAt: Date;
-  onChainData?: OnChainData;
-  data: Workstream;
-  relevant: boolean;
-  direction?: 'incoming' | 'outgoing';
-}
-
-export interface DrippingEventWrapper {
-  event: DripsUpdatedEvent;
-  fromBlock: Block;
-}
+const Workstream = z.object({
+  creator: z.string(),
+  receiver: z.string(),
+  createdAt: dateSchema,
+  description: z.string(),
+  title: z.string(),
+  streamTarget: Money,
+  amountPerSecond: Money
+});
+export type Workstream = z.infer<typeof Workstream>;
 
 export interface DripHistoryEvent {
   balance: Money;
@@ -71,12 +58,34 @@ export interface DripHistoryEvent {
   timestamp: Date;
 }
 
-export interface OnChainData {
+interface OnChainData {
   amtPerSec: Money;
-  dripsEntries: DripsConfig_dripsConfig_dripsEntries[];
-  dripsAccount?: DripsConfig_dripsConfig_dripsAccount;
-  streamSetUp: boolean;
   dripHistory: DripHistoryEvent[];
+  currentlyStreaming: boolean;
+  paused: boolean;
+}
+
+interface Estimate {
+  currentBalance: Money;
+  remainingBalance: Money;
+  streamingUntil?: Date;
+}
+
+export interface EnrichedWorkstream {
+  cid: string;
+  data: Workstream;
+  fetchedAt: Date;
+  direction?: 'incoming' | 'outgoing';
+  onChainData: OnChainData;
+  relevant: boolean;
+  estimate?: Estimate;
+}
+
+interface WorkstreamsState {
+  fetched: boolean;
+  earnedInCurrentCycle?: Money;
+  totalEarned?: Money;
+  workstreams: { [workstreamId: string]: EnrichedWorkstream };
 }
 
 interface InternalState {
@@ -86,49 +95,23 @@ interface InternalState {
   intervalId: number;
 }
 
-interface Estimate {
-  currentBalance: Money;
-  remainingBalance: Money;
-  streamingUntil?: Date;
-  currentlyStreaming: boolean;
-  paused: boolean;
-}
-
-interface EstimatesState {
-  workstreams: { [wsId: string]: Estimate };
-  totalBalance?: Money;
-  earnedInCurrentCycle?: Money;
-}
-
-const INITIAL_WORKSTREAMS_STATE = {
-  fetchStatus: {
-    relevantStreamsFetched: false,
-    relevantStreamsFetching: true
-  },
+const INITIAL_WORKSTREAMS_STATE: WorkstreamsState = {
+  fetched: false,
   workstreams: {}
 };
 
-export const workstreamsStore = (() => {
+export default (() => {
   const workstreams = writable<WorkstreamsState>(INITIAL_WORKSTREAMS_STATE);
-  const estimates = writable<EstimatesState>({
-    workstreams: {}
-  });
   const internal = writable<InternalState | undefined>();
 
-  function clear() {
-    const { intervalId } = get(internal) ?? {};
-    if (intervalId !== undefined) {
-      tick.deregister(intervalId);
-    }
-
-    workstreams.set(INITIAL_WORKSTREAMS_STATE);
-    estimates.set({ workstreams: {} });
-    internal.set(undefined);
-  }
-
   /**
-   * Connect the store to the chain in order to enable on-chain enrichment
-   * and balance estimates for active workstreams.
+   * Connect the store with the user's wallet. This triggers fetching of all
+   * relevant Workstreams associated with the user, and starts estimations for
+   * current balances, updated once per second.
+   *
+   * @param address The user's current wallet address.
+   * @param chainId Canonical chainId for the currently selected chain.
+   * @param cycle Information about the current Radicle Drips cycle.
    */
   async function connect(address: string, chainId: number, cycle: Cycle) {
     if (get(internal)) return;
@@ -137,352 +120,291 @@ export const workstreamsStore = (() => {
       chainId,
       currentCycleStart: cycle.start,
       currentAddress: address,
-      intervalId: tick.register(estimateBalances)
+      intervalId: tick.register(_estimateBalances)
     });
 
-    await refreshRelevantStreams();
+    await _fetchWorkstreams();
   }
 
-  async function refreshRelevantStreams() {
-    workstreams.update((v) => ({
-      ...v,
-      fetchStatus: {
-        relevantStreamsFetching: true,
-        relevantStreamsFetched: v.fetchStatus.relevantStreamsFetched
-      }
-    }));
+  /**
+   * Disconnect the store from the user's wallet. Clears the store completely
+   * and stops estimation logic.
+   */
+  function disconnect() {
+    const { intervalId } = get(internal) ?? {};
+    if (intervalId) tick.deregister(intervalId);
 
-    try {
-      const { currentAddress, chainId } = get(internal) ?? {};
-      if (!currentAddress || !chainId) {
-        throw new Error('Connect the store first');
-      }
+    internal.set(undefined);
+    workstreams.set(INITIAL_WORKSTREAMS_STATE);
+  }
 
-      await fetchRelevantWorkstreams(currentAddress, chainId);
-
-      workstreams.update((v) => ({
-        ...v,
-        fetchStatus: {
-          relevantStreamsFetching: false,
-          relevantStreamsFetched: true
+  /**
+   * Pins a new Workstream to IPFS. Please note that the stream needs to be set
+   * up on-chain via `drips.createDrip` before it gets returned in listing calls.
+   *
+   * @param workstream The Workstream object to pin to IPFS.
+   * @return The CID of the newly-created Workstream.
+   */
+  async function createWorkstream(workstream: Workstream): Promise<CID> {
+    const res = await fetch('/api/ipfs/pin', {
+      method: 'POST',
+      body: JSON.stringify(workstream, (_, value) => {
+        if (typeof value === 'bigint') {
+          return String(value);
         }
-      }));
-    } catch (e) {
-      workstreams.update((v) => ({
-        ...v,
-        fetchStatus: {
-          relevantStreamsFetching: false,
-          relevantStreamsFetched: 'error'
-        }
-      }));
+        return value;
+      })
+    });
+
+    return CID.parse(await res.text());
+  }
+
+  /**
+   * Fetches and returns a singular enriched Workstream, and appends it to the
+   * store state. If the Workstream could not be found or wasn't set up on-chain,
+   * an error is thrown.
+   *
+   * @param id The IPFS CIDv0 for the Workstream.
+   * @return The requested Workstream object with enriched on-chain data.
+   */
+  async function fetchWorkstream(id: string): Promise<EnrichedWorkstream> {
+    const cid = CID.parse(id);
+
+    if (cid.version !== 0) {
+      throw new Error('Workstream CID must be v0');
     }
+
+    const res = await _ipfs(cid);
+    const workstream = Workstream.parse(await res.json());
+    const enriched = await _enrichWorkstream(cid.toString(), workstream);
+
+    _pushWorkstreams(enriched);
+
+    return enriched;
   }
 
-  async function enrich(item: Workstream): Promise<EnrichedWorkstream> {
+  /**
+   * Take a Workstream payload from IPFS and fetch on-chain data to
+   * construct an EnrichedWorkstream object.
+   * @private
+   */
+  async function _enrichWorkstream(
+    cid: string,
+    workstream: Workstream
+  ): Promise<EnrichedWorkstream> {
     const internalState = get(internal);
 
-    // User isn't logged in, so no need to enrich with on-chain data.
     if (!internalState) {
-      return {
-        data: item,
-        relevant: false,
-        fetchedAt: new Date()
-      };
+      throw new Error('Log in first');
     }
 
+    const { creator, receiver } = workstream;
+
     const relevant =
-      item.creator === internalState.currentAddress ||
-      item.acceptedApplication === internalState.currentAddress;
+      creator === internalState.currentAddress ||
+      receiver === internalState.currentAddress;
+
     const direction =
-      relevant && item.creator === internalState.currentAddress
+      relevant && creator === internalState.currentAddress
         ? 'outgoing'
         : 'incoming';
 
-    if (item.state !== WorkstreamState.ACTIVE) {
-      return {
-        data: item,
-        fetchedAt: new Date(),
-        relevant,
-        direction
-      };
-    }
-
-    const { id, creator, acceptedApplication: assignee, dripsData } = item;
-
-    if (!dripsData) throw new Error(`No drips data for ws ${id}`);
-
-    const { chainId } = get(internal) ?? {};
-    if (!chainId) throw new Error('Connect the store first');
-
-    const [dripsAccount, dripsUpdatedEvents] = await Promise.all([
-      getDripsAccount(creator, dripsData.accountId, chainId),
-      getDripsUpdatedEvents(creator, dripsData.accountId)
-    ]);
-
-    if ([dripsAccount, dripsUpdatedEvents].find((v) => !v)) {
-      throw new Error(`Unable to query on-chain state for workstream ${id}`);
-    }
-
-    const receiverConfig = dripsUpdatedEvents[
-      dripsUpdatedEvents.length - 1
-    ]?.event.args.receivers.find((r) => r.receiver.toLowerCase() === assignee);
-
-    const amtPerSec = {
-      wei: receiverConfig?.amtPerSec.toBigInt() ?? BigInt(0),
-      currency: Currency.DAI
-    };
-
-    const dripHistory = dripsUpdatedEvents.reduce<DripHistoryEvent[]>(
-      (acc, dew) => {
-        const { args } = dew.event;
-        const recipient = args.receivers.find(
-          (r) => r.receiver.toLowerCase() === assignee
-        );
-
-        return [
-          ...acc,
-          {
-            balance: {
-              currency: Currency.DAI,
-              wei: args.balance.toBigInt()
-            },
-            amtPerSec: {
-              currency: Currency.DAI,
-              wei: recipient?.amtPerSec.toBigInt() ?? BigInt(0)
-            },
-            timestamp: new Date(dew.fromBlock.timestamp * 1000)
-          }
-        ];
-      },
-      []
+    const updateEvents = await getDripsUpdatedEvents(
+      creator,
+      BigInt(cidToBase10(CID.parse(cid)))
     );
 
+    if (updateEvents.length === 0) {
+      throw new Error(
+        'Provided workstream CID has no associated Drips subaccount'
+      );
+    }
+
+    const dripHistory = buildDripHistory(updateEvents, receiver);
+
+    const amtPerSec: Money = {
+      wei: dripHistory[dripHistory.length - 1].amtPerSec.wei,
+      currency: 'dai'
+    };
+
     return {
-      data: item,
+      cid,
+      data: workstream,
       fetchedAt: new Date(),
       onChainData: {
         amtPerSec,
         dripHistory,
-        dripsEntries: dripsAccount?.dripsEntries ?? [],
-        streamSetUp: Boolean(
-          dripsUpdatedEvents[0]?.event.args.receivers.find(
-            (r) => r.receiver.toLowerCase() === item.acceptedApplication
-          )
-        ),
-        dripsAccount: dripsAccount ?? undefined
+        currentlyStreaming: amtPerSec.wei > BigInt(0),
+        paused: amtPerSec.wei === BigInt(0)
       },
-      relevant,
-      direction
+      direction,
+      relevant
     };
   }
 
-  function estimateBalances() {
+  /**
+   * Update the estimate of remaining and streamed amounts for
+   * each Workstream stored in the store state.
+   * @private
+   */
+  async function _estimateBalances() {
     const ws = get(workstreams).workstreams;
 
     const i = get(internal);
     if (!i) throw new Error('Connect store first');
 
-    const newEstimates: { [wsId: string]: Estimate } = {};
+    // Update all individual stream estimates
 
-    for (const [wsId, v] of Object.entries(ws)) {
-      if (!v.onChainData) continue;
+    const streamed = streamedBetween(Object.values(ws));
 
-      const { dripHistory } = v.onChainData;
+    for (const estimate of streamed) {
+      const { wei: weiPerSec } = estimate.workstream.onChainData.amtPerSec;
 
-      if (dripHistory.length === 0) {
-        // Drip hasn't yet been set up for this workstream.
+      const streamingForAnotherMillis =
+        (weiPerSec > BigInt(0) &&
+          Number(estimate.remaining.wei / weiPerSec) * 1000) ||
+        undefined;
 
-        newEstimates[wsId] = {
-          currentBalance: {
-            wei: BigInt(0),
-            currency: Currency.DAI
-          },
-          remainingBalance: {
-            wei: BigInt(0),
-            currency: Currency.DAI
-          },
-          streamingUntil: undefined,
-          currentlyStreaming: false,
-          paused: false
-        };
+      const streamingUntil =
+        (streamingForAnotherMillis &&
+          new Date(new Date().getTime() + streamingForAnotherMillis)) ||
+        undefined;
 
-        continue;
-      }
-
-      const streamed = streamedBetween([v])[0];
-
-      const lastUpdate = dripHistory[dripHistory.length - 1];
-      const currAmtPerSec = lastUpdate?.amtPerSec.wei ?? BigInt(0);
-      const lastUpdateTimestamp = lastUpdate?.timestamp.getTime();
-      const streamingUntil = currAmtPerSec
-        ? new Date(
-            lastUpdateTimestamp +
-              Number(lastUpdate.balance.wei / currAmtPerSec) * 1000
-          )
-        : undefined;
-
-      newEstimates[wsId] = {
-        currentBalance: streamed.amount,
-        remainingBalance: streamed.remaining,
-        streamingUntil,
-        currentlyStreaming: streamingUntil
-          ? streamingUntil.getTime() > new Date().getTime()
-          : false,
-        paused: currAmtPerSec === BigInt(0)
-      };
+      workstreams.update((ws) => ({
+        ...ws,
+        workstreams: {
+          ...ws.workstreams,
+          [estimate.workstream.cid]: {
+            ...ws.workstreams[estimate.workstream.cid],
+            estimate: {
+              currentBalance: estimate.amount,
+              remainingBalance: estimate.remaining,
+              streamingUntil
+            }
+          }
+        }
+      }));
     }
 
-    /*
-      Sum up the amount earned from all active streams in the store to
-      calculcate the global earned amount.
-    */
-    const incomingWorkstreams = Object.values(ws).filter(
-      (ws) => ws.direction === 'incoming'
-    );
-    const amountsStreamedTotal = streamedBetween(incomingWorkstreams);
-    const { currentCycleStart } = i;
-    const amountsStreamedInCurrentCycle = streamedBetween(incomingWorkstreams, {
-      from: currentCycleStart,
+    // Update total estimations
+
+    const streamedInCurrentCycle = streamedBetween(Object.values(ws), {
+      from: i.currentCycleStart,
       to: new Date()
     });
 
-    const totalWeiEarned = amountsStreamedTotal.reduce<bigint>(
-      (acc, v) => acc + v.amount.wei,
-      BigInt(0)
-    );
-    const totalWeiEarnedInCurrentCycle =
-      amountsStreamedInCurrentCycle.reduce<bigint>(
-        (acc, v) => acc + v.amount.wei,
-        BigInt(0)
-      );
-
-    estimates.update((estimatesVal) => ({
-      totalBalance: {
-        currency: Currency.DAI,
-        wei: totalWeiEarned
-      },
+    workstreams.update((ws) => ({
+      ...ws,
       earnedInCurrentCycle: {
-        currency: Currency.DAI,
-        wei: totalWeiEarnedInCurrentCycle
+        currency: 'dai',
+        wei: streamedInCurrentCycle
+          .filter((e) => e.workstream.direction === 'incoming')
+          .reduce<bigint>((acc, v) => acc + v.amount.wei, BigInt(0))
       },
-      workstreams: {
-        ...estimatesVal.workstreams,
-        ...newEstimates
+      totalEarned: {
+        currency: 'dai',
+        wei: streamed
+          .filter((e) => e.workstream.direction === 'incoming')
+          .reduce<bigint>((acc, v) => acc + v.amount.wei, BigInt(0))
       }
     }));
   }
 
-  async function pushState(enrichedWorkstreams: EnrichedWorkstream[]) {
-    workstreams.update((v) => {
-      let toAppend = {};
+  /**
+   * Fetch all Workstreams created by the current user and populate
+   * the store.
+   * @private
+   *
+   * TODO: Also fetch workstreams assigned to the current user.
+   */
+  async function _fetchWorkstreams() {
+    const { currentAddress, chainId } = get(internal) ?? {};
 
-      for (const enrichedWorkstream of enrichedWorkstreams) {
-        toAppend = {
-          ...toAppend,
-          [enrichedWorkstream.data.id]: enrichedWorkstream
-        };
-      }
+    if (!currentAddress || !chainId) throw new Error('Not connected to wallet');
 
-      return { ...v, workstreams: { ...v.workstreams, ...toAppend } };
-    });
-  }
-
-  function serveFromCache(
-    id: string
-  ): { ok: true; data: Workstream } | undefined {
-    const data = get(workstreams).workstreams[id]?.data;
-
-    return data
-      ? {
-          ok: true,
-          data
+    const dripsAccounts = (
+      await query<DripsAccountsForUser, DripsAccountsForUserVariables>({
+        query: DRIPS_ACCOUNTS_FOR_USER,
+        chainId,
+        variables: {
+          user: currentAddress
         }
-      : undefined;
+      })
+    ).dripsConfig?.dripsAccount;
+    const dripsAccountIds =
+      dripsAccounts?.map((da) => da.account as string) ?? [];
+
+    const incomingEntries =
+      (
+        await query<
+          DripsEntriesStreamingToUser,
+          DripsEntriesStreamingToUserVariables
+        >({
+          query: DRIPS_ENTRIES_STREAMING_TO_USER,
+          chainId,
+          variables: {
+            user: currentAddress
+          }
+        })
+      ).dripsEntries ?? [];
+    const incomingAccountEntries = incomingEntries.filter(
+      (de) => de.isAccountDrip
+    );
+
+    const incomingAccountIds = incomingAccountEntries.reduce<string[]>(
+      (acc, curr) => {
+        if (!acc.includes(curr.account)) return [...acc, curr.account];
+        return acc;
+      },
+      []
+    );
+
+    const ipfsFetches = [...dripsAccountIds, ...incomingAccountIds].map(
+      async (da) => {
+        try {
+          const cid = base10toCid(da).toString();
+          const enrichedWorkstream = await fetchWorkstream(cid);
+
+          _pushWorkstreams(enrichedWorkstream);
+        } catch (e) {
+          return undefined;
+        }
+      }
+    );
+
+    Promise.allSettled(ipfsFetches);
   }
 
-  async function getWorkstreams(
-    filters?: Partial<WorkstreamsFilterConfig>,
-    fetcher?: typeof fetch
-  ) {
-    const paramsString =
-      filters && Object.keys(filters).length > 0
-        ? new URLSearchParams(filters).toString()
-        : '';
-
-    const url = `${getConfig().API_URL_BASE}/workstreams?${paramsString}`;
-
-    const response = await _fetch(url, undefined, fetcher);
-
-    if (response.status === 200) {
-      const parsed = JSON.parse(await response.text(), reviver) as Workstream[];
-      const enrichPromises = parsed.map((w) => enrich(w));
-      const enriched = await Promise.all(enrichPromises);
-
-      pushState(enriched);
-
-      return {
-        data: parsed,
-        enriched,
-        ok: true
-      };
-    } else {
-      return {
-        ok: false,
-        error: await response.text()
-      };
-    }
+  /**
+   * Append one or more EnrichedWorkstreams object to the store
+   * state.
+   * @private
+   */
+  function _pushWorkstreams(...args: EnrichedWorkstream[]) {
+    args.forEach((enrichedWorkstream) =>
+      workstreams.update((s) => ({
+        fetched: true,
+        workstreams: {
+          ...s.workstreams,
+          [enrichedWorkstream.cid]: enrichedWorkstream
+        }
+      }))
+    );
   }
 
-  async function getWorkstream(
-    id: string,
-    fetcher?: typeof fetch,
-    bypassCache?: true
-  ) {
-    if (!bypassCache && serveFromCache(id)) return serveFromCache(id);
-
-    const url = `${getConfig().API_URL_BASE}/workstreams/${id}`;
-    const response = await _fetch(url, undefined, fetcher);
-
-    if (response.ok) {
-      const parsed = JSON.parse(await response.text(), reviver) as Workstream;
-
-      const enriched = await enrich(parsed);
-
-      pushState([enriched]);
-
-      return {
-        data: parsed,
-        enriched,
-        ok: true
-      };
-    } else {
-      return {
-        ok: false,
-        error: await response.text()
-      };
-    }
-  }
-
-  async function _fetch(
-    url: string,
-    config?: RequestInit,
-    fetcher?: typeof fetch
-  ) {
-    return (fetcher ?? fetch)(url, {
-      ...(config as object),
-      credentials: 'include'
-    });
+  /**
+   * Fetch a Workstream object from IPFS by its CID.
+   * @private
+   */
+  function _ipfs(cid: CID) {
+    return fetch(`https://${IPFS_GATEWAY_DOMAIN}/ipfs/${cid.toString()}`);
   }
 
   return {
     subscribe: workstreams.subscribe,
-    estimates: {
-      subscribe: estimates.subscribe
-    },
     connect,
-    refreshRelevantStreams,
-    clear,
-    getWorkstreams,
-    getWorkstream
+    disconnect,
+    createWorkstream,
+    fetchWorkstream
   };
 })();

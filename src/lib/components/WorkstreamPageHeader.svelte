@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { Workstream } from '$lib/stores/workstreams/types';
+  import type { EnrichedWorkstream } from '$lib/stores/workstreams';
 
-  export let workstream: Workstream;
+  export let workstream: EnrichedWorkstream;
 </script>
 
 <div>
-  <h4>{workstream.title}</h4>
+  <h4>{workstream.data.title}</h4>
 </div>
 
 <style>

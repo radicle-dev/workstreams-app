@@ -2,7 +2,7 @@
   import { fly } from 'svelte/transition';
   import { onDestroy } from 'svelte';
 
-  import { workstreamsStore } from '$lib/stores/workstreams';
+  import workstreamsStore from '$lib/stores/workstreams';
   import HistoryItem from '$lib/components/History/HistoryItem.svelte';
   import { currencyFormat } from '$lib/utils/format';
   import history from './history';
@@ -12,20 +12,16 @@
   import tick from '$lib/stores/tick';
   import { walletStore } from '$lib/stores/wallet/wallet';
 
-  const { estimates } = workstreamsStore;
-
   $: relevantStreams = Object.values($workstreamsStore.workstreams).filter(
-    (ws) => ws.relevant && ws.onChainData?.streamSetUp
+    (ws) => ws.relevant
   );
+  $: ws = $workstreamsStore;
 
   let loading = true;
   let tickRegistrationId: number;
 
   $: {
-    if (
-      $walletStore.ready &&
-      $workstreamsStore.fetchStatus.relevantStreamsFetched
-    ) {
+    if ($walletStore.ready && $workstreamsStore.fetched) {
       updateHistory();
       loading = false;
       tick.deregister(tickRegistrationId);
@@ -64,9 +60,7 @@
         <div class="key-value">
           <h4>Total earned</h4>
           <p class="amount typo-text-mono-bold">
-            {($estimates.totalBalance &&
-              currencyFormat($estimates.totalBalance.wei)) ??
-              '…'} DAI
+            {(ws.totalEarned && currencyFormat(ws.totalEarned)) ?? '…'} DAI
           </p>
         </div>
       </div>

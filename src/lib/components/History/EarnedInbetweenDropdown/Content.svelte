@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { EnrichedWorkstream } from '$lib/stores/workstreams';
-  import type { Money } from '$lib/stores/workstreams/types';
+  import type { Money } from '$lib/stores/workstreams';
   import { currencyFormat } from '$lib/utils/format';
   import Minus from 'radicle-design-system/icons/Minus.svelte';
   import Plus from 'radicle-design-system/icons/Plus.svelte';
